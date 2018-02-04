@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="libs\gl3w\GL\gl3w.h">
+      <Filter>Sources\GL\gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\gl3w\GL\glcorearb.h">
+      <Filter>Sources\GL\gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ProdTool.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ProdToolTypes.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h">
+      <Filter>Sources\GL\imgui_impl_glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\HTTPDownloader.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\GL\ProdToolGL.h">
+      <Filter>Sources\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\OnlineDatabase.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\SeLogerOnlineDatabase.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\Request.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\RequestManager.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\DatabaseManager.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\UI\UIManager.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\StringTools.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\LeSiteImmoOnlineDatabase.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\moodycamel\blockingconcurrentqueue.h">
+      <Filter>Sources\Tools\moodycamel</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\moodycamel\concurrentqueue.h">
+      <Filter>Sources\Tools\moodycamel</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\autolink.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\features.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\forwards.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\json.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\json_batchallocator.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\jsonconfig.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\reader.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\value.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\jsoncpp\writer.h">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\Thread\Thread.h">
+      <Filter>Sources\Tools\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\ImGui\imconfig.h">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\ImGui\imgui.h">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Tools\ImGui\imgui_internal.h">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libs\gl3w\GL\gl3w.c">
+      <Filter>Sources\GL\gl3w</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ProdTool.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\GL\imgui_impl_glfw_gl3.cpp">
+      <Filter>Sources\GL\imgui_impl_glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\HTTPDownloader.cpp">
+      <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\GL\ProdToolGL.cpp">
+      <Filter>Sources\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\Request.cpp">
+      <Filter>Sources\Request</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\RequestManager.cpp">
+      <Filter>Sources\Request</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\DatabaseManager.cpp">
+      <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\UI\UIManager.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\StringTools.cpp">
+      <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\SeLogerOnlineDatabase.cpp">
+      <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\LeSiteImmoOnlineDatabase.cpp">
+      <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\jsoncpp\json_reader.cpp">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\jsoncpp\json_value.cpp">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\jsoncpp\json_writer.cpp">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\Thread\Thread.cpp">
+      <Filter>Sources\Tools\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\ImGui\imgui.cpp">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\ImGui\imgui_demo.cpp">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\ImGui\imgui_draw.cpp">
+      <Filter>Sources\Tools\ImGui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{cd01e092-088e-4f99-8777-e1083c42501f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Database">
+      <UniqueIdentifier>{bde120d4-d46c-4b4b-a021-05b817bec04f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\UI">
+      <UniqueIdentifier>{49f0cf11-13fb-4740-8862-2480e55c6bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GL">
+      <UniqueIdentifier>{1cfdb2b2-fcf0-4613-a806-786b99351119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GL\imgui_impl_glfw">
+      <UniqueIdentifier>{76f4b10d-ef1c-4dd6-8870-8b880dcd7bd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GL\gl3w">
+      <UniqueIdentifier>{7fcf34fe-f524-45c3-8657-fddecbddc5c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Request">
+      <UniqueIdentifier>{e5de6e67-e894-4b85-b60f-161bace31759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools">
+      <UniqueIdentifier>{13eb0180-cb16-4048-85b1-d2e16253211a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools\ImGui">
+      <UniqueIdentifier>{8c5c5a53-670d-4af2-8b82-b791303444f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools\moodycamel">
+      <UniqueIdentifier>{1c9ad96b-eac8-4a66-a99a-288b645d7d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools\JsonCpp">
+      <UniqueIdentifier>{0e014d0a-40be-465b-85a0-270d403e8993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools\Thread">
+      <UniqueIdentifier>{6e55f381-94d7-4fe2-8e0a-0baeb93bc5fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sources\Tools\jsoncpp\json_internalarray.inl">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </None>
+    <None Include="sources\Tools\jsoncpp\json_internalmap.inl">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </None>
+    <None Include="sources\Tools\jsoncpp\json_valueiterator.inl">
+      <Filter>Sources\Tools\JsonCpp</Filter>
+    </None>
+  </ItemGroup>
+</Project>

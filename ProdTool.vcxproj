@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7773E156-8246-4227-95CE-2840E26132D2}</ProjectGuid>
+    <RootNamespace>TerraFormer</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>ProdTool</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)bin\</OutDir>
+    <IntDir>$(ProjectDir)bin\$(ProjectName)\$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformArchitecture)_$(Configuration)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)bin\</OutDir>
+    <IntDir>$(ProjectDir)bin\$(ProjectName)\$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformArchitecture)_$(Configuration)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;$(ProjectDir)../TinyXml</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(ProjectDir)extern/lib/;$(SolutionDir)\libs\glfw\lib-vc2015-64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ole32.lib;Crypt32.lib;Shell32.lib;Advapi32.lib;Version.lib;opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(ProjectDir)extern/lib/;$(SolutionDir)\libs\glfw\lib-vc2015-64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="libs\gl3w\GL\gl3w.h" />
+    <ClInclude Include="libs\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="sources\Database\HTTPDownloader.h" />
+    <ClInclude Include="sources\Database\LeSiteImmoOnlineDatabase.h" />
+    <ClInclude Include="sources\Database\OnlineDatabase.h" />
+    <ClInclude Include="sources\Database\DatabaseManager.h" />
+    <ClInclude Include="sources\Database\SeLogerOnlineDatabase.h" />
+    <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="sources\GL\ProdToolGL.h" />
+    <ClInclude Include="sources\ProdTool.h" />
+    <ClInclude Include="sources\ProdToolTypes.h" />
+    <ClInclude Include="sources\Request\Request.h" />
+    <ClInclude Include="sources\Request\RequestManager.h" />
+    <ClInclude Include="sources\Request\SearchRequest.h" />
+    <ClInclude Include="sources\Tools\ImGui\imconfig.h" />
+    <ClInclude Include="sources\Tools\ImGui\imgui.h" />
+    <ClInclude Include="sources\Tools\ImGui\imgui_internal.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\autolink.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\features.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\forwards.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\json.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\jsonconfig.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\json_batchallocator.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\reader.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\value.h" />
+    <ClInclude Include="sources\Tools\jsoncpp\writer.h" />
+    <ClInclude Include="sources\Tools\moodycamel\blockingconcurrentqueue.h" />
+    <ClInclude Include="sources\Tools\moodycamel\concurrentqueue.h" />
+    <ClInclude Include="sources\Tools\StringTools.h" />
+    <ClInclude Include="sources\Tools\Thread\Thread.h" />
+    <ClInclude Include="sources\UI\UIManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libs\gl3w\GL\gl3w.c" />
+    <ClCompile Include="sources\Database\HTTPDownloader.cpp" />
+    <ClCompile Include="sources\Database\DatabaseManager.cpp" />
+    <ClCompile Include="sources\Database\LeSiteImmoOnlineDatabase.cpp" />
+    <ClCompile Include="sources\Database\SeLogerOnlineDatabase.cpp" />
+    <ClCompile Include="sources\GL\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="sources\GL\ProdToolGL.cpp" />
+    <ClCompile Include="sources\ProdTool.cpp" />
+    <ClCompile Include="sources\Request\Request.cpp" />
+    <ClCompile Include="sources\Request\RequestManager.cpp" />
+    <ClCompile Include="sources\Tools\ImGui\imgui.cpp" />
+    <ClCompile Include="sources\Tools\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="sources\Tools\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="sources\Tools\jsoncpp\json_reader.cpp" />
+    <ClCompile Include="sources\Tools\jsoncpp\json_value.cpp" />
+    <ClCompile Include="sources\Tools\jsoncpp\json_writer.cpp" />
+    <ClCompile Include="sources\Tools\StringTools.cpp" />
+    <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
+    <ClCompile Include="sources\UI\UIManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sources\Tools\jsoncpp\json_internalarray.inl" />
+    <None Include="sources\Tools\jsoncpp\json_internalmap.inl" />
+    <None Include="sources\Tools\jsoncpp\json_valueiterator.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

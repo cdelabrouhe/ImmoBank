@@ -7,9 +7,6 @@
     <ClInclude Include="libs\gl3w\GL\glcorearb.h">
       <Filter>Sources\GL\gl3w</Filter>
     </ClInclude>
-    <ClInclude Include="sources\ProdTool.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="sources\ProdToolTypes.h">
       <Filter>Sources</Filter>
     </ClInclude>

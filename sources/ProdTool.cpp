@@ -6,7 +6,7 @@
 #include "Request/RequestManager.h"
 #include "Database/DatabaseManager.h"
 #include "UI/UIManager.h"
-#include "ProdToolTypes.h"
+#include "Tools/Types.h"
 
 const int	CONFIG_WINDOW_WIDTH = 1280;
 const int	CONFIG_WINDOW_HEIGHT = 768;

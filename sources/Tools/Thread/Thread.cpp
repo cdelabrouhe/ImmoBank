@@ -1,6 +1,6 @@
 #include "Thread.h"
 #include <windows.h>
-#include "..\..\ProdToolTypes.h"
+#include "Tools/Types.h"
 
 void Thread::create(UserFuncPtr userFunc, void* userParam, const char* _name, ThreadPriority _priority)
 {

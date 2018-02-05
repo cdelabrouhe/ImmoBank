@@ -11,7 +11,7 @@
 #include "imgui_impl_glfw_gl3.h"
 
 #include "UI/UIManager.h"
-#include "ProdToolTypes.h"
+#include "Tools/Types.h"
 
 //-------------------------------------------------------------------------------------------------
 // DATA

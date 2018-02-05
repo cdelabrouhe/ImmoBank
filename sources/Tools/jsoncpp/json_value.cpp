@@ -11,7 +11,7 @@
 # include "json_batchallocator.h"
 #endif // #ifndef JSON_USE_SIMPLE_INTERNAL_ALLOCATOR
 
-#include "ProdToolTypes.h"
+#include "Tools/Types.h"
 
 #define JSON_ASSERT_UNREACHABLE ASSERT(0)
 #define JSON_ASSERT( condition ) ASSERT( condition );  // @todo <= change this into an exception throw

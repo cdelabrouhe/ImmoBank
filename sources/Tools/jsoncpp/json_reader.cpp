@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <cstring>
 #include <stdexcept>
-#include "..\..\ProdToolTypes.h"
+#include "Tools/Types.h"
 
 #define JSON_ASSERT( condition ) ASSERT( condition );  // @todo <= change this into an exception throw
 

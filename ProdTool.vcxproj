@@ -95,7 +95,7 @@
     <ClInclude Include="sources\Database\SeLogerOnlineDatabase.h" />
     <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="sources\GL\ProdToolGL.h" />
-    <ClInclude Include="sources\ProdToolTypes.h" />
+    <ClInclude Include="sources\Tools\Types.h" />
     <ClInclude Include="sources\Request\Request.h" />
     <ClInclude Include="sources\Request\RequestManager.h" />
     <ClInclude Include="sources\Request\SearchRequest.h" />

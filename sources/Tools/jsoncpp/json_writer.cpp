@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include "forwards.h"
-#include "..\..\ProdToolTypes.h"
+#include "Tools/Types.h"
 #include "writer.h"
 
 #define JSON_ASSERT( condition ) ASSERT( condition )

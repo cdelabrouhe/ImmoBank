@@ -83,8 +83,9 @@ void Request::Display()
 		Json::Reader reader;
 		if (reader.parse(result, root))
 		{
-			int nbCities = root.size();
-			for (int ID = 0; ID < nbCities; ++ID)
+			unsigned int nbMaxCities = 10;
+			unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
+			for (unsigned int ID = 0; ID < nbCities; ++ID)
 			{
 				Json::Value& val = root.get(ID, Json::nullValue);
 				std::string name = val["nom"].asString();
@@ -134,6 +135,36 @@ void Request::Display()
 			m_searchRequest.m_city = m_cities[m_selectedCityID];
 	}
 
+
+	if (ImGui::Checkbox("Appartement", &m_apartment))
+	{
+		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_Apartment);
+		if (m_apartment)
+		{
+			if (it == m_searchRequest.m_categories.end())
+				m_searchRequest.m_categories.push_back(Category_Apartment);
+		}
+		else
+		{
+			if (it != m_searchRequest.m_categories.end())
+				m_searchRequest.m_categories.erase(it);
+		}
+	}
+	if (ImGui::Checkbox("House", &m_house))
+	{
+		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_House);
+		if (m_house)
+		{
+			if (it == m_searchRequest.m_categories.end())
+				m_searchRequest.m_categories.push_back(Category_House);
+		}
+		else
+		{
+			if (it != m_searchRequest.m_categories.end())
+				m_searchRequest.m_categories.erase(it);
+		}
+	}
+
 	ImGui::SliderInt("Nb rooms", &m_searchRequest.m_nbRooms, 1, 20);
 	ImGui::SliderInt("Nb bedrooms", &m_searchRequest.m_nbBedRooms, 1, 20);
 	ImGui::InputInt("Surface min", &m_searchRequest.m_surfaceMin);
@@ -173,7 +204,9 @@ void Request::Display()
 				auto& request = m_result[ID];
 				ImGui::Separator();
 				ImGui::SetWindowFontScale(1.2f);
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), request.m_name.c_str());
+				std::string name = (request.m_category == Category_Apartment ? "Apartment" : "House");
+				name += ", " + request.m_name;
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), name.c_str());
 				ImGui::SetWindowFontScale(1.0f);
 
 				ImGui::TextWrapped(request.m_description.c_str());

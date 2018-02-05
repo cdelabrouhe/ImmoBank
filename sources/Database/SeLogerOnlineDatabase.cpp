@@ -25,17 +25,24 @@ int SeLogerOnlineDatase::SendRequest(const SearchRequest& _request)
 	}
 
 	// Apartment / house
-	switch (_request.m_category)
+	int categoryID = 0;
+	auto nbCategories = _request.m_categories;
+	for (auto category : _request.m_categories)
 	{
-	case Category_Apartment:
-		request += "&idtypebien=1";
-		break;
-	case Category_House:
-		request += "&idtypebien=2";
-		break;
-	default:
-		printf("Error: unknown request category");
-		return -1;
+		switch (category)
+		{
+		case Category_Apartment:
+			request += categoryID == 0 ? "&idtypebien=1" : ",1";
+			break;
+		case Category_House:
+			request += categoryID == 0 ? "&idtypebien=2" : ",2";
+			break;
+		default:
+			printf("Error: unknown request category");
+			return -1;
+		}
+
+		++categoryID;
 	}
 
 	// Force city to Montpellier (INSEE code)
@@ -117,6 +124,7 @@ bool SeLogerOnlineDatase::ProcessResult(SearchRequest& _initialRequest, std::str
 		result.m_URL = annonce.m_URL;
 		result.m_nbRooms = annonce.m_nbRooms;
 		result.m_nbBedRooms = annonce.m_nbBedRooms;
+		result.m_category = annonce.m_category;
 
 		_results.push_back(result);
 	}
@@ -170,4 +178,26 @@ void SeLogerOnlineDatase::sAnnonce::Serialize(const std::string& _str)
 
 	str = StringTools::GetXMLBaliseContent(_str, "nbChambre");
 	if (!str.empty())	m_nbBedRooms = std::stoi(str);
+
+	str = StringTools::GetXMLBaliseContent(_str, "idTypeBien");
+	if (!str.empty())
+	{
+		int type = std::stoi(str);
+		switch (type)
+		{
+		case 1:			m_category = Category_Apartment;	break;
+		case 2:			m_category = Category_House;		break;
+		default:		m_category = Category_NONE;			break;
+		}
+	}
+
+	static bool s_test = false;
+	if (s_test)
+	{
+		FILE* f = fopen("test.xml", "wt");
+		if (!f)
+			return;
+		fwrite(_str.data(), sizeof(char), (size_t)_str.size(), f);
+		fclose(f);
+	}
 }

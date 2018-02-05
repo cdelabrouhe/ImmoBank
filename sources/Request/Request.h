@@ -27,5 +27,7 @@ protected:
 	int									m_selectedCityID = 0;
 	int									m_requestID = -1;
 	int									m_cityNameRequestID = -1;
+	bool								m_apartment = true;
+	bool								m_house = true;
 	bool								m_available = false;
 };

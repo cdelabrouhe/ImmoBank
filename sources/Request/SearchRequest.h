@@ -30,7 +30,7 @@ struct SearchRequest
 {
 	sCity		m_city;
 	Type		m_type = Type_NONE;
-	Category	m_category = Category_NONE;
+	std::vector<Category> m_categories;
 	int			m_priceMin = 0;
 	int			m_priceMax = 0;
 	int			m_surfaceMin = 0;
@@ -62,7 +62,6 @@ struct SearchRequestResult
 	{
 		m_city = _request.m_city;
 		m_type = _request.m_type;
-		m_category = _request.m_category;
 		return *this;
 	}
 };

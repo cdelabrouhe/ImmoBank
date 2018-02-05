@@ -12,6 +12,7 @@ private:
 		std::string m_name;
 		std::string m_description;
 		std::string m_URL;
+		Category m_category;
 		int m_price;
 		float m_surface;
 		int m_nbRooms;

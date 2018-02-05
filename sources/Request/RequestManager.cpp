@@ -62,7 +62,8 @@ Request* RequestManager::CreateDefaultRequest()
 	SearchRequest request;
 	request.m_type = Type_Buy;
 	request.m_city.m_name = "Montpellier";
-	request.m_category = Category_Apartment;
+	request.m_categories.push_back(Category_Apartment);
+	request.m_categories.push_back(Category_House);
 	request.m_priceMin = 210000;
 	request.m_priceMax = 215000;
 	request.m_nbRooms = 3;

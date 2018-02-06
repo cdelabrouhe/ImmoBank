@@ -95,7 +95,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;$(ProjectDir)../TinyXml</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;$(ProjectDir)../TinyXml</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +127,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -145,7 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\sources;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -164,6 +164,7 @@
     <ClInclude Include="sources\Database\DatabaseManager.h" />
     <ClInclude Include="sources\Database\SeLogerOnlineDatabase.h" />
     <ClInclude Include="sources\GL\imgui_impl_glfw_gl2.h" />
+    <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="sources\GL\ProdToolGL.h" />
     <ClInclude Include="sources\Tools\Types.h" />
     <ClInclude Include="sources\Request\Request.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="sources\Database\LeSiteImmoOnlineDatabase.cpp" />
     <ClCompile Include="sources\Database\SeLogerOnlineDatabase.cpp" />
     <ClCompile Include="sources\GL\imgui_impl_glfw_gl2.cpp" />
+    <ClCompile Include="sources\GL\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="sources\GL\ProdToolGL.cpp" />
     <ClCompile Include="sources\ProdTool.cpp" />
     <ClCompile Include="sources\Request\Request.cpp" />

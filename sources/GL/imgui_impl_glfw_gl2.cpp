@@ -1,3 +1,5 @@
+#ifdef OPENGL2
+
 // ImGui GLFW binding with OpenGL (legacy, fixed pipeline)
 // In this binding, ImTextureID is used to store an OpenGL 'GLuint' texture identifier. Read the FAQ about ImTextureID in imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
@@ -127,20 +129,20 @@ static void ImGui_ImplGlfwGL2_SetClipboardText(void* user_data, const char* text
 	glfwSetClipboardString((GLFWwindow*)user_data, text);
 }
 
-void ImGui_ImplGlfwGL2_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
+void ImGui_ImplGlfwGL_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
 {
 	if (action == GLFW_PRESS && button >= 0 && button < 3)
 		g_MouseJustPressed[button] = true;
 }
 
-void ImGui_ImplGlfwGL2_ScrollCallback(GLFWwindow*, double xoffset, double yoffset)
+void ImGui_ImplGlfwGL_ScrollCallback(GLFWwindow*, double xoffset, double yoffset)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.MouseWheelH += (float)xoffset;
 	io.MouseWheel += (float)yoffset;
 }
 
-void ImGui_ImplGlfwGL2_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
+void ImGui_ImplGlfwGL_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	if (action == GLFW_PRESS)
@@ -155,14 +157,14 @@ void ImGui_ImplGlfwGL2_KeyCallback(GLFWwindow*, int key, int, int action, int mo
 	io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 }
 
-void ImGui_ImplGlfwGL2_CharCallback(GLFWwindow*, unsigned int c)
+void ImGui_ImplGlfwGL_CharCallback(GLFWwindow*, unsigned int c)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	if (c > 0 && c < 0x10000)
 		io.AddInputCharacter((unsigned short)c);
 }
 
-bool ImGui_ImplGlfwGL2_CreateDeviceObjects()
+bool ImGui_ImplGlfwGL_CreateDeviceObjects()
 {
 	// Build texture atlas
 	ImGuiIO& io = ImGui::GetIO();
@@ -188,7 +190,7 @@ bool ImGui_ImplGlfwGL2_CreateDeviceObjects()
 	return true;
 }
 
-void    ImGui_ImplGlfwGL2_InvalidateDeviceObjects()
+void    ImGui_ImplGlfwGL_InvalidateDeviceObjects()
 {
 	if (g_FontTexture)
 	{
@@ -198,7 +200,7 @@ void    ImGui_ImplGlfwGL2_InvalidateDeviceObjects()
 	}
 }
 
-bool    ImGui_ImplGlfwGL2_Init(GLFWwindow* window, bool install_callbacks)
+bool    ImGui_ImplGlfwGL_Init(GLFWwindow* window, bool install_callbacks)
 {
 	g_Window = window;
 
@@ -234,25 +236,25 @@ bool    ImGui_ImplGlfwGL2_Init(GLFWwindow* window, bool install_callbacks)
 
 	if (install_callbacks)
 	{
-		glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL2_MouseButtonCallback);
-		glfwSetScrollCallback(window, ImGui_ImplGlfwGL2_ScrollCallback);
-		glfwSetKeyCallback(window, ImGui_ImplGlfwGL2_KeyCallback);
-		glfwSetCharCallback(window, ImGui_ImplGlfwGL2_CharCallback);
+		glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL_MouseButtonCallback);
+		glfwSetScrollCallback(window, ImGui_ImplGlfwGL_ScrollCallback);
+		glfwSetKeyCallback(window, ImGui_ImplGlfwGL_KeyCallback);
+		glfwSetCharCallback(window, ImGui_ImplGlfwGL_CharCallback);
 	}
 
 	return true;
 }
 
-void ImGui_ImplGlfwGL2_Shutdown()
+void ImGui_ImplGlfwGL_Shutdown()
 {
-	ImGui_ImplGlfwGL2_InvalidateDeviceObjects();
+	ImGui_ImplGlfwGL_InvalidateDeviceObjects();
 	ImGui::Shutdown();
 }
 
-void ImGui_ImplGlfwGL2_NewFrame()
+void ImGui_ImplGlfwGL_NewFrame()
 {
 	if (!g_FontTexture)
-		ImGui_ImplGlfwGL2_CreateDeviceObjects();
+		ImGui_ImplGlfwGL_CreateDeviceObjects();
 
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -302,3 +304,5 @@ void ImGui_ImplGlfwGL2_NewFrame()
 	// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 	ImGui::NewFrame();
 }
+
+#endif

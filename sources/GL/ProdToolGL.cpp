@@ -8,7 +8,14 @@
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 #include "Tools/ImGui/imgui.h"
+
+#ifdef OPENGL2
 #include "imgui_impl_glfw_gl2.h"
+#endif
+
+#ifdef OPENGL3
+#include "imgui_impl_glfw_gl3.h"
+#endif
 
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
@@ -46,7 +53,7 @@ GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 
 void ProdToolGL_Shutdown()
 {
-	ImGui_ImplGlfwGL2_Shutdown();
+	ImGui_ImplGlfwGL_Shutdown();
 	glfwTerminate();
 }
 
@@ -88,7 +95,7 @@ void ProdToolGL_InitImGui()
 
 	// Setup ImGui binding
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui_ImplGlfwGL2_Init(s_Window, true);
+	ImGui_ImplGlfwGL_Init(s_Window, true);
 
 	// Load fonts next to executable file
 	std::string fontPath = "DroidSans.ttf";
@@ -101,7 +108,7 @@ void ProdToolGL_InitImGui()
 	style.FrameRounding = 4;
 	style.IndentSpacing = 12.0f;*/
 
-	ImGui_ImplGlfwGL2_CreateDeviceObjects();
+	ImGui_ImplGlfwGL_CreateDeviceObjects();
 
 	for (auto& font : io.Fonts->Fonts)
 		AddReplacementGlyph(font, 0x2019, '\'');
@@ -130,7 +137,7 @@ void ProdToolGL_NewFrame()
 
 	Sleep(15);
 
-	ImGui_ImplGlfwGL2_NewFrame();
+	ImGui_ImplGlfwGL_NewFrame();
 }
 
 void	ProdToolGL_Render()

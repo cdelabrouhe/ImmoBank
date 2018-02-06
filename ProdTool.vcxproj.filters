@@ -7,9 +7,6 @@
     <ClInclude Include="libs\gl3w\GL\glcorearb.h">
       <Filter>Sources\GL\gl3w</Filter>
     </ClInclude>
-    <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h">
-      <Filter>Sources\GL\imgui_impl_glfw</Filter>
-    </ClInclude>
     <ClInclude Include="sources\Database\HTTPDownloader.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
     <ClInclude Include="sources\Tools\Types.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="sources\GL\imgui_impl_glfw_gl2.h">
+      <Filter>Sources\GL\imgui_impl_glfw</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libs\gl3w\GL\gl3w.c">
@@ -98,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="sources\ProdTool.cpp">
       <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\GL\imgui_impl_glfw_gl3.cpp">
-      <Filter>Sources\GL\imgui_impl_glfw</Filter>
     </ClCompile>
     <ClCompile Include="sources\Database\HTTPDownloader.cpp">
       <Filter>Sources\Database</Filter>
@@ -149,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="sources\Tools\ImGui\imgui_draw.cpp">
       <Filter>Sources\Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\GL\imgui_impl_glfw_gl2.cpp">
+      <Filter>Sources\GL\imgui_impl_glfw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

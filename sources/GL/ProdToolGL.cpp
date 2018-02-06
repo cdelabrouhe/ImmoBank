@@ -8,7 +8,7 @@
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 #include "Tools/ImGui/imgui.h"
-#include "imgui_impl_glfw_gl3.h"
+#include "imgui_impl_glfw_gl2.h"
 
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
@@ -21,37 +21,21 @@ GLFWwindow*		s_Window;
 //-------------------------------------------------------------------------------------------------
 // FUNCTIONS
 //-------------------------------------------------------------------------------------------------
+static void error_callback(int error, const char* description)
+{
+	fprintf(stderr, "Error %d: %s\n", error, description);
+}
 
 GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 {
-	glfwSetErrorCallback([](int error, const char* description) { fprintf(stderr, "Error %d: %s\n", error, description); });
+	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		return NULL;
-
-	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-	glfwWindowHint(GLFW_DECORATED, 1);
-	glfwWindowHint(GLFW_RESIZABLE, 1);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-	const char* additional_text = "";
-	if (_MSC_VER == 1900)
-	{
-		if (sizeof(void*) == 8)
-			additional_text = "(VS2015 x64)";
-		else
-			additional_text = "(VS2015)";
-	}
-
+	
 	std::string name = "ProdTool";
 	GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-	glfwSetWindowPos(window, (mode->width - width) / 2, (mode->height - height) / 2);
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1); // Enable vsync
 
 	gl3wInit();
 
@@ -62,7 +46,7 @@ GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 
 void ProdToolGL_Shutdown()
 {
-	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui_ImplGlfwGL2_Shutdown();
 	glfwTerminate();
 }
 
@@ -104,7 +88,7 @@ void ProdToolGL_InitImGui()
 
 	// Setup ImGui binding
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui_ImplGlfwGL3_Init(s_Window, true);
+	ImGui_ImplGlfwGL2_Init(s_Window, true);
 
 	// Load fonts next to executable file
 	std::string fontPath = "DroidSans.ttf";
@@ -117,7 +101,7 @@ void ProdToolGL_InitImGui()
 	style.FrameRounding = 4;
 	style.IndentSpacing = 12.0f;*/
 
-	ImGui_ImplGlfwGL3_CreateDeviceObjects();
+	ImGui_ImplGlfwGL2_CreateDeviceObjects();
 
 	for (auto& font : io.Fonts->Fonts)
 		AddReplacementGlyph(font, 0x2019, '\'');
@@ -146,7 +130,7 @@ void ProdToolGL_NewFrame()
 
 	Sleep(15);
 
-	ImGui_ImplGlfwGL3_NewFrame();
+	ImGui_ImplGlfwGL2_NewFrame();
 }
 
 void	ProdToolGL_Render()

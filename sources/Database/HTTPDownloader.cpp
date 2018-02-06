@@ -8,10 +8,20 @@
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
+#ifdef WIN32
+//#ifdef _DEBUG
+//#pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a_debug.lib")
+//#else
+#pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a.lib")
+//#endif
+
+#else
+
 #ifdef _DEBUG
 #pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a_debug.lib")
 #else
 #pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a.lib")
+#endif
 #endif
 
 //------------------------------------------------------------------------------------------------
@@ -158,7 +168,8 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 //------------------------------------------------------------------------------------------------
 std::string HTTPDownloader::download(const std::string& _url)
 {
-	curl_easy_setopt(m_curl, CURLOPT_URL, _url.c_str());
+	const char* url = _url.c_str();
+	curl_easy_setopt(m_curl, CURLOPT_URL, url);
 	/* example.com is redirected, so we tell libcurl to follow redirection */
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
@@ -172,8 +183,6 @@ std::string HTTPDownloader::download(const std::string& _url)
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 	}
-	std::string str = out.str();
-	int count = out.gcount();
 	return out.str();
 }
 

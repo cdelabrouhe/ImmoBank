@@ -32,8 +32,6 @@ bool UIManager::Draw()
 {
 	bool quit = false;
 
-	ImGui::NewFrame();
-
 	// Fullscreen window
 	const float BORDER_WIDTH = 0.0f;
 	ImGui::SetNextWindowPos(ImVec2(BORDER_WIDTH, BORDER_WIDTH));

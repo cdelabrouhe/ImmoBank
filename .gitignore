@@ -5,3 +5,8 @@
 /bin/ProdTool/v140_64_Debug
 /imgui.ini
 /bin
+/Debug
+/ProdTool.vcxproj.user
+/ProdTool.VC.VC.opendb
+/ProdTool.VC.db
+/.vs/ProdTool/v14/.suo

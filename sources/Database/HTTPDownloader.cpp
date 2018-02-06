@@ -8,21 +8,21 @@
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
-#ifdef WIN32
+/*#ifdef WIN32
 //#ifdef _DEBUG
 //#pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a_debug.lib")
 //#else
 #pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a.lib")
 //#endif
 
-#else
+#else*/
 
 #ifdef _DEBUG
 #pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a_debug.lib")
 #else
 #pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a.lib")
 #endif
-#endif
+//#endif
 
 //------------------------------------------------------------------------------------------------
 unsigned int ThreadStart(void* arg)

@@ -1,28 +1,26 @@
 #include "HTTPDownloader.h"
 #include <sstream>
 #include <iostream>
-#include "libcurl/include/curl/curl.h"
-#include "libcurl/include/curl/easy.h"
-#include "libcurl/include/curl/curlbuild.h"
+#include "curl/curl.h"
 #include "DatabaseManager.h"
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
-/*#ifdef WIN32
-//#ifdef _DEBUG
-//#pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a_debug.lib")
-//#else
-#pragma comment(lib, "sources/Database/libcurl/lib/Win32/libcurl_a.lib")
-//#endif
+#ifdef WIN32
+#ifdef _DEBUG
+#pragma comment(lib, "extern/libcurl/lib/Win32/libcurld.lib")
+#else
+#pragma comment(lib, "extern/libcurl/lib/Win32/libcurl.lib")
+#endif
 
-#else*/
+#else
 
 #ifdef _DEBUG
-#pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a_debug.lib")
+#pragma comment(lib, "extern/libcurl/lib/x64/libcurld.lib")
 #else
-#pragma comment(lib, "sources/Database/libcurl/lib/libcurl_a.lib")
+#pragma comment(lib, "extern/libcurl/lib/x64/libcurl.lib")
 #endif
-//#endif
+#endif
 
 //------------------------------------------------------------------------------------------------
 unsigned int ThreadStart(void* arg)
@@ -171,6 +169,7 @@ std::string HTTPDownloader::download(const std::string& _url)
 	const char* url = _url.c_str();
 	curl_easy_setopt(m_curl, CURLOPT_URL, url);
 	/* example.com is redirected, so we tell libcurl to follow redirection */
+	curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
 	std::stringstream out;

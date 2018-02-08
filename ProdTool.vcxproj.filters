@@ -94,6 +94,36 @@
     <ClInclude Include="extern\moodycamel\concurrentqueue.h">
       <Filter>Sources\extern\moodycamel</Filter>
     </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\curl.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\curlbuild.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\curlrules.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\curlver.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\easy.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\mprintf.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\multi.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\stdcheaders.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\system.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libcurl\include\curl\typecheck-gcc.h">
+      <Filter>Sources\extern\Curl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -196,6 +226,9 @@
     </Filter>
     <Filter Include="Sources\extern\moodycamel">
       <UniqueIdentifier>{1c9ad96b-eac8-4a66-a99a-288b645d7d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\Curl">
+      <UniqueIdentifier>{7a58d86a-676d-4f98-af2b-d7bf56526148}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

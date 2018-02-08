@@ -168,6 +168,16 @@
     <ClInclude Include="extern\jsoncpp\reader.h" />
     <ClInclude Include="extern\jsoncpp\value.h" />
     <ClInclude Include="extern\jsoncpp\writer.h" />
+    <ClInclude Include="extern\libcurl\include\curl\curl.h" />
+    <ClInclude Include="extern\libcurl\include\curl\curlbuild.h" />
+    <ClInclude Include="extern\libcurl\include\curl\curlrules.h" />
+    <ClInclude Include="extern\libcurl\include\curl\curlver.h" />
+    <ClInclude Include="extern\libcurl\include\curl\easy.h" />
+    <ClInclude Include="extern\libcurl\include\curl\mprintf.h" />
+    <ClInclude Include="extern\libcurl\include\curl\multi.h" />
+    <ClInclude Include="extern\libcurl\include\curl\stdcheaders.h" />
+    <ClInclude Include="extern\libcurl\include\curl\system.h" />
+    <ClInclude Include="extern\libcurl\include\curl\typecheck-gcc.h" />
     <ClInclude Include="extern\moodycamel\blockingconcurrentqueue.h" />
     <ClInclude Include="extern\moodycamel\concurrentqueue.h" />
     <ClInclude Include="extern\opengl\libs\gl3w\GL\gl3w.h" />

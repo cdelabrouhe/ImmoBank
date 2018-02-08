@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(ProjectDir)../TinyXml</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -109,12 +109,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\extern\openssl\Win32\lib;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(ProjectDir)../TinyXml</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(ProjectDir)extern/lib/;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\sources\Database\libcurl\lib\Win32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -126,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -144,20 +144,20 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\libs\glfw\include;$(SolutionDir)\libs\gl3w;$(SolutionDir)\extern\openssl\Win32\lib;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(ProjectDir)extern/lib/;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\sources\Database\libcurl\lib\Win32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="libs\gl3w\GL\gl3w.h" />
-    <ClInclude Include="libs\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="extern\opengl\libs\gl3w\GL\gl3w.h" />
+    <ClInclude Include="extern\opengl\libs\gl3w\GL\glcorearb.h" />
     <ClInclude Include="sources\Database\HTTPDownloader.h" />
     <ClInclude Include="sources\Database\LeSiteImmoOnlineDatabase.h" />
     <ClInclude Include="sources\Database\OnlineDatabase.h" />
@@ -189,7 +189,7 @@
     <ClInclude Include="sources\UI\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libs\gl3w\GL\gl3w.c" />
+    <ClCompile Include="extern\opengl\libs\gl3w\GL\gl3w.c" />
     <ClCompile Include="sources\Database\HTTPDownloader.cpp" />
     <ClCompile Include="sources\Database\DatabaseManager.cpp" />
     <ClCompile Include="sources\Database\LeSiteImmoOnlineDatabase.cpp" />

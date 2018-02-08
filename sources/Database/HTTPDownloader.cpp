@@ -190,8 +190,6 @@ void sRequest::Process(HTTPDownloader* _downloader)
 {
 	m_result = _downloader->download(m_request);
 
-	int delimiter = m_result.find("%");
-
 	// Remove any space / tab from string
 	StringTools::RemoveEOL(m_result);
 

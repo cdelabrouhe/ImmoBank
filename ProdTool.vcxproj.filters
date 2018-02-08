@@ -34,50 +34,8 @@
     <ClInclude Include="sources\Database\LeSiteImmoOnlineDatabase.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Tools\moodycamel\blockingconcurrentqueue.h">
-      <Filter>Sources\Tools\moodycamel</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\moodycamel\concurrentqueue.h">
-      <Filter>Sources\Tools\moodycamel</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\autolink.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\features.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\forwards.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\json.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\json_batchallocator.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\jsonconfig.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\reader.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\value.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\jsoncpp\writer.h">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClInclude>
     <ClInclude Include="sources\Tools\Thread\Thread.h">
       <Filter>Sources\Tools\Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\ImGui\imconfig.h">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\ImGui\imgui.h">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Tools\ImGui\imgui_internal.h">
-      <Filter>Sources\Tools\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="sources\Tools\Types.h">
       <Filter>Sources\Tools</Filter>
@@ -93,6 +51,48 @@
     </ClInclude>
     <ClInclude Include="extern\opengl\libs\gl3w\GL\glcorearb.h">
       <Filter>Sources\GL\gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\ImGui\imconfig.h">
+      <Filter>Sources\extern\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\ImGui\imgui.h">
+      <Filter>Sources\extern\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\ImGui\imgui_internal.h">
+      <Filter>Sources\extern\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\autolink.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\features.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\forwards.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\json.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\json_batchallocator.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\jsonconfig.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\reader.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\value.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\jsoncpp\writer.h">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\moodycamel\blockingconcurrentqueue.h">
+      <Filter>Sources\extern\moodycamel</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\moodycamel\concurrentqueue.h">
+      <Filter>Sources\extern\moodycamel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -126,26 +126,8 @@
     <ClCompile Include="sources\Database\LeSiteImmoOnlineDatabase.cpp">
       <Filter>Sources\Database</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Tools\jsoncpp\json_reader.cpp">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Tools\jsoncpp\json_value.cpp">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Tools\jsoncpp\json_writer.cpp">
-      <Filter>Sources\Tools\JsonCpp</Filter>
-    </ClCompile>
     <ClCompile Include="sources\Tools\Thread\Thread.cpp">
       <Filter>Sources\Tools\Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Tools\ImGui\imgui.cpp">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Tools\ImGui\imgui_demo.cpp">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Tools\ImGui\imgui_draw.cpp">
-      <Filter>Sources\Tools\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="sources\GL\imgui_impl_glfw_gl2.cpp">
       <Filter>Sources\GL\imgui_impl_glfw</Filter>
@@ -155,6 +137,24 @@
     </ClCompile>
     <ClCompile Include="extern\opengl\libs\gl3w\GL\gl3w.c">
       <Filter>Sources\GL\gl3w</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\jsoncpp\json_reader.cpp">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\jsoncpp\json_value.cpp">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\jsoncpp\json_writer.cpp">
+      <Filter>Sources\extern\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\ImGui\imgui.cpp">
+      <Filter>Sources\extern\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\ImGui\imgui_demo.cpp">
+      <Filter>Sources\extern\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\ImGui\imgui_draw.cpp">
+      <Filter>Sources\extern\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,28 +182,31 @@
     <Filter Include="Sources\Tools">
       <UniqueIdentifier>{13eb0180-cb16-4048-85b1-d2e16253211a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Tools\ImGui">
-      <UniqueIdentifier>{8c5c5a53-670d-4af2-8b82-b791303444f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools\moodycamel">
-      <UniqueIdentifier>{1c9ad96b-eac8-4a66-a99a-288b645d7d71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools\JsonCpp">
-      <UniqueIdentifier>{0e014d0a-40be-465b-85a0-270d403e8993}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Tools\Thread">
       <UniqueIdentifier>{6e55f381-94d7-4fe2-8e0a-0baeb93bc5fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\extern">
+      <UniqueIdentifier>{626c1fd2-71cf-47c4-8e4d-b844d56cd3eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\ImGui">
+      <UniqueIdentifier>{8c5c5a53-670d-4af2-8b82-b791303444f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\JsonCpp">
+      <UniqueIdentifier>{0e014d0a-40be-465b-85a0-270d403e8993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\moodycamel">
+      <UniqueIdentifier>{1c9ad96b-eac8-4a66-a99a-288b645d7d71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="sources\Tools\jsoncpp\json_internalarray.inl">
-      <Filter>Sources\Tools\JsonCpp</Filter>
+    <None Include="extern\jsoncpp\json_internalarray.inl">
+      <Filter>Sources\extern\JsonCpp</Filter>
     </None>
-    <None Include="sources\Tools\jsoncpp\json_internalmap.inl">
-      <Filter>Sources\Tools\JsonCpp</Filter>
+    <None Include="extern\jsoncpp\json_internalmap.inl">
+      <Filter>Sources\extern\JsonCpp</Filter>
     </None>
-    <None Include="sources\Tools\jsoncpp\json_valueiterator.inl">
-      <Filter>Sources\Tools\JsonCpp</Filter>
+    <None Include="extern\jsoncpp\json_valueiterator.inl">
+      <Filter>Sources\extern\JsonCpp</Filter>
     </None>
   </ItemGroup>
 </Project>

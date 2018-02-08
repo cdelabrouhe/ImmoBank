@@ -70,8 +70,8 @@ std::string StringTools::GetXMLBaliseContent(const std::string& _str, const std:
 	std::string start = "<" + _balise + ">";
 	std::string stop = "</" + _balise + ">";
 
-	int startID = _str.find(start);
-	int stopID = _str.find(stop);
+	int startID = (int)_str.find(start);
+	int stopID = (int)_str.find(stop);
 	if ((startID >= 0) && (stopID >= 0))
 		return _str.substr(startID + start.size(), stopID - startID - start.size());
 	return "";
@@ -84,8 +84,8 @@ void StringTools::GetXMLBaliseArrayContent(const std::string& _str, const std::s
 	std::string start = "<" + _balise + ">";
 	std::string stop = "</" + _balise + ">";
 
-	int startID = str.find(start);
-	int stopID = str.find(stop);
+	int startID = (int)str.find(start);
+	int stopID = (int)str.find(stop);
 
 	while (startID > -1)
 	{
@@ -93,8 +93,8 @@ void StringTools::GetXMLBaliseArrayContent(const std::string& _str, const std::s
 			_list.push_back(str.substr(startID + start.size(), stopID - startID - start.size()));
 
 		str = str.substr(stopID + stop.size(), str.size());
-		startID = str.find(start);
-		stopID = str.find(stop);
+		startID = (int)str.find(start);
+		stopID = (int)str.find(stop);
 	}
 }
 

@@ -11,7 +11,7 @@
 #include <string>
 #include <map>
 #include <mutex>
-#include "Tools/moodycamel/blockingconcurrentqueue.h"
+#include "extern/moodycamel/blockingconcurrentqueue.h"
 
 struct sStoreRequest
 {

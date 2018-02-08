@@ -39,7 +39,7 @@ void Thread::create(UserFuncPtr userFunc, void* userParam, const char* _name, Th
 	}
 	SetThreadPriority(m_handle, winPrio);
 
-	int ret = SetThreadAffinityMask(m_handle, 0xFFFFFFFF);
+	auto ret = SetThreadAffinityMask(m_handle, 0xFFFFFFFF);
 
 	ASSERT(ret != 0);
 

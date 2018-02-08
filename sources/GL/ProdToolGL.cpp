@@ -7,7 +7,7 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
-#include "Tools/ImGui/imgui.h"
+#include "extern/ImGui/imgui.h"
 
 #ifdef OPENGL2
 #include "imgui_impl_glfw_gl2.h"

@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -109,7 +109,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -126,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -156,6 +156,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="extern\ImGui\imconfig.h" />
+    <ClInclude Include="extern\ImGui\imgui.h" />
+    <ClInclude Include="extern\ImGui\imgui_internal.h" />
+    <ClInclude Include="extern\jsoncpp\autolink.h" />
+    <ClInclude Include="extern\jsoncpp\features.h" />
+    <ClInclude Include="extern\jsoncpp\forwards.h" />
+    <ClInclude Include="extern\jsoncpp\json.h" />
+    <ClInclude Include="extern\jsoncpp\jsonconfig.h" />
+    <ClInclude Include="extern\jsoncpp\json_batchallocator.h" />
+    <ClInclude Include="extern\jsoncpp\reader.h" />
+    <ClInclude Include="extern\jsoncpp\value.h" />
+    <ClInclude Include="extern\jsoncpp\writer.h" />
+    <ClInclude Include="extern\moodycamel\blockingconcurrentqueue.h" />
+    <ClInclude Include="extern\moodycamel\concurrentqueue.h" />
     <ClInclude Include="extern\opengl\libs\gl3w\GL\gl3w.h" />
     <ClInclude Include="extern\opengl\libs\gl3w\GL\glcorearb.h" />
     <ClInclude Include="sources\Database\HTTPDownloader.h" />
@@ -170,25 +184,17 @@
     <ClInclude Include="sources\Request\Request.h" />
     <ClInclude Include="sources\Request\RequestManager.h" />
     <ClInclude Include="sources\Request\SearchRequest.h" />
-    <ClInclude Include="sources\Tools\ImGui\imconfig.h" />
-    <ClInclude Include="sources\Tools\ImGui\imgui.h" />
-    <ClInclude Include="sources\Tools\ImGui\imgui_internal.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\autolink.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\features.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\forwards.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\json.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\jsonconfig.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\json_batchallocator.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\reader.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\value.h" />
-    <ClInclude Include="sources\Tools\jsoncpp\writer.h" />
-    <ClInclude Include="sources\Tools\moodycamel\blockingconcurrentqueue.h" />
-    <ClInclude Include="sources\Tools\moodycamel\concurrentqueue.h" />
     <ClInclude Include="sources\Tools\StringTools.h" />
     <ClInclude Include="sources\Tools\Thread\Thread.h" />
     <ClInclude Include="sources\UI\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="extern\ImGui\imgui.cpp" />
+    <ClCompile Include="extern\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="extern\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="extern\jsoncpp\json_reader.cpp" />
+    <ClCompile Include="extern\jsoncpp\json_value.cpp" />
+    <ClCompile Include="extern\jsoncpp\json_writer.cpp" />
     <ClCompile Include="extern\opengl\libs\gl3w\GL\gl3w.c" />
     <ClCompile Include="sources\Database\HTTPDownloader.cpp" />
     <ClCompile Include="sources\Database\DatabaseManager.cpp" />
@@ -200,20 +206,14 @@
     <ClCompile Include="sources\ProdTool.cpp" />
     <ClCompile Include="sources\Request\Request.cpp" />
     <ClCompile Include="sources\Request\RequestManager.cpp" />
-    <ClCompile Include="sources\Tools\ImGui\imgui.cpp" />
-    <ClCompile Include="sources\Tools\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="sources\Tools\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="sources\Tools\jsoncpp\json_reader.cpp" />
-    <ClCompile Include="sources\Tools\jsoncpp\json_value.cpp" />
-    <ClCompile Include="sources\Tools\jsoncpp\json_writer.cpp" />
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sources\Tools\jsoncpp\json_internalarray.inl" />
-    <None Include="sources\Tools\jsoncpp\json_internalmap.inl" />
-    <None Include="sources\Tools\jsoncpp\json_valueiterator.inl" />
+    <None Include="extern\jsoncpp\json_internalarray.inl" />
+    <None Include="extern\jsoncpp\json_internalmap.inl" />
+    <None Include="extern\jsoncpp\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

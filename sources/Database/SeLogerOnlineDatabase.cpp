@@ -152,7 +152,7 @@ void SeLogerOnlineDatase::sSummary::Serialize(const std::string& _str)
 	StringTools::GetXMLBaliseArray(_str, "annonces", "annonce", list);
 
 	m_annonces.resize(list.size());
-	for (int ID = 0; ID < m_annonces.size(); ++ID)
+	for (auto ID = 0; ID < m_annonces.size(); ++ID)
 	{
 		m_annonces[ID].Serialize(list[ID]);
 	}

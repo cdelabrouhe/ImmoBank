@@ -5,8 +5,8 @@
 #include "RequestManager.h"
 #include "Database/DatabaseManager.h"
 
-#include "Tools/ImGui/imgui.h"
-#include "Tools/jsoncpp/reader.h"
+#include "extern/ImGui/imgui.h"
+#include "extern/jsoncpp/reader.h"
 #include "Tools/StringTools.h"
 
 void Request::Init(SearchRequest* _request)
@@ -117,7 +117,7 @@ void Request::Display()
 		m_cities.resize(100);
 
 	const char* cities[100];
-	for (int ID = 0; ID < m_cities.size(); ++ID)
+	for (auto ID = 0; ID < m_cities.size(); ++ID)
 		cities[ID] = m_cities[ID].m_name.c_str();
 
 	if (m_cities.size() > 0)
@@ -199,7 +199,7 @@ void Request::Display()
 		else
 		{
 			ImGui::Text("%u results available", m_result.size());
-			for (int ID = 0; ID < m_result.size(); ++ID)
+			for (auto ID = 0; ID < m_result.size(); ++ID)
 			{
 				auto& request = m_result[ID];
 				ImGui::Separator();

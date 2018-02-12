@@ -24,9 +24,9 @@ void Request::Process()
 		{
 			DatabaseManager::getSingleton()->GetRequestResult(m_requestID, m_result);
 
-			for (auto request : m_result)
+			for (auto result : m_result)
 			{
-				request->PostProcess();
+				result->PostProcess();
 			}
 		}
 	}
@@ -53,6 +53,8 @@ void Request::Reset()
 
 	m_requestID = -1;
 	m_available = false;
+	for (auto result : m_result)
+		delete result;
 	m_result.clear();
 }
 

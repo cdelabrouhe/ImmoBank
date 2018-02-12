@@ -101,8 +101,10 @@ bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<Sea
 		if (m_downloader->GetResult(it->second.m_requestID, str))
 		{
 			SearchRequest* request = it->second.m_initialRequest;
-			m_requests.erase(it);
-			return ProcessResult(request, str, _result);
+			bool result = ProcessResult(request, str, _result);
+			DeleteRequest(_requestID);
+			delete request;
+			return result;
 		}
 	}
 	return false;

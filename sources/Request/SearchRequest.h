@@ -45,10 +45,7 @@ struct SearchRequest
 {
 	SearchRequestType	m_requestType;
 
-	virtual void copyTo(SearchRequest* _target)
-	{
-		_target->m_requestType = m_requestType;
-	}
+	virtual void copyTo(SearchRequest* _target);
 };
 
 struct SearchRequestAnnounce : public SearchRequest
@@ -63,19 +60,7 @@ struct SearchRequestAnnounce : public SearchRequest
 	int						m_nbRooms = 0;
 	int						m_nbBedRooms = 0;
 
-	virtual void copyTo(SearchRequestAnnounce* _target)
-	{
-		SearchRequest::copyTo(_target);
-		_target->m_city = m_city;
-		_target->m_type = m_type;
-		_target->m_categories = m_categories;
-		_target->m_priceMin = m_priceMin;
-		_target->m_priceMax = m_priceMax;
-		_target->m_surfaceMin = m_surfaceMin;
-		_target->m_surfaceMax = m_surfaceMax;
-		_target->m_nbRooms = m_nbRooms;
-		_target->m_nbBedRooms = m_nbBedRooms;
-	}
+	virtual void copyTo(SearchRequest* _target) override;
 };
 
 struct SearchRequestResult

@@ -28,3 +28,23 @@ void SearchRequestResultAnnounce::Display()
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 		ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 }
+
+void SearchRequest::copyTo(SearchRequest* _target)
+{
+	_target->m_requestType = m_requestType;
+}
+
+void SearchRequestAnnounce::copyTo(SearchRequest* _target)
+{
+	SearchRequest::copyTo(_target);
+	SearchRequestAnnounce* target = (SearchRequestAnnounce*)_target;
+	target->m_city = m_city;
+	target->m_type = m_type;
+	target->m_categories = m_categories;
+	target->m_priceMin = m_priceMin;
+	target->m_priceMax = m_priceMax;
+	target->m_surfaceMin = m_surfaceMin;
+	target->m_surfaceMax = m_surfaceMax;
+	target->m_nbRooms = m_nbRooms;
+	target->m_nbBedRooms = m_nbBedRooms;
+}

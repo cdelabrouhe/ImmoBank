@@ -9,12 +9,18 @@ void SeLogerOnlineDatase::Init(HTTPDownloader* _downloader)
 	SetName("SeLoger");
 }
 
-int SeLogerOnlineDatase::SendRequest(const SearchRequest& _request)
+int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 {
+	if (_request->m_requestType != SearchRequestType_Announce)
+		return -1;
+
+	SearchRequestAnnounce* announce = new SearchRequestAnnounce();
+	_request->copyTo(announce);
+
 	std::string request = "http://ws.seloger.com/search.xml?";
 
 	// Buy / rent
-	switch (_request.m_type)
+	switch (announce->m_type)
 	{
 	case Type_Rent:
 		request += "idtt=1";
@@ -26,8 +32,8 @@ int SeLogerOnlineDatase::SendRequest(const SearchRequest& _request)
 
 	// Apartment / house
 	int categoryID = 0;
-	auto nbCategories = _request.m_categories;
-	for (auto category : _request.m_categories)
+	auto nbCategories = announce->m_categories;
+	for (auto category : announce->m_categories)
 	{
 		switch (category)
 		{
@@ -46,7 +52,7 @@ int SeLogerOnlineDatase::SendRequest(const SearchRequest& _request)
 	}
 
 	// Force city to Montpellier (INSEE code)
-	int code = _request.m_city.m_inseeCode;
+	int code = announce->m_city.m_inseeCode;
 	int rightCode = code % 1000;
 	int leftCode = (code - rightCode) / 1000;
 	code = ((leftCode * 10) * 1000) + rightCode;
@@ -56,23 +62,23 @@ int SeLogerOnlineDatase::SendRequest(const SearchRequest& _request)
 	request += "&tri=initial";
 
 	// Price
-	request += "&pxmin=" + std::to_string(_request.m_priceMin);
-	request += "&pxmax=" + std::to_string(_request.m_priceMax);
+	request += "&pxmin=" + std::to_string(announce->m_priceMin);
+	request += "&pxmax=" + std::to_string(announce->m_priceMax);
 
 	// Surface
-	request += "&surfacemin=" + std::to_string(_request.m_surfaceMin);
-	request += "&surfacemax=" + std::to_string(_request.m_surfaceMax);
+	request += "&surfacemin=" + std::to_string(announce->m_surfaceMin);
+	request += "&surfacemax=" + std::to_string(announce->m_surfaceMax);
 
 	// Nb rooms
-	request += "&nb_pieces=" + std::to_string(_request.m_nbRooms);
-	request += "&nb_chambres=" + std::to_string(_request.m_nbBedRooms);
+	request += "&nb_pieces=" + std::to_string(announce->m_nbRooms);
+	request += "&nb_chambres=" + std::to_string(announce->m_nbBedRooms);
 	
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
 	m_requests[ID].m_requestID = m_downloader->SendRequest(request);
-	m_requests[ID].m_initialRequest = _request;
+	m_requests[ID].m_initialRequest = announce;
 
 	return ID;
 }
@@ -86,14 +92,18 @@ bool SeLogerOnlineDatase::IsRequestAvailable(const int _requestID)
 	return false;
 }
 
-bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<SearchRequestResult>& _result)
+bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
 {
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
 	{
 		std::string str;
 		if (m_downloader->GetResult(it->second.m_requestID, str))
-			return ProcessResult(it->second.m_initialRequest, str, _result);
+		{
+			SearchRequest* request = it->second.m_initialRequest;
+			m_requests.erase(it);
+			return ProcessResult(request, str, _result);
+		}
 	}
 	return false;
 }
@@ -108,23 +118,28 @@ void SeLogerOnlineDatase::End()
 
 }
 
-bool SeLogerOnlineDatase::ProcessResult(SearchRequest& _initialRequest, std::string& _str, std::vector<SearchRequestResult>& _results)
+bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
+	if (_initialRequest->m_requestType != SearchRequestType_Announce)
+		return false;
+
+	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
+
 	sRecherche recherche;
 	recherche.Serialize(_str);
 
 	for (auto& annonce : recherche.m_summary.m_annonces)
 	{
-		SearchRequestResult result(_initialRequest);
-		result.m_database = GetName();
-		result.m_name = annonce.m_name;
-		result.m_description = annonce.m_description;
-		result.m_price = annonce.m_price;
-		result.m_surface = annonce.m_surface;
-		result.m_URL = annonce.m_URL;
-		result.m_nbRooms = annonce.m_nbRooms;
-		result.m_nbBedRooms = annonce.m_nbBedRooms;
-		result.m_category = annonce.m_category;
+		SearchRequestResultAnnounce* result = new SearchRequestResultAnnounce(*announce);
+		result->m_database = GetName();
+		result->m_name = annonce.m_name;
+		result->m_description = annonce.m_description;
+		result->m_price = annonce.m_price;
+		result->m_surface = annonce.m_surface;
+		result->m_URL = annonce.m_URL;
+		result->m_nbRooms = annonce.m_nbRooms;
+		result->m_nbBedRooms = annonce.m_nbBedRooms;
+		result->m_category = annonce.m_category;
 
 		_results.push_back(result);
 	}

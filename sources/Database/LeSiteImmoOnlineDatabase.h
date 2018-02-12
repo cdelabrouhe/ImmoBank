@@ -41,11 +41,11 @@ private:
 public:
 	virtual void Init(HTTPDownloader* _downloader) override;
 	virtual void Process() override;
-	virtual int SendRequest(const SearchRequest& _request) override;
+	virtual int SendRequest(SearchRequest* _request) override;
 	virtual bool IsRequestAvailable(int _requestID) override;
-	virtual bool GetRequestResult(int _requestID, std::vector<SearchRequestResult>& _result) override;
+	virtual bool GetRequestResult(int _requestID, std::vector<SearchRequestResult*>& _result) override;
 	virtual void End() override;
 
 protected:
-	virtual bool ProcessResult(SearchRequest& _initialRequest, std::string& _str, std::vector<SearchRequestResult>& _results) override;
+	virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;
 };

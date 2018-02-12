@@ -3,7 +3,7 @@
 #include <vector>
 
 class Request;
-struct SearchRequest;
+struct SearchRequestAnnounce;
 
 class RequestManager
 {
@@ -23,7 +23,7 @@ public:
 
 	void DisplayRequests();
 
-	Request* CreateRequest(SearchRequest& _request);
+	Request* CreateRequest(SearchRequestAnnounce& _request);
 	Request* CreateDefaultRequest();
 
 	void AskForDeleteRequest(Request* _request);

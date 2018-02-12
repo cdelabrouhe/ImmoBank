@@ -55,15 +55,24 @@ void DatabaseManager::End()
 }
 
 //-------------------------------------------------------------------------------------------------
-int DatabaseManager::SendRequest(const SearchRequest& _request)
+int DatabaseManager::SendRequest(SearchRequest* _request)
 {
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
+
+	switch (_request->m_requestType)
+	{
+		case SearchRequestType_Announce:
+		{
+			sInternalSearchRequest& request = m_requests[ID];
+			for (auto db : m_databases)
+				request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(_request)));
+
+		}
+		break;
+	}
 	
-	sInternalSearchRequest& request = m_requests[ID];
-	for (auto db : m_databases)
-		request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(_request)));
 
 	return ID;
 }
@@ -113,7 +122,7 @@ void DatabaseManager::CancelBasicHTTPRequest(const int _requestID)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult>& _result)
+bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
 {
 	if (!IsRequestAvailable(_requestID))
 		return false;
@@ -149,7 +158,7 @@ bool sInternalSearchRequest::IsAvailable() const
 }
 
 //-------------------------------------------------------------------------------------------------
-bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult>& _results)
+bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult*>& _results)
 {
 	if (!IsAvailable())
 		return false;

@@ -9,7 +9,7 @@
 #include "extern/jsoncpp/reader.h"
 #include "Tools/StringTools.h"
 
-void Request::Init(SearchRequest* _request)
+void Request::Init(SearchRequestAnnounce* _request)
 {
 	if (_request)
 		m_searchRequest = *_request;
@@ -24,10 +24,9 @@ void Request::Process()
 		{
 			DatabaseManager::getSingleton()->GetRequestResult(m_requestID, m_result);
 
-			for (auto& request : m_result)
+			for (auto request : m_result)
 			{
-				StringTools::RemoveSpecialCharacters(request.m_name);
-				StringTools::RemoveSpecialCharacters(request.m_description);
+				request->PostProcess();
 			}
 		}
 	}
@@ -60,7 +59,8 @@ void Request::Reset()
 void Request::Launch()
 {
 	Reset();
-	m_requestID = DatabaseManager::getSingleton()->SendRequest(m_searchRequest);
+	m_searchRequest.m_requestType = SearchRequestType_Announce;
+	m_requestID = DatabaseManager::getSingleton()->SendRequest(&m_searchRequest);
 }
 
 void Request::Display()
@@ -201,22 +201,8 @@ void Request::Display()
 			ImGui::Text("%u results available", m_result.size());
 			for (auto ID = 0; ID < m_result.size(); ++ID)
 			{
-				auto& request = m_result[ID];
-				ImGui::Separator();
-				ImGui::SetWindowFontScale(1.2f);
-				std::string name = (request.m_category == Category_Apartment ? "Apartment" : "House");
-				name += ", " + request.m_name;
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), name.c_str());
-				ImGui::SetWindowFontScale(1.0f);
-
-				ImGui::TextWrapped(request.m_description.c_str());
-				ImGui::Text("Price: %u", request.m_price);
-				ImGui::Text("Surface: %.0f", request.m_surface);
-				ImGui::Text("Nb rooms: %u", request.m_nbRooms);
-				ImGui::Text("Nb bedrooms: %u", request.m_nbBedRooms);
-				ImGui::TextColored(ImVec4(0.2f, 0.75f, 1.0f, 1.0f), "URL (%s)", request.m_database.c_str());
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-					ShellExecuteA(NULL, "open", request.m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+				auto request = m_result[ID];
+				request->Display();
 			}
 		}
 	}

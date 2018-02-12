@@ -216,6 +216,7 @@
     <ClCompile Include="sources\ProdTool.cpp" />
     <ClCompile Include="sources\Request\Request.cpp" />
     <ClCompile Include="sources\Request\RequestManager.cpp" />
+    <ClCompile Include="sources\Request\SearchRequest.cpp" />
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />

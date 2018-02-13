@@ -14,9 +14,9 @@ class OnlineDatabase
 public:
 	virtual void Init(HTTPDownloader* _downloader) = 0;
 	virtual void Process() = 0;
-	virtual int SendRequest(const SearchRequest& _request) = 0;
+	virtual int SendRequest(SearchRequest* _request) = 0;
 	virtual bool IsRequestAvailable(int _requestID) = 0;
-	virtual bool GetRequestResult(int _requestID, std::vector<SearchRequestResult>& _result) = 0;
+	virtual bool GetRequestResult(int _requestID, std::vector<SearchRequestResult*>& _result) = 0;
 	virtual void End() = 0;
 
 	void SetName(const std::string& _name)	{ m_name = _name;	}
@@ -30,7 +30,7 @@ public:
 	}
 
 protected:
-	virtual bool ProcessResult(SearchRequest& _initialRequest, std::string& _str, std::vector<SearchRequestResult>& _results) = 0;
+	virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
 
 protected:
 	HTTPDownloader*		m_downloader;
@@ -39,7 +39,7 @@ protected:
 	struct sRequest
 	{
 		int				m_requestID;
-		SearchRequest	m_initialRequest;
+		SearchRequest*	m_initialRequest;
 	};
 	std::map<int, sRequest>	m_requests;
 };

@@ -9,7 +9,7 @@ void LeSiteImmoOnlineDatabase::Init(HTTPDownloader* _downloader)
 	SetName("LeSiteImmo");
 }
 
-int LeSiteImmoOnlineDatabase::SendRequest(const SearchRequest& _request)
+int LeSiteImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 {
 	return 0;
 }
@@ -19,7 +19,7 @@ bool LeSiteImmoOnlineDatabase::IsRequestAvailable(const int _requestID)
 	return true;
 }
 
-bool LeSiteImmoOnlineDatabase::GetRequestResult(const int _requestID, std::vector<SearchRequestResult>& _result)
+bool LeSiteImmoOnlineDatabase::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
 {
 	return true;
 }
@@ -34,7 +34,7 @@ void LeSiteImmoOnlineDatabase::End()
 
 }
 
-bool LeSiteImmoOnlineDatabase::ProcessResult(SearchRequest& _initialRequest, std::string& _str, std::vector<SearchRequestResult>& _results)
+bool LeSiteImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	return true;
 }

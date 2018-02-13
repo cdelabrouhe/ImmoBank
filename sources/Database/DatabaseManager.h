@@ -14,10 +14,11 @@ struct sInternalSearchRequest
 {
 public:
 	bool IsAvailable() const;
-	bool GetResult(std::vector<SearchRequestResult>& _results);
+	bool GetResult(std::vector<SearchRequestResult*>& _results);
 	void End();
 
 public:
+	SearchRequest*									m_request = nullptr;
 	std::vector<std::pair<OnlineDatabase*, int>>	m_internalRequests;
 };
 
@@ -30,8 +31,8 @@ public:
 	void	Process();
 	void	End();
 	
-	int		SendRequest(const SearchRequest& _request);
-	bool	GetRequestResult(const int _requestID, std::vector<SearchRequestResult>& _result);
+	int		SendRequest(SearchRequest* _request);
+	bool	GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result);
 
 	bool	IsRequestAvailable(int _requestID) const;
 	void	DeleteRequest(int _requestID);

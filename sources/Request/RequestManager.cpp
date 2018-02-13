@@ -43,12 +43,13 @@ void RequestManager::End()
 //-------------------------------------------------------------------------------------------------
 void RequestManager::DisplayRequests()
 {
+	unsigned int ID = 0;
 	for (auto& request : m_requests)
-		request.m_request->Display();
+		request.m_request->Display(ID++);
 }
 
 //-------------------------------------------------------------------------------------------------
-Request* RequestManager::CreateRequest(SearchRequest& _request)
+Request* RequestManager::CreateRequest(SearchRequestAnnounce& _request)
 {
 	Request* request = new Request();
 	request->Init(&_request);
@@ -59,7 +60,7 @@ Request* RequestManager::CreateRequest(SearchRequest& _request)
 //-------------------------------------------------------------------------------------------------
 Request* RequestManager::CreateDefaultRequest()
 {
-	SearchRequest request;
+	SearchRequestAnnounce request;
 	request.m_type = Type_Buy;
 	request.m_city.m_name = "Montpellier";
 	request.m_categories.push_back(Category_Apartment);

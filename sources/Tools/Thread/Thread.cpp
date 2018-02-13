@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "Tools/Types.h"
 
-void Thread::create(UserFuncPtr userFunc, void* userParam, const char* _name, ThreadPriority _priority)
+void Thread::start(UserFuncPtr userFunc, void* userParam, const char* _name, ThreadPriority _priority)
 {
 	m_startParam.m_threadName = _name;
 	m_startParam.m_userFunc = userFunc;
@@ -44,6 +44,12 @@ void Thread::create(UserFuncPtr userFunc, void* userParam, const char* _name, Th
 	ASSERT(ret != 0);
 
 	ResumeThread(m_handle);
+}
+
+void Thread::stop()
+{
+	DWORD exitCode = 0;
+	TerminateThread(m_handle, exitCode);
 }
 
 void Thread::sleep(unsigned int milliseconds)

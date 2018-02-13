@@ -11,7 +11,6 @@
 #include <string>
 #include <map>
 #include <mutex>
-#include "extern/moodycamel/blockingconcurrentqueue.h"
 
 struct sStoreRequest
 {
@@ -53,6 +52,8 @@ public:
 	bool IsRequestAvailable(const int _requestID) const;
 	void CancelRequest(const int _requestID);
 
+	bool GetNextRequest(sRequest& _request);
+
 protected:
 	/**
 	* Download a file using HTTP GET and store in in a std::string
@@ -67,7 +68,4 @@ private:
 
 	std::mutex*	m_mutex;
 	Thread*		m_thread;
-
-public:
-	moodycamel::ConcurrentQueue<sRequest> m_onGoingRequests;
 };

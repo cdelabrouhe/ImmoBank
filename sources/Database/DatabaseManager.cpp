@@ -55,15 +55,28 @@ void DatabaseManager::End()
 }
 
 //-------------------------------------------------------------------------------------------------
-int DatabaseManager::SendRequest(const SearchRequest& _request)
+int DatabaseManager::SendRequest(SearchRequest* _request)
 {
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
+
+	switch (_request->m_requestType)
+	{
+		case SearchRequestType_Announce:
+		{
+			SearchRequestAnnounce* announce = new SearchRequestAnnounce();
+			_request->copyTo(announce);
+
+			sInternalSearchRequest& request = m_requests[ID];
+			request.m_request = announce;
+			for (auto db : m_databases)
+				request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(announce)));
+
+		}
+		break;
+	}
 	
-	sInternalSearchRequest& request = m_requests[ID];
-	for (auto db : m_databases)
-		request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(_request)));
 
 	return ID;
 }
@@ -113,7 +126,7 @@ void DatabaseManager::CancelBasicHTTPRequest(const int _requestID)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult>& _result)
+bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
 {
 	if (!IsRequestAvailable(_requestID))
 		return false;
@@ -149,7 +162,7 @@ bool sInternalSearchRequest::IsAvailable() const
 }
 
 //-------------------------------------------------------------------------------------------------
-bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult>& _results)
+bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult*>& _results)
 {
 	if (!IsAvailable())
 		return false;
@@ -160,7 +173,13 @@ bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult>& _result
 		OnlineDatabase* db = request.first;
 		int requestID = request.second;
 		valid &= db->GetRequestResult(requestID, _results);
+		db->DeleteRequest(requestID);
 	}
+
+	delete m_request;
+	m_request = nullptr;
+
+	m_internalRequests.clear();
 
 	return valid;
 }
@@ -174,4 +193,5 @@ void sInternalSearchRequest::End()
 		db->DeleteRequest(request.second);
 	}
 	m_internalRequests.clear();
+	delete m_request;
 }

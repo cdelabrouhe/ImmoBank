@@ -186,6 +186,9 @@
     <ClCompile Include="extern\ImGui\imgui_draw.cpp">
       <Filter>Sources\extern\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest.cpp">
+      <Filter>Sources\Request</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

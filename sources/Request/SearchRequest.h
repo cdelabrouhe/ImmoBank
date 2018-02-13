@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 enum Type
 {
@@ -26,23 +27,58 @@ struct sCity
 	int			m_zipCode;
 };
 
+enum SearchRequestType
+{
+	SearchRequestType_NONE = -1,
+	SearchRequestType_Announce,
+	SearchRequestType_CityBoroughs,
+	SearchRequestType_PriceMin,
+	SearchRequestType_Price,
+	SearchRequestType_PriceMax,
+	SearchRequestType_RentMin,
+	SearchRequestType_Rent,
+	SearchRequestType_RentMax,
+	SearchRequestType_COUNT
+};
+
 struct SearchRequest
 {
-	sCity		m_city;
-	Type		m_type = Type_NONE;
-	std::vector<Category> m_categories;
-	int			m_priceMin = 0;
-	int			m_priceMax = 0;
-	int			m_surfaceMin = 0;
-	int			m_surfaceMax = 0;
-	int			m_nbRooms = 0;
-	int			m_nbBedRooms = 0;
+	virtual ~SearchRequest() {}
+
+	SearchRequestType	m_requestType;
+
+	virtual void copyTo(SearchRequest* _target);
+};
+
+struct SearchRequestAnnounce : public SearchRequest
+{
+	virtual ~SearchRequestAnnounce() {}
+
+	sCity					m_city;
+	Type					m_type = Type_NONE;
+	std::vector<Category>	m_categories;
+	int						m_priceMin = 0;
+	int						m_priceMax = 0;
+	int						m_surfaceMin = 0;
+	int						m_surfaceMax = 0;
+	int						m_nbRooms = 0;
+	int						m_nbBedRooms = 0;
+
+	virtual void copyTo(SearchRequest* _target) override;
 };
 
 struct SearchRequestResult
 {
-	SearchRequestResult() {}
-	SearchRequestResult(SearchRequest& _request)
+	SearchRequestType m_resultType;
+
+	virtual void PostProcess()	{}
+	virtual void Display()		{}
+};
+
+struct SearchRequestResultAnnounce : public SearchRequestResult
+{
+	SearchRequestResultAnnounce() {}
+	SearchRequestResultAnnounce(SearchRequestAnnounce& _request)
 	{
 		*this = _request;
 	}
@@ -58,7 +94,10 @@ struct SearchRequestResult
 	int			m_nbRooms = 0;
 	int			m_nbBedRooms = 0;
 
-	SearchRequestResult& SearchRequestResult::operator=(const SearchRequest &_request)
+	virtual void PostProcess() override;
+	virtual void Display() override;
+
+	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
 	{
 		m_city = _request.m_city;
 		m_type = _request.m_type;

@@ -29,7 +29,7 @@ unsigned int ThreadStart(void* arg)
 	while (true)
 	{
 		sRequest request;
-		if (downloader->m_onGoingRequests.try_dequeue(request))
+		if (downloader->GetNextRequest(request))
 			request.Process(downloader);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -46,8 +46,8 @@ void HTTPDownloader::Init()
 
 	// Init thread
 	m_thread = new Thread();
-	m_thread->create(ThreadStart, this, "CurlRequestsThread");
-
+	m_thread->start(ThreadStart, this, "CurlRequestsThread");
+	
 	m_mutex = new std::mutex();
 }
 
@@ -71,6 +71,8 @@ void HTTPDownloader::Process()
 //------------------------------------------------------------------------------------------------
 void HTTPDownloader::End()
 {
+	m_thread->stop();
+
 	curl_easy_cleanup(m_curl);
 
 	delete m_thread;
@@ -87,12 +89,10 @@ int HTTPDownloader::SendRequest(const std::string& _request)
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
+	// Store request
 	m_requests[ID].m_request = _request;
 
 	m_mutex->unlock();
-
-	// Send request to the process thread
-	m_onGoingRequests.enqueue(sRequest(ID, _request));
 
 	return ID;
 }
@@ -107,7 +107,26 @@ void HTTPDownloader::CancelRequest(const int _requestID)
 	m_mutex->unlock();
 }
 
+//------------------------------------------------------------------------------------------------
+bool HTTPDownloader::GetNextRequest(sRequest& _request)
+{
+	m_mutex->lock();
+	bool found = false;
+	auto it = m_requests.begin();
+	while (it != m_requests.end() && !found)
+	{
+		if (!it->second.m_canceled)
+		{
+			_request.m_requestID = it->first;
+			_request.m_request = it->second.m_request;
+			found = true;
+		}
+		++it;
+	}
+	m_mutex->unlock();
 
+	return found;
+}
 
 //------------------------------------------------------------------------------------------------
 void HTTPDownloader::SetResult(const int _requestID, std::string& _result)

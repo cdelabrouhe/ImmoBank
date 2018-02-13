@@ -33,7 +33,8 @@ private:
 	static unsigned int WINAPI startFunc(void* startParam);
 
 public:
-	void create(UserFuncPtr _userFunc, void* _userParam, const char* _name, ThreadPriority _priority = TP_NORMAL);
+	void start(UserFuncPtr _userFunc, void* _userParam, const char* _name, ThreadPriority _priority = TP_NORMAL);
+	void stop();
 	static void sleep(unsigned int milliseconds);
 
 private:

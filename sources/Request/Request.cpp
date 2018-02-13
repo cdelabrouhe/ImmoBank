@@ -104,7 +104,7 @@ void Request::Display(unsigned int _ID)
 	ImGui::BeginChild("Search request", ImVec2(300, 0), true);
 	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
 	{
-		//if (strlen(m_inputTextCity) >= 3)
+		if (strlen(m_inputTextCity) >= 3)
 		{
 			// Ask for a city list
 			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity);

@@ -43,6 +43,8 @@ enum SearchRequestType
 
 struct SearchRequest
 {
+	virtual ~SearchRequest() {}
+
 	SearchRequestType	m_requestType;
 
 	virtual void copyTo(SearchRequest* _target);
@@ -50,6 +52,8 @@ struct SearchRequest
 
 struct SearchRequestAnnounce : public SearchRequest
 {
+	virtual ~SearchRequestAnnounce() {}
+
 	sCity					m_city;
 	Type					m_type = Type_NONE;
 	std::vector<Category>	m_categories;

@@ -18,6 +18,7 @@ public:
 	void End();
 
 public:
+	SearchRequest*									m_request = nullptr;
 	std::vector<std::pair<OnlineDatabase*, int>>	m_internalRequests;
 };
 

@@ -65,9 +65,13 @@ int DatabaseManager::SendRequest(SearchRequest* _request)
 	{
 		case SearchRequestType_Announce:
 		{
+			SearchRequestAnnounce* announce = new SearchRequestAnnounce();
+			_request->copyTo(announce);
+
 			sInternalSearchRequest& request = m_requests[ID];
+			request.m_request = announce;
 			for (auto db : m_databases)
-				request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(_request)));
+				request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(announce)));
 
 		}
 		break;
@@ -169,7 +173,13 @@ bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult*>& _resul
 		OnlineDatabase* db = request.first;
 		int requestID = request.second;
 		valid &= db->GetRequestResult(requestID, _results);
+		db->DeleteRequest(requestID);
 	}
+
+	delete m_request;
+	m_request = nullptr;
+
+	m_internalRequests.clear();
 
 	return valid;
 }
@@ -183,4 +193,5 @@ void sInternalSearchRequest::End()
 		db->DeleteRequest(request.second);
 	}
 	m_internalRequests.clear();
+	delete m_request;
 }

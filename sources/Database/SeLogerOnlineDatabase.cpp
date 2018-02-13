@@ -14,8 +14,7 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	if (_request->m_requestType != SearchRequestType_Announce)
 		return -1;
 
-	SearchRequestAnnounce* announce = new SearchRequestAnnounce();
-	_request->copyTo(announce);
+	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
 
 	std::string request = "http://ws.seloger.com/search.xml?";
 
@@ -103,7 +102,6 @@ bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<Sea
 			SearchRequest* request = it->second.m_initialRequest;
 			bool result = ProcessResult(request, str, _result);
 			DeleteRequest(_requestID);
-			delete request;
 			return result;
 		}
 	}

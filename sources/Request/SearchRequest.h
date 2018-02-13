@@ -43,6 +43,7 @@ enum SearchRequestType
 
 struct SearchRequest
 {
+	SearchRequest(SearchRequestType _type)	: m_requestType(_type)	{}
 	virtual ~SearchRequest() {}
 
 	SearchRequestType	m_requestType;
@@ -52,6 +53,7 @@ struct SearchRequest
 
 struct SearchRequestAnnounce : public SearchRequest
 {
+	SearchRequestAnnounce() : SearchRequest(SearchRequestType_Announce)	{}
 	virtual ~SearchRequestAnnounce() {}
 
 	sCity					m_city;
@@ -65,6 +67,16 @@ struct SearchRequestAnnounce : public SearchRequest
 	int						m_nbBedRooms = 0;
 
 	virtual void copyTo(SearchRequest* _target) override;
+};
+
+struct SearchRequestCityBoroughs : public SearchRequest
+{
+	SearchRequestCityBoroughs() : SearchRequest(SearchRequestType_CityBoroughs) {}
+	virtual ~SearchRequestCityBoroughs() {}
+	
+	virtual void copyTo(SearchRequest* _target) override;
+
+	sCity					m_city;
 };
 
 struct SearchRequestResult

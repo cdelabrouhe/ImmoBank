@@ -34,11 +34,7 @@ void Request::Process()
 
 void Request::End()
 {
-	if (m_requestID > -1)
-		DatabaseManager::getSingleton()->DeleteRequest(m_requestID);
-
-	m_requestID = -1;
-	m_available = false;
+	Reset();
 }
 
 bool Request::IsAvailable() const

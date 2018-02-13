@@ -75,6 +75,13 @@ int DatabaseManager::SendRequest(SearchRequest* _request)
 
 		}
 		break;
+
+
+		case SearchRequestType_CityBoroughs:
+		{
+
+		}
+		break;
 	}
 	
 

@@ -37,6 +37,9 @@ void SearchRequest::copyTo(SearchRequest* _target)
 void SearchRequestAnnounce::copyTo(SearchRequest* _target)
 {
 	SearchRequest::copyTo(_target);
+	if (_target->m_requestType != SearchRequestType_Announce)
+		return;
+
 	SearchRequestAnnounce* target = (SearchRequestAnnounce*)_target;
 	target->m_city = m_city;
 	target->m_type = m_type;
@@ -47,4 +50,14 @@ void SearchRequestAnnounce::copyTo(SearchRequest* _target)
 	target->m_surfaceMax = m_surfaceMax;
 	target->m_nbRooms = m_nbRooms;
 	target->m_nbBedRooms = m_nbBedRooms;
+}
+
+void SearchRequestCityBoroughs::copyTo(SearchRequest* _target)
+{
+	SearchRequest::copyTo(_target);
+	if (_target->m_requestType != SearchRequestType_CityBoroughs)
+		return;
+
+	SearchRequestCityBoroughs* target = (SearchRequestCityBoroughs*)_target;
+	target->m_city = m_city;
 }

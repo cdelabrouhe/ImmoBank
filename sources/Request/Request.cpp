@@ -65,10 +65,9 @@ void Request::Launch()
 	m_requestID = DatabaseManager::getSingleton()->SendRequest(&m_searchRequest);
 }
 
-void Request::Display()
+void Request::Display(unsigned int _ID)
 {
-	unsigned int ID = *(int*)this;
-	std::string name = "Request##" + std::to_string(ID);
+	std::string name = "Request##" + std::to_string(_ID);
 
 	ImGui::SetNextWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
 	ImGui::Begin(name.c_str());

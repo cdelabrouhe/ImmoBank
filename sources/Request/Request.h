@@ -10,7 +10,7 @@ public:
 	void Process();
 	void End();
 
-	void Display();
+	void Display(unsigned int _ID);
 
 	bool IsAvailable() const;
 	void GetResults(std::vector<SearchRequestResult*>& _results) { _results = m_result; }

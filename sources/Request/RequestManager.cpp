@@ -43,8 +43,9 @@ void RequestManager::End()
 //-------------------------------------------------------------------------------------------------
 void RequestManager::DisplayRequests()
 {
+	unsigned int ID = 0;
 	for (auto& request : m_requests)
-		request.m_request->Display();
+		request.m_request->Display(ID++);
 }
 
 //-------------------------------------------------------------------------------------------------

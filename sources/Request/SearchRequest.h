@@ -41,6 +41,7 @@ enum SearchRequestType
 	SearchRequestType_COUNT
 };
 
+struct SearchRequestResult;
 struct SearchRequest
 {
 	SearchRequest(SearchRequestType _type)	: m_requestType(_type)	{}
@@ -48,13 +49,31 @@ struct SearchRequest
 
 	SearchRequestType	m_requestType;
 
-	virtual void copyTo(SearchRequest* _target);
+	virtual void Init() = 0;
+	virtual void Process()		{}
+	virtual void End()			{}
+
+	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) = 0;
+
+	virtual void copyTo(SearchRequest* _target) = 0;
+
+	virtual bool IsAvailable() const = 0;
 };
 
+class OnlineDatabase;
 struct SearchRequestAnnounce : public SearchRequest
 {
 	SearchRequestAnnounce() : SearchRequest(SearchRequestType_Announce)	{}
 	virtual ~SearchRequestAnnounce() {}
+
+	virtual void Init() override;
+	virtual void Process() override;
+	virtual void End() override;
+
+	virtual void copyTo(SearchRequest* _target) override;
+	virtual bool IsAvailable() const override;
+
+	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
 	sCity					m_city;
 	Type					m_type = Type_NONE;
@@ -66,31 +85,55 @@ struct SearchRequestAnnounce : public SearchRequest
 	int						m_nbRooms = 0;
 	int						m_nbBedRooms = 0;
 
-	virtual void copyTo(SearchRequest* _target) override;
+private:
+	std::vector<std::string>	m_boroughs;
+	std::vector<std::pair<OnlineDatabase*, int>>	m_internalRequests;
+	int		m_boroughsRequestID = -1;
 };
 
 struct SearchRequestCityBoroughs : public SearchRequest
 {
 	SearchRequestCityBoroughs() : SearchRequest(SearchRequestType_CityBoroughs) {}
 	virtual ~SearchRequestCityBoroughs() {}
+
+	virtual void Init() override;
 	
 	virtual void copyTo(SearchRequest* _target) override;
+	virtual bool IsAvailable() const;
+
+	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
 	sCity					m_city;
+
+private:
+	int		m_httpRequestID = -1;
 };
 
 struct SearchRequestResult
 {
+	SearchRequestResult(SearchRequestType _type) : m_resultType(_type)	{}
+
 	SearchRequestType m_resultType;
 
 	virtual void PostProcess()	{}
 	virtual void Display()		{}
 };
 
+struct SearchRequestResulCityBorough : public SearchRequestResult
+{
+	SearchRequestResulCityBorough() : SearchRequestResult(SearchRequestType_CityBoroughs) {}
+	SearchRequestResulCityBorough(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughs)
+	{
+		*this = _request;
+	}
+
+	std::string m_name;
+};
+
 struct SearchRequestResultAnnounce : public SearchRequestResult
 {
-	SearchRequestResultAnnounce() {}
-	SearchRequestResultAnnounce(SearchRequestAnnounce& _request)
+	SearchRequestResultAnnounce() : SearchRequestResult(SearchRequestType_Announce)	{}
+	SearchRequestResultAnnounce(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_Announce)
 	{
 		*this = _request;
 	}

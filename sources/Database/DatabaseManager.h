@@ -10,18 +10,6 @@ class OnlineDatabase;
 struct SearchRequest;
 struct SearchRequestResult;
 
-struct sInternalSearchRequest
-{
-public:
-	bool IsAvailable() const;
-	bool GetResult(std::vector<SearchRequestResult*>& _results);
-	void End();
-
-public:
-	SearchRequest*									m_request = nullptr;
-	std::vector<std::pair<OnlineDatabase*, int>>	m_internalRequests;
-};
-
 class DatabaseManager
 {
 public:
@@ -41,7 +29,9 @@ public:
 	bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
 	void	CancelBasicHTTPRequest(const int _requestID);
 
+	std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
+
 protected:
-	std::vector<OnlineDatabase*>			m_databases;
-	std::map<int,sInternalSearchRequest>	m_requests;
+	std::vector<OnlineDatabase*>		m_databases;
+	std::map<int,SearchRequest*>		m_requests;
 };

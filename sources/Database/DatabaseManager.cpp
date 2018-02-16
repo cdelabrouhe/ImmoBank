@@ -43,6 +43,9 @@ void DatabaseManager::Process()
 
 	for (auto db : m_databases)
 		db->Process();
+
+	for (auto& request : m_requests)
+		request.second->Process();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -61,30 +64,26 @@ int DatabaseManager::SendRequest(SearchRequest* _request)
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
+	SearchRequest* request = nullptr;
 	switch (_request->m_requestType)
 	{
 		case SearchRequestType_Announce:
-		{
-			SearchRequestAnnounce* announce = new SearchRequestAnnounce();
-			_request->copyTo(announce);
-
-			sInternalSearchRequest& request = m_requests[ID];
-			request.m_request = announce;
-			for (auto db : m_databases)
-				request.m_internalRequests.push_back(std::make_pair(db, db->SendRequest(announce)));
-
-		}
-		break;
+			request = new SearchRequestAnnounce();
+			break;
 
 
 		case SearchRequestType_CityBoroughs:
-		{
-
-		}
-		break;
+			request = new SearchRequestCityBoroughs();
+			break;
 	}
 	
-
+	if (request)
+	{
+		m_requests[ID] = request;
+		_request->copyTo(request);
+		request->Init();
+	}
+		
 	return ID;
 }
 
@@ -93,7 +92,7 @@ bool DatabaseManager::IsRequestAvailable(int _requestID) const
 {
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
-		return it->second.IsAvailable();
+		return it->second->IsAvailable();
 	return false;
 }
 
@@ -103,9 +102,32 @@ void DatabaseManager::DeleteRequest(int _requestID)
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
 	{
-		it->second.End();
+		SearchRequest* request = it->second;
+		request->End();
+		delete request;
 		m_requests.erase(it);
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
+{
+	if (!IsRequestAvailable(_requestID))
+		return false;
+
+	bool valid = true;
+
+	for (auto& entry : m_requests)
+	{
+		SearchRequest* request = entry.second;
+		if (request->IsAvailable())
+			valid &= request->GetResult(_result);
+	}
+
+	if (valid)
+		DeleteRequest(_requestID);
+
+	return valid;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -130,75 +152,4 @@ bool DatabaseManager::GetBasicHTTPRequestResult(const int _requestID, std::strin
 void DatabaseManager::CancelBasicHTTPRequest(const int _requestID)
 {
 	s_downloader.CancelRequest(_requestID);
-}
-
-//-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
-{
-	if (!IsRequestAvailable(_requestID))
-		return false;
-
-	bool valid = true;
-
-	for (auto& entry : m_requests)
-	{
-		sInternalSearchRequest& request = entry.second;
-		if (request.IsAvailable())
-			valid &= request.GetResult(_result);
-	}
-
-	if (valid)
-		DeleteRequest(_requestID);
-
-	return valid;
-}
-
-//-------------------------------------------------------------------------------------------------
-bool sInternalSearchRequest::IsAvailable() const
-{
-	bool valid = true;
-
-	for (auto& request : m_internalRequests)
-	{
-		OnlineDatabase* db = request.first;
-		int requestID = request.second;
-		valid &= db->IsRequestAvailable(requestID);
-	}
-
-	return valid;
-}
-
-//-------------------------------------------------------------------------------------------------
-bool sInternalSearchRequest::GetResult(std::vector<SearchRequestResult*>& _results)
-{
-	if (!IsAvailable())
-		return false;
-
-	bool valid = true;
-	for (auto& request : m_internalRequests)
-	{
-		OnlineDatabase* db = request.first;
-		int requestID = request.second;
-		valid &= db->GetRequestResult(requestID, _results);
-		db->DeleteRequest(requestID);
-	}
-
-	delete m_request;
-	m_request = nullptr;
-
-	m_internalRequests.clear();
-
-	return valid;
-}
-
-//-------------------------------------------------------------------------------------------------
-void sInternalSearchRequest::End()
-{
-	for (auto& request : m_internalRequests)
-	{
-		OnlineDatabase* db = request.first;
-		db->DeleteRequest(request.second);
-	}
-	m_internalRequests.clear();
-	delete m_request;
 }

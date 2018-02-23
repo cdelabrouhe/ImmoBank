@@ -106,7 +106,7 @@ struct SearchRequestCityBoroughs : public SearchRequest
 	sCity					m_city;
 
 private:
-	int		m_httpRequestID = -1;
+	std::vector<int>		m_httpRequestsID;
 };
 
 struct SearchRequestResult

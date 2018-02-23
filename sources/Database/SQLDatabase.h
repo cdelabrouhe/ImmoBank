@@ -4,6 +4,12 @@
 #include "extern/imstr/Str.h"
 #include <functional>
 
+enum SQLDatabases
+{
+	SQLDatabase_CityBoroughs,
+	SQLDatabase_COUNT
+};
+
 sqlite3* SQLOpenDB(const char* _path);
 void     SQLCloseDB(sqlite3* _db);
 bool     SQLExecute(sqlite3* _db, const char* _sql, ...);

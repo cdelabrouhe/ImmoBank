@@ -1,5 +1,7 @@
 #include "SQLDatabase.h"
 
+#pragma comment(lib, "sqlite3.lib")
+
 static void SQLLog(const char* _log, ...)
 {
 	va_list args;

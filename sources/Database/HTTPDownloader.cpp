@@ -115,7 +115,7 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 	auto it = m_requests.begin();
 	while (it != m_requests.end() && !found)
 	{
-		if (!it->second.m_canceled)
+		if (!it->second.m_canceled && !it->second.m_finished)
 		{
 			_request.m_requestID = it->first;
 			_request.m_request = it->second.m_request;

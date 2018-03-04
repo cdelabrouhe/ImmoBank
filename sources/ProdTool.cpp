@@ -4,6 +4,7 @@
 #include "GL/ProdToolGL.h"
 
 #include "Request/RequestManager.h"
+#include "Online/OnlineManager.h"
 #include "Database/DatabaseManager.h"
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
@@ -13,7 +14,7 @@ const int	CONFIG_WINDOW_HEIGHT = 768;
 
 int main(int argc, char** argv)
 {
-	FreeConsole();
+	//FreeConsole();
 
 	// Extract .exe directory
 	char exe_path[MAX_PATH];
@@ -31,6 +32,9 @@ int main(int argc, char** argv)
 	ProdToolGL_InitImGui();
 	ProdToolGL_GetHwnd(&hwnd);
 
+	// Init Online
+	OnlineManager::getSingleton()->Init();
+
 	// Init DB
 	DatabaseManager::getSingleton()->Init();
 
@@ -41,8 +45,9 @@ int main(int argc, char** argv)
 	bool quit = false;
 	while (!quit && !ProdToolGL_ShouldClose())
 	{
-		DatabaseManager::getSingleton()->Process();
+		OnlineManager::getSingleton()->Process();
 		RequestManager::getSingleton()->Process();
+		DatabaseManager::getSingleton()->Process();
 
 		ProdToolGL_NewFrame();
 
@@ -62,6 +67,9 @@ int main(int argc, char** argv)
 		if (want_refresh)
 			ProdToolGL_Render();
 	}
+
+	// End Online
+	OnlineManager::getSingleton()->End();
 
 	// End DB
 	DatabaseManager::getSingleton()->End();

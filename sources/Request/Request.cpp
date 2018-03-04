@@ -3,7 +3,7 @@
 #include <shellapi.h>
 
 #include "RequestManager.h"
-#include "Database/DatabaseManager.h"
+#include "Online/OnlineManager.h"
 
 #include "extern/ImGui/imgui.h"
 #include "extern/jsoncpp/reader.h"
@@ -19,10 +19,10 @@ void Request::Process()
 {
 	if ((m_requestID > -1) && !m_available)
 	{
-		m_available = DatabaseManager::getSingleton()->IsRequestAvailable(m_requestID);
+		m_available = OnlineManager::getSingleton()->IsRequestAvailable(m_requestID);
 		if (m_available)
 		{
-			DatabaseManager::getSingleton()->GetRequestResult(m_requestID, m_result);
+			OnlineManager::getSingleton()->GetRequestResult(m_requestID, m_result);
 
 			for (auto result : m_result)
 			{
@@ -45,7 +45,7 @@ bool Request::IsAvailable() const
 void Request::Reset()
 {
 	if (m_requestID > -1)
-		DatabaseManager::getSingleton()->DeleteRequest(m_requestID);
+		OnlineManager::getSingleton()->DeleteRequest(m_requestID);
 
 	m_requestID = -1;
 	m_available = false;
@@ -58,7 +58,7 @@ void Request::Launch()
 {
 	Reset();
 	m_searchRequest.m_requestType = SearchRequestType_Announce;
-	m_requestID = DatabaseManager::getSingleton()->SendRequest(&m_searchRequest);
+	m_requestID = OnlineManager::getSingleton()->SendRequest(&m_searchRequest);
 }
 
 void Request::Display(unsigned int _ID)
@@ -69,11 +69,11 @@ void Request::Display(unsigned int _ID)
 	ImGui::Begin(name.c_str());
 
 	// Get city name list
-	if ((m_cityNameRequestID > -1) && DatabaseManager::getSingleton()->IsBasicHTTPRequestAvailable(m_cityNameRequestID))
+	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_cityNameRequestID))
 	{
 		m_cities.clear();
 		std::string result;
-		DatabaseManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
 		m_cityNameRequestID = -1;
 		StringTools::RemoveEOL(result);
 		Json::Value root;
@@ -105,8 +105,8 @@ void Request::Display(unsigned int _ID)
 			// Ask for a city list
 			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity);
 			if (m_cityNameRequestID > -1)
-				DatabaseManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
-			m_cityNameRequestID = DatabaseManager::getSingleton()->SendBasicHTTPRequest(request);
+				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
+			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 		}
 	}
 

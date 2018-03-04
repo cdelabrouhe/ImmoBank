@@ -10,7 +10,7 @@ static void SQLLog(const char* _log, ...)
 	log.setfv(_log, args);
 	va_end(args);
 
-	//g_DebugLog->AddLog(log.c_str());
+	printf(log.c_str());
 }
 
 sqlite3* SQLOpenDB(const char* _path)

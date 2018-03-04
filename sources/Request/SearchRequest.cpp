@@ -3,8 +3,8 @@
 #include "extern/ImGui/imgui.h"
 #include <windows.h>
 #include <shellapi.h>
-#include "Database/DatabaseManager.h"
-#include "Database/OnlineDatabase.h"
+#include "Online/OnlineManager.h"
+#include "Online/OnlineDatabase.h"
 #include "extern/jsoncpp/reader.h"
 #include "extern/jsoncpp/value.h"
 
@@ -42,15 +42,15 @@ void SearchRequestAnnounce::Init()
 {
 	SearchRequestCityBoroughs boroughs;
 	boroughs.m_city = m_city;
-	m_boroughsRequestID = DatabaseManager::getSingleton()->SendRequest(&boroughs);
+	m_boroughsRequestID = OnlineManager::getSingleton()->SendRequest(&boroughs);
 }
 
 void SearchRequestAnnounce::Process()
 {
-	if ((m_boroughsRequestID > -1) && DatabaseManager::getSingleton()->IsRequestAvailable(m_boroughsRequestID))
+	if ((m_boroughsRequestID > -1) && OnlineManager::getSingleton()->IsRequestAvailable(m_boroughsRequestID))
 	{
 		std::vector<SearchRequestResult*> list;
-		DatabaseManager::getSingleton()->GetRequestResult(m_boroughsRequestID, list);
+		OnlineManager::getSingleton()->GetRequestResult(m_boroughsRequestID, list);
 		m_boroughsRequestID = -1;
 
 		for (auto result : list)
@@ -64,7 +64,7 @@ void SearchRequestAnnounce::Process()
 		}
 
 		// Trigger internal requests
-		auto databases = DatabaseManager::getSingleton()->GetOnlineDatabases();
+		auto databases = OnlineManager::getSingleton()->GetOnlineDatabases();
 		for (auto db : databases)
 			m_internalRequests.push_back(std::make_pair(db, db->SendRequest(this)));
 	}
@@ -147,7 +147,7 @@ void SearchRequestCityBoroughs::Init()
 		str.resize(4);
 		//std::string str = " " + std::string((const char*)(&character));
 		std::string request = "https://api.meilleursagents.com/geo/v1/?q=" + m_city.m_name + str + "&types=arrmuns,boroughs";
-		m_httpRequestsID.push_back(DatabaseManager::getSingleton()->SendBasicHTTPRequest(request));
+		m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendBasicHTTPRequest(request));
 	}
 }
 
@@ -167,7 +167,7 @@ bool SearchRequestCityBoroughs::IsAvailable() const
 	int ID = 0;
 	for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
 	{
-		available &= DatabaseManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID[ID]);
+		available &= OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID[ID]);
 		if (!available)
 			break;
 	}
@@ -181,7 +181,7 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 	for (int ID = 0; ID < m_httpRequestsID.size(); ++ID)
 	{
 		std::string str;
-		if (DatabaseManager::getSingleton()->GetBasicHTTPRequestResult(m_httpRequestsID[ID], str))
+		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_httpRequestsID[ID], str))
 		{
 			Json::Reader reader;
 			Json::Value root;

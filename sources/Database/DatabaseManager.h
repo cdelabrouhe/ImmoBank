@@ -2,14 +2,43 @@
 
 #include <vector>
 #include <map>
+#include "Tools\Types.h"
+
+enum DataTables
+{
+	DataTables_NONE = -1,
+	DataTables_Cities,
+	DataTables_COUNT
+};
+
+struct sqlite3;
+
+struct sBoroughData
+{
+	std::string			m_name;
+	std::string			m_cityName;
+	sDate				m_timeUpdate;
+	int					m_key;
+	float				m_priceBuyMin;
+	float				m_priceBuyMax;
+	float				m_priceRentMin;
+	float				m_priceRentMax;
+};
+
+struct sCityComputeData
+{
+	void Init();
+	void Process();
+	void End();
+
+	std::string					m_city;
+	std::vector<sBoroughData>	m_boroughs;
+	int							m_boroughsListID = -1;
+};
 
 //-------------------------------------------------------------------------------------------------
 // DATA
 //-------------------------------------------------------------------------------------------------
-class OnlineDatabase;
-struct SearchRequest;
-struct SearchRequestResult;
-
 class DatabaseManager
 {
 public:
@@ -18,20 +47,18 @@ public:
 	void	Init();
 	void	Process();
 	void	End();
+
+	void	AddBoroughData(const sBoroughData& _data);
+	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, sBoroughData& _data);
+
+	void	ComputeCityData(const std::string& _cityName);
 	
-	int		SendRequest(SearchRequest* _request);
-	bool	GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result);
+private:
+	void	CreateTables();
+	void	OpenTables();
+	void	CloseTables();
 
-	bool	IsRequestAvailable(int _requestID) const;
-	void	DeleteRequest(int _requestID);
-	int		SendBasicHTTPRequest(const std::string& _request);
-	bool	IsBasicHTTPRequestAvailable(int _requestID) const;
-	bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
-	void	CancelBasicHTTPRequest(const int _requestID);
-
-	std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
-
-protected:
-	std::vector<OnlineDatabase*>		m_databases;
-	std::map<int,SearchRequest*>		m_requests;
+private:
+	sqlite3*						m_tables[DataTables_COUNT];
+	std::vector<sCityComputeData>	m_cityComputes;
 };

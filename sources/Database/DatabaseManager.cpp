@@ -219,11 +219,17 @@ void DatabaseManager::ComputeCityData(const std::string& _cityName)
 //-------------------------------------------------------------------------------------------------
 void sCityComputeData::Init()
 {
-	SearchRequestCityBoroughs boroughs;
-	boroughs.m_city = m_city;
-	m_boroughsListID = OnlineManager::getSingleton()->SendRequest(&boroughs);
+	m_state = UpdateStep_GetCityData;
 
-	m_state = UpdateStep_GetBoroughList;
+	sCityData data;
+	if (DatabaseManager::getSingleton()->GetCityData(m_city, data))
+	{
+		SearchRequestCityBoroughs boroughs;
+		boroughs.m_city = m_city;
+		m_boroughsListID = OnlineManager::getSingleton()->SendRequest(&boroughs);
+
+		m_state = UpdateStep_GetBoroughList;
+	}	
 }
 
 //-------------------------------------------------------------------------------------------------

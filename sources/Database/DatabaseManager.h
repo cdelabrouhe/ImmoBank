@@ -38,6 +38,7 @@ struct sCityComputeData
 	enum UpdateStep
 	{
 		UpdateStep_NONE = -1,
+		UpdateStep_GetCityData,
 		UpdateStep_GetBoroughList,
 		UpdateStep_ComputeBoroughsPrices,
 		UpdateStep_COUNT

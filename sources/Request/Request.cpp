@@ -8,6 +8,8 @@
 #include "extern/ImGui/imgui.h"
 #include "extern/jsoncpp/reader.h"
 #include "Tools/StringTools.h"
+#include "Database/DatabaseManager.h"
+#include <time.h>
 
 void Request::Init(SearchRequestAnnounce* _request)
 {
@@ -91,6 +93,15 @@ void Request::Display(unsigned int _ID)
 				int code = std::stoi(codeStr);
 				int zipCode = std::stoi(zipCodeStr);
 				m_cities.push_back(sCity(name, code, zipCode));
+
+				sCityData city;
+				city.m_name = name;
+				city.m_zipCode = zipCode;
+				time_t t = time(0);   // get time now
+				struct tm * now = localtime(&t);
+				int year = 1900 + now->tm_year;
+				city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
+				DatabaseManager::getSingleton()->AddCity(city);
 			}
 		}
 	}

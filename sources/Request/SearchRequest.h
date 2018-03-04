@@ -127,7 +127,8 @@ struct SearchRequestResulCityBorough : public SearchRequestResult
 		*this = _request;
 	}
 
-	std::string m_name;
+	std::string		m_name;
+	unsigned int	m_internalID = 0xFFFFFFFF;
 };
 
 struct SearchRequestResultAnnounce : public SearchRequestResult

@@ -199,6 +199,8 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 					if (coma > -1)
 						name = name.substr(0, coma);
 
+					unsigned int internalID = val["id"].asUInt();
+
 					StringTools::RemoveSpecialCharacters(name);
 
 					// Search if this borough is not already in the list
@@ -218,6 +220,7 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 					{
 						SearchRequestResulCityBorough* result = new SearchRequestResulCityBorough();
 						result->m_name = name;
+						result->m_internalID = internalID;
 						_results.push_back(result);
 					}
 				}

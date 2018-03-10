@@ -14,15 +14,9 @@ enum DataTables
 
 struct sqlite3;
 
-struct sCityData
-{
-	std::string			m_name;
-	int					m_zipCode = 0;
-	sDate				m_timeUpdate;
-};
-
 struct sBoroughData
 {
+public:
 	std::string			m_name;
 	std::string			m_cityName;
 	sDate				m_timeUpdate;
@@ -31,6 +25,17 @@ struct sBoroughData
 	float				m_priceBuyMax;
 	float				m_priceRentMin;
 	float				m_priceRentMax;
+
+private:
+};
+
+struct sCityData
+{
+	std::string			m_name;
+	int					m_zipCode = 0;
+	sDate				m_timeUpdate;
+
+	std::vector<sBoroughData>	m_boroughs;
 };
 
 struct sCityComputeData
@@ -73,6 +78,7 @@ public:
 
 	void	AddBoroughData(const sBoroughData& _data);
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, sBoroughData& _data);
+	bool	GetBoroughs(const std::string& _cityName, std::vector<sBoroughData>& _data);
 
 	void	AddCity(const sCityData& _data);
 	bool	GetCityData(const std::string& _name, sCityData& _data);

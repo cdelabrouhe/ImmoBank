@@ -4,6 +4,7 @@
 #include "SQLDatabase.h"
 #include "Online/OnlineManager.h"
 #include <time.h>
+#include "Request/SearchResult.h"
 
 DatabaseManager* s_singleton = nullptr;
 
@@ -45,7 +46,7 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs VALUES('%s', '%s', %lld, %d, %f, %f, %f, %f)",
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, BUYMIN, BUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %d, %f, %f, %f, %f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
@@ -90,9 +91,39 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 }
 
 //-------------------------------------------------------------------------------------------------
+bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBoroughData>& _data)
+{
+	if (m_tables[DataTables_Boroughs] == nullptr)
+		return false;
+
+	_data.clear();
+	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s'", _cityName.c_str());
+
+	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&_data](sqlite3_stmt* _stmt)
+	{
+		int index = 0;
+		_data.resize(_data.size() + 1);
+		auto& borough = _data.back();
+		borough.m_cityName = (const char*)sqlite3_column_text(_stmt, index++);
+		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
+		borough.m_key = sqlite3_column_int(_stmt, index++);
+		borough.m_priceBuyMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentMax = (float)sqlite3_column_double(_stmt, index++);
+	});
+
+	if (_data.size() >= 1)
+		return true;
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddCity(const sCityData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities VALUES('%s', %d, %lld)",
+	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %lld)",
 		_data.m_name.c_str(),
 		_data.m_zipCode,
 		_data.m_timeUpdate.GetData()))
@@ -133,8 +164,7 @@ void DatabaseManager::CreateTables()
 		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
 		"`NAME` TEXT,\n"			// Name of the city
 		"`ZIPCODE` INTEGER,\n"		// ZIP code
-		"`TIMEUPDATE` INTEGER,\n"	// Last time the borough has been updated
-		"PRIMARY KEY(`NAME`)"
+		"`TIMEUPDATE` INTEGER"	// Last time the borough has been updated
 		")"
 	);
 
@@ -147,8 +177,7 @@ void DatabaseManager::CreateTables()
 		"`BUYMIN` REAL,\n"			// Buy min price
 		"`BUYMAX` REAL,\n"			// Buy max price
 		"`RENTMIN` REAL,\n"			// Rent min price
-		"`RENTMAX` REAL,\n"			// Rent max price
-		"PRIMARY KEY(`CITY`)"
+		"`RENTMAX` REAL"			// Rent max price
 		")"
 	);
 }

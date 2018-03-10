@@ -46,13 +46,15 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, BUYMIN, BUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %d, %f, %f, %f, %f)",
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %d, %f, %f, %f, %f, %f, %f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
 		_data.m_key,
-		_data.m_priceBuyMin,
-		_data.m_priceBuyMax,
+		_data.m_priceApartmentBuyMin,
+		_data.m_priceApartmentBuyMax,
+		_data.m_priceHouseBuyMin,
+		_data.m_priceHouseBuyMax,
 		_data.m_priceRentMin,
 		_data.m_priceRentMax))
 		printf("Add borough %s to database Boroughs\n", _data.m_name.c_str());
@@ -76,8 +78,10 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
-		borough.m_priceBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceApartmentBuyMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceApartmentBuyMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceHouseBuyMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceHouseBuyMax = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentMin = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentMax = (float)sqlite3_column_double(_stmt, index++);
 	});
@@ -108,8 +112,10 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
-		borough.m_priceBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceApartmentBuyMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceApartmentBuyMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceHouseBuyMin = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceHouseBuyMax = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentMin = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentMax = (float)sqlite3_column_double(_stmt, index++);
 	});
@@ -174,8 +180,10 @@ void DatabaseManager::CreateTables()
 		"`BOROUGH` TEXT,\n"			// Name of the borough
 		"`TIMEUPDATE` INTEGER,\n"	// Last time the borough has been updated
 		"`KEY` INTEGER,\n"			// Internal meilleursagents.com key
-		"`BUYMIN` REAL,\n"			// Buy min price
-		"`BUYMAX` REAL,\n"			// Buy max price
+		"`APARTMENTBUYMIN` REAL,\n"	// Buy min price
+		"`APARTMENTBUYMAX` REAL,\n"	// Buy max price
+		"`HOUSEBUYMIN` REAL,\n"		// Buy min price
+		"`HOUSEBUYMAX` REAL,\n"		// Buy max price
 		"`RENTMIN` REAL,\n"			// Rent min price
 		"`RENTMAX` REAL"			// Rent max price
 		")"
@@ -225,8 +233,10 @@ void DatabaseManager::Test()
 	data.m_cityName = "Montpellier";
 	data.m_key = 13245;
 	data.m_timeUpdate = date;
-	data.m_priceBuyMin = 23456.1f;
-	data.m_priceBuyMax = 34567.1f;
+	data.m_priceApartmentBuyMin = 23456.1f;
+	data.m_priceApartmentBuyMax = 34567.1f;
+	data.m_priceHouseBuyMin = 246.8f;
+	data.m_priceHouseBuyMax = 357.9f;
 	data.m_priceRentMin = 4568.1f;
 	data.m_priceRentMax = 56789.1f;
 	AddBoroughData(data);

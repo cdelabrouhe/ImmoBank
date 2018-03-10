@@ -21,6 +21,11 @@ typedef unsigned long			u64;
 struct sDate
 {
 public:
+	sDate()
+	{
+		SetData(0);
+	}
+
 	void SetDate(int _year, int _month, int _day, int _hour, int _minute, int _second)
 	{
 		m_year = _year - START_YEAR;

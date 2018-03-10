@@ -20,11 +20,13 @@ public:
 	std::string			m_name;
 	std::string			m_cityName;
 	sDate				m_timeUpdate;
-	int					m_key;
-	float				m_priceBuyMin;
-	float				m_priceBuyMax;
-	float				m_priceRentMin;
-	float				m_priceRentMax;
+	unsigned int		m_key = 0xffffffff;
+	float				m_priceApartmentBuyMin = 0.f;
+	float				m_priceApartmentBuyMax = 0.f;
+	float				m_priceHouseBuyMin = 0.f;
+	float				m_priceHouseBuyMax = 0.f;
+	float				m_priceRentMin = 0.f;
+	float				m_priceRentMax = 0.f;
 
 private:
 };

@@ -78,6 +78,10 @@ int OnlineManager::SendRequest(SearchRequest* _request)
 		case SearchRequestType_CityData:
 			request = new SearchRequestCityData();
 			break;
+
+		case SearchRequestType_CityBoroughData:
+			request = new SearchRequestCityBoroughData();
+			break;
 	}
 	
 	if (request)

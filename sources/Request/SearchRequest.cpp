@@ -6,6 +6,7 @@
 #include "extern/jsoncpp/reader.h"
 #include "extern/jsoncpp/value.h"
 #include "SearchResult.h"
+#include <algorithm>
 
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequest::copyTo(SearchRequest* _target)
@@ -120,6 +121,7 @@ static const char* s_characters = "abcdefghijklmnopqrstuvwxyz123456789";
 static auto s_nbCharacters = strlen(s_characters);
 
 //---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityBoroughs::Init()
 {
 	for (int ID = 0; ID < s_nbCharacters; ++ID)
@@ -219,7 +221,7 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 	return valid;
 }
 
-
+//---------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityData::Init()
 {
@@ -233,7 +235,34 @@ void SearchRequestCityData::Init()
 		m_boroughsRequestID = OnlineManager::getSingleton()->SendRequest(&boroughs);
 	}
 	else
+	{
+		InitBoroughPricesRequest();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+void SearchRequestCityData::InitBoroughPricesRequest()
+{
+	if (m_boroughs.size() == 0)
+	{
+		m_state = UpdateStep_COUNT;
+		return;
+	}
+
+	if (m_boroughs[0].m_timeUpdate.GetData() == 0)
+	{
 		m_state = UpdateStep_ComputeBoroughsPrices;
+
+		for (auto ID = 0; ID < m_boroughs.size(); ++ID)
+		{
+			SearchRequestCityBoroughData data;
+			data.m_data = m_boroughs[ID];
+			data.m_city = m_city;
+			m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendRequest(&data));
+		}
+	}
+	else
+		m_state = UpdateStep_COUNT;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -257,6 +286,7 @@ void SearchRequestCityData::Process()
 					sBoroughData data;
 					data.m_cityName = m_city.m_name;
 					data.m_name = borough->m_name;
+					data.m_key = borough->m_internalID;
 					m_boroughs.push_back(data);
 
 					// Store data into DB
@@ -265,17 +295,51 @@ void SearchRequestCityData::Process()
 				}
 			}
 
-			//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
-
-			IncreaseStep();
+			InitBoroughPricesRequest();
 		}
 		break;
 
 		// Boroughs prices
 	case UpdateStep_ComputeBoroughsPrices:
 	{
-		if (true)
+		bool available = true;
+		int ID = 0;
+		for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
 		{
+			available &= OnlineManager::getSingleton()->IsRequestAvailable(m_httpRequestsID[ID]);
+			if (!available)
+				break;
+		}
+
+		if (available)
+		{
+			bool valid = true;
+			for (int ID = 0; ID < m_httpRequestsID.size(); ++ID)
+			{
+				std::vector<SearchRequestResult*> list;
+				if (OnlineManager::getSingleton()->GetRequestResult(m_httpRequestsID[ID], list))
+				{
+					m_boroughsRequestID = -1;
+
+					for (auto result : list)
+					{
+						if (result->m_resultType == SearchRequestType_CityBoroughData)
+						{
+							SearchRequestResulCityBoroughData* borough = static_cast<SearchRequestResulCityBoroughData*>(result);
+							sBoroughData data = borough->m_data;
+							auto it = std::find_if(m_boroughs.begin(), m_boroughs.end(), [data](sBoroughData& _data)->bool { return _data.m_name == data.m_name; });
+							if (it != m_boroughs.end())
+							{
+								*it = data;
+
+								// Store data into DB
+								DatabaseManager::getSingleton()->AddBoroughData(data);
+							}							
+						}
+					}
+				}
+			}
+
 			IncreaseStep();
 		}
 	}
@@ -316,5 +380,60 @@ bool SearchRequestCityData::GetResult(std::vector<SearchRequestResult*>& _result
 		return false;
 
 	bool valid = true;
+	return valid;
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+void SearchRequestCityBoroughData::Init()
+{
+	//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/quartier_" + m_data.m_name + "-" + std::to_string(m_data.m_key);
+	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+void SearchRequestCityBoroughData::copyTo(SearchRequest* _target)
+{
+	SearchRequest::copyTo(_target);
+	if (_target->m_requestType != SearchRequestType_CityBoroughData)
+		return;
+
+	SearchRequestCityBoroughData* target = (SearchRequestCityBoroughData*)_target;
+	target->m_city = m_city;
+	target->m_data = m_data;
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+bool SearchRequestCityBoroughData::IsAvailable() const
+{
+	if (m_httpRequestsID > -1)
+		return OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID);
+
+	return true;
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& _results)
+{
+	bool valid = true;
+	if (m_httpRequestsID > -1)
+	{
+		std::string str;
+		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_httpRequestsID, str))
+		{
+			SearchRequestResulCityBoroughData* result = new SearchRequestResulCityBoroughData();
+			result->m_data = m_data;
+			result->m_data.m_priceApartmentBuyMax = 1.0f;
+			result->m_data.m_priceHouseBuyMin = 1.0f;
+			result->m_data.m_priceHouseBuyMax = 1.0f;
+			result->m_data.m_priceRentMin = 1.0f;
+			result->m_data.m_priceRentMax = 1.0f;
+			_results.push_back(result);
+		}
+		else
+			valid = false;
+	}
+
 	return valid;
 }

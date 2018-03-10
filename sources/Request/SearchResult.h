@@ -24,6 +24,17 @@ struct SearchRequestResulCityBorough : public SearchRequestResult
 	unsigned int	m_internalID = 0xFFFFFFFF;
 };
 
+struct SearchRequestResulCityBoroughData : public SearchRequestResult
+{
+	SearchRequestResulCityBoroughData() : SearchRequestResult(SearchRequestType_CityBoroughData) {}
+	SearchRequestResulCityBoroughData(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughData)
+	{
+		*this = _request;
+	}
+
+	sBoroughData	m_data;
+};
+
 struct SearchRequestResultAnnounce : public SearchRequestResult
 {
 	SearchRequestResultAnnounce() : SearchRequestResult(SearchRequestType_Announce) {}

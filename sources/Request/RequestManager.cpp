@@ -1,6 +1,8 @@
 #include "RequestManager.h"
-#include "Request.h"
+#include "EditableRequest.h"
 #include <algorithm>
+#include "EditableRequestAnnounce.h"
+#include "EditableRequestCityData.h"
 
 RequestManager* s_singleton = nullptr;
 
@@ -49,16 +51,37 @@ void RequestManager::DisplayRequests()
 }
 
 //-------------------------------------------------------------------------------------------------
-Request* RequestManager::CreateRequest(SearchRequestAnnounce& _request)
+EditableRequest* RequestManager::CreateRequest(SearchRequest* _request)
 {
-	Request* request = new Request();
-	request->Init(&_request);
-	m_requests.push_back(sRequest(request));
+	EditableRequest* request = nullptr;
+
+	switch (_request->m_requestType)
+	{
+		case SearchRequestType_Announce:
+		{
+			request = new EditableRequestAnnounce();
+			request->Init(_request);
+			m_requests.push_back(sRequest(request));
+		}
+		break;
+
+		case SearchRequestType_CityData:
+		{
+			request = new EditableRequestCityData();
+			request->Init(_request);
+			m_requests.push_back(sRequest(request));
+		}
+		break;
+
+		default:
+			break;
+	}
+	
 	return request;
 }
 
 //-------------------------------------------------------------------------------------------------
-Request* RequestManager::CreateDefaultRequest()
+EditableRequest* RequestManager::CreateRequestAnnounceDefault()
 {
 	SearchRequestAnnounce request;
 	request.m_type = Type_Buy;
@@ -72,11 +95,20 @@ Request* RequestManager::CreateDefaultRequest()
 	request.m_surfaceMin = 50;
 	request.m_surfaceMax = 70;
 
-	return CreateRequest(request);
+	return CreateRequest(&request);
 }
 
 //-------------------------------------------------------------------------------------------------
-void RequestManager::AskForDeleteRequest(Request* _request)
+EditableRequest* RequestManager::CreateRequestCityDataDefault()
+{
+	SearchRequestCityData request;
+	request.m_city.m_name = "Montpellier";
+
+	return CreateRequest(&request);
+}
+
+//-------------------------------------------------------------------------------------------------
+void RequestManager::AskForDeleteRequest(EditableRequest* _request)
 {
 	RequestManager::sRequest* request = getRequest(_request);
 	if (request != nullptr)
@@ -84,7 +116,7 @@ void RequestManager::AskForDeleteRequest(Request* _request)
 }
 
 //-------------------------------------------------------------------------------------------------
-void RequestManager::DeleteRequest(Request* _request)
+void RequestManager::DeleteRequest(EditableRequest* _request)
 {
 	std::vector<sRequest>::iterator it = std::find_if(m_requests.begin(), m_requests.end(), [_request](const sRequest& _r)->bool { return _r.m_request == _request; });
 	if (it != m_requests.end())
@@ -97,7 +129,7 @@ void RequestManager::DeleteRequest(Request* _request)
 }
 
 //-------------------------------------------------------------------------------------------------
-RequestManager::sRequest* RequestManager::getRequest(Request* _request)
+RequestManager::sRequest* RequestManager::getRequest(EditableRequest* _request)
 {
 	auto it = std::find_if(m_requests.begin(), m_requests.end(), [_request](const sRequest& _r)->bool { return _r.m_request == _request; });
 	if (it != m_requests.end())

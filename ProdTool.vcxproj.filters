@@ -4,9 +4,6 @@
     <ClInclude Include="sources\GL\ProdToolGL.h">
       <Filter>Sources\GL</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Request\Request.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
     <ClInclude Include="sources\Request\RequestManager.h">
       <Filter>Sources\Request</Filter>
     </ClInclude>
@@ -136,6 +133,18 @@
     <ClInclude Include="sources\Database\DatabaseManager.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequest.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequestAnnounce.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequestCityData.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchResult.h">
+      <Filter>Sources\Request</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -143,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="sources\GL\ProdToolGL.cpp">
       <Filter>Sources\GL</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Request\Request.cpp">
-      <Filter>Sources\Request</Filter>
     </ClCompile>
     <ClCompile Include="sources\Request\RequestManager.cpp">
       <Filter>Sources\Request</Filter>
@@ -209,6 +215,15 @@
     </ClCompile>
     <ClCompile Include="sources\Database\DatabaseManager.cpp">
       <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\EditableRequestAnnounce.cpp">
+      <Filter>Sources\Request</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\EditableRequestCityData.cpp">
+      <Filter>Sources\Request</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchResult.cpp">
+      <Filter>Sources\Request</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

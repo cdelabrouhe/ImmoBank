@@ -1,4 +1,4 @@
-#include "Request.h"
+#include "EditableRequestCityData.h"
 #include <windows.h>
 #include <shellapi.h>
 
@@ -10,14 +10,14 @@
 #include "Tools/StringTools.h"
 #include "Database/DatabaseManager.h"
 #include <time.h>
+#include "SearchResult.h"
 
-void Request::Init(SearchRequestAnnounce* _request)
+void EditableRequestCityData::Init(SearchRequest* _request)
 {
-	if (_request)
-		m_searchRequest = *_request;
+	
 }
 
-void Request::Process()
+void EditableRequestCityData::Process()
 {
 	if ((m_requestID > -1) && !m_available)
 	{
@@ -34,17 +34,17 @@ void Request::Process()
 	}
 }
 
-void Request::End()
+void EditableRequestCityData::End()
 {
 	Reset();
 }
 
-bool Request::IsAvailable() const
+bool EditableRequestCityData::IsAvailable() const
 {
 	return m_available;
 }
 
-void Request::Reset()
+void EditableRequestCityData::Reset()
 {
 	if (m_requestID > -1)
 		OnlineManager::getSingleton()->DeleteRequest(m_requestID);
@@ -53,17 +53,16 @@ void Request::Reset()
 	m_available = false;
 	for (auto result : m_result)
 		delete result;
-	m_result.clear();
+	m_result.clear(); 
 }
 
-void Request::Launch()
+void EditableRequestCityData::Launch()
 {
 	Reset();
-	m_searchRequest.m_requestType = SearchRequestType_Announce;
 	m_requestID = OnlineManager::getSingleton()->SendRequest(&m_searchRequest);
 }
 
-void Request::Display(unsigned int _ID)
+void EditableRequestCityData::Display(unsigned int _ID)
 {
 	std::string name = "Request##" + std::to_string(_ID);
 
@@ -143,43 +142,6 @@ void Request::Display(unsigned int _ID)
 			m_searchRequest.m_city = m_cities[m_selectedCityID];
 	}
 
-
-	if (ImGui::Checkbox("Appartement", &m_apartment))
-	{
-		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_Apartment);
-		if (m_apartment)
-		{
-			if (it == m_searchRequest.m_categories.end())
-				m_searchRequest.m_categories.push_back(Category_Apartment);
-		}
-		else
-		{
-			if (it != m_searchRequest.m_categories.end())
-				m_searchRequest.m_categories.erase(it);
-		}
-	}
-	if (ImGui::Checkbox("House", &m_house))
-	{
-		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_House);
-		if (m_house)
-		{
-			if (it == m_searchRequest.m_categories.end())
-				m_searchRequest.m_categories.push_back(Category_House);
-		}
-		else
-		{
-			if (it != m_searchRequest.m_categories.end())
-				m_searchRequest.m_categories.erase(it);
-		}
-	}
-
-	ImGui::SliderInt("Nb rooms", &m_searchRequest.m_nbRooms, 1, 20);
-	ImGui::SliderInt("Nb bedrooms", &m_searchRequest.m_nbBedRooms, 1, 20);
-	ImGui::InputInt("Surface min", &m_searchRequest.m_surfaceMin);
-	ImGui::InputInt("Surface max", &m_searchRequest.m_surfaceMax);
-	ImGui::InputInt("Price min", &m_searchRequest.m_priceMin);
-	ImGui::InputInt("Price max", &m_searchRequest.m_priceMax);
-
 	if (ImGui::Button("Launch"))
 		Launch();
 
@@ -209,8 +171,8 @@ void Request::Display(unsigned int _ID)
 			ImGui::Text("%u results available", m_result.size());
 			for (auto ID = 0; ID < m_result.size(); ++ID)
 			{
-				auto request = m_result[ID];
-				request->Display();
+				auto result = m_result[ID];
+				result->Display();
 			}
 		}
 	}

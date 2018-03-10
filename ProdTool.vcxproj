@@ -194,8 +194,11 @@
     <ClInclude Include="sources\Online\LeSiteImmoOnlineDatabase.h" />
     <ClInclude Include="sources\Online\OnlineDatabase.h" />
     <ClInclude Include="sources\Online\SeLogerOnlineDatabase.h" />
+    <ClInclude Include="sources\Request\EditableRequestAnnounce.h" />
+    <ClInclude Include="sources\Request\EditableRequestCityData.h" />
+    <ClInclude Include="sources\Request\SearchResult.h" />
     <ClInclude Include="sources\Tools\Types.h" />
-    <ClInclude Include="sources\Request\Request.h" />
+    <ClInclude Include="sources\Request\EditableRequest.h" />
     <ClInclude Include="sources\Request\RequestManager.h" />
     <ClInclude Include="sources\Request\SearchRequest.h" />
     <ClInclude Include="sources\Tools\StringTools.h" />
@@ -221,9 +224,11 @@
     <ClCompile Include="sources\Online\LeSiteImmoOnlineDatabase.cpp" />
     <ClCompile Include="sources\Online\SeLogerOnlineDatabase.cpp" />
     <ClCompile Include="sources\ProdTool.cpp" />
-    <ClCompile Include="sources\Request\Request.cpp" />
+    <ClCompile Include="sources\Request\EditableRequestAnnounce.cpp" />
+    <ClCompile Include="sources\Request\EditableRequestCityData.cpp" />
     <ClCompile Include="sources\Request\RequestManager.cpp" />
     <ClCompile Include="sources\Request\SearchRequest.cpp" />
+    <ClCompile Include="sources\Request\SearchResult.cpp" />
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />

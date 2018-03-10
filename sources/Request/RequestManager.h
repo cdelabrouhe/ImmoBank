@@ -2,8 +2,8 @@
 
 #include <vector>
 
-class Request;
-struct SearchRequestAnnounce;
+class EditableRequest;
+struct SearchRequest;
 
 class RequestManager
 {
@@ -12,8 +12,8 @@ public:
 
 	struct sRequest
 	{
-		sRequest(Request* _request = nullptr) : m_request(_request)	{}
-		Request*	m_request = nullptr;
+		sRequest(EditableRequest* _request = nullptr) : m_request(_request)	{}
+		EditableRequest*	m_request = nullptr;
 		bool		m_deleted = false;
 	};
 
@@ -23,14 +23,15 @@ public:
 
 	void DisplayRequests();
 
-	Request* CreateRequest(SearchRequestAnnounce& _request);
-	Request* CreateDefaultRequest();
+	EditableRequest* CreateRequest(SearchRequest* _request);
+	EditableRequest* CreateRequestAnnounceDefault();
+	EditableRequest* CreateRequestCityDataDefault();
 
-	void AskForDeleteRequest(Request* _request);
+	void AskForDeleteRequest(EditableRequest* _request);
 
 private:
-	void DeleteRequest(Request* _request);
-	sRequest* getRequest(Request* _request);
+	void DeleteRequest(EditableRequest* _request);
+	sRequest* getRequest(EditableRequest* _request);
 
 private:
 	std::vector<sRequest>	m_requests;

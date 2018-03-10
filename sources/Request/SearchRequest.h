@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Database\DatabaseManager.h"
 
 enum Type
 {
@@ -32,6 +33,7 @@ enum SearchRequestType
 	SearchRequestType_NONE = -1,
 	SearchRequestType_Announce,
 	SearchRequestType_CityBoroughs,
+	SearchRequestType_CityData,
 	SearchRequestType_PriceMin,
 	SearchRequestType_Price,
 	SearchRequestType_PriceMax,
@@ -109,54 +111,39 @@ private:
 	std::vector<int>		m_httpRequestsID;
 };
 
-struct SearchRequestResult
+struct SearchRequestCityData : public SearchRequest
 {
-	SearchRequestResult(SearchRequestType _type) : m_resultType(_type)	{}
-
-	SearchRequestType m_resultType;
-
-	virtual void PostProcess()	{}
-	virtual void Display()		{}
-};
-
-struct SearchRequestResulCityBorough : public SearchRequestResult
-{
-	SearchRequestResulCityBorough() : SearchRequestResult(SearchRequestType_CityBoroughs) {}
-	SearchRequestResulCityBorough(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughs)
+	enum UpdateStep
 	{
-		*this = _request;
-	}
+		UpdateStep_NONE = -1,
+		UpdateStep_GetCityData,
+		UpdateStep_GetBoroughList,
+		UpdateStep_ComputeBoroughsPrices,
+		UpdateStep_COUNT
+	};
 
-	std::string		m_name;
-	unsigned int	m_internalID = 0xFFFFFFFF;
-};
+	SearchRequestCityData() : SearchRequest(SearchRequestType_CityData) {}
+	virtual ~SearchRequestCityData() {}
 
-struct SearchRequestResultAnnounce : public SearchRequestResult
-{
-	SearchRequestResultAnnounce() : SearchRequestResult(SearchRequestType_Announce)	{}
-	SearchRequestResultAnnounce(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_Announce)
-	{
-		*this = _request;
-	}
-	std::string m_database;
-	std::string m_name;
-	std::string m_description;
-	std::string m_URL;
-	sCity		m_city;
-	Type		m_type = Type_NONE;
-	Category	m_category = Category_NONE;
-	int			m_price = 0;
-	float		m_surface = 0.f;
-	int			m_nbRooms = 0;
-	int			m_nbBedRooms = 0;
+	virtual void Init() override;
+	virtual void Process() override;
+	virtual void End() override;
 
-	virtual void PostProcess() override;
-	virtual void Display() override;
+	virtual void copyTo(SearchRequest* _target) override;
+	virtual bool IsAvailable() const;
 
-	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
-	{
-		m_city = _request.m_city;
-		m_type = _request.m_type;
-		return *this;
-	}
+	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
+
+	sCity					m_city;
+
+private:
+	std::vector<int>			m_httpRequestsID;
+	std::vector<sBoroughData>	m_boroughs;
+	int							m_boroughsRequestID = -1;
+
+private:
+	void IncreaseStep() { m_state = (UpdateStep)((int)m_state + 1); }
+
+private:
+	UpdateStep		m_state = UpdateStep_NONE;
 };

@@ -2,6 +2,7 @@
 #include "HTTPDownloader.h"
 #include "Request/SearchRequest.h"
 #include "Tools/StringTools.h"
+#include "Request/SearchResult.h"
 
 void SeLogerOnlineDatase::Init(HTTPDownloader* _downloader)
 {

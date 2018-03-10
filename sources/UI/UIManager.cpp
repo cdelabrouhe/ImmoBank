@@ -46,7 +46,19 @@ bool UIManager::Draw()
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New request"))
-				RequestManager::getSingleton()->CreateDefaultRequest();
+				RequestManager::getSingleton()->CreateRequestAnnounceDefault();
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Exit", "ALT+F4"))
+				quit = true;
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Database"))
+		{
+			if (ImGui::MenuItem("Compute city data"))
+				RequestManager::getSingleton()->CreateRequestCityDataDefault();
 
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", "ALT+F4"))

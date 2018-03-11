@@ -105,3 +105,8 @@ void StringTools::GetXMLBaliseArray(const std::string& _str, const std::string& 
 
 	GetXMLBaliseArrayContent(str, _entryName, _list);
 }
+
+void StringTools::TransformToLower(std::string& _str)
+{
+	std::transform(_str.begin(), _str.end(), _str.begin(), ::tolower);
+}

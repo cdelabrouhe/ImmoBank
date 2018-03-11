@@ -13,4 +13,5 @@ public:
 	static std::string GetXMLBaliseContent(const std::string& _str, const std::string& _balise);
 	static void GetXMLBaliseArrayContent(const std::string& _str, const std::string& _balise, std::vector<std::string>& _list);
 	static void GetXMLBaliseArray(const std::string& _str, const std::string& _arrayName, const std::string& _entryName, std::vector<std::string>& _list);
+	static void TransformToLower(std::string& _str);
 };

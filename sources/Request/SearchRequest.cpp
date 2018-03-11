@@ -388,7 +388,11 @@ bool SearchRequestCityData::GetResult(std::vector<SearchRequestResult*>& _result
 void SearchRequestCityBoroughData::Init()
 {
 	//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
-	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/quartier_" + m_data.m_name + "-" + std::to_string(m_data.m_key);
+	std::string boroughName = m_data.m_name;
+	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
+	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
+	StringTools::TransformToLower(request);
 	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 }
 

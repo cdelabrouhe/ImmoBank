@@ -249,11 +249,12 @@ void SearchRequestCityData::InitBoroughPricesRequest()
 		return;
 	}
 
-	if (m_boroughs[0].m_timeUpdate.GetData() == 0)
+	if (m_boroughs[0].m_priceApartmentBuyMax == 0)
 	{
 		m_state = UpdateStep_ComputeBoroughsPrices;
 
-		for (auto ID = 0; ID < m_boroughs.size(); ++ID)
+		//for (auto ID = 0; ID < m_boroughs.size(); ++ID)
+		for (auto ID = 0; ID < 1; ++ID)
 		{
 			SearchRequestCityBoroughData data;
 			data.m_data = m_boroughs[ID];
@@ -426,6 +427,28 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 		std::string str;
 		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_httpRequestsID, str))
 		{
+			StringTools::RemoveEOL(str);
+			std::string searchStr("MA.Context.placePrices = ");
+			int findID = str.find(searchStr);
+			str = str.substr(findID + searchStr.size(), str.size());
+			findID = str.find_first_of(";");
+			str = str.substr(0, findID);
+
+			Json::Reader reader;
+			Json::Value root;
+			reader.parse(str, root);
+
+			/*static bool s_test = false;
+			if (s_test)
+			{
+				FILE* f = fopen("test.xml", "wt");
+				if (f)
+				{
+					fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+					fclose(f);
+				}
+			}*/
+			//StringTools::
 			SearchRequestResulCityBoroughData* result = new SearchRequestResulCityBoroughData();
 			result->m_data = m_data;
 			result->m_data.m_priceApartmentBuyMax = 1.0f;

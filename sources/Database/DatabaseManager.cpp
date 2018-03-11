@@ -46,7 +46,7 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %d, %f, %f, %f, %f, %f, %f)",
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %u, %f, %f, %f, %f, %f, %f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),

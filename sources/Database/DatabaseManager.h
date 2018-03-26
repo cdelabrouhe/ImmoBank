@@ -87,6 +87,8 @@ public:
 
 	void	ComputeCityData(const std::string& _cityName);
 	
+	void	DisplayCityInformation();
+
 private:
 	void	CreateTables();
 	void	OpenTables();

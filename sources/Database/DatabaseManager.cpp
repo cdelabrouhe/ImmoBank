@@ -46,7 +46,7 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %lld, %u, %f, %f, %f, %f, %f, %f)",
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %u, %u, %f, %f, %f, %f, %f, %f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
@@ -129,7 +129,7 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddCity(const sCityData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %lld)",
+	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %u)",
 		_data.m_name.c_str(),
 		_data.m_zipCode,
 		_data.m_timeUpdate.GetData()))
@@ -256,6 +256,12 @@ void DatabaseManager::ComputeCityData(const std::string& _cityName)
 }
 
 //-------------------------------------------------------------------------------------------------
+void DatabaseManager::DisplayCityInformation()
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
 void sCityComputeData::Init()
 {
 	m_state = UpdateStep_GetCityData;
@@ -268,7 +274,7 @@ void sCityComputeData::Init()
 		m_boroughsListID = OnlineManager::getSingleton()->SendRequest(&boroughs);
 
 		m_state = UpdateStep_GetBoroughList;
-	}	
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

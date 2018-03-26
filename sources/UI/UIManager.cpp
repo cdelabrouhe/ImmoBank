@@ -60,6 +60,9 @@ bool UIManager::Draw()
 			if (ImGui::MenuItem("Compute city data"))
 				RequestManager::getSingleton()->CreateRequestCityDataDefault();
 
+			if (ImGui::MenuItem("View city data"))
+				DatabaseManager::getSingleton()->DisplayCityInformation();
+
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", "ALT+F4"))
 				quit = true;

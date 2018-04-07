@@ -49,7 +49,7 @@ bool CitySelector::Display()
 		if (strlen(m_inputTextCity) >= 3)
 		{
 			// Ask for a city list
-			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity);
+			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity) + "&boost=population";
 			if (m_cityNameRequestID > -1)
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);

@@ -203,6 +203,7 @@
     <ClInclude Include="sources\Request\SearchRequest.h" />
     <ClInclude Include="sources\Tools\StringTools.h" />
     <ClInclude Include="sources\Tools\Thread\Thread.h" />
+    <ClInclude Include="sources\UI\CitySelector.h" />
     <ClInclude Include="sources\UI\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +232,7 @@
     <ClCompile Include="sources\Request\SearchResult.cpp" />
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
+    <ClCompile Include="sources\UI\CitySelector.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>

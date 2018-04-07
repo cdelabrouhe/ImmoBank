@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EditableRequest.h"
+#include "UI\CitySelector.h"
 
 class EditableRequestAnnounce : public EditableRequest
 {
@@ -19,11 +20,8 @@ private:
 
 protected:
 	SearchRequestAnnounce				m_searchRequest;
-	std::vector<sCity>					m_cities;
-	char								m_inputTextCity[256];
-	int									m_selectedCityID = 0;
+	CitySelector						m_citySelector;
 	int									m_requestID = -1;
-	int									m_cityNameRequestID = -1;
 	bool								m_apartment = true;
 	bool								m_house = true;
 	bool								m_available = false;

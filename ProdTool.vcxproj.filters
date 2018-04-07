@@ -145,6 +145,9 @@
     <ClInclude Include="sources\Request\SearchResult.h">
       <Filter>Sources\Request</Filter>
     </ClInclude>
+    <ClInclude Include="sources\UI\CitySelector.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="sources\Request\SearchResult.cpp">
       <Filter>Sources\Request</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\UI\CitySelector.cpp">
+      <Filter>Sources\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

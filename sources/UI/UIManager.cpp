@@ -6,6 +6,7 @@
 
 #include "extern/ImGui/imgui.h"
 #include "Request/RequestManager.h"
+#include "Database/DatabaseManager.h"
 
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS

@@ -429,7 +429,7 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 		{
 			StringTools::RemoveEOL(str);
 			std::string searchStr("MA.Context.placePrices = ");
-			int findID = str.find(searchStr);
+			auto findID = str.find(searchStr);
 			str = str.substr(findID + searchStr.size(), str.size());
 			findID = str.find_first_of(";");
 			str = str.substr(0, findID);

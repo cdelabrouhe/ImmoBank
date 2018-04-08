@@ -5,6 +5,7 @@
 #include "Online/OnlineManager.h"
 #include <time.h>
 #include "Request/SearchResult.h"
+#include "extern/ImGui/imgui.h"
 
 DatabaseManager* s_singleton = nullptr;
 
@@ -35,6 +36,9 @@ void DatabaseManager::Process()
 {
 	for (auto& compute : m_cityComputes)
 		compute.Process();
+
+	if (m_displayCityData)
+		DisplayCityInformation();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -164,6 +168,35 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
+bool DatabaseManager::ListAllCities(std::vector<std::string>& _list)
+{
+	if (m_tables[DataTables_Cities] == nullptr)
+		return false;
+
+	std::vector<sCityData> cities;
+	Str128f sql("SELECT * FROM Cities");
+
+	SQLExecuteSelect(m_tables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
+	{
+		int index = 0;
+		cities.resize(cities.size() + 1);
+		auto& city = cities.back();
+		city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_zipCode = sqlite3_column_int(_stmt, index++);
+		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
+	});
+
+	if (cities.size() > 0)
+	{
+		for (auto& city : cities)
+			_list.push_back(city.m_name);
+
+		return true;
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void DatabaseManager::CreateTables()
 {
 	SQLExecute(m_tables[DataTables_Cities],
@@ -256,9 +289,99 @@ void DatabaseManager::ComputeCityData(const std::string& _cityName)
 }
 
 //-------------------------------------------------------------------------------------------------
+void DatabaseManager::AskForDisplayCityInformation()
+{
+	m_displayCityData = !m_displayCityData;
+	if (m_displayCityData)
+		InitDisplayCityInformation();		
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::InitDisplayCityInformation()
+{
+	m_cityListRequested = false;
+	m_selectedCityID = 0;
+	m_cityListFull;
+	m_hovered = -1;
+	m_selected = -1;
+}
+
+//-------------------------------------------------------------------------------------------------
 void DatabaseManager::DisplayCityInformation()
 {
+	if (!m_cityListRequested)
+	{
+		m_cityListFull.clear();
+		ListAllCities(m_cityListFull);
+		m_cityListRequested = true;
+	}
 
+	ImGui::SetNextWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
+	ImGui::Begin("City info display", &m_displayCityData);
+
+	// Left panel (city selector process)
+	bool listUpdated = false;
+	std::vector<std::string> cityListFiltered;
+	ImGui::BeginChild("City search", ImVec2(300, 0), true);
+	ImGui::InputText("City name", (char*)m_inputTextCity, 256);
+	if (strlen(m_inputTextCity) > 0)
+	{
+		std::string input = m_inputTextCity;
+		StringTools::TransformToLower(input);
+		for (auto city : m_cityListFull)
+		{
+			std::string tmp = city;
+			StringTools::TransformToLower(tmp);
+			auto findID = tmp.find(m_inputTextCity);
+			if (findID != std::string::npos)
+				cityListFiltered.push_back(city);
+		}
+
+		listUpdated = true;
+	}
+	ImGui::Separator();
+
+	if (!listUpdated)
+	{
+		for (auto& city : m_cityListFull)
+			cityListFiltered.push_back(city);
+	}
+
+	int localHovered = -1;
+	int cpt = 0;
+	const ImColor colSelected(1.0f, 0.0f, 0.0f);
+	const ImColor colHovered(0.0f, .5f, .5f);
+	for (auto& city : cityListFiltered)
+	{
+		const bool isHovered = (m_hovered == cpt);
+		const bool isSelected = (m_selected == cpt);
+		if (isSelected)
+			ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)colSelected);
+		else if (isHovered)
+			ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)colHovered);
+		
+		ImGui::Text(city.c_str());
+		if (ImGui::IsItemHovered())
+			m_hovered = cpt;
+
+		if (ImGui::IsItemClicked())
+			m_selected = cpt;
+
+		if (isSelected || isHovered)
+			ImGui::PopStyleColor();
+
+		++cpt;
+	}
+
+	ImGui::EndChild();
+	ImGui::SameLine();
+
+	// Right panel (infos display)
+	ImGui::BeginChild("Item view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing())); // Leave room for 1 line below us
+	
+	ImGui::EndChild();
+
+	ImGui::End();
 }
 
 //-------------------------------------------------------------------------------------------------

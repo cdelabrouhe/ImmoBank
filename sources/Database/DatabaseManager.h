@@ -84,9 +84,12 @@ public:
 
 	void	AddCity(const sCityData& _data);
 	bool	GetCityData(const std::string& _name, sCityData& _data);
+	bool	ListAllCities(std::vector<std::string>& _list);
 
 	void	ComputeCityData(const std::string& _cityName);
 	
+	void	AskForDisplayCityInformation();
+	void	InitDisplayCityInformation();
 	void	DisplayCityInformation();
 
 private:
@@ -99,4 +102,13 @@ private:
 private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<sCityComputeData>	m_cityComputes;
+
+	// Display panel
+	char							m_inputTextCity[256];
+	int								m_selectedCityID = 0;
+	std::vector<std::string>		m_cityListFull;
+	int								m_hovered = -1;
+	int								m_selected = -1;
+	bool							m_displayCityData = false;
+	bool							m_cityListRequested = false;
 };

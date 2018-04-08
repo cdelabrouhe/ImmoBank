@@ -1,6 +1,5 @@
 #include "SearchRequest.h"
 #include <Tools/StringTools.h>
-#include "extern/ImGui/imgui.h"
 #include "Online/OnlineManager.h"
 #include "Online/OnlineDatabase.h"
 #include "extern/jsoncpp/reader.h"

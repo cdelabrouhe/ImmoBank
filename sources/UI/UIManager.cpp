@@ -62,7 +62,7 @@ bool UIManager::Draw()
 				RequestManager::getSingleton()->CreateRequestCityDataDefault();
 
 			if (ImGui::MenuItem("View city data"))
-				DatabaseManager::getSingleton()->DisplayCityInformation();
+				DatabaseManager::getSingleton()->AskForDisplayCityInformation();
 
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", "ALT+F4"))

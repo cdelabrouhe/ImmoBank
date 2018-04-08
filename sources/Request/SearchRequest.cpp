@@ -252,8 +252,7 @@ void SearchRequestCityData::InitBoroughPricesRequest()
 	{
 		m_state = UpdateStep_ComputeBoroughsPrices;
 
-		//for (auto ID = 0; ID < m_boroughs.size(); ++ID)
-		for (auto ID = 0; ID < 1; ++ID)
+		for (auto ID = 0; ID < m_boroughs.size(); ++ID)
 		{
 			SearchRequestCityBoroughData data;
 			data.m_data = m_boroughs[ID];
@@ -429,13 +428,21 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 			StringTools::RemoveEOL(str);
 			std::string searchStr("MA.Context.placePrices = ");
 			auto findID = str.find(searchStr);
-			str = str.substr(findID + searchStr.size(), str.size());
-			findID = str.find_first_of(";");
-			str = str.substr(0, findID);
+			if (findID == std::string::npos)
+			{
+				// Bot behavior detected ?
+				findID = str.find("behavior");
+				if (findID != std::string::npos)
+					return false;
+			}
+
+			std::string tmp = str.substr(findID + searchStr.size(), str.size());
+			findID = tmp.find_first_of(";");
+			tmp = tmp.substr(0, findID);
 
 			Json::Reader reader;
 			Json::Value root;
-			reader.parse(str, root);
+			reader.parse(tmp, root);
 
 			/*static bool s_test = false;
 			if (s_test)
@@ -447,7 +454,7 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 					fclose(f);
 				}
 			}*/
-			//StringTools::
+
 			SearchRequestResulCityBoroughData* result = new SearchRequestResulCityBoroughData();
 			result->m_data = m_data;
 			result->m_data.m_priceApartmentBuyMax = 1.0f;

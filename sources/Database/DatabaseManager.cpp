@@ -50,7 +50,9 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %u, %u, %f, %f, %f, %f, %f, %f)",
+	RemoveBoroughData(_data.m_cityName, _data.m_name);
+
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
@@ -99,6 +101,18 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 }
 
 //-------------------------------------------------------------------------------------------------
+bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std::string& _name)
+{
+	if (m_tables[DataTables_Boroughs] == nullptr)
+		return false;
+
+	std::vector<sCityData> cities;
+	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
+
+	return SQLExecute(m_tables[DataTables_Boroughs], sql.c_str());
+}
+
+//-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBoroughData>& _data)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
@@ -133,6 +147,8 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddCity(const sCityData& _data)
 {
+	RemoveCityData(_data.m_name);
+
 	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %u)",
 		_data.m_name.c_str(),
 		_data.m_zipCode,
@@ -162,9 +178,23 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data)
 	if (cities.size() == 1)
 	{
 		_data = cities.back();
+		GetBoroughs(_data.m_name, _data.m_boroughs);
+
 		return true;
 	}
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool DatabaseManager::RemoveCityData(const std::string& _name)
+{
+	if (m_tables[DataTables_Cities] == nullptr)
+		return false;
+
+	std::vector<sCityData> cities;
+	Str128f sql("DELETE FROM Cities WHERE NAME='%s'", _name.c_str());
+	
+	return SQLExecute(m_tables[DataTables_Cities], sql.c_str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -373,11 +403,44 @@ void DatabaseManager::DisplayCityInformation()
 		++cpt;
 	}
 
+	if (m_selected >= cityListFiltered.size())
+		m_selected = -1;
+
+	sCityData selectedCity;
+	if (m_selected > -1)
+		GetCityData(cityListFiltered[m_selected], selectedCity);
+
 	ImGui::EndChild();
 	ImGui::SameLine();
 
 	// Right panel (infos display)
 	ImGui::BeginChild("Item view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing())); // Leave room for 1 line below us
+
+	if (!selectedCity.m_name.empty())
+	{
+		ImGui::Text("Name: %s", selectedCity.m_name.c_str());
+		ImGui::Text("ZipCode: %d", selectedCity.m_zipCode);
+		if (ImGui::TreeNode("Boroughs"))
+		{
+			for (auto& borough : selectedCity.m_boroughs)
+			{
+				ImGui::Text("%s", borough.m_name.c_str());
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text("Key: %u", borough.m_key);
+					ImGui::Text("App buy min: %.2f", borough.m_priceApartmentBuyMin);
+					ImGui::Text("App buy max: %.2f", borough.m_priceApartmentBuyMax);
+					ImGui::Text("House buy min: %.2f", borough.m_priceHouseBuyMin);
+					ImGui::Text("House buy max: %.2f", borough.m_priceHouseBuyMax);
+					ImGui::Text("Rent min: %.2f", borough.m_priceRentMin);
+					ImGui::Text("Rent max: %.2f", borough.m_priceRentMax);
+					ImGui::EndTooltip();
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
 	
 	ImGui::EndChild();
 

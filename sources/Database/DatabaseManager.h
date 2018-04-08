@@ -80,10 +80,12 @@ public:
 
 	void	AddBoroughData(const sBoroughData& _data);
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, sBoroughData& _data);
+	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 	bool	GetBoroughs(const std::string& _cityName, std::vector<sBoroughData>& _data);
 
 	void	AddCity(const sCityData& _data);
 	bool	GetCityData(const std::string& _name, sCityData& _data);
+	bool	RemoveCityData(const std::string& _name);
 	bool	ListAllCities(std::vector<std::string>& _list);
 
 	void	ComputeCityData(const std::string& _cityName);

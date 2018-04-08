@@ -45,11 +45,11 @@ int main(int argc, char** argv)
 	bool quit = false;
 	while (!quit && !ProdToolGL_ShouldClose())
 	{
+		ProdToolGL_NewFrame();
+
 		OnlineManager::getSingleton()->Process();
 		RequestManager::getSingleton()->Process();
 		DatabaseManager::getSingleton()->Process();
-
-		ProdToolGL_NewFrame();
 
 		const bool is_minimized = ProdToolGL_IsMinimized();
 		bool want_refresh = true;

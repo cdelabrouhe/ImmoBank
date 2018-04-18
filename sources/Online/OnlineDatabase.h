@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "Request/SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 
 class HTTPDownloader;
 struct SearchRequest;

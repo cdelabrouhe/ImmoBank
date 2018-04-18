@@ -1,4 +1,4 @@
-#include "SearchResult.h"
+#include "SearchRequestResultAnnounce.h"
 #include "Tools\StringTools.h"
 #include "extern/ImGui/imgui.h"
 #include <windows.h>

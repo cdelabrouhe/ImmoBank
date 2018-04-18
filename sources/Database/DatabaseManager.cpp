@@ -1,11 +1,12 @@
 #include "DatabaseManager.h"
-#include "Request/SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 #include "SQLDatabase.h"
 #include "Online/OnlineManager.h"
 #include <time.h>
-#include "Request/SearchResult.h"
 #include "extern/ImGui/imgui.h"
+#include "Request/SearchRequest/SearchRequestCityBoroughs.h"
+#include "Request/SearchRequest/SearchRequestResulCityBorough.h"
 
 DatabaseManager* s_singleton = nullptr;
 

@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <shellapi.h>
 
-#include "RequestManager.h"
+#include "Request/RequestManager.h"
 #include "Online/OnlineManager.h"
 
 #include "extern/ImGui/imgui.h"
@@ -10,7 +10,7 @@
 #include "Tools/StringTools.h"
 #include "Database/DatabaseManager.h"
 #include <time.h>
-#include "SearchResult.h"
+#include "Request/SearchRequest/SearchRequestResult.h"
 
 void EditableRequestCityData::Init(SearchRequest* _request)
 {

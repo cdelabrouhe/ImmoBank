@@ -1,9 +1,13 @@
 #include "OnlineManager.h"
 #include "HTTPDownloader.h"
-#include "Request/SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 #include "SeLogerOnlineDatabase.h"
 #include "LeSiteImmoOnlineDatabase.h"
+#include "Request/SearchRequest/SearchRequestAnnounce.h"
+#include "Request/SearchRequest/SearchRequestCityBoroughs.h"
+#include "Request/SearchRequest/SearchRequestCityData.h"
+#include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 
 OnlineManager* s_singleton = nullptr;
 

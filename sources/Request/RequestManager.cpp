@@ -1,8 +1,8 @@
 #include "RequestManager.h"
-#include "EditableRequest.h"
+#include "EditableRequest/EditableRequest.h"
 #include <algorithm>
-#include "EditableRequestAnnounce.h"
-#include "EditableRequestCityData.h"
+#include "EditableRequest/EditableRequestAnnounce.h"
+#include "EditableRequest/EditableRequestCityData.h"
 
 RequestManager* s_singleton = nullptr;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Request\SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 
 class CitySelector
 {

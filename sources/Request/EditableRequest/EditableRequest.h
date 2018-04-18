@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 
 class EditableRequest
 {

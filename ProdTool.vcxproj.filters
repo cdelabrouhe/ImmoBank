@@ -13,9 +13,6 @@
     <ClInclude Include="sources\Tools\StringTools.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Request\SearchRequest.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
     <ClInclude Include="sources\Tools\Thread\Thread.h">
       <Filter>Sources\Tools\Thread</Filter>
     </ClInclude>
@@ -133,20 +130,44 @@
     <ClInclude Include="sources\Database\DatabaseManager.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Request\EditableRequest.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Request\EditableRequestAnnounce.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Request\EditableRequestCityData.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\Request\SearchResult.h">
-      <Filter>Sources\Request</Filter>
-    </ClInclude>
     <ClInclude Include="sources\UI\CitySelector.h">
       <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequest.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestAnnounce.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestCityBoroughData.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestCityBoroughs.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestCityData.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestResulCityBorough.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestResulCityBoroughData.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestResult.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\SearchRequest\SearchRequestResultAnnounce.h">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequest\EditableRequest.h">
+      <Filter>Sources\Request\EditableRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequest\EditableRequestAnnounce.h">
+      <Filter>Sources\Request\EditableRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Request\EditableRequest\EditableRequestCityData.h">
+      <Filter>Sources\Request\EditableRequest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,9 +216,6 @@
     <ClCompile Include="extern\ImGui\imgui_draw.cpp">
       <Filter>Sources\extern\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Request\SearchRequest.cpp">
-      <Filter>Sources\Request</Filter>
-    </ClCompile>
     <ClCompile Include="extern\imstr\Str.cpp">
       <Filter>Sources\extern\imstr</Filter>
     </ClCompile>
@@ -219,17 +237,32 @@
     <ClCompile Include="sources\Database\DatabaseManager.cpp">
       <Filter>Sources\Database</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Request\EditableRequestAnnounce.cpp">
-      <Filter>Sources\Request</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Request\EditableRequestCityData.cpp">
-      <Filter>Sources\Request</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Request\SearchResult.cpp">
-      <Filter>Sources\Request</Filter>
-    </ClCompile>
     <ClCompile Include="sources\UI\CitySelector.cpp">
       <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequest.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequestAnnounce.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequestCityBoroughData.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequestCityBoroughs.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequestCityData.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\SearchRequest\SearchRequestResultAnnounce.cpp">
+      <Filter>Sources\Request\SearchRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\EditableRequest\EditableRequestAnnounce.cpp">
+      <Filter>Sources\Request\EditableRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Request\EditableRequest\EditableRequestCityData.cpp">
+      <Filter>Sources\Request\EditableRequest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +316,15 @@
     </Filter>
     <Filter Include="Sources\Online">
       <UniqueIdentifier>{7f10a3e2-1333-4b27-842f-d3a8e2d616be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Request\SearchRequest">
+      <UniqueIdentifier>{f4185243-40be-4eaf-a2ad-1bbfea2966a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Request\SearchRequest\EditableRequest">
+      <UniqueIdentifier>{db04ee93-ebec-4d79-8751-e2fc20c7718a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Request\EditableRequest">
+      <UniqueIdentifier>{18a145de-3cf3-47eb-a490-2da6c133b9e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 #include "LeSiteImmoOnlineDatabase.h"
 #include "HTTPDownloader.h"
-#include "Request/SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 
 void LeSiteImmoOnlineDatabase::Init(HTTPDownloader* _downloader)

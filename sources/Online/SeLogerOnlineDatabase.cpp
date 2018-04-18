@@ -1,8 +1,9 @@
 #include "SeLogerOnlineDatabase.h"
 #include "HTTPDownloader.h"
-#include "Request/SearchRequest.h"
+#include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
-#include "Request/SearchResult.h"
+#include "Request/SearchRequest/SearchRequestAnnounce.h"
+#include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 
 void SeLogerOnlineDatase::Init(HTTPDownloader* _downloader)
 {

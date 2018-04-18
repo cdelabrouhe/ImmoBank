@@ -2,6 +2,7 @@
 
 #include "EditableRequest.h"
 #include "UI\CitySelector.h"
+#include "Request/SearchRequest/SearchRequestCityData.h"
 
 class EditableRequestCityData : public EditableRequest
 {

@@ -128,11 +128,11 @@ bool OnlineManager::GetRequestResult(const int _requestID, std::vector<SearchReq
 
 	bool valid = true;
 
-	for (auto& entry : m_requests)
+	auto it = m_requests.find(_requestID);
+	if (it != m_requests.end())
 	{
-		SearchRequest* request = entry.second;
-		if (request->IsAvailable())
-			valid &= request->GetResult(_result);
+		SearchRequest* request = it->second;
+		valid = request->GetResult(_result);
 	}
 
 	if (valid)

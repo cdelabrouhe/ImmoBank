@@ -53,17 +53,32 @@ void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
 	RemoveBoroughData(_data.m_cityName, _data.m_name);
 
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUYMIN, HOUSEBUYMAX, RENTMIN, RENTMAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
+	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
 		_data.m_cityName.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
 		_data.m_key,
-		_data.m_priceApartmentBuyMin,
-		_data.m_priceApartmentBuyMax,
-		_data.m_priceHouseBuyMin,
-		_data.m_priceHouseBuyMax,
-		_data.m_priceRentMin,
-		_data.m_priceRentMax))
+		_data.m_priceBuyApartment.m_val,
+		_data.m_priceBuyApartment.m_min,
+		_data.m_priceBuyApartment.m_max,
+		_data.m_priceBuyHouse.m_val,
+		_data.m_priceBuyHouse.m_min,
+		_data.m_priceBuyHouse.m_max,
+		_data.m_priceRentHouse.m_val,
+		_data.m_priceRentHouse.m_min,
+		_data.m_priceRentHouse.m_max,
+		_data.m_priceRentApartmentT1.m_val,
+		_data.m_priceRentApartmentT1.m_min,
+		_data.m_priceRentApartmentT1.m_max,
+		_data.m_priceRentApartmentT2.m_val,
+		_data.m_priceRentApartmentT2.m_min,
+		_data.m_priceRentApartmentT2.m_max,
+		_data.m_priceRentApartmentT3.m_val,
+		_data.m_priceRentApartmentT3.m_min,
+		_data.m_priceRentApartmentT3.m_max,
+		_data.m_priceRentApartmentT4Plus.m_val,
+		_data.m_priceRentApartmentT4Plus.m_min,
+		_data.m_priceRentApartmentT4Plus.m_max))
 		printf("Add borough %s to database Boroughs\n", _data.m_name.c_str());
 }
 
@@ -85,12 +100,27 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
-		borough.m_priceApartmentBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceApartmentBuyMax = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceHouseBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceHouseBuyMax = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 	});
 
 	if (boroughs.size() == 1)
@@ -131,12 +161,27 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
-		borough.m_priceApartmentBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceApartmentBuyMax = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceHouseBuyMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceHouseBuyMax = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentMin = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentMax = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceBuyHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
+		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 	});
 
 	if (_data.size() >= 1)
@@ -244,12 +289,27 @@ void DatabaseManager::CreateTables()
 		"`BOROUGH` TEXT,\n"			// Name of the borough
 		"`TIMEUPDATE` INTEGER,\n"	// Last time the borough has been updated
 		"`KEY` INTEGER,\n"			// Internal meilleursagents.com key
+		"`APARTMENTBUY` REAL,\n"	// Buy min price
 		"`APARTMENTBUYMIN` REAL,\n"	// Buy min price
 		"`APARTMENTBUYMAX` REAL,\n"	// Buy max price
-		"`HOUSEBUYMIN` REAL,\n"		// Buy min price
-		"`HOUSEBUYMAX` REAL,\n"		// Buy max price
-		"`RENTMIN` REAL,\n"			// Rent min price
-		"`RENTMAX` REAL"			// Rent max price
+		"`HOUSEBUY` REAL,\n"		// Buy min price
+		"`HOUSEBUYMIN` REAL,\n"		// Buy max price
+		"`HOUSEBUYMAX` REAL,\n"		// Buy min price
+		"`RENTHOUSE` REAL,\n"		// Buy max price
+		"`RENTHOUSEMIN` REAL,\n"	// Buy min price
+		"`RENTHOUSEMAX` REAL,\n"	// Buy max price
+		"`RENTT1` REAL,\n"			// Buy min price
+		"`RENTT1MIN` REAL,\n"		// Buy max price
+		"`RENTT1MAX` REAL,\n"		// Buy min price
+		"`RENTT2` REAL,\n"			// Buy max price
+		"`RENTT2MIN` REAL,\n"		// Buy min price
+		"`RENTT2MAX` REAL,\n"		// Buy max price
+		"`RENTT3` REAL,\n"			// Buy min price
+		"`RENTT3MIN` REAL,\n"		// Buy max price
+		"`RENTT3MAX` REAL,\n"		// Buy min price
+		"`RENTT4` REAL,\n"			// Buy max price
+		"`RENTT4MIN` REAL,\n"		// Buy min price
+		"`RENTT4MAX` REAL"			// Buy max price
 		")"
 	);
 }
@@ -297,12 +357,29 @@ void DatabaseManager::Test()
 	data.m_cityName = "Montpellier";
 	data.m_key = 13245;
 	data.m_timeUpdate = date;
-	data.m_priceApartmentBuyMin = 23456.1f;
-	data.m_priceApartmentBuyMax = 34567.1f;
-	data.m_priceHouseBuyMin = 246.8f;
-	data.m_priceHouseBuyMax = 357.9f;
-	data.m_priceRentMin = 4568.1f;
-	data.m_priceRentMax = 56789.1f;
+
+	data.m_priceBuyApartment.m_val = 1;
+	data.m_priceBuyApartment.m_min = 2;
+	data.m_priceBuyApartment.m_max = 3;
+	data.m_priceBuyHouse.m_val = 4;
+	data.m_priceBuyHouse.m_min = 5;
+	data.m_priceBuyHouse.m_max = 6;
+	data.m_priceRentHouse.m_val = 7;
+	data.m_priceRentHouse.m_min = 8;
+	data.m_priceRentHouse.m_max = 9;
+	data.m_priceRentApartmentT1.m_val = 10;
+	data.m_priceRentApartmentT1.m_min = 11;
+	data.m_priceRentApartmentT1.m_max = 12;
+	data.m_priceRentApartmentT2.m_val = 13;
+	data.m_priceRentApartmentT2.m_min = 14;
+	data.m_priceRentApartmentT2.m_max = 15;
+	data.m_priceRentApartmentT3.m_val = 16;
+	data.m_priceRentApartmentT3.m_min = 17;
+	data.m_priceRentApartmentT3.m_max = 18;
+	data.m_priceRentApartmentT4Plus.m_val = 19;
+	data.m_priceRentApartmentT4Plus.m_min = 20;
+	data.m_priceRentApartmentT4Plus.m_max = 21;
+
 	AddBoroughData(data);
 
 	sBoroughData data2;
@@ -404,7 +481,7 @@ void DatabaseManager::DisplayCityInformation()
 		++cpt;
 	}
 
-	if (m_selected >= cityListFiltered.size())
+	if (m_selected >= (int)cityListFiltered.size())
 		m_selected = -1;
 
 	sCityData selectedCity;
@@ -423,21 +500,51 @@ void DatabaseManager::DisplayCityInformation()
 		ImGui::Text("ZipCode: %d", selectedCity.m_zipCode);
 		if (ImGui::TreeNode("Boroughs"))
 		{
+			int cpt = 0;
 			for (auto& borough : selectedCity.m_boroughs)
 			{
+				ImGui::PushID(this + cpt);
+				bool update = ImGui::Button("Update");
+				ImGui::PopID();
+
+				ImGui::SameLine();
+
 				ImGui::Text("%s", borough.m_name.c_str());
-				if (ImGui::IsItemHovered())
+				bool hovered = ImGui::IsItemHovered();
+				if (hovered)
 				{
 					ImGui::BeginTooltip();
 					ImGui::Text("Key: %u", borough.m_key);
-					ImGui::Text("App buy min: %.2f", borough.m_priceApartmentBuyMin);
-					ImGui::Text("App buy max: %.2f", borough.m_priceApartmentBuyMax);
-					ImGui::Text("House buy min: %.2f", borough.m_priceHouseBuyMin);
-					ImGui::Text("House buy max: %.2f", borough.m_priceHouseBuyMax);
-					ImGui::Text("Rent min: %.2f", borough.m_priceRentMin);
-					ImGui::Text("Rent max: %.2f", borough.m_priceRentMax);
+					ImGui::Text("App buy min: %.2f", borough.m_priceBuyApartment.m_min);
+					ImGui::Text("App buy: %.2f", borough.m_priceBuyApartment.m_val);
+					ImGui::Text("App buy max: %.2f", borough.m_priceBuyApartment.m_max);
+					ImGui::Text("House buy min: %.2f", borough.m_priceBuyHouse.m_min);
+					ImGui::Text("House buy: %.2f", borough.m_priceBuyHouse.m_val);
+					ImGui::Text("House buy max: %.2f", borough.m_priceBuyHouse.m_max);
+					ImGui::Text("T1 rent min: %.2f", borough.m_priceRentApartmentT1.m_min);
+					ImGui::Text("T1 rent: %.2f", borough.m_priceRentApartmentT1.m_val);
+					ImGui::Text("T1 rent max: %.2f", borough.m_priceRentApartmentT1.m_max);
+					ImGui::Text("T2 rent min: %.2f", borough.m_priceRentApartmentT2.m_min);
+					ImGui::Text("T2 rent: %.2f", borough.m_priceRentApartmentT2.m_val);
+					ImGui::Text("T2 rent max: %.2f", borough.m_priceRentApartmentT2.m_max);
+					ImGui::Text("T3 rent min: %.2f", borough.m_priceRentApartmentT3.m_min);
+					ImGui::Text("T3 rent: %.2f", borough.m_priceRentApartmentT3.m_val);
+					ImGui::Text("T3 rent max: %.2f", borough.m_priceRentApartmentT3.m_max);
+					ImGui::Text("T4 rent min: %.2f", borough.m_priceRentApartmentT4Plus.m_min);
+					ImGui::Text("T4 rent: %.2f", borough.m_priceRentApartmentT4Plus.m_val);
+					ImGui::Text("T4 rent max: %.2f", borough.m_priceRentApartmentT4Plus.m_max);
+					ImGui::Text("House rent min: %.2f", borough.m_priceRentHouse.m_min);
+					ImGui::Text("House rent: %.2f", borough.m_priceRentHouse.m_val);
+					ImGui::Text("House rent max: %.2f", borough.m_priceRentHouse.m_max);
 					ImGui::EndTooltip();
 				}
+
+				if (update)
+				{
+					printf("");
+				}
+
+				++cpt;
 			}
 			ImGui::TreePop();
 		}

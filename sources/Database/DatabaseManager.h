@@ -14,6 +14,15 @@ enum DataTables
 
 struct sqlite3;
 
+struct sPrice
+{
+	sPrice(float _val = 0.f, float _min = 0.f, float _max = 0.f)
+		: m_val(_val), m_min(_min), m_max(_max)	{}
+	float m_min = 0.f;
+	float m_val = 0.f;
+	float m_max = 0.f;
+};
+
 struct sBoroughData
 {
 public:
@@ -21,12 +30,13 @@ public:
 	std::string			m_cityName;
 	sDate				m_timeUpdate;
 	unsigned int		m_key = 0xffffffff;
-	float				m_priceApartmentBuyMin = 0.f;
-	float				m_priceApartmentBuyMax = 0.f;
-	float				m_priceHouseBuyMin = 0.f;
-	float				m_priceHouseBuyMax = 0.f;
-	float				m_priceRentMin = 0.f;
-	float				m_priceRentMax = 0.f;
+	sPrice				m_priceRentApartmentT1;
+	sPrice				m_priceRentApartmentT2;
+	sPrice				m_priceRentApartmentT3;
+	sPrice				m_priceRentApartmentT4Plus;
+	sPrice				m_priceBuyApartment;
+	sPrice				m_priceBuyHouse;
+	sPrice				m_priceRentHouse;
 
 private:
 };

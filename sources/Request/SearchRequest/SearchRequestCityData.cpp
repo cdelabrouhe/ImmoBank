@@ -34,11 +34,11 @@ void SearchRequestCityData::InitBoroughPricesRequest()
 		return;
 	}
 
-	if (m_boroughs[0].m_priceApartmentBuyMax == 0)
+	if (m_boroughs[0].m_priceBuyApartment.m_val == 0)
 	{
 		m_state = UpdateStep_ComputeBoroughsPrices;
 
-		for (auto ID = 0; ID < m_boroughs.size(); ++ID)
+		for (size_t ID = 0; ID < m_boroughs.size(); ++ID)
 		{
 			SearchRequestCityBoroughData data;
 			data.m_data = m_boroughs[ID];
@@ -88,7 +88,7 @@ void SearchRequestCityData::Process()
 	case UpdateStep_ComputeBoroughsPrices:
 	{
 		bool available = true;
-		int ID = 0;
+		size_t ID = 0;
 		for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
 		{
 			available &= OnlineManager::getSingleton()->IsRequestAvailable(m_httpRequestsID[ID]);
@@ -99,7 +99,7 @@ void SearchRequestCityData::Process()
 		if (available)
 		{
 			bool valid = true;
-			for (int ID = 0; ID < m_httpRequestsID.size(); ++ID)
+			for (size_t ID = 0; ID < m_httpRequestsID.size(); ++ID)
 			{
 				std::vector<SearchRequestResult*> list;
 				if (OnlineManager::getSingleton()->GetRequestResult(m_httpRequestsID[ID], list))

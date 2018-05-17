@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "SearchRequestCityBoroughData.h"
 
+//#define GET_BOROUGH_PRICES
+
 //---------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityData::Init()
@@ -28,6 +30,11 @@ void SearchRequestCityData::Init()
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityData::InitBoroughPricesRequest()
 {
+#ifndef GET_BOROUGH_PRICES
+	m_state = UpdateStep_COUNT;
+	return;
+#endif
+
 	if (m_boroughs.size() == 0)
 	{
 		m_state = UpdateStep_COUNT;

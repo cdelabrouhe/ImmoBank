@@ -95,14 +95,14 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 			Json::Value& valRentT2 = rental["t2"];
 			Json::Value& valRentT3 = rental["t3"];
 			Json::Value& valRentT4 = rental["t4_plus"];
-			sPrice rentT1(valRentT1["value"].asDouble(), valRentT1["low"].asDouble(), valRentT1["high"].asDouble());
-			sPrice rentT2(valRentT2["value"].asDouble(), valRentT2["low"].asDouble(), valRentT2["high"].asDouble());
-			sPrice rentT3(valRentT3["value"].asDouble(), valRentT3["low"].asDouble(), valRentT3["high"].asDouble());
-			sPrice rentT4(valRentT4["value"].asDouble(), valRentT4["low"].asDouble(), valRentT4["high"].asDouble());
+			sPrice rentT1((float)valRentT1["value"].asDouble(), (float)valRentT1["low"].asDouble(), (float)valRentT1["high"].asDouble());
+			sPrice rentT2((float)valRentT2["value"].asDouble(), (float)valRentT2["low"].asDouble(), (float)valRentT2["high"].asDouble());
+			sPrice rentT3((float)valRentT3["value"].asDouble(), (float)valRentT3["low"].asDouble(), (float)valRentT3["high"].asDouble());
+			sPrice rentT4((float)valRentT4["value"].asDouble(), (float)valRentT4["low"].asDouble(), (float)valRentT4["high"].asDouble());
 			Json::Value& sellApartment = root["sell"]["apartment"];
 			Json::Value& sellHouse = root["sell"]["house"];
-			sPrice buyApartment(sellApartment["value"].asDouble(), sellApartment["low"].asDouble(), sellApartment["high"].asDouble());
-			sPrice buyHouse(sellHouse["value"].asDouble(), sellHouse["low"].asDouble(), sellHouse["high"].asDouble());
+			sPrice buyApartment((float)sellApartment["value"].asDouble(), (float)sellApartment["low"].asDouble(), (float)sellApartment["high"].asDouble());
+			sPrice buyHouse((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
 
 			SearchRequestResulCityBoroughData* result = new SearchRequestResulCityBoroughData();
 			result->m_data = m_data;

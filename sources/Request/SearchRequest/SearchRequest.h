@@ -20,14 +20,6 @@ enum Category
 	Category_COUNT
 };
 
-struct sCity
-{
-	sCity(const std::string& _name = "", int _codeInsee = 0, int _zipCode = 0) : m_name(_name), m_inseeCode(_codeInsee), m_zipCode(_zipCode)	{}
-	std::string m_name;
-	int			m_inseeCode;
-	int			m_zipCode;
-};
-
 enum SearchRequestType
 {
 	SearchRequestType_NONE = -1,

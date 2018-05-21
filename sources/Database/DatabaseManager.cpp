@@ -45,7 +45,7 @@ void DatabaseManager::Process()
 		if (data.Process())
 			itCity = m_cityComputes.erase(itCity);
 		else
-			m_cityComputes.erase(itCity);
+			++itCity;
 	}
 
 	auto itBorough = m_boroughComputes.begin();
@@ -55,7 +55,7 @@ void DatabaseManager::Process()
 		if (data.Process())
 			itBorough = m_boroughComputes.erase(itBorough);
 		else
-			m_boroughComputes.erase(itBorough);
+			++itBorough;
 	}
 
 	if (m_displayCityData)
@@ -71,10 +71,10 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 {
-	RemoveBoroughData(_data.m_cityName, _data.m_name);
+	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
 
 	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
-		_data.m_cityName.c_str(),
+		_data.m_city.m_name.c_str(),
 		_data.m_name.c_str(),
 		_data.m_timeUpdate.GetData(),
 		_data.m_key,
@@ -116,7 +116,7 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		int index = 0;
 		boroughs.resize(boroughs.size() + 1);
 		auto& borough = boroughs.back();
-		borough.m_cityName = (const char*)sqlite3_column_text(_stmt, index++);
+		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
@@ -164,20 +164,20 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBoroughData>& _data)
+bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<sBoroughData>& _data)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	_data.clear();
-	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s'", _cityName.c_str());
+	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
 
 	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&_data](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		_data.resize(_data.size() + 1);
 		auto& borough = _data.back();
-		borough.m_cityName = (const char*)sqlite3_column_text(_stmt, index++);
+		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 		borough.m_key = sqlite3_column_int(_stmt, index++);
@@ -204,6 +204,9 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 	});
 
+	for (auto& borough : _data)
+		borough.m_city = _city;
+
 	if (_data.size() >= 1)
 		return true;
 
@@ -211,15 +214,25 @@ bool DatabaseManager::GetBoroughs(const std::string& _cityName, std::vector<sBor
 }
 
 //-------------------------------------------------------------------------------------------------
+bool DatabaseManager::IsBoroughUpdating(sBoroughData& _data)
+{
+	auto it = std::find_if(m_boroughComputes.begin(), m_boroughComputes.end(), [_data](sBoroughData& _boroughData)->bool
+	{
+		return (_boroughData.m_city.m_name == _data.m_city.m_name) && (_boroughData.m_name == _data.m_name);
+	});
+	return it != m_boroughComputes.end();
+}
+
+//-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddCity(const sCityData& _data)
 {
-	RemoveCityData(_data.m_name);
+	RemoveCityData(_data.m_data.m_name);
 
 	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %u)",
-		_data.m_name.c_str(),
-		_data.m_zipCode,
+		_data.m_data.m_name.c_str(),
+		_data.m_data.m_zipCode,
 		_data.m_timeUpdate.GetData()))
-		printf("Add city %s to database Cities\n", _data.m_name.c_str());
+		printf("Add city %s to database Cities\n", _data.m_data.m_name.c_str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -236,15 +249,15 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data)
 		int index = 0;
 		cities.resize(cities.size() + 1);
 		auto& city = cities.back();
-		city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_zipCode = sqlite3_column_int(_stmt, index++);
+		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 	});
 
 	if (cities.size() == 1)
 	{
 		_data = cities.back();
-		GetBoroughs(_data.m_name, _data.m_boroughs);
+		GetBoroughs(_data.m_data, _data.m_boroughs);
 
 		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), sBoroughData::compare);
 
@@ -279,15 +292,15 @@ bool DatabaseManager::ListAllCities(std::vector<std::string>& _list)
 		int index = 0;
 		cities.resize(cities.size() + 1);
 		auto& city = cities.back();
-		city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_zipCode = sqlite3_column_int(_stmt, index++);
+		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 	});
 
 	if (cities.size() > 0)
 	{
 		for (auto& city : cities)
-			_list.push_back(city.m_name);
+			_list.push_back(city.m_data.m_name);
 
 		return true;
 	}
@@ -363,8 +376,8 @@ void DatabaseManager::Test()
 	date.SetDate(2020, 10, 30, 15, 58, 17);
 
 	sCityData city;
-	city.m_name = "Montpellier";
-	city.m_zipCode = 34000;
+	city.m_data.m_name = "Montpellier";
+	city.m_data.m_zipCode = 34000;
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime(&t);
 	int year = 1900 + now->tm_year;
@@ -376,7 +389,7 @@ void DatabaseManager::Test()
 
 	sBoroughData data;
 	data.m_name = "Antigone";
-	data.m_cityName = "Montpellier";
+	data.m_city.m_name = "Montpellier";
 	data.m_key = 13245;
 	data.m_timeUpdate = date;
 
@@ -523,17 +536,23 @@ void DatabaseManager::DisplayCityInformation()
 	// Right panel (infos display)
 	ImGui::BeginChild("Item view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing())); // Leave room for 1 line below us
 
-	if (!selectedCity.m_name.empty())
+	if (!selectedCity.m_data.m_name.empty())
 	{
-		ImGui::Text("Name: %s", selectedCity.m_name.c_str());
-		ImGui::Text("ZipCode: %d", selectedCity.m_zipCode);
+		ImGui::Text("Name: %s", selectedCity.m_data.m_name.c_str());
+		ImGui::Text("ZipCode: %d", selectedCity.m_data.m_zipCode);
 		if (ImGui::TreeNode("Boroughs"))
 		{
 			int cpt = 0;
 			for (auto& borough : selectedCity.m_boroughs)
 			{
 				ImGui::PushID(this + cpt);
-				bool update = ImGui::Button("Update");
+				bool updating = IsBoroughUpdating(borough);
+				bool update = false;
+				if (!updating)
+					update = ImGui::Button("Update");
+				else
+					ImGui::Text("Updating...");
+
 				ImGui::PopID();
 
 				ImGui::SameLine();
@@ -619,7 +638,7 @@ bool sCityComputeData::Process()
 				{
 					SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
 					sBoroughData data;
-					data.m_cityName = m_city;
+					data.m_city = m_city;
 					data.m_name = borough->m_name;
 					m_boroughs.push_back(data);
 					delete borough;
@@ -657,7 +676,7 @@ void sBoroughData::Init()
 {
 	SearchRequestCityBoroughData request;
 	request.m_data = *this;
-	request.m_city = m_cityName;
+	request.m_city = m_city;
 	m_httpRequestID = OnlineManager::getSingleton()->SendRequest(&request);
 }
 

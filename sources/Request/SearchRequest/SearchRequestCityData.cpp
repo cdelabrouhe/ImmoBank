@@ -13,7 +13,7 @@
 void SearchRequestCityData::Init()
 {
 	// Get boroughs (if they exist) from Database
-	if (!DatabaseManager::getSingleton()->GetBoroughs(m_city.m_name, m_boroughs))
+	if (!DatabaseManager::getSingleton()->GetBoroughs(m_city, m_boroughs))
 	{
 		m_state = UpdateStep_GetBoroughList;
 
@@ -76,7 +76,7 @@ void SearchRequestCityData::Process()
 				{
 					SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
 					sBoroughData data;
-					data.m_cityName = m_city.m_name;
+					data.m_city = m_city;
 					data.m_name = borough->m_name;
 					data.m_key = borough->m_internalID;
 					m_boroughs.push_back(data);

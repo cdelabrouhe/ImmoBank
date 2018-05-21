@@ -38,7 +38,17 @@ public:
 	sPrice				m_priceBuyHouse;
 	sPrice				m_priceRentHouse;
 
+	void Init();
+	bool Process();
+	void End();
+
+	static bool compare(const sBoroughData &_a, const sBoroughData &_b)
+	{
+		return _a.m_name < _b.m_name;
+	}
+
 private:
+	int m_httpRequestID = -1;
 };
 
 struct sCityData
@@ -99,6 +109,7 @@ public:
 	bool	ListAllCities(std::vector<std::string>& _list);
 
 	void	ComputeCityData(const std::string& _cityName);
+	void	ComputeBoroughData(sBoroughData& _data);
 	
 	void	AskForDisplayCityInformation();
 	void	InitDisplayCityInformation();
@@ -114,6 +125,7 @@ private:
 private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<sCityComputeData>	m_cityComputes;
+	std::vector<sBoroughData>		m_boroughComputes;
 
 	// Display panel
 	char							m_inputTextCity[256];

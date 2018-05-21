@@ -7,6 +7,9 @@
 #include "extern/ImGui/imgui.h"
 #include "Request/SearchRequest/SearchRequestCityBoroughs.h"
 #include "Request/SearchRequest/SearchRequestResulCityBorough.h"
+#include "Request/SearchRequest/SearchRequestResulCityBoroughData.h"
+#include "Request/SearchRequest/SearchRequestCityBoroughData.h"
+#include <algorithm>
 
 DatabaseManager* s_singleton = nullptr;
 
@@ -35,8 +38,25 @@ void DatabaseManager::Init()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::Process()
 {
-	for (auto& compute : m_cityComputes)
-		compute.Process();
+	auto itCity = m_cityComputes.begin();
+	while (itCity != m_cityComputes.end())
+	{
+		sCityComputeData& data = *itCity;
+		if (data.Process())
+			itCity = m_cityComputes.erase(itCity);
+		else
+			m_cityComputes.erase(itCity);
+	}
+
+	auto itBorough = m_boroughComputes.begin();
+	while (itBorough != m_boroughComputes.end())
+	{
+		sBoroughData& data = *itBorough;
+		if (data.Process())
+			itBorough = m_boroughComputes.erase(itBorough);
+		else
+			m_boroughComputes.erase(itBorough);
+	}
 
 	if (m_displayCityData)
 		DisplayCityInformation();
@@ -226,6 +246,8 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data)
 		_data = cities.back();
 		GetBoroughs(_data.m_name, _data.m_boroughs);
 
+		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), sBoroughData::compare);
+
 		return true;
 	}
 	return false;
@@ -397,6 +419,13 @@ void DatabaseManager::ComputeCityData(const std::string& _cityName)
 }
 
 //-------------------------------------------------------------------------------------------------
+void DatabaseManager::ComputeBoroughData(sBoroughData& _data)
+{
+	m_boroughComputes.push_back(_data);
+	m_boroughComputes.back().Init();
+}
+
+//-------------------------------------------------------------------------------------------------
 void DatabaseManager::AskForDisplayCityInformation()
 {
 	m_displayCityData = !m_displayCityData;
@@ -541,7 +570,7 @@ void DatabaseManager::DisplayCityInformation()
 
 				if (update)
 				{
-					printf("");
+					ComputeBoroughData(borough);
 				}
 
 				++cpt;
@@ -619,6 +648,47 @@ bool sCityComputeData::Process()
 
 //-------------------------------------------------------------------------------------------------
 void sCityComputeData::End()
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
+void sBoroughData::Init()
+{
+	SearchRequestCityBoroughData request;
+	request.m_data = *this;
+	request.m_city = m_cityName;
+	m_httpRequestID = OnlineManager::getSingleton()->SendRequest(&request);
+}
+
+//-------------------------------------------------------------------------------------------------
+bool sBoroughData::Process()
+{
+	if (OnlineManager::getSingleton()->IsRequestAvailable(m_httpRequestID))
+	{
+		std::vector<SearchRequestResult*> list;
+		if (OnlineManager::getSingleton()->GetRequestResult(m_httpRequestID, list))
+		{
+			m_httpRequestID = -1;
+
+			for (auto result : list)
+			{
+				if (result->m_resultType == SearchRequestType_CityBoroughData)
+				{
+					SearchRequestResulCityBoroughData* borough = static_cast<SearchRequestResulCityBoroughData*>(result);
+					DatabaseManager::getSingleton()->AddBoroughData(borough->m_data);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+void sBoroughData::End()
 {
 
 }

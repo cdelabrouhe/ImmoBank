@@ -34,6 +34,7 @@ bool CitySelector::Display()
 				sCityData city;
 				city.m_data.m_name = name;
 				city.m_data.m_zipCode = zipCode;
+				city.m_data.m_inseeCode = code;
 				time_t t = time(0);   // get time now
 				struct tm * now = localtime(&t);
 				int year = 1900 + now->tm_year;

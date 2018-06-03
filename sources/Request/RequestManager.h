@@ -25,7 +25,6 @@ public:
 
 	EditableRequest* CreateRequest(SearchRequest* _request);
 	EditableRequest* CreateRequestAnnounceDefault();
-	EditableRequest* CreateRequestCityDataDefault();
 
 	void AskForDeleteRequest(EditableRequest* _request);
 

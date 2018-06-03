@@ -166,9 +166,6 @@
     <ClInclude Include="sources\Request\EditableRequest\EditableRequestAnnounce.h">
       <Filter>Sources\Request\EditableRequest</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Request\EditableRequest\EditableRequestCityData.h">
-      <Filter>Sources\Request\EditableRequest</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -259,9 +256,6 @@
       <Filter>Sources\Request\SearchRequest</Filter>
     </ClCompile>
     <ClCompile Include="sources\Request\EditableRequest\EditableRequestAnnounce.cpp">
-      <Filter>Sources\Request\EditableRequest</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Request\EditableRequest\EditableRequestCityData.cpp">
       <Filter>Sources\Request\EditableRequest</Filter>
     </ClCompile>
   </ItemGroup>

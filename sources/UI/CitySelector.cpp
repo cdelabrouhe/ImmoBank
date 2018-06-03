@@ -7,6 +7,8 @@
 
 bool CitySelector::Display()
 {
+	m_changed = false;
+
 	// Get city name list
 	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_cityNameRequestID))
 	{
@@ -47,7 +49,7 @@ bool CitySelector::Display()
 	// left
 	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
 	{
-		if (strlen(m_inputTextCity) >= 3)
+		if (strlen(m_inputTextCity) >= 2)
 		{
 			// Ask for a city list
 			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity) + "&boost=population";
@@ -55,6 +57,7 @@ bool CitySelector::Display()
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 		}
+		m_changed = true;
 	}
 
 	if (m_cities.size() > 100)
@@ -64,7 +67,7 @@ bool CitySelector::Display()
 	for (size_t ID = 0; ID < m_cities.size(); ++ID)
 		cities[ID] = m_cities[ID].m_name.c_str();
 
-	if (m_cities.size() > 0)
+	if (m_displayAllResults && m_cities.size() > 0)
 	{
 		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
 		{

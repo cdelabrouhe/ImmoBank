@@ -196,7 +196,6 @@
     <ClInclude Include="sources\Online\SeLogerOnlineDatabase.h" />
     <ClInclude Include="sources\Request\EditableRequest\EditableRequest.h" />
     <ClInclude Include="sources\Request\EditableRequest\EditableRequestAnnounce.h" />
-    <ClInclude Include="sources\Request\EditableRequest\EditableRequestCityData.h" />
     <ClInclude Include="sources\Request\SearchRequest\SearchRequest.h" />
     <ClInclude Include="sources\Request\SearchRequest\SearchRequestAnnounce.h" />
     <ClInclude Include="sources\Request\SearchRequest\SearchRequestCityBoroughData.h" />
@@ -233,7 +232,6 @@
     <ClCompile Include="sources\Online\SeLogerOnlineDatabase.cpp" />
     <ClCompile Include="sources\ProdTool.cpp" />
     <ClCompile Include="sources\Request\EditableRequest\EditableRequestAnnounce.cpp" />
-    <ClCompile Include="sources\Request\EditableRequest\EditableRequestCityData.cpp" />
     <ClCompile Include="sources\Request\RequestManager.cpp" />
     <ClCompile Include="sources\Request\SearchRequest\SearchRequest.cpp" />
     <ClCompile Include="sources\Request\SearchRequest\SearchRequestAnnounce.cpp" />

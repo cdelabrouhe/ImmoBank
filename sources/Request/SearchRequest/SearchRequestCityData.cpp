@@ -23,18 +23,17 @@ void SearchRequestCityData::Init()
 	}
 	else
 	{
+#ifndef GET_BOROUGH_PRICES
+		m_state = UpdateStep_COUNT;
+#else
 		InitBoroughPricesRequest();
+#endif
 	}
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityData::InitBoroughPricesRequest()
 {
-#ifndef GET_BOROUGH_PRICES
-	m_state = UpdateStep_COUNT;
-	return;
-#endif
-
 	if (m_boroughs.size() == 0)
 	{
 		m_state = UpdateStep_COUNT;
@@ -87,7 +86,11 @@ void SearchRequestCityData::Process()
 				}
 			}
 
+#ifndef GET_BOROUGH_PRICES
+			m_state = UpdateStep_COUNT;
+#else
 			InitBoroughPricesRequest();
+#endif
 		}
 		break;
 

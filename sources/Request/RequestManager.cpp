@@ -2,7 +2,6 @@
 #include "EditableRequest/EditableRequest.h"
 #include <algorithm>
 #include "EditableRequest/EditableRequestAnnounce.h"
-#include "EditableRequest/EditableRequestCityData.h"
 
 RequestManager* s_singleton = nullptr;
 
@@ -65,14 +64,6 @@ EditableRequest* RequestManager::CreateRequest(SearchRequest* _request)
 		}
 		break;
 
-		case SearchRequestType_CityData:
-		{
-			request = new EditableRequestCityData();
-			request->Init(_request);
-			m_requests.push_back(sRequest(request));
-		}
-		break;
-
 		default:
 			break;
 	}
@@ -94,15 +85,6 @@ EditableRequest* RequestManager::CreateRequestAnnounceDefault()
 	request.m_nbBedRooms = 2;
 	request.m_surfaceMin = 50;
 	request.m_surfaceMax = 70;
-
-	return CreateRequest(&request);
-}
-
-//-------------------------------------------------------------------------------------------------
-EditableRequest* RequestManager::CreateRequestCityDataDefault()
-{
-	SearchRequestCityData request;
-	request.m_city.m_name = "Montpellier";
 
 	return CreateRequest(&request);
 }

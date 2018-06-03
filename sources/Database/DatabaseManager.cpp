@@ -10,6 +10,7 @@
 #include "Request/SearchRequest/SearchRequestResulCityBoroughData.h"
 #include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 #include <algorithm>
+#include "UI/CitySelector.h"
 
 DatabaseManager* s_singleton = nullptr;
 
@@ -211,6 +212,15 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<sBoroughData>& _data
 		return true;
 
 	return false;
+}
+
+bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
+{
+	auto it = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](sCityComputeData& _cityData)->bool
+	{
+		return (_cityData.m_city == _cityName) && (_cityData.m_city == _cityName);
+	});
+	return it != m_cityComputes.end();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -463,7 +473,10 @@ void DatabaseManager::InitDisplayCityInformation()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::DisplayCityInformation()
 {
-	if (!m_cityListRequested)
+	static CitySelector s_citySelector;
+	s_citySelector.SetDisplayAllResults(false);
+
+	if (!m_cityListRequested || s_citySelector.HasChanged())
 	{
 		m_cityListFull.clear();
 		ListAllCities(m_cityListFull);
@@ -477,16 +490,20 @@ void DatabaseManager::DisplayCityInformation()
 	bool listUpdated = false;
 	std::vector<std::string> cityListFiltered;
 	ImGui::BeginChild("City search", ImVec2(300, 0), true);
-	ImGui::InputText("City name", (char*)m_inputTextCity, 256);
-	if (strlen(m_inputTextCity) > 0)
+
+	sCity result;
+	if (s_citySelector.Display())
+		result = *s_citySelector.GetSelectedCity();
+
+	if (strlen(s_citySelector.GetText()) > 0)
 	{
-		std::string input = m_inputTextCity;
+		std::string input = s_citySelector.GetText();
 		StringTools::TransformToLower(input);
 		for (auto city : m_cityListFull)
 		{
 			std::string tmp = city;
 			StringTools::TransformToLower(tmp);
-			auto findID = tmp.find(m_inputTextCity);
+			auto findID = tmp.find(s_citySelector.GetText());
 			if (findID != std::string::npos)
 				cityListFiltered.push_back(city);
 		}
@@ -543,29 +560,35 @@ void DatabaseManager::DisplayCityInformation()
 	if (!selectedCity.m_data.m_name.empty())
 	{
 		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", selectedCity.m_data.m_name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
-		if (ImGui::TreeNode("Boroughs"))
+		if (!IsCityUpdating(selectedCity.m_data.m_name))
 		{
-			int cpt = 0;
-			for (auto& borough : selectedCity.m_boroughs)
+			ImGui::SameLine();
+			if (ImGui::Button("Update boroughs list"))
+				ComputeCityData(selectedCity.m_data.m_name);
+
+			if (ImGui::TreeNode("Boroughs"))
 			{
-				ImGui::PushID(this + cpt);
-				bool updating = IsBoroughUpdating(borough);
-				bool update = false;
-				if (!updating)
-					update = ImGui::Button("Update");
-				else
-					ImGui::Text("Updating...");
+				int cpt = 0;
+				for (auto& borough : selectedCity.m_boroughs)
+				{
+					ImGui::PushID(this + cpt);
+					bool updating = IsBoroughUpdating(borough);
+					bool update = false;
+					if (!updating)
+						update = ImGui::Button("Update");
+					else
+						ImGui::Text("Updating...");
 
-				ImGui::PopID();
+					ImGui::PopID();
 
-				ImGui::SameLine();
+					ImGui::SameLine();
 
-				static float s_sizeMin = 0.8f;
-				static float s_size = 1.f;
-				static float s_sizeMax = 0.8f;
-				static ImVec4 s_colorMin(1.f,1.f,0.f,1.f);
-				static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
-				static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
+					static float s_sizeMin = 0.8f;
+					static float s_size = 1.f;
+					static float s_sizeMax = 0.8f;
+					static ImVec4 s_colorMin(1.f,1.f,0.f,1.f);
+					static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
+					static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
 
 #define DISPLAY_INFO(name, data) \
 				ImGui::Text(#name " : "); \
@@ -573,41 +596,48 @@ void DatabaseManager::DisplayCityInformation()
 				ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
 				ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
 
-				ImGui::Text("%s", borough.m_name.c_str());
-				bool hovered = ImGui::IsItemHovered();
-				if (hovered)
-				{
-					ImGui::BeginTooltip();
-					ImGui::Text("Key: %u", borough.m_key);
-					ImGui::Text("Prices (per m2) ");
-					ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
-					ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
-					ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
+					ImGui::Text("%s", borough.m_name.c_str());
+					bool hovered = ImGui::IsItemHovered();
+					if (hovered)
+					{
+						ImGui::BeginTooltip();
+						ImGui::Text("Key: %u", borough.m_key);
+						ImGui::Text("Prices (per m2) ");
+						ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
+						ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
+						ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
 
-					ImGui::Separator();
+						ImGui::Separator();
 
-					ImGui::Text("BUY");
-					DISPLAY_INFO(App, borough.m_priceBuyApartment);
-					DISPLAY_INFO(House, borough.m_priceBuyHouse);
-					ImGui::Separator();
-					ImGui::Text("RENT");
-					DISPLAY_INFO(T1, borough.m_priceRentApartmentT1);
-					DISPLAY_INFO(T2, borough.m_priceRentApartmentT2);
-					DISPLAY_INFO(T3, borough.m_priceRentApartmentT3);
-					DISPLAY_INFO(T4+, borough.m_priceRentApartmentT4Plus);
-					DISPLAY_INFO(House, borough.m_priceRentHouse);
-					
-					ImGui::EndTooltip();
+						ImGui::Text("BUY");
+						DISPLAY_INFO(App, borough.m_priceBuyApartment);
+						DISPLAY_INFO(House, borough.m_priceBuyHouse);
+						ImGui::Separator();
+						ImGui::Text("RENT");
+						DISPLAY_INFO(T1, borough.m_priceRentApartmentT1);
+						DISPLAY_INFO(T2, borough.m_priceRentApartmentT2);
+						DISPLAY_INFO(T3, borough.m_priceRentApartmentT3);
+						DISPLAY_INFO(T4+, borough.m_priceRentApartmentT4Plus);
+						DISPLAY_INFO(House, borough.m_priceRentHouse);
+
+						ImGui::EndTooltip();
+					}
+
+					if (update)
+					{
+						ComputeBoroughData(borough);
+					}
+
+					++cpt;
 				}
-
-				if (update)
-				{
-					ComputeBoroughData(borough);
-				}
-
-				++cpt;
+				ImGui::TreePop();
 			}
-			ImGui::TreePop();
+		}
+		else
+		{
+			char buf[128];
+			sprintf_s(buf, "Updating boroughs list... %c", "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+			ImGui::Text(buf);
 		}
 	}
 	
@@ -653,12 +683,15 @@ bool sCityComputeData::Process()
 					sBoroughData data;
 					data.m_city = m_city;
 					data.m_name = borough->m_name;
+					data.m_key = borough->m_internalID;
 					m_boroughs.push_back(data);
+
+					// Store data into DB
+					DatabaseManager::getSingleton()->AddBoroughData(data);
+
 					delete borough;
 				}
 			}
-
-			//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
 
 			IncreaseStep();
 		}

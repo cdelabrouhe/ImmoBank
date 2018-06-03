@@ -101,6 +101,7 @@ public:
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, sBoroughData& _data);
 	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 	bool	GetBoroughs(sCity& _city, std::vector<sBoroughData>& _data);
+	bool	IsCityUpdating(const std::string& _cityName);
 	bool	IsBoroughUpdating(sBoroughData& _data);
 
 	void	AddCity(const sCityData& _data);
@@ -128,7 +129,6 @@ private:
 	std::vector<sBoroughData>		m_boroughComputes;
 
 	// Display panel
-	char							m_inputTextCity[256];
 	int								m_selectedCityID = 0;
 	std::vector<std::string>		m_cityListFull;
 	int								m_hovered = -1;

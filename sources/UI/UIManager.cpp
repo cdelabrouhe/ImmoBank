@@ -58,9 +58,6 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("Database"))
 		{
-			if (ImGui::MenuItem("Compute city data"))
-				RequestManager::getSingleton()->CreateRequestCityDataDefault();
-
 			if (ImGui::MenuItem("View city data"))
 				DatabaseManager::getSingleton()->AskForDisplayCityInformation();
 

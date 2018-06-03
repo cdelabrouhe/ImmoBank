@@ -2,7 +2,6 @@
 #include <sstream>
 #include <iostream>
 #include "curl/curl.h"
-#include "OnlineManager.h"
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 

@@ -5,14 +5,13 @@
 #include <vector>
 #include "Request/SearchRequest/SearchRequest.h"
 
-class HTTPDownloader;
 struct SearchRequest;
 struct SearchRequestResult;
 
 class OnlineDatabase
 {
 public:
-	virtual void Init(HTTPDownloader* _downloader) = 0;
+	virtual void Init() = 0;
 	virtual void Process() = 0;
 	virtual int SendRequest(SearchRequest* _request) = 0;
 	virtual bool IsRequestAvailable(int _requestID) = 0;
@@ -33,7 +32,6 @@ protected:
 	virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
 
 protected:
-	HTTPDownloader*		m_downloader;
 	std::string			m_name;
 
 	struct sRequest

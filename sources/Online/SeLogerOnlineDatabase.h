@@ -40,7 +40,7 @@ private:
 	};
 
 public:
-	virtual void Init(HTTPDownloader* _downloader) override;
+	virtual void Init() override;
 	virtual void Process() override;
 	virtual int SendRequest(SearchRequest* _request) override;
 	virtual bool IsRequestAvailable(int _requestID) override;

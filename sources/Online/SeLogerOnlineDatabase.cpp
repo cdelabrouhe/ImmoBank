@@ -1,13 +1,12 @@
 #include "SeLogerOnlineDatabase.h"
-#include "HTTPDownloader.h"
+#include "OnlineManager.h"
 #include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 #include "Request/SearchRequest/SearchRequestAnnounce.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 
-void SeLogerOnlineDatase::Init(HTTPDownloader* _downloader)
+void SeLogerOnlineDatase::Init()
 {
-	m_downloader = _downloader;
 	SetName("SeLoger");
 }
 
@@ -78,7 +77,7 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
-	m_requests[ID].m_requestID = m_downloader->SendRequest(request);
+	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 	m_requests[ID].m_initialRequest = announce;
 
 	return ID;
@@ -88,7 +87,7 @@ bool SeLogerOnlineDatase::IsRequestAvailable(const int _requestID)
 {
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
-		return m_downloader->IsRequestAvailable(it->second.m_requestID);
+		return OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(it->second.m_requestID);
 
 	return false;
 }
@@ -99,7 +98,7 @@ bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<Sea
 	if (it != m_requests.end())
 	{
 		std::string str;
-		if (m_downloader->GetResult(it->second.m_requestID, str))
+		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(it->second.m_requestID, str))
 		{
 			SearchRequest* request = it->second.m_initialRequest;
 			bool result = ProcessResult(request, str, _result);

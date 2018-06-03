@@ -1,11 +1,9 @@
 #include "LeSiteImmoOnlineDatabase.h"
-#include "HTTPDownloader.h"
 #include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 
-void LeSiteImmoOnlineDatabase::Init(HTTPDownloader* _downloader)
+void LeSiteImmoOnlineDatabase::Init()
 {
-	m_downloader = _downloader;
 	SetName("LeSiteImmo");
 }
 

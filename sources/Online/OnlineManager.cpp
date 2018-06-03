@@ -32,11 +32,11 @@ void OnlineManager::Init()
 	s_downloader.Init();
 
 	auto seLogerDB = new SeLogerOnlineDatase();
-	seLogerDB->Init(&s_downloader);
+	seLogerDB->Init();
 	m_databases.push_back(seLogerDB);
 
 	auto leSiteImmoDB = new LeSiteImmoOnlineDatabase();
-	leSiteImmoDB->Init(&s_downloader);
+	leSiteImmoDB->Init();
 	m_databases.push_back(leSiteImmoDB);
 }
 

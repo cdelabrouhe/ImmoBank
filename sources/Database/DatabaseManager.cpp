@@ -228,9 +228,10 @@ void DatabaseManager::AddCity(const sCityData& _data)
 {
 	RemoveCityData(_data.m_data.m_name);
 
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, TIMEUPDATE) VALUES('%s', %d, %u)",
+	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', %d, %d, %u)",
 		_data.m_data.m_name.c_str(),
 		_data.m_data.m_zipCode,
+		_data.m_data.m_inseeCode,
 		_data.m_timeUpdate.GetData()))
 		printf("Add city %s to database Cities\n", _data.m_data.m_name.c_str());
 }
@@ -251,6 +252,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data)
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
+		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 	});
 
@@ -294,6 +296,7 @@ bool DatabaseManager::ListAllCities(std::vector<std::string>& _list)
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
+		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
 	});
 
@@ -314,6 +317,7 @@ void DatabaseManager::CreateTables()
 		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
 		"`NAME` TEXT,\n"			// Name of the city
 		"`ZIPCODE` INTEGER,\n"		// ZIP code
+		"`INSEECODE` INTEGER,\n"		// ZIP code
 		"`TIMEUPDATE` INTEGER"	// Last time the borough has been updated
 		")"
 	);
@@ -378,6 +382,7 @@ void DatabaseManager::Test()
 	sCityData city;
 	city.m_data.m_name = "Montpellier";
 	city.m_data.m_zipCode = 34000;
+	city.m_data.m_inseeCode = 340172;
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime(&t);
 	int year = 1900 + now->tm_year;
@@ -451,7 +456,6 @@ void DatabaseManager::InitDisplayCityInformation()
 {
 	m_cityListRequested = false;
 	m_selectedCityID = 0;
-	m_cityListFull;
 	m_hovered = -1;
 	m_selected = -1;
 }
@@ -538,8 +542,7 @@ void DatabaseManager::DisplayCityInformation()
 
 	if (!selectedCity.m_data.m_name.empty())
 	{
-		ImGui::Text("Name: %s", selectedCity.m_data.m_name.c_str());
-		ImGui::Text("ZipCode: %d", selectedCity.m_data.m_zipCode);
+		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", selectedCity.m_data.m_name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
 		if (ImGui::TreeNode("Boroughs"))
 		{
 			int cpt = 0;
@@ -557,33 +560,43 @@ void DatabaseManager::DisplayCityInformation()
 
 				ImGui::SameLine();
 
+				static float s_sizeMin = 0.8f;
+				static float s_size = 1.f;
+				static float s_sizeMax = 0.8f;
+				static ImVec4 s_colorMin(1.f,1.f,0.f,1.f);
+				static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
+				static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
+
+#define DISPLAY_INFO(name, data) \
+				ImGui::Text(#name " : "); \
+				ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("%.f", data.m_min); ImGui::PopStyleColor(); \
+				ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
+				ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
+
 				ImGui::Text("%s", borough.m_name.c_str());
 				bool hovered = ImGui::IsItemHovered();
 				if (hovered)
 				{
 					ImGui::BeginTooltip();
 					ImGui::Text("Key: %u", borough.m_key);
-					ImGui::Text("App buy min: %.2f", borough.m_priceBuyApartment.m_min);
-					ImGui::Text("App buy: %.2f", borough.m_priceBuyApartment.m_val);
-					ImGui::Text("App buy max: %.2f", borough.m_priceBuyApartment.m_max);
-					ImGui::Text("House buy min: %.2f", borough.m_priceBuyHouse.m_min);
-					ImGui::Text("House buy: %.2f", borough.m_priceBuyHouse.m_val);
-					ImGui::Text("House buy max: %.2f", borough.m_priceBuyHouse.m_max);
-					ImGui::Text("T1 rent min: %.2f", borough.m_priceRentApartmentT1.m_min);
-					ImGui::Text("T1 rent: %.2f", borough.m_priceRentApartmentT1.m_val);
-					ImGui::Text("T1 rent max: %.2f", borough.m_priceRentApartmentT1.m_max);
-					ImGui::Text("T2 rent min: %.2f", borough.m_priceRentApartmentT2.m_min);
-					ImGui::Text("T2 rent: %.2f", borough.m_priceRentApartmentT2.m_val);
-					ImGui::Text("T2 rent max: %.2f", borough.m_priceRentApartmentT2.m_max);
-					ImGui::Text("T3 rent min: %.2f", borough.m_priceRentApartmentT3.m_min);
-					ImGui::Text("T3 rent: %.2f", borough.m_priceRentApartmentT3.m_val);
-					ImGui::Text("T3 rent max: %.2f", borough.m_priceRentApartmentT3.m_max);
-					ImGui::Text("T4 rent min: %.2f", borough.m_priceRentApartmentT4Plus.m_min);
-					ImGui::Text("T4 rent: %.2f", borough.m_priceRentApartmentT4Plus.m_val);
-					ImGui::Text("T4 rent max: %.2f", borough.m_priceRentApartmentT4Plus.m_max);
-					ImGui::Text("House rent min: %.2f", borough.m_priceRentHouse.m_min);
-					ImGui::Text("House rent: %.2f", borough.m_priceRentHouse.m_val);
-					ImGui::Text("House rent max: %.2f", borough.m_priceRentHouse.m_max);
+					ImGui::Text("Prices (per m2) ");
+					ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
+					ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
+					ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
+
+					ImGui::Separator();
+
+					ImGui::Text("BUY");
+					DISPLAY_INFO(App, borough.m_priceBuyApartment);
+					DISPLAY_INFO(House, borough.m_priceBuyHouse);
+					ImGui::Separator();
+					ImGui::Text("RENT");
+					DISPLAY_INFO(T1, borough.m_priceRentApartmentT1);
+					DISPLAY_INFO(T2, borough.m_priceRentApartmentT2);
+					DISPLAY_INFO(T3, borough.m_priceRentApartmentT3);
+					DISPLAY_INFO(T4+, borough.m_priceRentApartmentT4Plus);
+					DISPLAY_INFO(House, borough.m_priceRentHouse);
+					
 					ImGui::EndTooltip();
 				}
 

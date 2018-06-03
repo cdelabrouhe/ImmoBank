@@ -591,6 +591,7 @@ void DatabaseManager::DisplayCityInformation()
 					static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
 
 #define DISPLAY_INFO(name, data) \
+				ImGui::SetWindowFontScale(1.f); \
 				ImGui::Text(#name " : "); \
 				ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("%.f", data.m_min); ImGui::PopStyleColor(); \
 				ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
@@ -601,6 +602,7 @@ void DatabaseManager::DisplayCityInformation()
 					if (hovered)
 					{
 						ImGui::BeginTooltip();
+						ImGui::SetWindowFontScale(1.0f);
 						ImGui::Text("Key: %u", borough.m_key);
 						ImGui::Text("Prices (per m2) ");
 						ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
@@ -609,10 +611,12 @@ void DatabaseManager::DisplayCityInformation()
 
 						ImGui::Separator();
 
+						ImGui::SetWindowFontScale(1.f);
 						ImGui::Text("BUY");
 						DISPLAY_INFO(App, borough.m_priceBuyApartment);
 						DISPLAY_INFO(House, borough.m_priceBuyHouse);
 						ImGui::Separator();
+						ImGui::SetWindowFontScale(1.f);
 						ImGui::Text("RENT");
 						DISPLAY_INFO(T1, borough.m_priceRentApartmentT1);
 						DISPLAY_INFO(T2, borough.m_priceRentApartmentT2);

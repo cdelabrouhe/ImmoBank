@@ -17,6 +17,8 @@ struct SearchRequestAnnounce : public SearchRequest
 
 	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
+	virtual SearchRequest* Clone() { return new SearchRequestAnnounce(); }
+
 	sCity					m_city;
 	Type					m_type = Type_NONE;
 	std::vector<Category>	m_categories;

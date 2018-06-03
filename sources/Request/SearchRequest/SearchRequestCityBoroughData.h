@@ -14,6 +14,8 @@ struct SearchRequestCityBoroughData : public SearchRequest
 
 	virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
+	virtual SearchRequest* Clone() { return new SearchRequestCityBoroughData(); }
+
 	sCity			m_city;
 	sBoroughData	m_data;
 

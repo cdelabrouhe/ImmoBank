@@ -53,4 +53,6 @@ struct SearchRequest
 	virtual void copyTo(SearchRequest* _target) = 0;
 
 	virtual bool IsAvailable() const = 0;
+
+	virtual SearchRequest* Clone() = 0;
 };

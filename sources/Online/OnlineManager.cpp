@@ -4,10 +4,6 @@
 #include "Tools/StringTools.h"
 #include "SeLogerOnlineDatabase.h"
 #include "LeSiteImmoOnlineDatabase.h"
-#include "Request/SearchRequest/SearchRequestAnnounce.h"
-#include "Request/SearchRequest/SearchRequestCityBoroughs.h"
-#include "Request/SearchRequest/SearchRequestCityData.h"
-#include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 
 OnlineManager* s_singleton = nullptr;
 
@@ -68,26 +64,7 @@ int OnlineManager::SendRequest(SearchRequest* _request)
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
-	SearchRequest* request = nullptr;
-	switch (_request->m_requestType)
-	{
-		case SearchRequestType_Announce:
-			request = new SearchRequestAnnounce();
-			break;
-			
-		case SearchRequestType_CityBoroughs:
-			request = new SearchRequestCityBoroughs();
-			break;
-
-		case SearchRequestType_CityData:
-			request = new SearchRequestCityData();
-			break;
-
-		case SearchRequestType_CityBoroughData:
-			request = new SearchRequestCityBoroughData();
-			break;
-	}
-	
+	SearchRequest* request = _request->Clone();
 	if (request)
 	{
 		m_requests[ID] = request;

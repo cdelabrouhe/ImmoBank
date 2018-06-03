@@ -320,9 +320,6 @@
     <Filter Include="Sources\Request\SearchRequest">
       <UniqueIdentifier>{f4185243-40be-4eaf-a2ad-1bbfea2966a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Request\SearchRequest\EditableRequest">
-      <UniqueIdentifier>{db04ee93-ebec-4d79-8751-e2fc20c7718a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Request\EditableRequest">
       <UniqueIdentifier>{18a145de-3cf3-47eb-a490-2da6c133b9e0}</UniqueIdentifier>
     </Filter>

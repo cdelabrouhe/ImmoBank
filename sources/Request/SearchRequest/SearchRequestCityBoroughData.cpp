@@ -82,6 +82,16 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 				if (findID != std::string::npos)
 				{
 					printf("ERROR: can't retrive borough information, too many requests and website banned us\n");
+					/*static bool s_test = false;
+					if (s_test)
+					{
+						FILE* f = fopen("error.html", "wt");
+						if (f)
+						{
+							fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+							fclose(f);
+						}
+					}*/
 					return false;
 				}
 			}

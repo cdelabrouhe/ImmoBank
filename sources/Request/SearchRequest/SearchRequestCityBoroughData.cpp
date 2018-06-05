@@ -80,7 +80,10 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 				// Bot behavior detected ?
 				findID = str.find("behavior");
 				if (findID != std::string::npos)
+				{
+					printf("ERROR: can't retrive borough information, too many requests and website banned us\n");
 					return false;
+				}
 			}
 
 			std::string tmp = str.substr(findID + searchStr.size(), str.size());

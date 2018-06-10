@@ -50,6 +50,7 @@ int main(int argc, char** argv)
 		OnlineManager::getSingleton()->Process();
 		RequestManager::getSingleton()->Process();
 		DatabaseManager::getSingleton()->Process();
+		UIManager::getSingleton()->Process();
 
 		const bool is_minimized = ProdToolGL_IsMinimized();
 		bool want_refresh = true;

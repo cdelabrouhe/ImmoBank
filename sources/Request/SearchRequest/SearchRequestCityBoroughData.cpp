@@ -17,7 +17,9 @@ void SearchRequestCityBoroughData::Init()
 	StringTools::ReplaceBadSyntax(boroughName, " \\ ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
-	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/";
+	if (!m_data.IsWholeCity())
+		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
 	StringTools::TransformToLower(request);
 #ifndef TEST_HTML
 	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);

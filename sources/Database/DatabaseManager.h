@@ -14,6 +14,8 @@ enum DataTables
 
 struct sqlite3;
 
+extern const std::string	s_wholeCityName;
+
 struct sPrice
 {
 	sPrice(float _val = 0.f, float _min = 0.f, float _max = 0.f)
@@ -41,6 +43,8 @@ public:
 	void Init();
 	bool Process();
 	void End();
+
+	bool IsWholeCity() const;
 
 	static bool compare(const sBoroughData &_a, const sBoroughData &_b)
 	{
@@ -105,17 +109,13 @@ public:
 	bool	IsBoroughUpdating(sBoroughData& _data);
 
 	void	AddCity(const sCityData& _data);
-	bool	GetCityData(const std::string& _name, sCityData& _data);
+	bool	GetCityData(const std::string& _name, sCityData& _data, sBoroughData* _wholeCity = nullptr);
 	bool	RemoveCityData(const std::string& _name);
 	bool	ListAllCities(std::vector<std::string>& _list);
 
 	void	ComputeCityData(const std::string& _cityName);
 	void	ComputeBoroughData(sBoroughData& _data);
 	
-	void	AskForDisplayCityInformation();
-	void	InitDisplayCityInformation();
-	void	DisplayCityInformation();
-
 private:
 	void	CreateTables();
 	void	OpenTables();
@@ -127,12 +127,4 @@ private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<sCityComputeData>	m_cityComputes;
 	std::vector<sBoroughData>		m_boroughComputes;
-
-	// Display panel
-	int								m_selectedCityID = 0;
-	std::vector<std::string>		m_cityListFull;
-	int								m_hovered = -1;
-	int								m_selected = -1;
-	bool							m_displayCityData = false;
-	bool							m_cityListRequested = false;
 };

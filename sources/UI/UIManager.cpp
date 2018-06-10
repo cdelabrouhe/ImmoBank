@@ -131,7 +131,7 @@ void UIManager::InitDisplayCityInformation()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DisplayPricesTooltip(sBoroughData& _borough)
+void DisplayPricesTooltip(BoroughData& _borough)
 {
 	static float s_sizeMin = 0.8f;
 	static float s_size = 1.f;
@@ -250,7 +250,7 @@ void UIManager::DisplayCityInformation()
 	if (m_selected >= (int)cityListFiltered.size())
 		m_selected = -1;
 
-	sBoroughData wholeCityData;
+	BoroughData wholeCityData;
 	sCityData selectedCity;
 	if (m_selected > -1)
 		DatabaseManager::getSingleton()->GetCityData(cityListFiltered[m_selected], selectedCity, &wholeCityData);
@@ -277,7 +277,7 @@ void UIManager::DisplayCityInformation()
 			ImGui::SameLine();
 			if (ImGui::Button("Update city average price"))
 			{
-				sBoroughData data;
+				BoroughData data;
 				data.m_city = selectedCity.m_data;
 				data.m_name = s_wholeCityName;
 				DatabaseManager::getSingleton()->ComputeBoroughData(data);

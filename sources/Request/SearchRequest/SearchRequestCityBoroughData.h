@@ -17,7 +17,7 @@ struct SearchRequestCityBoroughData : public SearchRequest
 	virtual SearchRequest* Clone() { return new SearchRequestCityBoroughData(); }
 
 	sCity			m_city;
-	sBoroughData	m_data;
+	BoroughData		m_data;
 
 private:
 	int				m_httpRequestsID = -1;

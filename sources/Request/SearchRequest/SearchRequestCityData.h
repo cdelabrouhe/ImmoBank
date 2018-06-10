@@ -35,7 +35,7 @@ public:
 
 private:
 	std::vector<int>			m_httpRequestsID;
-	std::vector<sBoroughData>	m_boroughs;
+	std::vector<BoroughData>	m_boroughs;
 	int							m_boroughsRequestID = -1;
 
 private:

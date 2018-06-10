@@ -74,7 +74,7 @@ void SearchRequestCityData::Process()
 				if (result->m_resultType == SearchRequestType_CityBoroughs)
 				{
 					SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
-					sBoroughData data;
+					BoroughData data;
 					data.m_city = m_city;
 					data.m_name = borough->m_name;
 					data.m_key = borough->m_internalID;
@@ -121,8 +121,8 @@ void SearchRequestCityData::Process()
 						if (result->m_resultType == SearchRequestType_CityBoroughData)
 						{
 							SearchRequestResulCityBoroughData* borough = static_cast<SearchRequestResulCityBoroughData*>(result);
-							sBoroughData data = borough->m_data;
-							auto it = std::find_if(m_boroughs.begin(), m_boroughs.end(), [data](sBoroughData& _data)->bool { return _data.m_name == data.m_name; });
+							BoroughData data = borough->m_data;
+							auto it = std::find_if(m_boroughs.begin(), m_boroughs.end(), [data](BoroughData& _data)->bool { return _data.m_name == data.m_name; });
 							if (it != m_boroughs.end())
 							{
 								*it = data;

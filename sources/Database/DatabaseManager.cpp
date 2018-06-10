@@ -39,7 +39,7 @@ void DatabaseManager::Process()
 	auto itCity = m_cityComputes.begin();
 	while (itCity != m_cityComputes.end())
 	{
-		sCityComputeData& data = *itCity;
+		CityComputeData& data = *itCity;
 		if (data.Process())
 			itCity = m_cityComputes.erase(itCity);
 		else
@@ -49,7 +49,7 @@ void DatabaseManager::Process()
 	auto itBorough = m_boroughComputes.begin();
 	while (itBorough != m_boroughComputes.end())
 	{
-		sBoroughData& data = *itBorough;
+		BoroughData& data = *itBorough;
 		if (data.Process())
 			itBorough = m_boroughComputes.erase(itBorough);
 		else
@@ -64,7 +64,7 @@ void DatabaseManager::End()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::AddBoroughData(const sBoroughData& _data)
+void DatabaseManager::AddBoroughData(const BoroughData& _data)
 {
 	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
 
@@ -98,12 +98,12 @@ void DatabaseManager::AddBoroughData(const sBoroughData& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::string& _name, sBoroughData& _data)
+bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
 
-	std::vector<sBoroughData> boroughs;
+	std::vector<BoroughData> boroughs;
 	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
 
 	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&boroughs](sqlite3_stmt* _stmt)
@@ -159,7 +159,7 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<sBoroughData>& _data)
+bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
@@ -210,7 +210,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<sBoroughData>& _data
 
 bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
 {
-	auto it = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](sCityComputeData& _cityData)->bool
+	auto it = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](CityComputeData& _cityData)->bool
 	{
 		return (_cityData.m_city == _cityName) && (_cityData.m_city == _cityName);
 	});
@@ -218,9 +218,9 @@ bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::IsBoroughUpdating(sBoroughData& _data)
+bool DatabaseManager::IsBoroughUpdating(BoroughData& _data)
 {
-	auto it = std::find_if(m_boroughComputes.begin(), m_boroughComputes.end(), [_data](sBoroughData& _boroughData)->bool
+	auto it = std::find_if(m_boroughComputes.begin(), m_boroughComputes.end(), [_data](BoroughData& _boroughData)->bool
 	{
 		return (_boroughData.m_city.m_name == _data.m_city.m_name) && (_boroughData.m_name == _data.m_name);
 	});
@@ -241,7 +241,7 @@ void DatabaseManager::AddCity(const sCityData& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, sBoroughData* _wholeCity)
+bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity)
 {
 	if (m_tables[DataTables_Cities] == nullptr)
 		return false;
@@ -265,12 +265,12 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, sB
 		_data = cities.back();
 		GetBoroughs(_data.m_data, _data.m_boroughs);
 
-		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), sBoroughData::compare);
+		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
 
 		auto it = _data.m_boroughs.begin();
 		while (it != _data.m_boroughs.end())
 		{
-			sBoroughData& data = *it;
+			BoroughData& data = *it;
 			if (_wholeCity && data.IsWholeCity())
 			{
 				*_wholeCity = data;
@@ -406,11 +406,11 @@ void DatabaseManager::Test()
 	city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 	AddCity(city);
 
-	sBoroughData mainCityData;
+	BoroughData mainCityData;
 	sCityData city2;
 	GetCityData("Montpellier", city2);
 
-	sBoroughData data;
+	BoroughData data;
 	data.m_name = "Antigone";
 	data.m_city.m_name = "Montpellier";
 	data.m_key = 13245;
@@ -440,7 +440,7 @@ void DatabaseManager::Test()
 
 	AddBoroughData(data);
 
-	sBoroughData data2;
+	BoroughData data2;
 	GetBoroughData("Montpellier", "Antigone", data2);
 	printf("");
 }
@@ -448,133 +448,15 @@ void DatabaseManager::Test()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::ComputeCityData(const std::string& _cityName)
 {
-	sCityComputeData data;
+	CityComputeData data;
 	data.m_city = _cityName;
 	m_cityComputes.push_back(data);
 	m_cityComputes.back().Init();
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::ComputeBoroughData(sBoroughData& _data)
+void DatabaseManager::ComputeBoroughData(BoroughData& _data)
 {
 	m_boroughComputes.push_back(_data);
 	m_boroughComputes.back().Init();
-}
-
-//-------------------------------------------------------------------------------------------------
-void sCityComputeData::Init()
-{
-	m_state = UpdateStep_GetCityData;
-
-	sCityData data;
-	if (DatabaseManager::getSingleton()->GetCityData(m_city, data))
-	{
-		SearchRequestCityBoroughs boroughs;
-		boroughs.m_city = m_city;
-		m_boroughsListID = OnlineManager::getSingleton()->SendRequest(&boroughs);
-
-		m_state = UpdateStep_GetBoroughList;
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-bool sCityComputeData::Process()
-{
-	switch (m_state)
-	{
-	// Borough list
-	case UpdateStep_GetBoroughList:
-		if ((m_boroughsListID > -1) && OnlineManager::getSingleton()->IsRequestAvailable(m_boroughsListID))
-		{
-			std::vector<SearchRequestResult*> list;
-			OnlineManager::getSingleton()->GetRequestResult(m_boroughsListID, list);
-			m_boroughsListID = -1;
-
-			for (auto result : list)
-			{
-				if (result->m_resultType == SearchRequestType_CityBoroughs)
-				{
-					SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
-					sBoroughData data;
-					data.m_city = m_city;
-					data.m_name = borough->m_name;
-					data.m_key = borough->m_internalID;
-					m_boroughs.push_back(data);
-
-					// Store data into DB
-					DatabaseManager::getSingleton()->AddBoroughData(data);
-
-					delete borough;
-				}
-			}
-
-			IncreaseStep();
-		}
-		break;
-
-	// Boroughs prices
-	case UpdateStep_ComputeBoroughsPrices:
-		{
-			if (true)
-			{
-				IncreaseStep();
-			}
-		}
-		break;
-	}
-	
-	return m_state == UpdateStep_COUNT;
-}
-
-//-------------------------------------------------------------------------------------------------
-void sCityComputeData::End()
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-void sBoroughData::Init()
-{
-	SearchRequestCityBoroughData request;
-	request.m_data = *this;
-	request.m_city = m_city;
-	m_httpRequestID = OnlineManager::getSingleton()->SendRequest(&request);
-}
-
-//-------------------------------------------------------------------------------------------------
-bool sBoroughData::Process()
-{
-	if (OnlineManager::getSingleton()->IsRequestAvailable(m_httpRequestID))
-	{
-		std::vector<SearchRequestResult*> list;
-		if (OnlineManager::getSingleton()->GetRequestResult(m_httpRequestID, list))
-		{
-			m_httpRequestID = -1;
-
-			for (auto result : list)
-			{
-				if (result->m_resultType == SearchRequestType_CityBoroughData)
-				{
-					SearchRequestResulCityBoroughData* borough = static_cast<SearchRequestResulCityBoroughData*>(result);
-					DatabaseManager::getSingleton()->AddBoroughData(borough->m_data);
-				}
-			}
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-//-------------------------------------------------------------------------------------------------
-void sBoroughData::End()
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-bool sBoroughData::IsWholeCity() const
-{
-	return m_name == s_wholeCityName;
 }

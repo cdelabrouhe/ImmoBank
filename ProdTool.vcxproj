@@ -184,6 +184,8 @@
     <ClInclude Include="extern\opengl\libs\gl3w\GL\gl3w.h" />
     <ClInclude Include="extern\opengl\libs\gl3w\GL\glcorearb.h" />
     <ClInclude Include="extern\sqlite\include\sqlite3.h" />
+    <ClInclude Include="sources\Database\BoroughData.h" />
+    <ClInclude Include="sources\Database\CityComputeData.h" />
     <ClInclude Include="sources\Database\DatabaseManager.h" />
     <ClInclude Include="sources\Database\SQLDatabase.h" />
     <ClInclude Include="sources\GL\imgui_impl_glfw_gl2.h" />
@@ -221,6 +223,8 @@
     <ClCompile Include="extern\jsoncpp\json_value.cpp" />
     <ClCompile Include="extern\jsoncpp\json_writer.cpp" />
     <ClCompile Include="extern\opengl\libs\gl3w\GL\gl3w.c" />
+    <ClCompile Include="sources\Database\BoroughData.cpp" />
+    <ClCompile Include="sources\Database\CityComputeData.cpp" />
     <ClCompile Include="sources\Database\DatabaseManager.cpp" />
     <ClCompile Include="sources\Database\SQLDatabase.cpp" />
     <ClCompile Include="sources\GL\imgui_impl_glfw_gl2.cpp" />

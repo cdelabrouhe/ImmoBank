@@ -11,5 +11,5 @@ struct SearchRequestResulCityBoroughData : public SearchRequestResult
 		*this = _request;
 	}
 
-	sBoroughData	m_data;
+	BoroughData	m_data;
 };

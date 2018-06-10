@@ -166,6 +166,12 @@
     <ClInclude Include="sources\Request\EditableRequest\EditableRequestAnnounce.h">
       <Filter>Sources\Request\EditableRequest</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Database\BoroughData.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Database\CityComputeData.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -257,6 +263,12 @@
     </ClCompile>
     <ClCompile Include="sources\Request\EditableRequest\EditableRequestAnnounce.cpp">
       <Filter>Sources\Request\EditableRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\BoroughData.cpp">
+      <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\CityComputeData.cpp">
+      <Filter>Sources\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

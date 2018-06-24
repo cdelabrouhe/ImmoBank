@@ -52,6 +52,8 @@ public:
 
 	void	ComputeCityData(const std::string& _cityName);
 	void	ComputeBoroughData(BoroughData& _data);
+
+	inline bool IsModified() const		{ return m_modified; }
 	
 private:
 	void	CreateTables();
@@ -64,4 +66,5 @@ private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<CityComputeData>	m_cityComputes;
 	std::vector<BoroughData>		m_boroughComputes;
+	bool							m_modified = false;
 };

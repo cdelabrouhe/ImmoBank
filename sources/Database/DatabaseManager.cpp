@@ -36,6 +36,7 @@ void DatabaseManager::Init()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::Process()
 {
+	m_modified = false;
 	auto itCity = m_cityComputes.begin();
 	while (itCity != m_cityComputes.end())
 	{
@@ -66,6 +67,8 @@ void DatabaseManager::End()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddBoroughData(const BoroughData& _data)
 {
+	m_modified = true;
+
 	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
 
 	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
@@ -152,6 +155,8 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
 
+	m_modified = true;
+
 	std::vector<sCityData> cities;
 	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
 
@@ -230,6 +235,8 @@ bool DatabaseManager::IsBoroughUpdating(BoroughData& _data)
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::AddCity(const sCityData& _data)
 {
+	m_modified = true;
+
 	RemoveCityData(_data.m_data.m_name);
 
 	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', %d, %d, %u)",
@@ -290,6 +297,8 @@ bool DatabaseManager::RemoveCityData(const std::string& _name)
 {
 	if (m_tables[DataTables_Cities] == nullptr)
 		return false;
+
+	m_modified = true;
 
 	std::vector<sCityData> cities;
 	Str128f sql("DELETE FROM Cities WHERE NAME='%s'", _name.c_str());

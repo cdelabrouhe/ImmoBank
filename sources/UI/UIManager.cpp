@@ -131,49 +131,6 @@ void UIManager::InitDisplayCityInformation()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DisplayPricesTooltip(BoroughData& _borough)
-{
-	static float s_sizeMin = 0.8f;
-	static float s_size = 1.f;
-	static float s_sizeMax = 0.8f;
-	static ImVec4 s_colorMin(1.f, 1.f, 0.f, 1.f);
-	static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
-	static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
-
-#define DISPLAY_INFO(name, data) \
-				ImGui::SetWindowFontScale(1.f); \
-				ImGui::Text(#name " : "); \
-				ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("%.f", data.m_min); ImGui::PopStyleColor(); \
-				ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
-				ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
-
-	ImGui::BeginTooltip();
-	ImGui::SetWindowFontScale(1.0f);
-	//ImGui::Text("Key: %u", _borough.m_key);
-	ImGui::Text("Prices (per m2) ");
-	ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
-	ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
-	ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
-
-	ImGui::Separator();
-
-	ImGui::SetWindowFontScale(1.f);
-	ImGui::Text("BUY");
-	DISPLAY_INFO(App, _borough.m_priceBuyApartment);
-	DISPLAY_INFO(House, _borough.m_priceBuyHouse);
-	ImGui::Separator();
-	ImGui::SetWindowFontScale(1.f);
-	ImGui::Text("RENT");
-	DISPLAY_INFO(T1, _borough.m_priceRentApartmentT1);
-	DISPLAY_INFO(T2, _borough.m_priceRentApartmentT2);
-	DISPLAY_INFO(T3, _borough.m_priceRentApartmentT3);
-	DISPLAY_INFO(T4 + , _borough.m_priceRentApartmentT4Plus);
-	DISPLAY_INFO(House, _borough.m_priceRentHouse);
-
-	ImGui::EndTooltip();
-}
-
-//-------------------------------------------------------------------------------------------------
 void UIManager::DisplayCityInformation()
 {
 	static CitySelector s_citySelector;
@@ -250,10 +207,20 @@ void UIManager::DisplayCityInformation()
 	if (m_selected >= (int)cityListFiltered.size())
 		m_selected = -1;
 
-	BoroughData wholeCityData;
-	sCityData selectedCity;
+	// Only update city data when changed
+	static std::string s_currentSelection;
+	static BoroughData wholeCityData;
+	static sCityData selectedCity;
 	if (m_selected > -1)
-		DatabaseManager::getSingleton()->GetCityData(cityListFiltered[m_selected], selectedCity, &wholeCityData);
+	{
+		if (s_currentSelection != cityListFiltered[m_selected])
+		{
+			s_currentSelection = cityListFiltered[m_selected];
+			DatabaseManager::getSingleton()->GetCityData(s_currentSelection, selectedCity, &wholeCityData);
+			wholeCityData.m_city = selectedCity.m_data;
+			wholeCityData.SetWholeCity();
+		}
+	}
 
 	ImGui::EndChild();
 	ImGui::SameLine();
@@ -261,21 +228,20 @@ void UIManager::DisplayCityInformation()
 	// Right panel (infos display)
 	ImGui::BeginChild("Item view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing())); // Leave room for 1 line below us
 
+	bool hovered = false;
 	if (!selectedCity.m_data.m_name.empty())
 	{
 		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", selectedCity.m_data.m_name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
-		bool hovered = ImGui::IsItemHovered();
-		if (hovered)
-			DisplayPricesTooltip(wholeCityData);
+		
+		wholeCityData.DisplayAsTooltip();
 
 		if (!DatabaseManager::getSingleton()->IsCityUpdating(selectedCity.m_data.m_name))
 		{
-			ImGui::SameLine();
 			if (ImGui::Button("Update boroughs list"))
 				DatabaseManager::getSingleton()->ComputeCityData(selectedCity.m_data.m_name);
 
 			ImGui::SameLine();
-			if (ImGui::Button("Update city average price"))
+			if (ImGui::Button("Auto update city price"))
 			{
 				BoroughData data;
 				data.m_city = selectedCity.m_data;
@@ -283,27 +249,54 @@ void UIManager::DisplayCityInformation()
 				DatabaseManager::getSingleton()->ComputeBoroughData(data);
 			}
 
+			ImGui::SameLine();
+
+			static BoroughData* s_selectedData = nullptr;
+			if (ImGui::Button("Manual edit city price"))
+			{
+				ImGui::OpenPopup("ManualEdit");
+				s_selectedData = &wholeCityData;
+			}
+
+			if (s_selectedData == &wholeCityData)
+				wholeCityData.Edit();
+
 			if (ImGui::TreeNode("Boroughs"))
 			{
 				int cpt = 0;
 				for (auto& borough : selectedCity.m_boroughs)
 				{
-					ImGui::PushID(this + cpt);
 					bool updating = DatabaseManager::getSingleton()->IsBoroughUpdating(borough);
 					bool update = false;
+					bool manual = false;
 					if (!updating)
-						update = ImGui::Button("Update");
+					{
+						ImGui::PushID(this + cpt);
+						update = ImGui::Button("Auto update");
+						ImGui::PopID();
+
+						ImGui::SameLine();
+
+						ImGui::PushID(this + cpt + 10000);
+						manual = ImGui::Button("Manual update");
+						ImGui::PopID();
+
+						if (manual)
+						{
+							ImGui::OpenPopup("ManualEdit");
+							s_selectedData = &borough;
+						}
+
+						if (s_selectedData == &borough)
+							borough.Edit();
+					}
 					else
 						ImGui::Text("Updating...");
-
-					ImGui::PopID();
-
+					
 					ImGui::SameLine();
 
 					ImGui::Text("%s", borough.m_name.c_str());
-					hovered = ImGui::IsItemHovered();
-					if (hovered)
-						DisplayPricesTooltip(borough);
+					borough.DisplayAsTooltip();
 
 					if (update)
 						DatabaseManager::getSingleton()->ComputeBoroughData(borough);

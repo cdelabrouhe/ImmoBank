@@ -208,14 +208,16 @@ void UIManager::DisplayCityInformation()
 		m_selected = -1;
 
 	// Only update city data when changed
+	bool forceUpdate = DatabaseManager::getSingleton()->IsModified();
 	static std::string s_currentSelection;
 	static BoroughData wholeCityData;
 	static sCityData selectedCity;
 	if (m_selected > -1)
 	{
-		if (s_currentSelection != cityListFiltered[m_selected])
+		if (forceUpdate || (s_currentSelection != cityListFiltered[m_selected]))
 		{
 			s_currentSelection = cityListFiltered[m_selected];
+			wholeCityData.Reset();
 			DatabaseManager::getSingleton()->GetCityData(s_currentSelection, selectedCity, &wholeCityData);
 			wholeCityData.m_city = selectedCity.m_data;
 			wholeCityData.SetWholeCity();

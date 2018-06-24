@@ -62,12 +62,12 @@ bool BoroughData::IsWholeCity() const
 void BoroughData::Edit()
 {
 	// Popup ?
-#define EDIT_INFO(name, data) \
+#define EDIT_INFO(name, data, decimal) \
 			ImGui::SetWindowFontScale(1.f); \
 			ImGui::Text(#name " : "); \
 			ImGui::SameLine(); \
 			ImGui::PushID(this + localID++); \
-			ImGui::InputFloat3("Min / Avg / Max",&data.m_min, 1); \
+			ImGui::InputFloat3("Min / Avg / Max",&data.m_min, decimal); \
 			ImGui::PopID(); \
 
 	if (ImGui::BeginPopupModal("ManualEdit", NULL, ImGuiWindowFlags_AlwaysAutoResize))
@@ -75,23 +75,26 @@ void BoroughData::Edit()
 		ImGui::SetWindowFontScale(1.f);
 		ImGui::Text("BUY");
 		int localID = 0;
-		EDIT_INFO(App, m_priceBuyApartment);
-		EDIT_INFO(House, m_priceBuyHouse);
+		EDIT_INFO(App, m_priceBuyApartment, 0);
+		EDIT_INFO(House, m_priceBuyHouse, 0);
 		ImGui::Separator();
 		ImGui::SetWindowFontScale(1.f);
 		ImGui::Text("RENT");
-		EDIT_INFO(T1, m_priceRentApartmentT1);
-		EDIT_INFO(T2, m_priceRentApartmentT2);
-		EDIT_INFO(T3, m_priceRentApartmentT3);
-		EDIT_INFO(T4 + , m_priceRentApartmentT4Plus);
-		EDIT_INFO(House, m_priceRentHouse);
+		EDIT_INFO(T1, m_priceRentApartmentT1, 1);
+		EDIT_INFO(T2, m_priceRentApartmentT2, 1);
+		EDIT_INFO(T3, m_priceRentApartmentT3, 1);
+		EDIT_INFO(T4 + , m_priceRentApartmentT4Plus, 1);
+		EDIT_INFO(House, m_priceRentHouse, 1);
+
+		ImGui::Separator();
+
 		if (ImGui::Button("Save"))
 		{
 			DatabaseManager::getSingleton()->AddBoroughData(*this);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Close"))
+		if (ImGui::Button("Cancel"))
 			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}

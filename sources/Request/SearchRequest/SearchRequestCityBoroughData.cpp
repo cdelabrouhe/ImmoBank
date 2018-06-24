@@ -17,7 +17,11 @@ void SearchRequestCityBoroughData::Init()
 	StringTools::ReplaceBadSyntax(boroughName, " \\ ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
-	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + std::to_string(m_city.m_zipCode) + "/";
+	std::string zipCode = std::to_string(m_city.m_zipCode);
+	while (zipCode.size() < 5)
+		zipCode = "0" + zipCode;
+
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + zipCode + "/";
 	if (!m_data.IsWholeCity())
 		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
 	StringTools::TransformToLower(request);
@@ -93,8 +97,16 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 							fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
 							fclose(f);
 						}
-					}*/
-					return false;
+					}
+					return false;*/
+				}
+				else
+				{
+					findID = str.find("Ooops");
+					if (findID != std::string::npos)
+					{
+						printf("ERROR: bad request, maybe a bad city name ?\n");
+					}
 				}
 			}
 

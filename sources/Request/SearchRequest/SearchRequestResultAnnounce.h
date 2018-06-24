@@ -17,10 +17,13 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 	sCity		m_city;
 	Type		m_type = Type_NONE;
 	Category	m_category = Category_NONE;
+	BoroughData	m_selectedBorough;
+	std::vector<BoroughData> m_boroughs;
 	int			m_price = 0;
 	float		m_surface = 0.f;
 	int			m_nbRooms = 0;
 	int			m_nbBedRooms = 0;
+	int			m_selectedBoroughID = 0;
 
 	virtual void PostProcess() override;
 	virtual void Display() override;

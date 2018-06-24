@@ -29,6 +29,12 @@ bool CitySelector::Display()
 				std::string name = val["nom"].asString();
 				std::string codeStr = val["code"].asString();
 				std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
+
+				// Replace 001 by 000
+				auto it = zipCodeStr.find("001");
+				if (it != std::string::npos)
+					StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
+
 				int code = std::stoi(codeStr);
 				int zipCode = std::stoi(zipCodeStr);
 				m_cities.push_back(sCity(name, code, zipCode));

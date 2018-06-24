@@ -47,6 +47,18 @@ void BoroughData::End()
 }
 
 //-------------------------------------------------------------------------------------------------
+void BoroughData::Reset()
+{
+	m_priceRentApartmentT1.Reset();
+	m_priceRentApartmentT2.Reset();
+	m_priceRentApartmentT3.Reset();
+	m_priceRentApartmentT4Plus.Reset();
+	m_priceBuyApartment.Reset();
+	m_priceBuyHouse.Reset();
+	m_priceRentHouse.Reset();
+}
+
+//-------------------------------------------------------------------------------------------------
 void BoroughData::SetWholeCity()
 {
 	m_name = s_wholeCityName;

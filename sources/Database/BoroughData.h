@@ -7,6 +7,9 @@ struct sPrice
 {
 	sPrice(float _val = 0.f, float _min = 0.f, float _max = 0.f)
 		: m_val(_val), m_min(_min), m_max(_max) {}
+
+	void Reset() { m_min = 0.f; m_val = 0.f; m_max = 0.f; }
+
 	float m_min = 0.f;
 	float m_val = 0.f;
 	float m_max = 0.f;
@@ -30,6 +33,7 @@ public:
 	void Init();
 	bool Process();
 	void End();
+	void Reset();
 
 	void Edit();
 	void DisplayAsTooltip();

@@ -140,6 +140,7 @@ void UIManager::DisplayCityInformation()
 	{
 		m_cityListFull.clear();
 		DatabaseManager::getSingleton()->ListAllCities(m_cityListFull);
+		std::sort(m_cityListFull.begin(), m_cityListFull.end());
 		m_cityListRequested = true;
 	}
 
@@ -280,7 +281,7 @@ void UIManager::DisplayCityInformation()
 						ImGui::SameLine();
 
 						ImGui::PushID(this + cpt + 10000);
-						manual = ImGui::Button("Manual update");
+						manual = ImGui::Button("Edit");
 						ImGui::PopID();
 
 						if (manual)

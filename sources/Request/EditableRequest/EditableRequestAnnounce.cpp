@@ -151,10 +151,14 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		else
 		{
 			ImGui::Text("%u results available", m_result.size());
+			ImGui::SameLine();
+			static ImGuiTextFilter filter;
+			filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+
 			for (size_t ID = 0; ID < m_result.size(); ++ID)
 			{
 				auto request = m_result[ID];
-				request->Display();
+				request->Display(&filter);
 			}
 		}
 	}

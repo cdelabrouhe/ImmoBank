@@ -26,7 +26,7 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 	int			m_selectedBoroughID = 0;
 
 	virtual void PostProcess() override;
-	virtual void Display() override;
+	virtual void Display(ImGuiTextFilter* _filter = nullptr) override;
 
 	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
 	{
@@ -34,4 +34,10 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 		m_type = _request.m_type;
 		return *this;
 	}
+
+private:
+	void UpdateBoroughs();
+
+private:
+	bool m_waitingForDBUpdate = false;
 };

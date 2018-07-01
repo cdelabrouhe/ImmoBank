@@ -2,6 +2,7 @@
 
 #include "SearchRequest.h"
 
+struct ImGuiTextFilter;
 struct SearchRequestResult
 {
 	SearchRequestResult(SearchRequestType _type) : m_resultType(_type) {}
@@ -9,5 +10,5 @@ struct SearchRequestResult
 	SearchRequestType m_resultType;
 
 	virtual void PostProcess() {}
-	virtual void Display() {}
+	virtual void Display(ImGuiTextFilter* _filter = nullptr) {}
 };

@@ -23,6 +23,7 @@ public:
 	void	AskForDisplayCityInformation();
 	void	InitDisplayCityInformation();
 	void	DisplayCityInformation();
+	void	DisplayComputeRateTool();
 
 private:
 	// Display panel

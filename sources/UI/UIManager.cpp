@@ -46,7 +46,7 @@ bool UIManager::Draw()
 	static bool showTestWindow = false;
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("File"))
+		if (ImGui::BeginMenu("Request"))
 		{
 			if (ImGui::MenuItem("New request"))
 				RequestManager::getSingleton()->CreateRequestAnnounceDefault();
@@ -60,11 +60,25 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("Database"))
 		{
-			if (ImGui::MenuItem("View city data"))
+			if (ImGui::MenuItem("Explore database"))
 				UIManager::getSingleton()->AskForDisplayCityInformation();
 
 			ImGui::EndMenu();
 		}
+
+		bool openRate = false;
+		if (ImGui::BeginMenu("Tools"))
+		{
+			if (ImGui::MenuItem("Compute rentability rate"))
+				openRate = true;
+
+			ImGui::EndMenu();
+		}
+
+		if (openRate)
+			ImGui::OpenPopup("Compute rate");
+
+		DisplayComputeRateTool();
 
 		if (ImGui::BeginMenu("Window"))
 		{
@@ -110,7 +124,6 @@ void UIManager::Process()
 {
 	if (m_displayCityData)
 		DisplayCityInformation();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -320,4 +333,31 @@ void UIManager::DisplayCityInformation()
 	ImGui::EndChild();
 
 	ImGui::End();
+}
+
+//-------------------------------------------------------------------------------------------------
+void UIManager::DisplayComputeRateTool()
+{
+	if (ImGui::BeginPopupModal("Compute rate", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::SetWindowFontScale(1.f);
+
+		static int s_rent = 700;
+		static int s_price = 150000;
+		static float s_result = 0.f;
+		ImGui::InputInt("Rent", &s_rent);
+		ImGui::InputInt("Price", &s_price);
+
+		ImGui::Separator();
+		ImGui::Text("Rate: %.2f", s_result);
+		ImGui::Separator();
+
+		if (ImGui::Button("Compute"))
+			s_result = (float)s_rent * 12.f * 100.f / (float)s_price;
+
+		ImGui::SameLine();
+		if (ImGui::Button("Exit"))
+			ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
 }

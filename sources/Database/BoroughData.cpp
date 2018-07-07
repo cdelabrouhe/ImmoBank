@@ -85,6 +85,13 @@ void BoroughData::Edit()
 	if (ImGui::BeginPopupModal("ManualEdit", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::SetWindowFontScale(1.f);
+#ifdef _DEBUG
+		static int s_key;
+		s_key = m_key;
+		if (ImGui::InputInt("Key", &s_key))
+			m_key = s_key;
+#endif
+		ImGui::Separator();
 		ImGui::Text("BUY");
 		int localID = 0;
 		EDIT_INFO(App, m_priceBuyApartment, 0);
@@ -133,6 +140,9 @@ void BoroughData::DisplayAsTooltip()
 
 		ImGui::BeginTooltip();
 		ImGui::SetWindowFontScale(1.0f);
+#ifdef _DEBUG
+		ImGui::Text("Key: %u", m_key);
+#endif
 		ImGui::Text("Prices (per m2) ");
 		ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
 		ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();

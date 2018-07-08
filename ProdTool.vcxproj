@@ -207,6 +207,7 @@
     <ClInclude Include="sources\Request\SearchRequest\SearchRequestResulCityBoroughData.h" />
     <ClInclude Include="sources\Request\SearchRequest\SearchRequestResult.h" />
     <ClInclude Include="sources\Request\SearchRequest\SearchRequestResultAnnounce.h" />
+    <ClInclude Include="sources\Tools\Tools.h" />
     <ClInclude Include="sources\Tools\Types.h" />
     <ClInclude Include="sources\Request\RequestManager.h" />
     <ClInclude Include="sources\Tools\StringTools.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="sources\Request\SearchRequest\SearchRequestResultAnnounce.cpp" />
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
+    <ClCompile Include="sources\Tools\Tools.cpp" />
     <ClCompile Include="sources\UI\CitySelector.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />
   </ItemGroup>

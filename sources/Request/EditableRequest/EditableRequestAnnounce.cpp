@@ -11,6 +11,7 @@
 #include "Database/DatabaseManager.h"
 #include <time.h>
 #include "Request/SearchRequest/SearchRequestResult.h"
+#include <algorithm>
 
 void EditableRequestAnnounce::Init(SearchRequest* _request)
 {
@@ -154,11 +155,23 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			ImGui::SameLine();
 			static ImGuiTextFilter filter;
 			filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
-
+			std::vector<SearchRequestResult*> toRemove;
 			for (size_t ID = 0; ID < m_result.size(); ++ID)
 			{
 				auto request = m_result[ID];
-				request->Display(&filter);
+				if (!request->Display(&filter))
+					toRemove.push_back(request);
+			}
+
+			for (auto& request : toRemove)
+			{
+				auto it = std::find_if(m_result.begin(), m_result.end(), [request](SearchRequestResult* _request)->bool
+				{
+					return _request == request;
+				});
+
+				if (it != m_result.end())
+					m_result.erase(it);
 			}
 		}
 	}

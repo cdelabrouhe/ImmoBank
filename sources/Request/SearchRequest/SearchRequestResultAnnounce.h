@@ -26,7 +26,7 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 	int			m_selectedBoroughID = 0;
 
 	virtual void PostProcess() override;
-	virtual void Display(ImGuiTextFilter* _filter = nullptr) override;
+	virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;
 
 	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
 	{

@@ -172,6 +172,9 @@
     <ClInclude Include="sources\Database\CityComputeData.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Tools\Tools.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -269,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="sources\Database\CityComputeData.cpp">
       <Filter>Sources\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\Tools.cpp">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

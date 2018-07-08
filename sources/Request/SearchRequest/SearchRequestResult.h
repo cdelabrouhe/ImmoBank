@@ -10,5 +10,5 @@ struct SearchRequestResult
 	SearchRequestType m_resultType;
 
 	virtual void PostProcess() {}
-	virtual void Display(ImGuiTextFilter* _filter = nullptr) {}
+	virtual bool Display(ImGuiTextFilter* _filter = nullptr) { return true; }
 };

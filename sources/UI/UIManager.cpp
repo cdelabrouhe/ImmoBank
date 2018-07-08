@@ -9,6 +9,7 @@
 #include "Database/DatabaseManager.h"
 #include "CitySelector.h"
 #include "Tools/StringTools.h"
+#include "Tools/Tools.h"
 
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
@@ -353,7 +354,7 @@ void UIManager::DisplayComputeRateTool()
 		ImGui::Separator();
 
 		if (ImGui::Button("Compute"))
-			s_result = (float)s_rent * 12.f * 100.f / (float)s_price;
+			s_result = Tools::ComputeRentabilityRate(s_rent, s_price);
 
 		ImGui::SameLine();
 		if (ImGui::Button("Exit"))

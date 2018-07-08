@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <algorithm>
+#include "Tools\Tools.h"
 
 void SearchRequestResultAnnounce::PostProcess()
 {
@@ -41,12 +42,13 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 	}
 }
 
-void SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
+bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 {
+	bool keep = true;
 	if (_filter)
 	{
 		if (!_filter->PassFilter(m_name.c_str()) && !_filter->PassFilter(m_description.c_str()))
-			return;
+			return true;
 	}
 
 	ImGui::Columns(1);
@@ -59,7 +61,13 @@ void SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 		ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 
-	ImGui::SetWindowFontScale(1.0f);
+	ImGui::SameLine();
+	ImGui::SetWindowFontScale(1.f);
+
+	ImGui::PushID(this + 123456);
+	if (ImGui::Button("Remove"))
+		keep = false;
+	ImGui::PopID();
 
 	ImGui::TextWrapped(m_description.c_str());
 
@@ -105,7 +113,7 @@ void SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		else
 			rent = m_surface * borough.m_priceRentApartmentT4Plus.m_val;
 
-		float val = rent * 12.f * 100.f / m_price;
+		float val = Tools::ComputeRentabilityRate(rent, (float)m_price);
 		rate = "Rate: " + std::to_string(val);
 	}
 
@@ -132,4 +140,6 @@ void SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::Text(" ");
+
+	return keep;
 }

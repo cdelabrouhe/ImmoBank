@@ -87,14 +87,14 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	// Compute rentability rate
 	bool needNeighboorUpdate = false;
 	std::string rate = "<= Select borough";
-	std::string boroughName;
+	BoroughData requestBorough;
 	if (m_selectedBoroughID > 0)
 	{
 		BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
 		if (borough.m_priceRentApartmentT1.m_val < 0.1f)
 		{
 			needNeighboorUpdate = true;
-			boroughName = borough.m_name;
+			requestBorough = borough;
 		}
 
 		if (m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough))
@@ -122,10 +122,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		ImGui::Text("%s     ", rate.c_str());
 	else if (ImGui::Button("Update borough"))
 	{
-		BoroughData data;
-		data.m_city = m_city;
-		data.m_name = boroughName;
-		DatabaseManager::getSingleton()->ComputeBoroughData(data);
+		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);
 		m_waitingForDBUpdate = true;
 	}
 	ImGui::NextColumn();

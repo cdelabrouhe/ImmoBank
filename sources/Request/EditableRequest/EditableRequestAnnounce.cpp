@@ -163,7 +163,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 					toRemove.push_back(request);
 			}
 
-			for (auto& request : toRemove)
+			for (auto request : toRemove)
 			{
 				auto it = std::find_if(m_result.begin(), m_result.end(), [request](SearchRequestResult* _request)->bool
 				{
@@ -172,6 +172,8 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 
 				if (it != m_result.end())
 					m_result.erase(it);
+
+				delete request;
 			}
 		}
 	}

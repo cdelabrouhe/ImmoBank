@@ -120,6 +120,12 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::NextColumn();
 	if (!needNeighboorUpdate)
 		ImGui::Text("%s     ", rate.c_str());
+	else if (m_waitingForDBUpdate)
+	{
+		char buf[128];
+		sprintf_s(buf, "Updating borough... %c", "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+		ImGui::Text(buf);
+	}
 	else if (ImGui::Button("Update borough"))
 	{
 		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);

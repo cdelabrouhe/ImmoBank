@@ -99,6 +99,7 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 						}
 					}
 					return false;*/
+					return true;
 				}
 				else
 				{

@@ -306,15 +306,19 @@ void UIManager::DisplayCityInformation()
 
 						if (s_selectedData == &borough)
 							borough.Edit();
+
+						ImGui::SameLine();
+
+						ImGui::Text("%s", borough.m_name.c_str());
+						borough.DisplayAsTooltip();
 					}
 					else
-						ImGui::Text("Updating...");
+					{
+						char buf[128];
+						sprintf_s(buf, "Updating %s... %c ", borough.m_name.c_str(), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+						ImGui::Text(buf);
+					}
 					
-					ImGui::SameLine();
-
-					ImGui::Text("%s", borough.m_name.c_str());
-					borough.DisplayAsTooltip();
-
 					if (update)
 						DatabaseManager::getSingleton()->ComputeBoroughData(borough);
 

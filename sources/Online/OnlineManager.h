@@ -24,7 +24,7 @@ public:
 
 	bool	IsRequestAvailable(int _requestID) const;
 	void	DeleteRequest(int _requestID);
-	int		SendBasicHTTPRequest(const std::string& _request);
+	int		SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent = false);
 	bool	IsBasicHTTPRequestAvailable(int _requestID) const;
 	bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
 	void	CancelBasicHTTPRequest(const int _requestID);

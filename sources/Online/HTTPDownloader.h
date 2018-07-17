@@ -18,6 +18,7 @@ struct sStoreRequest
 	std::string m_result;
 	bool m_finished = false;
 	bool m_canceled = false;
+	bool m_protectUserAgent = false;
 };
 
 class Thread;
@@ -33,6 +34,7 @@ struct sRequest
 	int	m_requestID;
 	std::string	m_request;
 	std::string	m_result;
+	bool m_protectUserAgent = false;
 };
 
 class HTTPDownloader
@@ -46,7 +48,7 @@ public:
 	void Process();
 	void End();
 
-	int SendRequest(const std::string& _request);
+	int SendRequest(const std::string& _request, bool _modifyUserAgent);
 	void SetResult(const int _requestID, std::string& _result);
 	bool GetResult(const int _requestID, std::string& _result);
 	bool IsRequestAvailable(const int _requestID) const;
@@ -60,7 +62,7 @@ protected:
 	* @param url The URL to download
 	* @return The download result
 	*/
-	std::string download(const std::string& _url);
+	std::string download(const std::string& _url, bool _modifyUserAgent);
 
 private:
 	void* m_curl;

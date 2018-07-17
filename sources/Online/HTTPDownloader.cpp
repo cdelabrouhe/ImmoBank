@@ -5,6 +5,8 @@
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
+static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36";
+
 #ifdef WIN32
 #ifdef _DEBUG
 #pragma comment(lib, "extern/libcurl/lib/Win32/libcurld.lib")
@@ -79,7 +81,7 @@ void HTTPDownloader::End()
 }
 
 //------------------------------------------------------------------------------------------------
-int HTTPDownloader::SendRequest(const std::string& _request)
+int HTTPDownloader::SendRequest(const std::string& _request, bool _modifyUserAgent)
 {
 	m_mutex->lock();
 
@@ -89,7 +91,9 @@ int HTTPDownloader::SendRequest(const std::string& _request)
 		++ID;
 
 	// Store request
-	m_requests[ID].m_request = _request;
+	auto& request = m_requests[ID];
+	request.m_request = _request;
+	request.m_protectUserAgent = _modifyUserAgent;
 
 	m_mutex->unlock();
 
@@ -118,6 +122,7 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 		{
 			_request.m_requestID = it->first;
 			_request.m_request = it->second.m_request;
+			_request.m_protectUserAgent = it->second.m_protectUserAgent;
 			found = true;
 		}
 		++it;
@@ -182,11 +187,14 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 }
 
 //------------------------------------------------------------------------------------------------
-std::string HTTPDownloader::download(const std::string& _url)
+std::string HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent)
 {
 	const char* url = _url.c_str();
 	curl_easy_setopt(m_curl, CURLOPT_URL, url);
 	/* example.com is redirected, so we tell libcurl to follow redirection */
+	if (_modifyUserAgent)
+		curl_easy_setopt(m_curl, CURLOPT_USERAGENT, s_curlUserAgent);
+
 	curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
@@ -206,7 +214,7 @@ std::string HTTPDownloader::download(const std::string& _url)
 //------------------------------------------------------------------------------------------------
 void sRequest::Process(HTTPDownloader* _downloader)
 {
-	m_result = _downloader->download(m_request);
+	m_result = _downloader->download(m_request, m_protectUserAgent);
 
 	// Remove any space / tab from string
 	StringTools::RemoveEOL(m_result);

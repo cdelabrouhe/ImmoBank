@@ -26,7 +26,7 @@ void SearchRequestCityBoroughData::Init()
 		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
 	StringTools::TransformToLower(request);
 #ifndef TEST_HTML
-	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 #else
 	m_httpRequestsID = 0;
 #endif

@@ -119,9 +119,9 @@ bool OnlineManager::GetRequestResult(const int _requestID, std::vector<SearchReq
 }
 
 //-------------------------------------------------------------------------------------------------
-int OnlineManager::SendBasicHTTPRequest(const std::string& _request)
+int OnlineManager::SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent)
 {
-	return s_downloader.SendRequest(_request);
+	return s_downloader.SendRequest(_request, _modifyUserAgent);
 }
 
 //-------------------------------------------------------------------------------------------------

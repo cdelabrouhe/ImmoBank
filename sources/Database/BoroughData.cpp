@@ -4,6 +4,8 @@
 #include "Request\SearchRequest\SearchRequestCityBoroughData.h"
 #include "Request\SearchRequest\SearchRequestResulCityBoroughData.h"
 #include "extern/ImGui/imgui.h"
+#include <GLFW\glfw3.h>
+#include <Tools\Tools.h>
 
 //-------------------------------------------------------------------------------------------------
 void BoroughData::Init()
@@ -84,6 +86,18 @@ void BoroughData::Edit()
 
 	if (ImGui::BeginPopupModal("ManualEdit", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
+		bool isPaste = ImGui::IsKeyPressed(GLFW_KEY_V) && ImGui::IsKeyPressed(GLFW_KEY_LEFT_CONTROL);
+		if (isPaste)
+		{
+			const char* clipboard = ImGui::GetClipboardText();
+			if (strlen(clipboard) > 0)
+			{
+				std::string str(clipboard);
+				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse))
+					DatabaseManager::getSingleton()->AddBoroughData(*this);
+			}
+		}
+
 		ImGui::SetWindowFontScale(1.f);
 #ifdef _DEBUG
 		static int s_key;

@@ -4,6 +4,7 @@
 #include "SearchRequestResulCityBoroughData.h"
 #include "extern/jsoncpp/reader.h"
 #include "extern/jsoncpp/value.h"
+#include <Tools\Tools.h>
 
 //#define TEST_HTML
 
@@ -26,7 +27,7 @@ void SearchRequestCityBoroughData::Init()
 		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
 	StringTools::TransformToLower(request);
 #ifndef TEST_HTML
-	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);// , true);
 #else
 	m_httpRequestsID = 0;
 #endif
@@ -79,7 +80,14 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 		if (true)
 #endif
 		{
-			std::string searchStr("MA.Context.placePrices = ");
+			sPrice rentT1;
+			sPrice rentT2;
+			sPrice rentT3;
+			sPrice rentT4;
+			sPrice buyApartment;
+			sPrice buyHouse;
+			Tools::ExtractPricesFromHTMLSource(str, rentT1, rentT2, rentT3, rentT4, buyApartment, buyHouse);
+			/*std::string searchStr("MA.Context.placePrices = ");
 			auto findID = str.find(searchStr);
 			if (findID == std::string::npos)
 			{
@@ -87,18 +95,18 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 				findID = str.find("behavior");
 				if (findID != std::string::npos)
 				{
-					printf("ERROR: can't retrive borough information, too many requests and website banned us\n");
-					/*static bool s_test = false;
-					if (s_test)
-					{
-						FILE* f = fopen("error.html", "wt");
-						if (f)
-						{
-							fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
-							fclose(f);
-						}
-					}
-					return false;*/
+// 					printf("ERROR: can't retrive borough information, too many requests and website banned us\n");
+// 					static bool s_test = false;
+// 					if (s_test)
+// 					{
+// 						FILE* f = fopen("error.html", "wt");
+// 						if (f)
+// 						{
+// 							fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+// 							fclose(f);
+// 						}
+// 					}
+// 					return false;
 					return true;
 				}
 				else
@@ -132,7 +140,7 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 			Json::Value& sellApartment = root["sell"]["apartment"];
 			Json::Value& sellHouse = root["sell"]["house"];
 			sPrice buyApartment((float)sellApartment["value"].asDouble(), (float)sellApartment["low"].asDouble(), (float)sellApartment["high"].asDouble());
-			sPrice buyHouse((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
+			sPrice buyHouse((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());*/
 
 			SearchRequestResulCityBoroughData* result = new SearchRequestResulCityBoroughData();
 			result->m_data = m_data;

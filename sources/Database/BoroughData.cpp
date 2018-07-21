@@ -138,12 +138,19 @@ void BoroughData::DisplayAsTooltip()
 	bool hovered = ImGui::IsItemHovered();
 	if (hovered)
 	{
-		static float s_sizeMin = 0.8f;
-		static float s_size = 1.f;
-		static float s_sizeMax = 0.8f;
-		static ImVec4 s_colorMin(1.f, 1.f, 0.f, 1.f);
-		static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
-		static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
+		const bool validData = ((m_priceBuyApartment.m_val > 0.f) && (m_priceBuyHouse.m_val > 0.f));
+
+		ImGui::BeginTooltip();
+		ImGui::SetWindowFontScale(1.f);
+
+		if (validData)
+		{
+			static float s_sizeMin = 0.8f;
+			static float s_size = 1.f;
+			static float s_sizeMax = 0.8f;
+			static ImVec4 s_colorMin(1.f, 1.f, 0.f, 1.f);
+			static ImVec4 s_color(0.f, 1.f, 0.f, 1.f);
+			static ImVec4 s_colorMax(1.f, 0.5f, 0.f, 1.f);
 
 #define DISPLAY_INFO(name, data) \
 			ImGui::SetWindowFontScale(1.f); \
@@ -152,31 +159,37 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
 			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
 
-		ImGui::BeginTooltip();
-		ImGui::SetWindowFontScale(1.0f);
 #ifdef _DEBUG
-		ImGui::Text("Key: %u", m_key);
+			ImGui::Text("Key: %u", m_key);
 #endif
-		ImGui::Text("Prices (per m2) ");
-		ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
-		ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
-		ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
+			ImGui::Text("Prices (per m2) ");
+			ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
+			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
+			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
 
-		ImGui::Separator();
+			ImGui::Separator();
 
-		ImGui::SetWindowFontScale(1.f);
-		ImGui::Text("BUY");
-		DISPLAY_INFO(App, m_priceBuyApartment);
-		DISPLAY_INFO(House, m_priceBuyHouse);
-		ImGui::Separator();
-		ImGui::SetWindowFontScale(1.f);
-		ImGui::Text("RENT");
-		DISPLAY_INFO(T1, m_priceRentApartmentT1);
-		DISPLAY_INFO(T2, m_priceRentApartmentT2);
-		DISPLAY_INFO(T3, m_priceRentApartmentT3);
-		DISPLAY_INFO(T4 + , m_priceRentApartmentT4Plus);
-		DISPLAY_INFO(House, m_priceRentHouse);
+			ImGui::SetWindowFontScale(1.f);
+			ImGui::Text("BUY");
+			DISPLAY_INFO(App, m_priceBuyApartment);
+			DISPLAY_INFO(House, m_priceBuyHouse);
+			ImGui::Separator();
+			ImGui::SetWindowFontScale(1.f);
+			ImGui::Text("RENT");
+			DISPLAY_INFO(T1, m_priceRentApartmentT1);
+			DISPLAY_INFO(T2, m_priceRentApartmentT2);
+			DISPLAY_INFO(T3, m_priceRentApartmentT3);
+			DISPLAY_INFO(T4 + , m_priceRentApartmentT4Plus);
+			DISPLAY_INFO(House, m_priceRentHouse);
 
+		}
+		else
+		{
+			static ImVec4 s_colorNoData(1.f, 0.f, 0.f, 1.f);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_colorNoData);
+			ImGui::Text("No valid data, update it !");
+			ImGui::PopStyleColor();
+		}
 		ImGui::EndTooltip();
 	}
 }

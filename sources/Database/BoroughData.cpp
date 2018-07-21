@@ -86,7 +86,7 @@ void BoroughData::Edit()
 
 	if (ImGui::BeginPopupModal("ManualEdit", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		bool isPaste = ImGui::IsKeyPressed(GLFW_KEY_V) && ImGui::IsKeyPressed(GLFW_KEY_LEFT_CONTROL);
+		bool isPaste = ImGui::IsKeyPressed(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_V);
 		if (isPaste)
 		{
 			const char* clipboard = ImGui::GetClipboardText();

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Tools\Types.h"
 
 //-------------------------------------------------------------------------------------------------
 // DATA
@@ -28,7 +29,7 @@ public:
 private:
 	// Display panel
 	int								m_selectedCityID = 0;
-	std::vector<std::string>		m_cityListFull;
+	std::vector<sCity>				m_cityListFull;
 	int								m_hovered = -1;
 	int								m_selected = -1;
 

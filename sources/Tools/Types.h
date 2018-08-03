@@ -84,4 +84,9 @@ struct sCity
 	std::string m_name;
 	int			m_inseeCode;
 	int			m_zipCode;
+
+	static bool compare(const sCity &_a, const sCity &_b)
+	{
+		return _a.m_name < _b.m_name;
+	}
 };

@@ -154,7 +154,7 @@ void UIManager::DisplayCityInformation()
 	{
 		m_cityListFull.clear();
 		DatabaseManager::getSingleton()->ListAllCities(m_cityListFull);
-		std::sort(m_cityListFull.begin(), m_cityListFull.end());
+		std::sort(m_cityListFull.begin(), m_cityListFull.end(), sCity::compare);
 		m_cityListRequested = true;
 	}
 
@@ -174,13 +174,13 @@ void UIManager::DisplayCityInformation()
 	{
 		std::string input = s_citySelector.GetText();
 		StringTools::TransformToLower(input);
-		for (auto city : m_cityListFull)
+		for (auto& city : m_cityListFull)
 		{
-			std::string tmp = city;
+			std::string tmp = city.m_name;
 			StringTools::TransformToLower(tmp);
 			auto findID = tmp.find(s_citySelector.GetText());
 			if (findID != std::string::npos)
-				cityListFiltered.push_back(city);
+				cityListFiltered.push_back(city.m_name);
 		}
 
 		listUpdated = true;
@@ -190,7 +190,7 @@ void UIManager::DisplayCityInformation()
 	if (!listUpdated)
 	{
 		for (auto& city : m_cityListFull)
-			cityListFiltered.push_back(city);
+			cityListFiltered.push_back(city.m_name);
 	}
 
 	int localHovered = -1;

@@ -48,7 +48,8 @@ public:
 	void	AddCity(const sCityData& _data);
 	bool	GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity = nullptr);
 	bool	RemoveCityData(const std::string& _name);
-	bool	ListAllCities(std::vector<std::string>& _list);
+	bool	ListAllCities(std::vector<sCity>& _list);
+	void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
 
 	void	ComputeCityData(const std::string& _cityName);
 	void	ComputeBoroughData(BoroughData& _data);

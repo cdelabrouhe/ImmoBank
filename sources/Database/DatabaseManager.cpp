@@ -307,7 +307,7 @@ bool DatabaseManager::RemoveCityData(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::ListAllCities(std::vector<std::string>& _list)
+bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 {
 	if (m_tables[DataTables_Cities] == nullptr)
 		return false;
@@ -329,11 +329,31 @@ bool DatabaseManager::ListAllCities(std::vector<std::string>& _list)
 	if (cities.size() > 0)
 	{
 		for (auto& city : cities)
-			_list.push_back(city.m_data.m_name);
+			_list.push_back(city.m_data);
 
 		return true;
 	}
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter)
+{
+	std::vector<sCity> list;
+	ListAllCities(list);
+
+	std::transform(_filter.begin(), _filter.end(), _filter.begin(), ::tolower);
+
+	auto it = list.begin();
+	while (it != list.end())
+	{
+		std::string str = (*it).m_name;
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		auto itFind = str.find(_filter);
+		if (itFind != std::string::npos)
+			_list.push_back(*it);
+		++it;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -86,8 +86,40 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 
 	// City selector process
 	ImGui::BeginChild("Search request", ImVec2(300, 0), true);
-	if (m_citySelector.Display())
-		m_searchRequest.m_city = *m_citySelector.GetSelectedCity();
+
+	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
+	{
+		if (strlen(m_inputTextCity) > 0)
+		{
+			// Ask for a city list
+			m_cities.clear();
+			std::string str = m_inputTextCity;
+			DatabaseManager::getSingleton()->ListAllCitiesWithFilter(m_cities, str);
+		}
+	}
+
+	if (m_cities.size() > 100)
+		m_cities.resize(100);
+
+	const char* cities[100];
+	for (size_t ID = 0; ID < m_cities.size(); ++ID)
+		cities[ID] = m_cities[ID].m_name.c_str();
+
+	if (m_cities.size() > 0)
+	{
+		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
+		{
+			std::string str = m_cities[m_selectedCityID].m_name;
+			int size = str.size() < 256 ? (int)str.size() : 256;
+			char* dest = m_inputTextCity;
+			const char* source = str.c_str();
+			memcpy(dest, source, size);
+		}
+
+		if ((m_selectedCityID > -1) && (m_selectedCityID < m_cities.size()))
+			m_searchRequest.m_city = m_cities[m_selectedCityID];
+	}
+
 	
 	if (ImGui::Checkbox("Appartement", &m_apartment))
 	{

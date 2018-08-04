@@ -150,8 +150,10 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		}
 	}
 
-	ImGui::SliderInt("Nb rooms", &m_searchRequest.m_nbRooms, 1, 20);
-	ImGui::SliderInt("Nb bedrooms", &m_searchRequest.m_nbBedRooms, 1, 20);
+	ImGui::SliderInt("Nb rooms min", &m_searchRequest.m_nbRoomsMin, 1, 20);
+	ImGui::SliderInt("Nb rooms max", &m_searchRequest.m_nbRoomsMax, 1, 20);
+	ImGui::SliderInt("Nb bedrooms min", &m_searchRequest.m_nbBedRoomsMin, 1, 20);
+	ImGui::SliderInt("Nb bedrooms max", &m_searchRequest.m_nbBedRoomsMax, 1, 20);
 	ImGui::InputInt("Surface min", &m_searchRequest.m_surfaceMin);
 	ImGui::InputInt("Surface max", &m_searchRequest.m_surfaceMax);
 	ImGui::InputInt("Price min", &m_searchRequest.m_priceMin);

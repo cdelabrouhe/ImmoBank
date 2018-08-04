@@ -26,8 +26,10 @@ struct SearchRequestAnnounce : public SearchRequest
 	int						m_priceMax = 0;
 	int						m_surfaceMin = 0;
 	int						m_surfaceMax = 0;
-	int						m_nbRooms = 0;
-	int						m_nbBedRooms = 0;
+	int						m_nbRoomsMin = 0;
+	int						m_nbRoomsMax = 0;
+	int						m_nbBedRoomsMin = 0;
+	int						m_nbBedRoomsMax = 0;
 
 private:
 	std::vector<std::string>	m_boroughs;

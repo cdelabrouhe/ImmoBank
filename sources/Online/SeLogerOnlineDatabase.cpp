@@ -70,8 +70,8 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	request += "&surfacemax=" + std::to_string(announce->m_surfaceMax);
 
 	// Nb rooms
-	request += "&nb_pieces=" + std::to_string(announce->m_nbRooms);
-	request += "&nb_chambres=" + std::to_string(announce->m_nbBedRooms);
+	request += "&nb_pieces=" + std::to_string(announce->m_nbRoomsMin) + "," + std::to_string(announce->m_nbRoomsMax);
+	request += "&nb_chambres=" + std::to_string(announce->m_nbBedRoomsMin) + "," + std::to_string(announce->m_nbBedRoomsMax);
 	
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())

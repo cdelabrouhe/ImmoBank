@@ -64,8 +64,10 @@ void SearchRequestAnnounce::copyTo(SearchRequest* _target)
 	target->m_priceMax = m_priceMax;
 	target->m_surfaceMin = m_surfaceMin;
 	target->m_surfaceMax = m_surfaceMax;
-	target->m_nbRooms = m_nbRooms;
-	target->m_nbBedRooms = m_nbBedRooms;
+	target->m_nbRoomsMin = m_nbRoomsMin;
+	target->m_nbRoomsMax = m_nbRoomsMax;
+	target->m_nbBedRoomsMin = m_nbBedRoomsMin;
+	target->m_nbBedRoomsMax = m_nbBedRoomsMax;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------

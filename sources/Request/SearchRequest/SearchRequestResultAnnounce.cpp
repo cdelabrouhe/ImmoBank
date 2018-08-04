@@ -18,9 +18,7 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 {
 	DatabaseManager::getSingleton()->GetBoroughs(m_city, m_boroughs);
 
-	std::sort(m_boroughs.begin(), m_boroughs.end(), [](BoroughData& a, BoroughData& b) {
-		return a.m_name < b.m_name;
-	});
+	std::sort(m_boroughs.begin(), m_boroughs.end(), BoroughData::compare);
 
 	std::string description = m_description;
 	StringTools::TransformToLower(description);
@@ -36,6 +34,11 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 			m_selectedBorough = borough;
 			m_selectedBoroughID = ID + 1;
 			break;
+		}
+		else
+		{
+			if ((m_selectedBoroughID == 0) && (borough.m_name == s_wholeCityName))
+				m_selectedBoroughID = ID + 1;
 		}
 
 		++ID;

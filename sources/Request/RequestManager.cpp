@@ -81,8 +81,10 @@ EditableRequest* RequestManager::CreateRequestAnnounceDefault()
 	request.m_categories.push_back(Category_House);
 	request.m_priceMin = 210000;
 	request.m_priceMax = 215000;
-	request.m_nbRooms = 3;
-	request.m_nbBedRooms = 2;
+	request.m_nbRoomsMin = 2;
+	request.m_nbRoomsMax = 3;
+	request.m_nbBedRoomsMin = 1;
+	request.m_nbBedRoomsMax = 2;
 	request.m_surfaceMin = 50;
 	request.m_surfaceMax = 70;
 

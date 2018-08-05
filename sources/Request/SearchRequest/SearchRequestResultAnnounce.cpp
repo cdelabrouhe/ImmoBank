@@ -45,6 +45,29 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 	}
 }
 
+float SearchRequestResultAnnounce::GetRentabilityRate() const
+{
+	if (m_selectedBoroughID > 0)
+	{
+		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
+		if (!m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough))
+		{
+			float rent = 0.f;
+			if (m_nbRooms == 1)
+				rent = m_surface * borough.m_priceRentApartmentT1.m_val;
+			else if (m_nbRooms == 2)
+				rent = m_surface * borough.m_priceRentApartmentT2.m_val;
+			else if (m_nbRooms == 3)
+				rent = m_surface * borough.m_priceRentApartmentT3.m_val;
+			else
+				rent = m_surface * borough.m_priceRentApartmentT4Plus.m_val;
+
+			return Tools::ComputeRentabilityRate(rent, (float)m_price);
+		}
+	}
+	return 0.f;
+}
+
 bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 {
 	bool keep = true;
@@ -93,7 +116,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	BoroughData requestBorough;
 	if (m_selectedBoroughID > 0)
 	{
-		BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
+		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
 		if (borough.m_priceRentApartmentT1.m_val < 0.1f)
 		{
 			needNeighboorUpdate = true;
@@ -106,18 +129,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 			UpdateBoroughs();
 		}
 
-		float rent = 0.f;
-		if (m_nbRooms == 1)
-			rent = m_surface * borough.m_priceRentApartmentT1.m_val;
-		else if (m_nbRooms == 2)
-			rent = m_surface * borough.m_priceRentApartmentT2.m_val;
-		else if (m_nbRooms == 3)
-			rent = m_surface * borough.m_priceRentApartmentT3.m_val;
-		else
-			rent = m_surface * borough.m_priceRentApartmentT4Plus.m_val;
-
-		float val = Tools::ComputeRentabilityRate(rent, (float)m_price);
-		rate = "Rate: " + std::to_string(val);
+		rate = "Rate: " + std::to_string(GetRentabilityRate());
 	}
 
 	ImGui::NextColumn();

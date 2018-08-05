@@ -27,12 +27,27 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 
 	virtual void PostProcess() override;
 	virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;
+	float GetRentabilityRate() const;
 
 	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
 	{
 		m_city = _request.m_city;
 		m_type = _request.m_type;
 		return *this;
+	}
+
+	virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType) const override
+	{
+		switch (_sortType)
+		{
+		case Tools::SortType::Rate:
+			return GetRentabilityRate() < ((SearchRequestResultAnnounce*)_target)->GetRentabilityRate();
+		case Tools::SortType::Price:
+			return m_price < ((SearchRequestResultAnnounce*)_target)->m_price;
+		case Tools::SortType::Surface:
+			return m_surface < ((SearchRequestResultAnnounce*)_target)->m_surface;
+		}
+		return false;
 	}
 
 private:

@@ -12,6 +12,7 @@
 #include <time.h>
 #include "Request/SearchRequest/SearchRequestResult.h"
 #include <algorithm>
+#include "Tools/Tools.h"
 
 void EditableRequestAnnounce::Init(SearchRequest* _request)
 {
@@ -32,6 +33,8 @@ void EditableRequestAnnounce::Init(SearchRequest* _request)
 	}
 }
 
+static Tools::SortType s_sortType = Tools::SortType::Rate;
+
 void EditableRequestAnnounce::Process()
 {
 	if ((m_requestID > -1) && !m_available)
@@ -46,6 +49,12 @@ void EditableRequestAnnounce::Process()
 				result->PostProcess();
 			}
 		}
+	}
+
+	if (m_updateList)
+	{
+		m_updateList = false;
+		Tools::DoboSort(m_result, s_sortType);
 	}
 }
 
@@ -85,11 +94,11 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	ImGui::Begin(name.c_str());
 
 	// City selector process
-	ImGui::BeginChild("Search request", ImVec2(300, 0), true);
+	ImGui::BeginChild("Search request", ImVec2(380, 0), true);
 
 	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
 	{
-		if (strlen(m_inputTextCity) > 0)
+		if (strlen(m_inputTextCity) > 1)
 		{
 			// Ask for a city list
 			m_cities.clear();
@@ -98,12 +107,18 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		}
 	}
 
-	if (m_cities.size() > 100)
-		m_cities.resize(100);
+	if (m_cities.size() > 500)
+		m_cities.resize(500);
 
-	const char* cities[100];
+	std::vector<std::string> citiesList;
+	citiesList.resize(m_cities.size());
+	const char* cities[500];
 	for (size_t ID = 0; ID < m_cities.size(); ++ID)
-		cities[ID] = m_cities[ID].m_name.c_str();
+	{
+		citiesList[ID] = m_cities[ID].m_name;
+		StringTools::ConvertToImGuiText(citiesList[ID]);
+		cities[ID] = citiesList[ID].c_str();
+	}
 
 	if (m_cities.size() > 0)
 	{
@@ -172,7 +187,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	// right
 	ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing())); // Leave room for 1 line below us
 
-																						// Request available
+	// Request available
 	if (m_requestID > -1)
 	{
 		ImGui::Separator();
@@ -185,10 +200,27 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		// Display results
 		else
 		{
+			ImGui::BeginChild("Child1", ImVec2(ImGui::GetWindowContentRegionWidth(), 50), false, ImGuiWindowFlags_NoScrollbar);
 			ImGui::Text("%u results available", m_result.size());
 			ImGui::SameLine();
 			static ImGuiTextFilter filter;
 			filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+			auto sortType = s_sortType;
+			if (ImGui::Button("Sort by rentability rate"))
+				s_sortType = Tools::SortType::Rate;
+			ImGui::SameLine();
+			if (ImGui::Button("Sort by price"))
+				s_sortType = Tools::SortType::Price;
+			ImGui::SameLine();
+			if (ImGui::Button("Sort by surface"))
+				s_sortType = Tools::SortType::Surface;
+			m_updateList = sortType != s_sortType;
+
+			ImGui::Separator();
+			ImGui::Separator();
+			ImGui::EndChild();
+
+			ImGui::BeginChild("Child2");// , ImVec2(ImGui::GetWindowContentRegionWidth(), 1000), false, ImGuiWindowFlags_NoScrollbar);
 			std::vector<SearchRequestResult*> toRemove;
 			for (size_t ID = 0; ID < m_result.size(); ++ID)
 			{
@@ -196,6 +228,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 				if (!request->Display(&filter))
 					toRemove.push_back(request);
 			}
+			ImGui::EndChild();
 
 			for (auto request : toRemove)
 			{

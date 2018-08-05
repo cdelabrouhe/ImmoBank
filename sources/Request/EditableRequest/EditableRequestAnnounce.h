@@ -30,4 +30,5 @@ protected:
 	std::vector<sCity>					m_cities;
 	char								m_inputTextCity[256];
 	int									m_selectedCityID = 0;
+	bool								m_updateList = true;
 };

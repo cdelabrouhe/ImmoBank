@@ -47,6 +47,11 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 
 float SearchRequestResultAnnounce::GetRentabilityRate() const
 {
+	return Tools::ComputeRentabilityRate(GetEstimatedRent(), (float)m_price);
+}
+
+float SearchRequestResultAnnounce::GetEstimatedRent() const
+{
 	if (m_selectedBoroughID > 0)
 	{
 		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
@@ -62,7 +67,7 @@ float SearchRequestResultAnnounce::GetRentabilityRate() const
 			else
 				rent = m_surface * borough.m_priceRentApartmentT4Plus.m_val;
 
-			return Tools::ComputeRentabilityRate(rent, (float)m_price);
+			return rent;
 		}
 	}
 	return 0.f;
@@ -97,7 +102,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	ImGui::TextWrapped(m_description.c_str());
 
-	ImGui::Columns(6);
+	ImGui::Columns(7);
 
 	ImGui::Separator();
 
@@ -129,7 +134,11 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 			UpdateBoroughs();
 		}
 
-		rate = "Rate: " + std::to_string(GetRentabilityRate());
+		float tmp = GetRentabilityRate();
+		std::round(tmp);
+		char buf[128];
+		sprintf(buf, "%.1f", tmp);
+		rate = "Rate: " + std::string(buf);
 	}
 
 	ImGui::NextColumn();
@@ -142,6 +151,15 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		ImGui::Text(buf);
 	}
 	else if (ImGui::Button("Update borough"))
+	{
+		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);
+		m_waitingForDBUpdate = true;
+	}
+	ImGui::NextColumn();
+	float rent = GetEstimatedRent();
+	if (rent > 0.f)
+		ImGui::Text("Estimated rent: %.0f     ", rent);
+	else if(ImGui::Button("Update borough"))
 	{
 		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);
 		m_waitingForDBUpdate = true;

@@ -28,6 +28,7 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 	virtual void PostProcess() override;
 	virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;
 	float GetRentabilityRate() const;
+	float GetEstimatedRent() const;
 
 	SearchRequestResultAnnounce& SearchRequestResultAnnounce::operator=(const SearchRequestAnnounce &_request)
 	{

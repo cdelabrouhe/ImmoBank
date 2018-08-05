@@ -69,35 +69,37 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data)
 {
 	m_modified = true;
 
-	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
+	BoroughData localData = _data;
+	localData.m_city.UnFixName();
+	RemoveBoroughData(localData.m_city.m_name, localData.m_name);
 
 	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
-		_data.m_city.m_name.c_str(),
-		_data.m_name.c_str(),
-		_data.m_timeUpdate.GetData(),
-		_data.m_key,
-		_data.m_priceBuyApartment.m_val,
-		_data.m_priceBuyApartment.m_min,
-		_data.m_priceBuyApartment.m_max,
-		_data.m_priceBuyHouse.m_val,
-		_data.m_priceBuyHouse.m_min,
-		_data.m_priceBuyHouse.m_max,
-		_data.m_priceRentHouse.m_val,
-		_data.m_priceRentHouse.m_min,
-		_data.m_priceRentHouse.m_max,
-		_data.m_priceRentApartmentT1.m_val,
-		_data.m_priceRentApartmentT1.m_min,
-		_data.m_priceRentApartmentT1.m_max,
-		_data.m_priceRentApartmentT2.m_val,
-		_data.m_priceRentApartmentT2.m_min,
-		_data.m_priceRentApartmentT2.m_max,
-		_data.m_priceRentApartmentT3.m_val,
-		_data.m_priceRentApartmentT3.m_min,
-		_data.m_priceRentApartmentT3.m_max,
-		_data.m_priceRentApartmentT4Plus.m_val,
-		_data.m_priceRentApartmentT4Plus.m_min,
-		_data.m_priceRentApartmentT4Plus.m_max))
-		printf("Add borough %s to database Boroughs\n", _data.m_name.c_str());
+		localData.m_city.m_name.c_str(),
+		localData.m_name.c_str(),
+		localData.m_timeUpdate.GetData(),
+		localData.m_key,
+		localData.m_priceBuyApartment.m_val,
+		localData.m_priceBuyApartment.m_min,
+		localData.m_priceBuyApartment.m_max,
+		localData.m_priceBuyHouse.m_val,
+		localData.m_priceBuyHouse.m_min,
+		localData.m_priceBuyHouse.m_max,
+		localData.m_priceRentHouse.m_val,
+		localData.m_priceRentHouse.m_min,
+		localData.m_priceRentHouse.m_max,
+		localData.m_priceRentApartmentT1.m_val,
+		localData.m_priceRentApartmentT1.m_min,
+		localData.m_priceRentApartmentT1.m_max,
+		localData.m_priceRentApartmentT2.m_val,
+		localData.m_priceRentApartmentT2.m_min,
+		localData.m_priceRentApartmentT2.m_max,
+		localData.m_priceRentApartmentT3.m_val,
+		localData.m_priceRentApartmentT3.m_min,
+		localData.m_priceRentApartmentT3.m_max,
+		localData.m_priceRentApartmentT4Plus.m_val,
+		localData.m_priceRentApartmentT4Plus.m_min,
+		localData.m_priceRentApartmentT4Plus.m_max))
+		printf("Add borough %s to database Boroughs\n", localData.m_name.c_str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -205,7 +207,10 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	});
 
 	for (auto& borough : _data)
+	{
 		borough.m_city = _city;
+		borough.m_city.FixName();
+	}
 
 	if (_data.size() >= 1)
 		return true;
@@ -223,7 +228,7 @@ bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::IsBoroughUpdating(BoroughData& _data)
+bool DatabaseManager::IsBoroughUpdating(const BoroughData& _data)
 {
 	auto it = std::find_if(m_boroughComputes.begin(), m_boroughComputes.end(), [_data](BoroughData& _boroughData)->bool
 	{
@@ -254,7 +259,9 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 		return false;
 
 	std::vector<sCityData> cities;
-	Str128f sql("SELECT * FROM Cities WHERE NAME='%s'", _name.c_str());
+	std::string name = _name;
+	sCity::UnFixName(name);
+	Str128f sql("SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
 
 	SQLExecuteSelect(m_tables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{
@@ -271,6 +278,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 	{
 		_data = cities.back();
 		GetBoroughs(_data.m_data, _data.m_boroughs);
+		_data.m_data.FixName();
 
 		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
 
@@ -329,7 +337,10 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 	if (cities.size() > 0)
 	{
 		for (auto& city : cities)
+		{
+			city.m_data.FixName();
 			_list.push_back(city.m_data);
+		}
 
 		return true;
 	}
@@ -342,6 +353,7 @@ void DatabaseManager::ListAllCitiesWithFilter(std::vector<sCity>& _list, std::st
 	std::vector<sCity> list;
 	ListAllCities(list);
 
+	std::sort(list.begin(), list.end(), sCity::compare);
 	std::transform(_filter.begin(), _filter.end(), _filter.begin(), ::tolower);
 
 	auto it = list.begin();

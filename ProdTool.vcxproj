@@ -247,6 +247,7 @@
     <ClCompile Include="sources\Tools\StringTools.cpp" />
     <ClCompile Include="sources\Tools\Thread\Thread.cpp" />
     <ClCompile Include="sources\Tools\Tools.cpp" />
+    <ClCompile Include="sources\Tools\Types.cpp" />
     <ClCompile Include="sources\UI\CitySelector.cpp" />
     <ClCompile Include="sources\UI\UIManager.cpp" />
   </ItemGroup>

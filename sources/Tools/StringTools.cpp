@@ -110,3 +110,9 @@ void StringTools::TransformToLower(std::string& _str)
 {
 	std::transform(_str.begin(), _str.end(), _str.begin(), ::tolower);
 }
+
+void StringTools::ConvertToImGuiText(std::string& _text)
+{
+	StringTools::ReplaceBadSyntax(_text, "É", "E");
+	StringTools::ReplaceBadSyntax(_text, "é", "e");
+}

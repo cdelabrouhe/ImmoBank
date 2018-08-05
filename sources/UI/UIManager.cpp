@@ -197,7 +197,7 @@ void UIManager::DisplayCityInformation()
 	int cpt = 0;
 	const ImColor colSelected(1.0f, 0.0f, 0.0f);
 	const ImColor colHovered(0.0f, .5f, .5f);
-	for (auto& city : cityListFiltered)
+	for (auto city : cityListFiltered)
 	{
 		const bool isHovered = (m_hovered == cpt);
 		const bool isSelected = (m_selected == cpt);
@@ -206,6 +206,7 @@ void UIManager::DisplayCityInformation()
 		else if (isHovered)
 			ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)colHovered);
 
+		StringTools::ConvertToImGuiText(city);
 		ImGui::Text(city.c_str());
 		if (ImGui::IsItemHovered())
 			m_hovered = cpt;
@@ -234,6 +235,7 @@ void UIManager::DisplayCityInformation()
 			s_currentSelection = cityListFiltered[m_selected];
 			wholeCityData.Reset();
 			DatabaseManager::getSingleton()->GetCityData(s_currentSelection, selectedCity, &wholeCityData);
+			selectedCity.m_data.FixName();
 			wholeCityData.m_city = selectedCity.m_data;
 			wholeCityData.SetWholeCity();
 		}
@@ -248,7 +250,9 @@ void UIManager::DisplayCityInformation()
 	bool hovered = false;
 	if (!selectedCity.m_data.m_name.empty())
 	{
-		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", selectedCity.m_data.m_name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
+		std::string name = selectedCity.m_data.m_name;
+		StringTools::ConvertToImGuiText(name);
+		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
 		
 		wholeCityData.DisplayAsTooltip();
 

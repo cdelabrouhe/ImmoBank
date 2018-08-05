@@ -43,7 +43,7 @@ public:
 	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 	bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
 	bool	IsCityUpdating(const std::string& _cityName);
-	bool	IsBoroughUpdating(BoroughData& _data);
+	bool	IsBoroughUpdating(const BoroughData& _data);
 
 	void	AddCity(const sCityData& _data);
 	bool	GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity = nullptr);

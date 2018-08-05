@@ -85,6 +85,11 @@ struct sCity
 	int			m_inseeCode;
 	int			m_zipCode;
 
+	void FixName();
+	void UnFixName();
+	static void FixName(std::string& _name);
+	static void UnFixName(std::string& _name);
+
 	static bool compare(const sCity &_a, const sCity &_b)
 	{
 		return _a.m_name < _b.m_name;

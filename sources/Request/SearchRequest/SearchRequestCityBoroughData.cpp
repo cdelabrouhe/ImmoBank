@@ -22,6 +22,7 @@ void SearchRequestCityBoroughData::Init()
 	while (zipCode.size() < 5)
 		zipCode = "0" + zipCode;
 
+	StringTools::ConvertToImGuiText(m_city.m_name);
 	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + zipCode + "/";
 	if (!m_data.IsWholeCity())
 		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);

@@ -5,7 +5,7 @@
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
-static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36";
+static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
 
 #ifdef WIN32
 #ifdef _DEBUG

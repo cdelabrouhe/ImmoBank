@@ -48,6 +48,8 @@ void EditableRequestAnnounce::Process()
 			{
 				result->PostProcess();
 			}
+
+			m_updateList = true;
 		}
 	}
 

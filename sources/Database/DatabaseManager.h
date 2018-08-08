@@ -38,6 +38,8 @@ public:
 	void	Process();
 	void	End();
 
+	void	InitExternalDatabase();
+
 	void	AddBoroughData(const BoroughData& _data);
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
 	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);

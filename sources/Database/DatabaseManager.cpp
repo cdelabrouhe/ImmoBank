@@ -8,6 +8,11 @@
 #include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 #include <algorithm>
 
+#include <mysqlx/xdevapi.h>
+#include <../../jsoncpp/value.h>
+
+using namespace mysqlx;
+
 DatabaseManager* s_singleton = nullptr;
 const std::string s_wholeCityName = "WholeCity";
 
@@ -30,7 +35,30 @@ void DatabaseManager::Init()
 	OpenTables();
 	CreateTables();
 
+	InitExternalDatabase();
+
 	//Test();
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::InitExternalDatabase()
+{
+	// Scope controls life-time of objects such as session or schema
+	{
+		Session sess("192.168.2.156", 8080, "testUser", "2mdxg89q");
+		Schema db = sess.getSchema("test");
+		// or Schema db(sess, "test");
+
+		Collection myColl = db.getCollection("my_collection");
+		// or Collection myColl(db, "my_collection");
+
+		DocResult myDocs = myColl.find("name like :param")
+			.limit(1)
+			.bind("param", "S%").execute();
+
+		Json::Value str = myDocs.fetchOne();
+		printf("");
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

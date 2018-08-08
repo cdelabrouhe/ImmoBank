@@ -8,13 +8,40 @@
 #include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 #include <algorithm>
 
-#include <mysqlx/xdevapi.h>
 #include <../../jsoncpp/value.h>
 
+#define XDEVAPI
+
+#ifndef XDEVAPI
+#define MYSQL_CONNECTION
+#endif
+
+#ifdef XDEVAPI
+#include <mysqlx/xdevapi.h>
 using namespace mysqlx;
+#endif
+
+#ifdef MYSQL_CONNECTION
+#include <jdbc/mysql_connection.h>
+
+#include <jdbc/cppconn/driver.h>
+#include <jdbc/cppconn/exception.h>
+#include <jdbc/cppconn/resultset.h>
+#include <jdbc/cppconn/statement.h>
+
+#pragma comment(lib, "mysqlcppconn.lib")
+#pragma comment(lib, "mysqlcppconn8.lib")
+#endif
 
 DatabaseManager* s_singleton = nullptr;
 const std::string s_wholeCityName = "WholeCity";
+
+#ifdef MYSQL_CONNECTION
+static sql::Driver *driver;
+static sql::Connection *con;
+static sql::Statement *stmt;
+static sql::ResultSet *res;
+#endif
 
 //-------------------------------------------------------------------------------------------------
 DatabaseManager* DatabaseManager::getSingleton()
@@ -43,6 +70,22 @@ void DatabaseManager::Init()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::InitExternalDatabase()
 {
+#ifdef MYSQL_CONNECTION
+	driver = get_driver_instance();
+	const char* name = driver->getName().c_str();
+	auto major = driver->getMajorVersion();
+	auto minor = driver->getMinorVersion();
+	auto patch = driver->getPatchVersion();
+		
+	con = driver->connect("192.168.0.26:3307", "root", "2mdxg89q");
+	// Connect to the MySQL test database
+	con->setSchema("test");
+
+	stmt = con->createStatement();
+	res = stmt->executeQuery("SELECT 'Hello World!' AS _message");
+#endif
+		
+#ifdef XDEVAPI
 	//----------------------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------------------
 	// EXAMPLE IN HERE: https://dev.mysql.com/doc/x-devapi-userguide/en/database-connection-example.html
@@ -50,7 +93,7 @@ void DatabaseManager::InitExternalDatabase()
 	//----------------------------------------------------------------------------------------------------
 	// Scope controls life-time of objects such as session or schema
 	{
-		Session sess("192.168.2.156", 8080, "testUser", "2mdxg89q");
+		Session sess("192.168.0.26", 3307, "testUser", "2mdxg89q");
 		Schema db = sess.getSchema("test");
 		// or Schema db(sess, "test");
 
@@ -64,6 +107,7 @@ void DatabaseManager::InitExternalDatabase()
 		Json::Value str = myDocs.fetchOne();
 		printf("");
 	}
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

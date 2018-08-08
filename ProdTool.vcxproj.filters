@@ -175,6 +175,150 @@
     <ClInclude Include="sources\Tools\Tools.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\mysql_connection.h">
+      <Filter>Sources\extern\MariaDB\jdbc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\mysql_driver.h">
+      <Filter>Sources\extern\MariaDB\jdbc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\mysql_error.h">
+      <Filter>Sources\extern\MariaDB\jdbc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\build_config.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\config.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\connection.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\datatype.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\driver.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\exception.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\metadata.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\parameter_metadata.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\prepared_statement.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\resultset.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\resultset_metadata.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\sqlstring.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\statement.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\variant.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\version_info.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\jdbc\cppconn\warning.h">
+      <Filter>Sources\extern\MariaDB\jdbc\cppconn</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common.h">
+      <Filter>Sources\extern\MariaDB\mysqlx</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common_constants.h">
+      <Filter>Sources\extern\MariaDB\mysqlx</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\xapi.h">
+      <Filter>Sources\extern\MariaDB\mysqlx</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\xdevapi.h">
+      <Filter>Sources\extern\MariaDB\mysqlx</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\api.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\error.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\op_if.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\settings.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\util.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\common\value.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\common</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\collations.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\collection_crud.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\common.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\crud.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\document.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\error.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\executable.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\mysql_charsets.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\mysql_collations.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\result.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\row.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\settings.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\table_crud.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\crud.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\error.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\result.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\row.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\session.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\settings.h">
+      <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -337,6 +481,27 @@
     </Filter>
     <Filter Include="Sources\Request\EditableRequest">
       <UniqueIdentifier>{18a145de-3cf3-47eb-a490-2da6c133b9e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB">
+      <UniqueIdentifier>{9f889ed3-4bb6-40bf-8d28-b8817ac02c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\jdbc">
+      <UniqueIdentifier>{74964c49-0423-4413-afae-217137ea1495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\mysqlx">
+      <UniqueIdentifier>{f35711a7-c2e7-4266-a937-937af22650b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\jdbc\cppconn">
+      <UniqueIdentifier>{b6de1fa7-1fba-4fa0-b5b4-c2e8c40dd39d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\mysqlx\common">
+      <UniqueIdentifier>{84138f68-1a74-48db-a7ab-c8c5ea8ea703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\mysqlx\devapi">
+      <UniqueIdentifier>{b5185f27-1d8e-4860-b113-deb162e2454d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\MariaDB\mysqlx\devapi\detail">
+      <UniqueIdentifier>{95ad0d77-5b8f-45bc-881f-6a7799431d2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

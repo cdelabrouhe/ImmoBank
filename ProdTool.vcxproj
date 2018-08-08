@@ -100,7 +100,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\mariadb\lib64\vs14</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn-static.lib;mysqlcppconn8-static.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn.lib;mysqlcppconn8.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\mariadb\lib64\vs14</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn-static.lib;mysqlcppconn8-static.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn.lib;mysqlcppconn8.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

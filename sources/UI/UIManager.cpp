@@ -362,7 +362,7 @@ void UIManager::DisplayComputeRateTool()
 		ImGui::Separator();
 
 		if (ImGui::Button("Compute"))
-			s_result = Tools::ComputeRentabilityRate(s_rent, s_price);
+			s_result = Tools::ComputeRentabilityRate((float)s_rent, (float)s_price);
 
 		ImGui::SameLine();
 		if (ImGui::Button("Exit"))

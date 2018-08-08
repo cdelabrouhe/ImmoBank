@@ -302,6 +302,13 @@ void UIManager::DisplayCityInformation()
 						manual = ImGui::Button("Edit");
 						ImGui::PopID();
 
+						ImGui::SameLine();
+
+						ImGui::PushID(this + cpt + 20000);
+						if (ImGui::Button("Link"))
+							borough.OpenInBrowser();
+						ImGui::PopID();
+
 						if (manual)
 						{
 							ImGui::OpenPopup("ManualEdit");

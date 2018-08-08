@@ -12,21 +12,8 @@
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestCityBoroughData::Init()
 {
-	//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
-	std::string boroughName = m_data.m_name;
-	StringTools::ReplaceBadSyntax(boroughName, " / ", "-");
-	StringTools::ReplaceBadSyntax(boroughName, " \\ ", "-");
-	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
-	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
-	std::string zipCode = std::to_string(m_city.m_zipCode);
-	while (zipCode.size() < 5)
-		zipCode = "0" + zipCode;
+	std::string request = m_data.ComputeRequestURL();
 
-	StringTools::ConvertToImGuiText(m_city.m_name);
-	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + m_city.m_name + "-" + zipCode + "/";
-	if (!m_data.IsWholeCity())
-		request += "quartier_" + boroughName + "-" + std::to_string(m_data.m_key);
-	StringTools::TransformToLower(request);
 #ifndef TEST_HTML
 	m_httpRequestsID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);// , true);
 #else

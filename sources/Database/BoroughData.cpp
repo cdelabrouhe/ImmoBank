@@ -6,6 +6,9 @@
 #include "extern/ImGui/imgui.h"
 #include <GLFW\glfw3.h>
 #include <Tools\Tools.h>
+#include "Tools\StringTools.h"
+#include <windows.h>
+#include <shellapi.h>
 
 //-------------------------------------------------------------------------------------------------
 void BoroughData::Init()
@@ -70,6 +73,36 @@ void BoroughData::SetWholeCity()
 bool BoroughData::IsWholeCity() const
 {
 	return m_name == s_wholeCityName;
+}
+
+//-------------------------------------------------------------------------------------------------
+void BoroughData::OpenInBrowser() const
+{
+	std::string request = ComputeRequestURL();
+	ShellExecuteA(NULL, "open", request.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string BoroughData::ComputeRequestURL() const
+{
+	//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
+	std::string boroughName = m_name;
+	StringTools::ReplaceBadSyntax(boroughName, " / ", "-");
+	StringTools::ReplaceBadSyntax(boroughName, " \\ ", "-");
+	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
+	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
+	std::string zipCode = std::to_string(m_city.m_zipCode);
+	while (zipCode.size() < 5)
+		zipCode = "0" + zipCode;
+
+	std::string name = m_city.m_name;
+	StringTools::ConvertToImGuiText(name);
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + name + "-" + zipCode + "/";
+	if (!IsWholeCity())
+		request += "quartier_" + boroughName + "-" + std::to_string(m_key);
+	StringTools::TransformToLower(request);
+
+	return request;
 }
 
 //-------------------------------------------------------------------------------------------------

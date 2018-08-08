@@ -41,6 +41,10 @@ public:
 	void SetWholeCity();
 	bool IsWholeCity() const;
 
+	void OpenInBrowser() const;
+
+	std::string ComputeRequestURL() const;
+
 	static bool compare(const BoroughData &_a, const BoroughData &_b)
 	{
 		return _a.m_name < _b.m_name;

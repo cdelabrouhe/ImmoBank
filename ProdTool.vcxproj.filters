@@ -319,6 +319,9 @@
     <ClInclude Include="extern\mariadb\include\mysqlx\devapi\detail\settings.h">
       <Filter>Sources\extern\MariaDB\mysqlx\devapi\detail</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Database\MySQLDatabase.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -422,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="sources\Tools\Types.cpp">
       <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\MySQLDatabase.cpp">
+      <Filter>Sources\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

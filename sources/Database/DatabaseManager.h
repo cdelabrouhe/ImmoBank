@@ -15,6 +15,7 @@ enum DataTables
 };
 
 struct sqlite3;
+class MySQLDatabase;
 
 extern const std::string	s_wholeCityName;
 
@@ -37,8 +38,6 @@ public:
 	void	Init();
 	void	Process();
 	void	End();
-
-	void	InitExternalDatabase();
 
 	void	AddBoroughData(const BoroughData& _data);
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
@@ -69,5 +68,6 @@ private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<CityComputeData>	m_cityComputes;
 	std::vector<BoroughData>		m_boroughComputes;
+	MySQLDatabase*					m_externalDB = nullptr;
 	bool							m_modified = false;
 };

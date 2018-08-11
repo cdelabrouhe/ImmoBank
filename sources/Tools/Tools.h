@@ -5,6 +5,9 @@
 
 struct sPrice;
 
+#define DISABLE_OPTIMIZE	__pragma(optimize("",off))
+#define ENABLE_OPTIMIZE	__pragma(optimize("",on))
+
 class Tools
 {
 public:

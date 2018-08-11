@@ -7,41 +7,10 @@
 #include "Request/SearchRequest/SearchRequestResulCityBoroughData.h"
 #include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 #include <algorithm>
-
-#include <../../jsoncpp/value.h>
-
-#define XDEVAPI
-
-#ifndef XDEVAPI
-#define MYSQL_CONNECTION
-#endif
-
-#ifdef XDEVAPI
-#include <mysqlx/xdevapi.h>
-using namespace mysqlx;
-#endif
-
-#ifdef MYSQL_CONNECTION
-#include <jdbc/mysql_connection.h>
-
-#include <jdbc/cppconn/driver.h>
-#include <jdbc/cppconn/exception.h>
-#include <jdbc/cppconn/resultset.h>
-#include <jdbc/cppconn/statement.h>
-
-#pragma comment(lib, "mysqlcppconn.lib")
-#pragma comment(lib, "mysqlcppconn8.lib")
-#endif
+#include "MySQLDatabase.h"
 
 DatabaseManager* s_singleton = nullptr;
 const std::string s_wholeCityName = "WholeCity";
-
-#ifdef MYSQL_CONNECTION
-static sql::Driver *driver;
-static sql::Connection *con;
-static sql::Statement *stmt;
-static sql::ResultSet *res;
-#endif
 
 //-------------------------------------------------------------------------------------------------
 DatabaseManager* DatabaseManager::getSingleton()
@@ -62,52 +31,10 @@ void DatabaseManager::Init()
 	OpenTables();
 	CreateTables();
 
-	InitExternalDatabase();
+	m_externalDB = new MySQLDatabase();
+	m_externalDB->Init();
 
 	//Test();
-}
-
-//-------------------------------------------------------------------------------------------------
-void DatabaseManager::InitExternalDatabase()
-{
-#ifdef MYSQL_CONNECTION
-	driver = get_driver_instance();
-	const char* name = driver->getName().c_str();
-	auto major = driver->getMajorVersion();
-	auto minor = driver->getMinorVersion();
-	auto patch = driver->getPatchVersion();
-		
-	con = driver->connect("192.168.0.26:3307", "root", "2mdxg89q");
-	// Connect to the MySQL test database
-	con->setSchema("test");
-
-	stmt = con->createStatement();
-	res = stmt->executeQuery("SELECT 'Hello World!' AS _message");
-#endif
-		
-#ifdef XDEVAPI
-	//----------------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------------
-	// EXAMPLE IN HERE: https://dev.mysql.com/doc/x-devapi-userguide/en/database-connection-example.html
-	//----------------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------------
-	// Scope controls life-time of objects such as session or schema
-	{
-		Session sess("192.168.0.26", 3307, "testUser", "2mdxg89q");
-		Schema db = sess.getSchema("test");
-		// or Schema db(sess, "test");
-
-		Collection myColl = db.getCollection("my_collection");
-		// or Collection myColl(db, "my_collection");
-
-		DocResult myDocs = myColl.find("name like :param")
-			.limit(1)
-			.bind("param", "S%").execute();
-
-		Json::Value str = myDocs.fetchOne();
-		printf("");
-	}
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -133,12 +60,17 @@ void DatabaseManager::Process()
 		else
 			++itBorough;
 	}
+
+	m_externalDB->Process();
 }
 
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::End()
 {
 	CloseTables();
+
+	m_externalDB->End();
+	delete m_externalDB;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -177,6 +109,8 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data)
 		localData.m_priceRentApartmentT4Plus.m_min,
 		localData.m_priceRentApartmentT4Plus.m_max))
 		printf("Add borough %s to database Boroughs\n", localData.m_name.c_str());
+
+	m_externalDB->WriteBoroughData(localData);
 }
 
 //-------------------------------------------------------------------------------------------------

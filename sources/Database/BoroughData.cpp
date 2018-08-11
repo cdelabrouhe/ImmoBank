@@ -83,6 +83,12 @@ void BoroughData::OpenInBrowser() const
 }
 
 //-------------------------------------------------------------------------------------------------
+bool BoroughData::IsValid() const
+{
+	return ((m_priceBuyApartment.m_val > 0.f) && (m_priceBuyHouse.m_val > 0.f));
+}
+
+//-------------------------------------------------------------------------------------------------
 std::string BoroughData::ComputeRequestURL() const
 {
 	//std::string request = "https://www.meilleursagents.com/prix-immobilier/montpellier-34000/quartier_antigone-170492247/"
@@ -171,12 +177,10 @@ void BoroughData::DisplayAsTooltip()
 	bool hovered = ImGui::IsItemHovered();
 	if (hovered)
 	{
-		const bool validData = ((m_priceBuyApartment.m_val > 0.f) && (m_priceBuyHouse.m_val > 0.f));
-
 		ImGui::BeginTooltip();
 		ImGui::SetWindowFontScale(1.f);
 
-		if (validData)
+		if (IsValid())
 		{
 			static float s_sizeMin = 0.8f;
 			static float s_size = 1.f;

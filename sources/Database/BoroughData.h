@@ -43,6 +43,8 @@ public:
 
 	void OpenInBrowser() const;
 
+	bool IsValid() const;
+
 	std::string ComputeRequestURL() const;
 
 	static bool compare(const BoroughData &_a, const BoroughData &_b)

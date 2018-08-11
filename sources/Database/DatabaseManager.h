@@ -39,7 +39,7 @@ public:
 	void	Process();
 	void	End();
 
-	void	AddBoroughData(const BoroughData& _data);
+	void	AddBoroughData(const BoroughData& _data, bool _saveExternal = true);
 	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
 	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 	bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
@@ -69,5 +69,6 @@ private:
 	std::vector<CityComputeData>	m_cityComputes;
 	std::vector<BoroughData>		m_boroughComputes;
 	MySQLDatabase*					m_externalDB = nullptr;
+	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
 	bool							m_modified = false;
 };

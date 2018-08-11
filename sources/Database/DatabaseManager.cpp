@@ -61,7 +61,23 @@ void DatabaseManager::Process()
 			++itBorough;
 	}
 
+	// External process
 	m_externalDB->Process();
+
+	auto it = m_externalBoroughRequests.begin();
+	while (it != m_externalBoroughRequests.end())
+	{
+		int queryID = it->second;
+		if (m_externalDB->IsQueryAvailable(queryID))
+		{
+			BoroughData borough;
+			m_externalDB->GetResultBoroughData(queryID, borough);
+			AddBoroughData(borough, false);
+			m_externalBoroughRequests.erase(it);
+		}
+		else
+			++it;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -74,7 +90,7 @@ void DatabaseManager::End()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::AddBoroughData(const BoroughData& _data)
+void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExternal)
 {
 	m_modified = true;
 
@@ -110,7 +126,8 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data)
 		localData.m_priceRentApartmentT4Plus.m_max))
 		printf("Add borough %s to database Boroughs\n", localData.m_name.c_str());
 
-	m_externalDB->WriteBoroughData(localData);
+	if (_saveExternal)
+		m_externalDB->WriteBoroughData(localData);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -157,6 +174,7 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 	if (boroughs.size() == 1)
 	{
 		_data = boroughs.back();
+		_data.m_city.FixName();
 		return true;
 	}
 	return false;
@@ -221,6 +239,22 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	{
 		borough.m_city = _city;
 		borough.m_city.FixName();
+
+		// Ask data to external database
+		if (!borough.IsValid())
+		{
+			unsigned int key = borough.m_key;
+			auto it = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
+			{
+				return (_pair.first == key);
+			});
+			if (it == m_externalBoroughRequests.end())
+			{
+				int queryID = m_externalDB->AskForBoroughData(borough);
+				if (queryID != -1)
+					m_externalBoroughRequests.push_back(std::make_pair(key, queryID));
+			}
+		}
 	}
 
 	if (_data.size() >= 1)

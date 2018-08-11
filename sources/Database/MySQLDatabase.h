@@ -4,6 +4,7 @@
 #include "BoroughData.h"
 #include <map>
 #include <mutex>
+#include <vector>
 
 class Thread;
 
@@ -54,7 +55,7 @@ public:
 	void WriteBoroughData(BoroughData& _data);
 	bool GetNextQuery(MySQLBoroughQuery& _request);
 	void CancelQuery(const int _queryID);
-	void Validate(const int _queryID);
+	void Validate(const int _queryID, BoroughData& _data);
 
 protected:
 	sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Statement* _statement) const;
@@ -69,6 +70,7 @@ private:
 	sql::Connection* m_connexion = nullptr;
 
 	std::map<int, MySQLBoroughQuery>	m_queries;
+	std::vector<std::pair<unsigned int, u64>>		m_timeoutQueries;
 
 	std::mutex*	m_mutex = nullptr;
 	Thread*		m_thread = nullptr;

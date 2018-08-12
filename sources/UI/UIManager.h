@@ -26,6 +26,12 @@ public:
 	void	DisplayCityInformation();
 	void	DisplayComputeRateTool();
 
+#ifdef DEV_MODE
+	bool	IsDisplayMySQLDebug();
+	void	NotifyMySQLEvent(const std::string& _request);
+	void	DisplayMySQLRequestsPanel();
+#endif
+
 private:
 	// Display panel
 	int								m_selectedCityID = 0;
@@ -35,4 +41,8 @@ private:
 
 	bool							m_displayCityData = false;
 	bool							m_cityListRequested = false;
+
+#ifdef DEV_MODE
+	std::vector<std::string>		m_MySQLRequests;
+#endif
 };

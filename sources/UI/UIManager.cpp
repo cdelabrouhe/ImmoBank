@@ -11,6 +11,8 @@
 #include "Tools/StringTools.h"
 #include "Tools/Tools.h"
 
+static bool s_displayDebugMySQL = false;
+
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
 //-------------------------------------------------------------------------------------------------
@@ -106,6 +108,15 @@ bool UIManager::Draw()
 			ImGui::EndMenu();
 		}
 
+#ifdef DEV_MODE
+		if (ImGui::BeginMenu("DEBUG"))
+		{
+			ImGui::MenuItem("Display MySQL Debug", nullptr, &s_displayDebugMySQL);
+
+			ImGui::EndMenu();
+		}
+#endif
+
 		ImGui::EndMenuBar();
 	}
 
@@ -125,6 +136,10 @@ void UIManager::Process()
 {
 	if (m_displayCityData)
 		DisplayCityInformation();
+
+#ifdef DEV_MODE
+	DisplayMySQLRequestsPanel();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -309,6 +324,15 @@ void UIManager::DisplayCityInformation()
 							borough.OpenInBrowser();
 						ImGui::PopID();
 
+#ifdef DEV_MODE
+						ImGui::SameLine();
+
+						ImGui::PushID(this + cpt + 30000);
+						if (ImGui::Button("DelData"))
+							borough.Reset(true);
+						ImGui::PopID();
+#endif
+
 						if (manual)
 						{
 							ImGui::OpenPopup("ManualEdit");
@@ -377,3 +401,40 @@ void UIManager::DisplayComputeRateTool()
 		ImGui::EndPopup();
 	}
 }
+
+#ifdef DEV_MODE
+bool UIManager::IsDisplayMySQLDebug()
+{
+	return s_displayDebugMySQL;
+}
+
+void UIManager::NotifyMySQLEvent(const std::string& _request)
+{
+	m_MySQLRequests.push_back(_request);
+}
+
+void UIManager::DisplayMySQLRequestsPanel()
+{
+	if (!s_displayDebugMySQL)
+		return;
+
+	ImGui::Begin("MySQL Debug panel", &s_displayDebugMySQL);
+	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 30), false, ImGuiWindowFlags_NoScrollbar);
+	if (ImGui::Button("Clear"))
+		m_MySQLRequests.clear();
+
+	ImGui::Separator();
+
+	ImGui::EndChild();
+
+	ImGui::BeginChild("Requests");
+	for (auto& request : m_MySQLRequests)
+	{
+		ImGui::TextWrapped("%s", request.c_str());
+	}
+	ImGui::EndChild();
+
+	ImGui::End();
+}
+
+#endif

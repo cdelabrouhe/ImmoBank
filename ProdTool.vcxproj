@@ -110,12 +110,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\extern\mariadb\include;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\mariadb\lib64\vs14</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn-static.lib;mysqlcppconn8-static.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn.lib;mysqlcppconn8.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -145,14 +145,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\extern\mariadb\include;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\mariadb\lib64\vs14</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn-static.lib;mysqlcppconn8-static.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;mysqlcppconn.lib;mysqlcppconn8.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

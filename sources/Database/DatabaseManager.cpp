@@ -11,6 +11,11 @@
 
 DatabaseManager* s_singleton = nullptr;
 const std::string s_wholeCityName = "WholeCity";
+#ifdef DEV_MODE
+static int s_externalDBUpdateInterval = 1000000;
+#else
+static int s_externalDBUpdateInterval = 600;
+#endif
 
 //-------------------------------------------------------------------------------------------------
 DatabaseManager* DatabaseManager::getSingleton()
@@ -33,6 +38,8 @@ void DatabaseManager::Init()
 
 	m_externalDB = new MySQLDatabase();
 	m_externalDB->Init();
+	
+	m_externalTimer = time(0);
 
 	//Test();
 }
@@ -41,6 +48,14 @@ void DatabaseManager::Init()
 void DatabaseManager::Process()
 {
 	m_modified = false;
+
+	if ((time(0) - m_externalTimer) > s_externalDBUpdateInterval)
+	{
+		m_modified = true;
+		m_externalTimer = time(0);
+		printf("DatabaseManager: force external update");
+	}
+
 	auto itCity = m_cityComputes.begin();
 	while (itCity != m_cityComputes.end())
 	{
@@ -545,4 +560,15 @@ void DatabaseManager::ComputeBoroughData(BoroughData& _data)
 {
 	m_boroughComputes.push_back(_data);
 	m_boroughComputes.back().Init();
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::ForceBoroughReset(BoroughData& _data)
+{
+	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
+	_data.Reset();
+	AddBoroughData(_data, false);
+	m_externalDB->RemoveBoroughData(_data);
+
+	m_modified = true;
 }

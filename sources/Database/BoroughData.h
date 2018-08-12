@@ -33,7 +33,7 @@ public:
 	void Init();
 	bool Process();
 	void End();
-	void Reset();
+	void Reset(bool _resetDB = false);
 
 	void Edit();
 	void DisplayAsTooltip();

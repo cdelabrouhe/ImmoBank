@@ -52,7 +52,7 @@ void BoroughData::End()
 }
 
 //-------------------------------------------------------------------------------------------------
-void BoroughData::Reset()
+void BoroughData::Reset(bool _resetDB)
 {
 	m_priceRentApartmentT1.Reset();
 	m_priceRentApartmentT2.Reset();
@@ -61,6 +61,12 @@ void BoroughData::Reset()
 	m_priceBuyApartment.Reset();
 	m_priceBuyHouse.Reset();
 	m_priceRentHouse.Reset();
+
+	// Reset all data in DBs
+	if (_resetDB)
+	{
+		DatabaseManager::getSingleton()->ForceBoroughReset(*this);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

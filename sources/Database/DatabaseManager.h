@@ -56,6 +56,8 @@ public:
 	void	ComputeBoroughData(BoroughData& _data);
 
 	inline bool IsModified() const		{ return m_modified; }
+
+	void	ForceBoroughReset(BoroughData& _data);
 	
 private:
 	void	CreateTables();
@@ -70,5 +72,6 @@ private:
 	std::vector<BoroughData>		m_boroughComputes;
 	MySQLDatabase*					m_externalDB = nullptr;
 	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
+	time_t								m_externalTimer = 0;
 	bool							m_modified = false;
 };

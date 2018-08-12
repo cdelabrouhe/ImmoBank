@@ -6,33 +6,31 @@
 #include <time.h>
 
 #ifndef _DEBUG
+#ifndef _WIN32
 #define MYSQL_ACTIVE
 #endif
-
-//#define XDEVAPI
-
-#ifndef XDEVAPI
-#define MYSQL_CONNECTION
 #endif
 
-#ifdef XDEVAPI
-#include <mysqlx/xdevapi.h>
-using namespace mysqlx;
-#endif
-
-#ifdef MYSQL_CONNECTION
+#ifdef MYSQL_ACTIVE
 #include <jdbc/mysql_connection.h>
 
 #include <jdbc/cppconn/driver.h>
 #include <jdbc/cppconn/exception.h>
 #include <jdbc/cppconn/resultset.h>
 #include <jdbc/cppconn/statement.h>
-
-#pragma comment(lib, "mysqlcppconn.lib")
-#pragma comment(lib, "mysqlcppconn8.lib")
 #endif
 
 static const u64 s_timeoutQuery = 10;
+
+#ifdef DEV_MODE
+#include "UI/UIManager.h"
+#endif
+void NotifyMySQLEvent(const std::string& _str)
+{
+#ifdef DEV_MODE
+	UIManager::getSingleton()->NotifyMySQLEvent(_str);
+#endif
+}
 
 #ifdef MYSQL_ACTIVE
 //--------------------------------------------------------------------------------------
@@ -40,6 +38,7 @@ static void DisplayMySQLException(sql::SQLException& _e)
 {
 	std::string str = "WARNING: SQLException ! MySQL error code: " + std::to_string(_e.getErrorCode()) + ", SQLState: " + _e.getSQLState() + "\n";
 	printf(str.c_str());
+	NotifyMySQLEvent(str);
 }
 
 //--------------------------------------------------------------------------------------
@@ -47,6 +46,7 @@ static void DisplayMySQLRuntimeError(std::runtime_error& _e)
 {
 	std::string str = "WARNING: MySQL runtime_err: " + std::string(_e.what()) + "\n";
 	printf(str.c_str());
+	NotifyMySQLEvent(str);
 }
 #endif
 
@@ -69,6 +69,7 @@ unsigned int MySQLThreadStart(void* arg)
 //--------------------------------------------------------------------------------------
 void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 {
+#ifdef MYSQL_ACTIVE
 	switch (m_type)
 	{
 	case Type_Read:
@@ -79,7 +80,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			sql::Statement* stmt = nullptr;
 			sql::ResultSet* result = _db->ExecuteQuery(str, stmt);
 
-			if (result->next())
+			if (result && result->next())
 			{
 				m_data.m_city.m_name = result->getString("CITY");
 				m_data.m_name = result->getString("BOROUGH");
@@ -123,13 +124,10 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 	case Type_Write:
 		{
 			// Remove current borough data
-			char buf[4096];
-			sprintf(buf, "DELETE FROM `BOROUGHS` WHERE BOROUGHKEY=%u", m_data.m_key);
-			std::string str = buf;
-			sql::Statement* stmt = nullptr;
-			_db->ExecuteQuery(str, stmt);
-			
+			_db->RemoveBoroughData(m_data);
+						
 			// Insert new borough data
+			char buf[4096];
 			memset(buf, 0, 4096);
 			sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
 				m_data.m_city.m_name.c_str(),
@@ -158,7 +156,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 				m_data.m_priceRentApartmentT4Plus.m_min,
 				m_data.m_priceRentApartmentT4Plus.m_max);
 
-			str = buf;
+			std::string str = buf;
 			_db->ExecuteUpdate(str);
 
 			/*static bool s_test = false;
@@ -176,6 +174,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 	}
 
 	_db->Validate(m_queryID, m_data);
+#endif
 }
 
 //--------------------------------------------------------------------------------------
@@ -188,7 +187,6 @@ void MySQLDatabase::Init()
 	m_thread = new Thread();
 	m_thread->start(MySQLThreadStart, this, "MySQLRequestsThread");
 
-#ifdef MYSQL_CONNECTION
 	try {
 		m_driver = get_driver_instance();
 		const char* name = m_driver->getName().c_str();
@@ -210,31 +208,6 @@ void MySQLDatabase::Init()
 		DisplayMySQLRuntimeError(e);
 		return;
 	}
-#endif
-
-#ifdef XDEVAPI
-	//----------------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------------
-	// EXAMPLE IN HERE: https://dev.mysql.com/doc/x-devapi-userguide/en/database-connection-example.html
-	//----------------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------------
-	// Scope controls life-time of objects such as session or schema
-	{
-		Session sess("192.168.0.26", 3307, "basicuser", "chouchou");
-		Schema db = sess.getSchema("mysql");
-		// or Schema db(sess, "test");
-
-		Collection myColl = db.getCollection("CITIES");
-		// or Collection myColl(db, "my_collection");
-
-		DocResult myDocs = myColl.find("name like :param")
-			.limit(1)
-			.bind("param", "S%").execute();
-
-		Json::Value str = myDocs.fetchOne();
-		printf("");
-	}
-#endif
 #endif
 }
 
@@ -260,7 +233,7 @@ void MySQLDatabase::Process()
 	auto itTimeout = m_timeoutQueries.begin();
 	while (itTimeout != m_timeoutQueries.end())
 	{
-		u64 result = curTime - itTimeout->second;
+		time_t result = curTime - itTimeout->second;
 		if (result > s_timeoutQuery)
 			itTimeout = m_timeoutQueries.erase(itTimeout);
 		else
@@ -303,7 +276,7 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 {
 #ifdef MYSQL_ACTIVE
 	unsigned int key = _data.m_key;
-	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, u64>& _pair)->bool
+	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, time_t>& _pair)->bool
 	{
 		return (_pair.first == key);
 	});
@@ -415,9 +388,21 @@ void MySQLDatabase::Validate(const int _queryID, BoroughData& _data)
 }
 
 //--------------------------------------------------------------------------------------
+void MySQLDatabase::RemoveBoroughData(BoroughData& _data)
+{
+	char buf[4096];
+	sprintf(buf, "DELETE FROM `BOROUGHS` WHERE BOROUGHKEY=%u", _data.m_key);
+	std::string str = buf;
+	sql::Statement* stmt = nullptr;
+	ExecuteQuery(str, stmt);
+}
+
+//--------------------------------------------------------------------------------------
 sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Statement* _statement) const
 {
 #ifdef MYSQL_ACTIVE
+	NotifyMySQLEvent(_query);
+
 	if (m_connexion)
 	{
 		try {
@@ -447,6 +432,8 @@ sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Stat
 int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 {
 #ifdef MYSQL_ACTIVE
+	NotifyMySQLEvent(_query);
+
 	if (m_connexion)
 	{
 		try {

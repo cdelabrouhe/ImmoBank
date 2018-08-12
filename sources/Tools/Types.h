@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string>
 
+//#define DEV_MODE
+
 #define ASSERT assert
 
 #ifdef WIN32

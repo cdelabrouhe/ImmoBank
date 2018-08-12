@@ -6,7 +6,7 @@
 #include <time.h>
 
 #ifndef _DEBUG
-#ifndef _WIN32
+#ifndef WIN32
 #define MYSQL_ACTIVE
 #endif
 #endif

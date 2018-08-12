@@ -45,7 +45,9 @@ bool CityComputeData::Process()
 					m_boroughs.push_back(data);
 
 					// Store data into DB
-					DatabaseManager::getSingleton()->AddBoroughData(data);
+					BoroughData localData;
+					if (!DatabaseManager::getSingleton()->GetBoroughData(data.m_city.m_name, data.m_name, localData))
+						DatabaseManager::getSingleton()->AddBoroughData(data);
 
 					delete borough;
 				}

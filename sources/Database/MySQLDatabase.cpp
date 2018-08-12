@@ -12,12 +12,12 @@
 #endif
 
 #ifdef MYSQL_ACTIVE
-#include <jdbc/mysql_connection.h>
+#include <mysql_connection.h>
 
-#include <jdbc/cppconn/driver.h>
-#include <jdbc/cppconn/exception.h>
-#include <jdbc/cppconn/resultset.h>
-#include <jdbc/cppconn/statement.h>
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
 #endif
 
 static const u64 s_timeoutQuery = 10;
@@ -25,6 +25,7 @@ static const u64 s_timeoutQuery = 10;
 #ifdef DEV_MODE
 #include "UI/UIManager.h"
 #endif
+
 void NotifyMySQLEvent(const std::string& _str)
 {
 #ifdef DEV_MODE
@@ -233,7 +234,7 @@ void MySQLDatabase::Process()
 	auto itTimeout = m_timeoutQueries.begin();
 	while (itTimeout != m_timeoutQueries.end())
 	{
-		time_t result = curTime - itTimeout->second;
+		int result = curTime - itTimeout->second;
 		if (result > s_timeoutQuery)
 			itTimeout = m_timeoutQueries.erase(itTimeout);
 		else
@@ -276,10 +277,22 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 {
 #ifdef MYSQL_ACTIVE
 	unsigned int key = _data.m_key;
-	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, time_t>& _pair)->bool
+#ifndef _WIN32
+	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, u64>& _pair)->bool
 	{
 		return (_pair.first == key);
 	});
+#else
+	bool found = false;
+	auto it = m_timeoutQueries.begin();
+	while (!found && (it != m_timeoutQueries.end()))
+	{
+		auto& pair = *it;
+		found = (pair.first == key);
+		++it;
+	}
+#endif
+
 	if (it != m_timeoutQueries.end())
 		return -1;
 

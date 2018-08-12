@@ -71,7 +71,7 @@ private:
 	sql::Connection* m_connexion = nullptr;
 
 	std::map<int, MySQLBoroughQuery>	m_queries;
-	std::vector<std::pair<unsigned int, time_t>>		m_timeoutQueries;
+	std::vector<std::pair<unsigned int, u64>>		m_timeoutQueries;
 
 	std::mutex*	m_mutex = nullptr;
 	Thread*		m_thread = nullptr;

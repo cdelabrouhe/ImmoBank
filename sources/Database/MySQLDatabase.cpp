@@ -362,7 +362,8 @@ void MySQLDatabase::CancelQuery(const int _queryID)
 //--------------------------------------------------------------------------------------
 void MySQLDatabase::WriteBoroughData(BoroughData& _data)
 {
-	AddQuery(MySQLBoroughQuery::Type_Write, _data);
+	if (_data.IsValid())
+		AddQuery(MySQLBoroughQuery::Type_Write, _data);
 }
 
 //--------------------------------------------------------------------------------------

@@ -91,7 +91,23 @@ void BoroughData::OpenInBrowser() const
 //-------------------------------------------------------------------------------------------------
 bool BoroughData::IsValid() const
 {
-	return ((m_priceBuyApartment.m_val > 0.f) && (m_priceBuyHouse.m_val > 0.f));
+	return ((m_priceBuyApartment.m_val > 0.f) || (m_priceBuyHouse.m_val > 0.f));
+}
+
+//-------------------------------------------------------------------------------------------------
+int GetBoroughNumber(const std::string& _boroughName)
+{
+	int maxBoroughNumber = 30;
+	int result = -1;
+	for (int ID = 0; ID < maxBoroughNumber; ++ID)
+	{
+		std::string val = std::to_string(ID) + "e";
+		auto it = _boroughName.find(val);
+		if (it != std::string::npos)
+			result = ID;
+	}
+
+	return result;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -103,16 +119,34 @@ std::string BoroughData::ComputeRequestURL() const
 	StringTools::ReplaceBadSyntax(boroughName, " \\ ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, " ", "-");
 	StringTools::ReplaceBadSyntax(boroughName, "'", "-");
+	StringTools::ReplaceBadSyntax(boroughName, "St.", "saint");
+	StringTools::ReplaceBadSyntax(boroughName, "St-", "saint-");
+	StringTools::ReplaceBadSyntax(boroughName, "Ste.", "sainte");
+	StringTools::ReplaceBadSyntax(boroughName, "Ste-", "sainte-");
 	std::string zipCode = std::to_string(m_city.m_zipCode);
 	while (zipCode.size() < 5)
 		zipCode = "0" + zipCode;
 
 	std::string name = m_city.m_name;
 	StringTools::ConvertToImGuiText(name);
-	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + name + "-" + zipCode + "/";
-	if (!IsWholeCity())
-		request += "quartier_" + boroughName + "-" + std::to_string(m_key);
-	StringTools::TransformToLower(request);
+	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + name;
+
+	int boroughNumber = GetBoroughNumber(boroughName);
+	if (boroughNumber == -1)
+	{
+		request = request + "-" + zipCode + "/";
+		if (!IsWholeCity())
+			request += "quartier_" + boroughName + "-" + std::to_string(m_key);
+		StringTools::TransformToLower(request);
+	}
+	else
+	{
+		StringTools::TransformToLower(request);
+		int departement = m_city.m_zipCode / 1000;
+		int zip = (departement * 1000) + boroughNumber;
+		zipCode = std::to_string(zip);
+		request = request + "-" + std::to_string(boroughNumber) + (boroughNumber == 1 ? "er" : "eme") + "-arrondissement-" + zipCode;
+	}
 
 	return request;
 }

@@ -46,6 +46,7 @@ class MySQLDatabase
 
 public:
 	void Init();
+	void LoadConfigFile();
 	void Process();
 	void End();
 
@@ -75,4 +76,9 @@ private:
 
 	std::mutex*	m_mutex = nullptr;
 	Thread*		m_thread = nullptr;
+
+	std::string		m_server;
+	std::string		m_user;
+	std::string		m_password;
+	std::string		m_base;
 };

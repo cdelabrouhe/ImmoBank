@@ -72,6 +72,6 @@ private:
 	std::vector<BoroughData>		m_boroughComputes;
 	MySQLDatabase*					m_externalDB = nullptr;
 	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
-	time_t								m_externalTimer = 0;
+	time_t							m_externalTimer = 0;
 	bool							m_modified = false;
 };

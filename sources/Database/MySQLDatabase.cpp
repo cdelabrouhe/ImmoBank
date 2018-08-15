@@ -5,6 +5,9 @@
 #include "Tools/Thread/Thread.h"
 #include <time.h>
 
+#include "extern/jsoncpp/reader.h"
+#include "extern/jsoncpp/value.h"
+
 #ifndef _DEBUG
 #ifndef WIN32
 #define MYSQL_ACTIVE
@@ -18,6 +21,8 @@
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
+
+#include <windows.h>
 #endif
 
 static const u64 s_timeoutQuery = 10;
@@ -34,6 +39,14 @@ void NotifyMySQLEvent(const std::string& _str)
 }
 
 #ifdef MYSQL_ACTIVE
+//--------------------------------------------------------------------------------------
+static void DisplayMySQLMessage(const std::string& _message)
+{
+	std::string str = "MESSAGE: " + _message + "\n";
+	printf(str.c_str());
+	NotifyMySQLEvent(str);
+}
+
 //--------------------------------------------------------------------------------------
 static void DisplayMySQLException(sql::SQLException& _e)
 {
@@ -67,114 +80,35 @@ unsigned int MySQLThreadStart(void* arg)
 	return 0;
 }
 
-//--------------------------------------------------------------------------------------
-void MySQLBoroughQuery::Process(MySQLDatabase* _db)
+//-------------------------------------------------------------------------------------------------
+void MySQLDatabase::LoadConfigFile()
 {
 #ifdef MYSQL_ACTIVE
-	switch (m_type)
+	// Load config file
+	char exe_path[2048];
+	GetModuleFileNameA(NULL, exe_path, 2048);
+	std::string path = exe_path;
+	auto delimiter = path.find_last_of("\\");
+	path = path.substr(0, delimiter + 1) + "database.cfg";
+
+	FILE* file = fopen(path.c_str(), "rt");
+	if (file)
 	{
-	case Type_Read:
-		{
-			char buf[512];
-			sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s' AND BOROUGH='%s'", m_data.m_city.m_name.c_str(), m_data.m_name.c_str());
-			std::string str = buf;
-			sql::Statement* stmt = nullptr;
-			sql::ResultSet* result = _db->ExecuteQuery(str, stmt);
+		char* test_data = (char*)malloc(1000000);
+		fread(test_data, sizeof(char), 1000000, file);
+		fclose(file);
+		std::string str = test_data;
+		free(test_data);
 
-			if (result && result->next())
-			{
-				m_data.m_city.m_name = result->getString("CITY");
-				m_data.m_name = result->getString("BOROUGH");
-				m_data.m_timeUpdate.SetData(result->getUInt("TIMEUPDATE"));
-				m_data.m_key = result->getUInt("BOROUGHKEY");
-				m_data.m_priceBuyApartment.m_val = (float)result->getDouble("APARTMENTBUY");
-				m_data.m_priceBuyApartment.m_min = (float)result->getDouble("APARTMENTBUYMIN");
-				m_data.m_priceBuyApartment.m_max = (float)result->getDouble("APARTMENTBUYMAX");
-				m_data.m_priceBuyHouse.m_val = (float)result->getDouble("HOUSEBUY");
-				m_data.m_priceBuyHouse.m_min = (float)result->getDouble("HOUSEBUYMIN");
-				m_data.m_priceBuyHouse.m_max = (float)result->getDouble("HOUSEBUYMAX");
-				m_data.m_priceRentHouse.m_val = (float)result->getDouble("RENTHOUSE");
-				m_data.m_priceRentHouse.m_min = (float)result->getDouble("RENTHOUSEMIN");
-				m_data.m_priceRentHouse.m_max = (float)result->getDouble("RENTHOUSEMAX");
-				m_data.m_priceRentApartmentT1.m_val = (float)result->getDouble("RENTT1");
-				m_data.m_priceRentApartmentT1.m_min = (float)result->getDouble("RENTT1MIN");
-				m_data.m_priceRentApartmentT1.m_max = (float)result->getDouble("RENTT1MAX");
-				m_data.m_priceRentApartmentT2.m_val = (float)result->getDouble("RENTT2");
-				m_data.m_priceRentApartmentT2.m_min = (float)result->getDouble("RENTT2MIN");
-				m_data.m_priceRentApartmentT2.m_max = (float)result->getDouble("RENTT2MAX");
-				m_data.m_priceRentApartmentT3.m_val = (float)result->getDouble("RENTT3");
-				m_data.m_priceRentApartmentT3.m_min = (float)result->getDouble("RENTT3MIN");
-				m_data.m_priceRentApartmentT3.m_max = (float)result->getDouble("RENTT3MAX");
-				m_data.m_priceRentApartmentT4Plus.m_val = (float)result->getDouble("RENTT4");
-				m_data.m_priceRentApartmentT4Plus.m_min = (float)result->getDouble("RENTT4MIN");
-				m_data.m_priceRentApartmentT4Plus.m_max = (float)result->getDouble("RENTT4MAX");
-			}
+		Json::Value root;
+		Json::Reader reader;
+		reader.parse(str, root);
 
-			/*static bool s_test = false;
-			if (s_test)
-			{
-				FILE* f = fopen("error.txt", "wt");
-				if (f)
-				{
-					fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
-					fclose(f);
-				}
-			}*/
-		}
-		break;
-	case Type_Write:
-		{
-			// Remove current borough data
-			_db->RemoveBoroughData(m_data);
-						
-			// Insert new borough data
-			char buf[4096];
-			memset(buf, 0, 4096);
-			sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
-				m_data.m_city.m_name.c_str(),
-				m_data.m_name.c_str(),
-				m_data.m_timeUpdate.GetData(),
-				m_data.m_key,
-				m_data.m_priceBuyApartment.m_val,
-				m_data.m_priceBuyApartment.m_min,
-				m_data.m_priceBuyApartment.m_max,
-				m_data.m_priceBuyHouse.m_val,
-				m_data.m_priceBuyHouse.m_min,
-				m_data.m_priceBuyHouse.m_max,
-				m_data.m_priceRentHouse.m_val,
-				m_data.m_priceRentHouse.m_min,
-				m_data.m_priceRentHouse.m_max,
-				m_data.m_priceRentApartmentT1.m_val,
-				m_data.m_priceRentApartmentT1.m_min,
-				m_data.m_priceRentApartmentT1.m_max,
-				m_data.m_priceRentApartmentT2.m_val,
-				m_data.m_priceRentApartmentT2.m_min,
-				m_data.m_priceRentApartmentT2.m_max,
-				m_data.m_priceRentApartmentT3.m_val,
-				m_data.m_priceRentApartmentT3.m_min,
-				m_data.m_priceRentApartmentT3.m_max,
-				m_data.m_priceRentApartmentT4Plus.m_val,
-				m_data.m_priceRentApartmentT4Plus.m_min,
-				m_data.m_priceRentApartmentT4Plus.m_max);
-
-			std::string str = buf;
-			_db->ExecuteUpdate(str);
-
-			/*static bool s_test = false;
-			if (s_test)
-			{
-				FILE* f = fopen("error.txt", "wt");
-				if (f)
-				{
-					fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
-					fclose(f);
-				}
-			}*/
-		}
-		break;
+		m_server = root["Server"].asString();
+		m_user = root["User"].asString();
+		m_password = root["Password"].asString();
+		m_base = root["Base"].asString();
 	}
-
-	_db->Validate(m_queryID, m_data);
 #endif
 }
 
@@ -183,6 +117,8 @@ void MySQLDatabase::Init()
 {
 #ifdef MYSQL_ACTIVE
 	m_mutex = new std::mutex();
+
+	LoadConfigFile();
 
 	// Init thread
 	m_thread = new Thread();
@@ -195,9 +131,14 @@ void MySQLDatabase::Init()
 		auto minor = m_driver->getMinorVersion();
 		auto patch = m_driver->getPatchVersion();
 
-		m_connexion = m_driver->connect("192.168.0.26:3307", "basicuser", "chouchou");
+		m_connexion = m_driver->connect(m_server, m_user, m_password);
 		// Connect to the MySQL test database
-		m_connexion->setSchema("mysql");
+		m_connexion->setSchema(m_base);
+
+		char buf[4096];
+		sprintf(buf, "User '%s' connected to database '%s' on server '%s'", m_user.c_str(), m_base.c_str(), m_server.c_str());
+		std::string message = buf;
+		DisplayMySQLMessage(message);
 	}
 	catch (sql::SQLException &e)
 	{
@@ -244,6 +185,118 @@ void MySQLDatabase::Process()
 }
 
 //--------------------------------------------------------------------------------------
+void MySQLBoroughQuery::Process(MySQLDatabase* _db)
+{
+#ifdef MYSQL_ACTIVE
+	switch (m_type)
+	{
+	case Type_Read:
+	{
+		char buf[512];
+		sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s' AND BOROUGH='%s'", m_data.m_city.m_name.c_str(), m_data.m_name.c_str());
+		std::string str = buf;
+		sql::Statement* stmt = nullptr;
+		sql::ResultSet* result = _db->ExecuteQuery(str, stmt);
+
+		if (result && result->next())
+		{
+			m_data.m_city.m_name = result->getString("CITY");
+			m_data.m_name = result->getString("BOROUGH");
+			m_data.m_timeUpdate.SetData(result->getUInt("TIMEUPDATE"));
+			m_data.m_key = result->getUInt("BOROUGHKEY");
+			m_data.m_priceBuyApartment.m_val = (float)result->getDouble("APARTMENTBUY");
+			m_data.m_priceBuyApartment.m_min = (float)result->getDouble("APARTMENTBUYMIN");
+			m_data.m_priceBuyApartment.m_max = (float)result->getDouble("APARTMENTBUYMAX");
+			m_data.m_priceBuyHouse.m_val = (float)result->getDouble("HOUSEBUY");
+			m_data.m_priceBuyHouse.m_min = (float)result->getDouble("HOUSEBUYMIN");
+			m_data.m_priceBuyHouse.m_max = (float)result->getDouble("HOUSEBUYMAX");
+			m_data.m_priceRentHouse.m_val = (float)result->getDouble("RENTHOUSE");
+			m_data.m_priceRentHouse.m_min = (float)result->getDouble("RENTHOUSEMIN");
+			m_data.m_priceRentHouse.m_max = (float)result->getDouble("RENTHOUSEMAX");
+			m_data.m_priceRentApartmentT1.m_val = (float)result->getDouble("RENTT1");
+			m_data.m_priceRentApartmentT1.m_min = (float)result->getDouble("RENTT1MIN");
+			m_data.m_priceRentApartmentT1.m_max = (float)result->getDouble("RENTT1MAX");
+			m_data.m_priceRentApartmentT2.m_val = (float)result->getDouble("RENTT2");
+			m_data.m_priceRentApartmentT2.m_min = (float)result->getDouble("RENTT2MIN");
+			m_data.m_priceRentApartmentT2.m_max = (float)result->getDouble("RENTT2MAX");
+			m_data.m_priceRentApartmentT3.m_val = (float)result->getDouble("RENTT3");
+			m_data.m_priceRentApartmentT3.m_min = (float)result->getDouble("RENTT3MIN");
+			m_data.m_priceRentApartmentT3.m_max = (float)result->getDouble("RENTT3MAX");
+			m_data.m_priceRentApartmentT4Plus.m_val = (float)result->getDouble("RENTT4");
+			m_data.m_priceRentApartmentT4Plus.m_min = (float)result->getDouble("RENTT4MIN");
+			m_data.m_priceRentApartmentT4Plus.m_max = (float)result->getDouble("RENTT4MAX");
+}
+
+			/*static bool s_test = false;
+			if (s_test)
+			{
+				FILE* f = fopen("error.txt", "wt");
+				if (f)
+				{
+					fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+					fclose(f);
+				}
+			}*/
+		}
+	break;
+	case Type_Write:
+	{
+		// Remove current borough data
+		_db->RemoveBoroughData(m_data);
+
+		// Insert new borough data
+		char buf[4096];
+		memset(buf, 0, 4096);
+		sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
+			m_data.m_city.m_name.c_str(),
+			m_data.m_name.c_str(),
+			m_data.m_timeUpdate.GetData(),
+			m_data.m_key,
+			m_data.m_priceBuyApartment.m_val,
+			m_data.m_priceBuyApartment.m_min,
+			m_data.m_priceBuyApartment.m_max,
+			m_data.m_priceBuyHouse.m_val,
+			m_data.m_priceBuyHouse.m_min,
+			m_data.m_priceBuyHouse.m_max,
+			m_data.m_priceRentHouse.m_val,
+			m_data.m_priceRentHouse.m_min,
+			m_data.m_priceRentHouse.m_max,
+			m_data.m_priceRentApartmentT1.m_val,
+			m_data.m_priceRentApartmentT1.m_min,
+			m_data.m_priceRentApartmentT1.m_max,
+			m_data.m_priceRentApartmentT2.m_val,
+			m_data.m_priceRentApartmentT2.m_min,
+			m_data.m_priceRentApartmentT2.m_max,
+			m_data.m_priceRentApartmentT3.m_val,
+			m_data.m_priceRentApartmentT3.m_min,
+			m_data.m_priceRentApartmentT3.m_max,
+			m_data.m_priceRentApartmentT4Plus.m_val,
+			m_data.m_priceRentApartmentT4Plus.m_min,
+			m_data.m_priceRentApartmentT4Plus.m_max);
+
+		std::string str = buf;
+		_db->ExecuteUpdate(str);
+
+		/*static bool s_test = false;
+		if (s_test)
+		{
+			FILE* f = fopen("error.txt", "wt");
+			if (f)
+				{
+				fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+				fclose(f);
+			}
+		}*/
+	}
+	break;
+	}
+
+	_db->Validate(m_queryID, m_data);
+#endif
+}
+
+
+//--------------------------------------------------------------------------------------
 void MySQLDatabase::End()
 {
 #ifdef MYSQL_ACTIVE
@@ -257,6 +310,11 @@ void MySQLDatabase::End()
 		m_connexion->close();
 		delete m_connexion;
 		m_connexion = NULL;
+
+		char buf[4096];
+		sprintf(buf, "Deconnection to server '%s'", m_server.c_str());
+		std::string message = buf;
+		DisplayMySQLMessage(message);
 	}
 
 	delete m_mutex;

@@ -2,6 +2,7 @@
 #include <Tools/StringTools.h>
 #include "extern/jsoncpp/reader.h"
 #include <Database/BoroughData.h>
+#include <windows.h>
 
 float Tools::ComputeRentabilityRate(float _rent, float _price)
 {
@@ -72,4 +73,20 @@ bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _ren
 	_buyHouse = sPrice((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
 
 	return true;
+}
+
+std::string Tools::GetExePath()
+{
+	char exe_path[2048];
+	GetModuleFileNameA(NULL, exe_path, 2048);
+	std::string exePath = exe_path;
+	auto delimiter = exePath.find_first_of("\\");
+	while (delimiter != std::string::npos)
+	{
+		exePath.replace(delimiter, 1, "/");
+		delimiter = exePath.find_first_of("\\");
+	}
+	delimiter = exePath.find_last_of("/");
+	exePath = exePath.substr(0, delimiter + 1);
+	return exePath;
 }

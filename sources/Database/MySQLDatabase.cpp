@@ -21,8 +21,6 @@
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
-
-#include <windows.h>
 #endif
 
 static const u64 s_timeoutQuery = 10;
@@ -85,11 +83,8 @@ void MySQLDatabase::LoadConfigFile()
 {
 #ifdef MYSQL_ACTIVE
 	// Load config file
-	char exe_path[2048];
-	GetModuleFileNameA(NULL, exe_path, 2048);
-	std::string path = exe_path;
-	auto delimiter = path.find_last_of("\\");
-	path = path.substr(0, delimiter + 1) + "database.cfg";
+	std::string path = Tools::GetExePath();
+	path += "database.cfg";
 
 	FILE* file = fopen(path.c_str(), "rt");
 	if (file)

@@ -474,11 +474,21 @@ void DatabaseManager::CreateTables()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::OpenTables()
 {
+	// Find EXE path
+	std::string exePath = Tools::GetExePath();
+	
+	// Load SQL databases
 	if (!m_tables[DataTables_Cities])
-		m_tables[DataTables_Cities] = SQLOpenDB("C:/Tables/cities.sqlite");
+	{
+		std::string path = exePath + "cities.sqlite";
+		m_tables[DataTables_Cities] = SQLOpenDB(path.c_str());
+	}
 
 	if (!m_tables[DataTables_Boroughs])
-		m_tables[DataTables_Boroughs] = SQLOpenDB("C:/Tables/boroughs.sqlite");
+	{
+		std::string path = exePath + "boroughs.sqlite";
+		m_tables[DataTables_Boroughs] = SQLOpenDB(path.c_str());
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

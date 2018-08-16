@@ -31,6 +31,7 @@ int main(int argc, char** argv)
 
 	// Init DB
 	DatabaseManager::getSingleton()->Init();
+	bool connectionValid = DatabaseManager::getSingleton()->IsConnectionValid();
 
 	// Init RequestManager
 	RequestManager::getSingleton()->Init();
@@ -41,10 +42,21 @@ int main(int argc, char** argv)
 	{
 		ProdToolGL_NewFrame();
 
-		OnlineManager::getSingleton()->Process();
-		RequestManager::getSingleton()->Process();
-		DatabaseManager::getSingleton()->Process();
-		UIManager::getSingleton()->Process();
+		if (connectionValid)
+		{
+			OnlineManager::getSingleton()->Process();
+			RequestManager::getSingleton()->Process();
+			DatabaseManager::getSingleton()->Process();
+			UIManager::getSingleton()->Process();
+		}
+		else
+		{
+			if (UIManager::getSingleton()->DisplayConnectionError())
+			{
+				DatabaseManager::getSingleton()->Init();
+				connectionValid = DatabaseManager::getSingleton()->IsConnectionValid();
+			}
+		}		
 
 		const bool is_minimized = ProdToolGL_IsMinimized();
 		bool want_refresh = true;

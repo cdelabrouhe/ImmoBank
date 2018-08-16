@@ -37,7 +37,7 @@ void DatabaseManager::Init()
 	CreateTables();
 
 	m_externalDB = new MySQLDatabase();
-	m_externalDB->Init();
+	m_connectionValid = m_externalDB->Init();
 	
 	m_externalTimer = time(0);
 
@@ -581,4 +581,11 @@ void DatabaseManager::ForceBoroughReset(BoroughData& _data)
 	m_externalDB->RemoveBoroughData(_data);
 
 	m_modified = true;
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::GetConnectionParameters(std::string& _server, std::string& _user)
+{
+	_server = m_externalDB->GetServer();
+	_user = m_externalDB->GetUser();
 }

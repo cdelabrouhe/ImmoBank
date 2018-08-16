@@ -58,6 +58,10 @@ public:
 	inline bool IsModified() const		{ return m_modified; }
 
 	void	ForceBoroughReset(BoroughData& _data);
+
+	inline bool IsConnectionValid() const	{ return m_connectionValid;	}
+
+	void GetConnectionParameters(std::string& _server, std::string& _user);
 	
 private:
 	void	CreateTables();
@@ -74,4 +78,5 @@ private:
 	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
 	time_t							m_externalTimer = 0;
 	bool							m_modified = false;
+	bool							m_connectionValid = false;
 };

@@ -402,6 +402,31 @@ void UIManager::DisplayComputeRateTool()
 	}
 }
 
+bool UIManager::DisplayConnectionError()
+{
+	bool result = false;
+	if (!m_connectionError)
+	{
+		m_connectionError = true;
+		ImGui::OpenPopup("Connection error");
+	}
+
+	if (ImGui::BeginPopupModal("Connection error", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		std::string server, user;
+		DatabaseManager::getSingleton()->GetConnectionParameters(server, user);
+		ImGui::Text("Can't connect to server %s with user %s", server.c_str(), user.c_str());
+		if (ImGui::Button("Retry"))
+		{
+			ImGui::CloseCurrentPopup();
+			result = true;
+		}
+		ImGui::EndPopup();
+	}
+
+	return result;
+}
+
 #ifdef DEV_MODE
 bool UIManager::IsDisplayMySQLDebug()
 {

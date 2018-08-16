@@ -25,6 +25,7 @@ public:
 	void	InitDisplayCityInformation();
 	void	DisplayCityInformation();
 	void	DisplayComputeRateTool();
+	bool	DisplayConnectionError();
 
 #ifdef DEV_MODE
 	bool	IsDisplayMySQLDebug();
@@ -41,6 +42,8 @@ private:
 
 	bool							m_displayCityData = false;
 	bool							m_cityListRequested = false;
+
+	bool							m_connectionError = false;
 
 #ifdef DEV_MODE
 	std::vector<std::string>		m_MySQLRequests;

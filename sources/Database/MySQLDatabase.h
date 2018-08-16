@@ -45,7 +45,7 @@ class MySQLDatabase
 	friend struct MySQLBoroughQuery;
 
 public:
-	void Init();
+	bool Init();
 	void LoadConfigFile();
 	void Process();
 	void End();
@@ -58,6 +58,8 @@ public:
 	void CancelQuery(const int _queryID);
 	void Validate(const int _queryID, BoroughData& _data);
 	void RemoveBoroughData(BoroughData& _data);
+	inline std::string GetServer()		{ return m_server;}
+	inline std::string GetUser()		{ return m_user; }
 
 protected:
 	sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Statement* _statement) const;

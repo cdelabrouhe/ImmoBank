@@ -108,10 +108,14 @@ void MySQLDatabase::LoadConfigFile()
 }
 
 //--------------------------------------------------------------------------------------
-void MySQLDatabase::Init()
+bool MySQLDatabase::Init()
 {
+	bool result = true;
+
 #ifdef MYSQL_ACTIVE
 	m_mutex = new std::mutex();
+
+	result = false;
 
 	LoadConfigFile();
 
@@ -134,18 +138,22 @@ void MySQLDatabase::Init()
 		sprintf(buf, "User '%s' connected to database '%s' on server '%s'", m_user.c_str(), m_base.c_str(), m_server.c_str());
 		std::string message = buf;
 		DisplayMySQLMessage(message);
+
+		result = true;
 	}
 	catch (sql::SQLException &e)
 	{
 		DisplayMySQLException(e);
-		return;
+		return false;
 	}
 	catch (std::runtime_error &e)
 	{
 		DisplayMySQLRuntimeError(e);
-		return;
+		return false;
 	}
 #endif
+
+	return result;
 }
 
 //--------------------------------------------------------------------------------------

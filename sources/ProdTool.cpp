@@ -14,16 +14,10 @@ const int	CONFIG_WINDOW_HEIGHT = 768;
 
 int main(int argc, char** argv)
 {
-	//FreeConsole();
-
-	// Extract .exe directory
-	char exe_path[MAX_PATH];
-	GetModuleFileNameA(NULL, exe_path, MAX_PATH);
-	char* pa = strrchr(exe_path, '/');
-	char* pb = strrchr(exe_path, '\\');
-	if (pa > pb) *(pa + 1) = 0;
-	if (pb > pa) *(pb + 1) = 0;
-
+#ifndef DEV_MODE
+	FreeConsole();
+#endif
+		
 	// Setup window
 	HWND hwnd = 0;
 	if (!ProdToolGL_InitCreateWindow(CONFIG_WINDOW_WIDTH, CONFIG_WINDOW_HEIGHT))

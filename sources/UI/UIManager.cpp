@@ -294,6 +294,11 @@ void UIManager::DisplayCityInformation()
 				s_selectedData = &wholeCityData;
 			}
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Link"))
+				wholeCityData.OpenInBrowser();;
+
 			if (s_selectedData == &wholeCityData)
 				wholeCityData.Edit();
 

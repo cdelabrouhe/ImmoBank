@@ -128,6 +128,7 @@ std::string BoroughData::ComputeRequestURL() const
 		zipCode = "0" + zipCode;
 
 	std::string name = m_city.m_name;
+	StringTools::ReplaceBadSyntax(name, " ", "-");
 	StringTools::ConvertToImGuiText(name);
 	std::string request = "https://www.meilleursagents.com/prix-immobilier/" + name;
 

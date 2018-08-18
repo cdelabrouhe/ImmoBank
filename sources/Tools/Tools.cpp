@@ -2,6 +2,7 @@
 #include <Tools/StringTools.h>
 #include "extern/jsoncpp/reader.h"
 #include <Database/BoroughData.h>
+#include <extern/jsoncpp/reader.h>
 #include <windows.h>
 
 float Tools::ComputeRentabilityRate(float _rent, float _price)
@@ -89,4 +90,23 @@ std::string Tools::GetExePath()
 	delimiter = exePath.find_last_of("/");
 	exePath = exePath.substr(0, delimiter + 1);
 	return exePath;
+}
+
+bool Tools::ReadJSON(const char* _path, Json::Value& _data)
+{
+	FILE* file = fopen(_path, "rt");
+	if (file)
+	{
+		char* test_data = (char*)malloc(1000000);
+		fread(test_data, sizeof(char), 1000000, file);
+		fclose(file);
+		std::string str = test_data;
+		free(test_data);
+
+		Json::Reader reader;
+		reader.parse(str, _data);
+
+		return true;
+	}
+	return false;
 }

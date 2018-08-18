@@ -5,7 +5,6 @@
 #include "Tools/Thread/Thread.h"
 #include <time.h>
 
-#include "extern/jsoncpp/reader.h"
 #include "extern/jsoncpp/value.h"
 
 #ifndef _DEBUG
@@ -86,19 +85,9 @@ void MySQLDatabase::LoadConfigFile()
 	std::string path = Tools::GetExePath();
 	path += "database.cfg";
 
-	FILE* file = fopen(path.c_str(), "rt");
-	if (file)
+	Json::Value root;
+	if (Tools::ReadJSON(path.c_str(), root))
 	{
-		char* test_data = (char*)malloc(1000000);
-		fread(test_data, sizeof(char), 1000000, file);
-		fclose(file);
-		std::string str = test_data;
-		free(test_data);
-
-		Json::Value root;
-		Json::Reader reader;
-		reader.parse(str, root);
-
 		m_server = root["Server"].asString();
 		m_user = root["User"].asString();
 		m_password = root["Password"].asString();

@@ -455,7 +455,7 @@ void MySQLDatabase::Validate(const int _queryID, BoroughData& _data)
 void MySQLDatabase::RemoveBoroughData(BoroughData& _data)
 {
 	char buf[4096];
-	sprintf(buf, "DELETE FROM `BOROUGHS` WHERE BOROUGHKEY=%u", _data.m_key);
+	sprintf(buf, "DELETE FROM `BOROUGHS` WHERE CITY='%s' AND BOROUGH='%s'", _data.m_city.m_name.c_str(), _data.m_name.c_str());
 	std::string str = buf;
 	sql::Statement* stmt = nullptr;
 	ExecuteQuery(str, stmt);

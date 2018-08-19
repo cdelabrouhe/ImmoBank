@@ -22,7 +22,7 @@
 #include <cppconn/statement.h>
 #endif
 
-static const u64 s_timeoutQuery = 10;
+static const u64 s_timeoutQuery = 30;
 
 #ifdef DEV_MODE
 #include "UI/UIManager.h"

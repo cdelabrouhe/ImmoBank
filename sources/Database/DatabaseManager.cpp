@@ -340,17 +340,47 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 		GetBoroughs(_data.m_data, _data.m_boroughs);
 		_data.m_data.FixName();
 
+		// Look for a WholeCity borough
+		std::string lookFor = s_wholeCityName;
+		auto itCity = std::find_if(_data.m_boroughs.begin(), _data.m_boroughs.end(), [lookFor](BoroughData& _borough)->bool
+		{	return (_borough.m_name == lookFor);	});
+		if (itCity == _data.m_boroughs.end())
+		{
+			BoroughData data;
+			data.m_city = _data.m_data;
+			data.m_name = s_wholeCityName;
+			_data.m_boroughs.push_back(data);
+		}
+
 		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
 
 		auto it = _data.m_boroughs.begin();
 		while (it != _data.m_boroughs.end())
 		{
 			BoroughData& data = *it;
-			if (_wholeCity && data.IsWholeCity())
-			{
+			const bool isWholeCity = (_wholeCity && data.IsWholeCity());
+			if (isWholeCity)
 				*_wholeCity = data;
-				it = _data.m_boroughs.erase(it);
+
+			// Ask data to external database
+			if (!data.IsValid())
+			{
+				unsigned int key = data.m_key;
+				auto itExternal = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
+				{
+					return (_pair.first == key);
+				});
+				if (itExternal == m_externalBoroughRequests.end())
+				{
+					int queryID = m_externalDB->AskForBoroughData(data);
+					if (queryID != -1)
+						m_externalBoroughRequests.push_back(std::make_pair(key, queryID));
+				}
 			}
+
+			// next
+			if (_wholeCity && data.IsWholeCity())
+				it = _data.m_boroughs.erase(it);
 			else
 				++it;
 		}

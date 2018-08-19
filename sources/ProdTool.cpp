@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 			}
 		}		
 
-		const bool is_minimized = ProdToolGL_IsMinimized();
+		const bool is_minimized = false;// ProdToolGL_IsMinimized();
 		bool want_refresh = true;
 		if (is_minimized)
 			want_refresh = false;

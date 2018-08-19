@@ -299,6 +299,13 @@ void UIManager::DisplayCityInformation()
 			if (ImGui::Button("Link"))
 				wholeCityData.OpenInBrowser();;
 
+#ifdef DEV_MODE
+			ImGui::SameLine();
+
+			if (ImGui::Button("Del Data"))
+				wholeCityData.Reset(true);
+#endif
+
 			if (s_selectedData == &wholeCityData)
 				wholeCityData.Edit();
 

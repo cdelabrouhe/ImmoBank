@@ -9,6 +9,12 @@
 #include "Tools\StringTools.h"
 #include <windows.h>
 #include <shellapi.h>
+#include <ctime>
+DISABLE_OPTIMIZE
+BoroughData::BoroughData()
+{
+	SetTimeUpdateToNow();
+}
 
 //-------------------------------------------------------------------------------------------------
 void BoroughData::Init()
@@ -92,6 +98,14 @@ void BoroughData::OpenInBrowser() const
 bool BoroughData::IsValid() const
 {
 	return ((m_priceBuyApartment.m_val > 0.f) || (m_priceBuyHouse.m_val > 0.f));
+}
+
+//-------------------------------------------------------------------------------------------------
+void BoroughData::SetTimeUpdateToNow()
+{
+	std::time_t t = std::time(0);   // get time now
+	std::tm* now = std::localtime(&t);
+	m_timeUpdate.SetDate(now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -203,6 +217,7 @@ void BoroughData::Edit()
 
 		if (ImGui::Button("Save"))
 		{
+			SetTimeUpdateToNow();
 			DatabaseManager::getSingleton()->AddBoroughData(*this);
 			ImGui::CloseCurrentPopup();
 		}
@@ -211,6 +226,14 @@ void BoroughData::Edit()
 			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
+}
+
+static std::string To2DigitsString(int _value)
+{
+	std::string str = std::to_string(_value);
+	if (str.size() == 1)
+		str = "0" + str;
+	return str;
 }
 
 void BoroughData::DisplayAsTooltip()
@@ -260,6 +283,22 @@ void BoroughData::DisplayAsTooltip()
 			DISPLAY_INFO(T4 + , m_priceRentApartmentT4Plus);
 			DISPLAY_INFO(House, m_priceRentHouse);
 
+			ImGui::Separator();
+
+			ImGui::SetWindowFontScale(1.f);
+			std::string day = To2DigitsString(m_timeUpdate.GetDay());
+			std::string month = To2DigitsString(m_timeUpdate.GetMonth() + 1);
+			std::string year = To2DigitsString(m_timeUpdate.GetYear());
+			std::string hour = To2DigitsString(m_timeUpdate.GetHour());
+			std::string minute = To2DigitsString(m_timeUpdate.GetMinute());
+			std::string second = To2DigitsString(m_timeUpdate.GetSecond());
+			ImGui::Text("Update: %s-%s-%s at %s:%s:%s" 
+							, day.c_str()
+							, month.c_str()
+							, year.c_str()
+							, hour.c_str()
+							, minute.c_str()
+							, second.c_str());
 		}
 		else
 		{
@@ -271,3 +310,4 @@ void BoroughData::DisplayAsTooltip()
 		ImGui::EndTooltip();
 	}
 }
+ENABLE_OPTIMIZE

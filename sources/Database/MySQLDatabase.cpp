@@ -522,5 +522,3 @@ int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 
 	return 0;
 }
-
-ENABLE_OPTIMIZE

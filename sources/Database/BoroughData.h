@@ -18,6 +18,8 @@ struct sPrice
 class BoroughData
 {
 public:
+	BoroughData();
+
 	std::string			m_name;
 	sCity				m_city;
 	sDate				m_timeUpdate;
@@ -44,6 +46,8 @@ public:
 	void OpenInBrowser() const;
 
 	bool IsValid() const;
+
+	void SetTimeUpdateToNow();
 
 	std::string ComputeRequestURL() const;
 

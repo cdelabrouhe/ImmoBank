@@ -8,6 +8,9 @@
 
 class Thread;
 
+typedef struct st_mysql MYSQL;
+typedef struct st_mysql_res MYSQL_RES;
+
 namespace sql
 {
 	class Driver;
@@ -62,7 +65,7 @@ public:
 	inline std::string GetUser()		{ return m_user; }
 
 protected:
-	sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Statement* _statement) const;
+	MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 	int ExecuteUpdate(const std::string& _query) const;
 
 private:
@@ -70,8 +73,7 @@ private:
 	int AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data);
 
 private:
-	sql::Driver* m_driver = nullptr;
-	sql::Connection* m_connexion = nullptr;
+	MYSQL*  m_connexion = nullptr;
 
 	std::map<int, MySQLBoroughQuery>	m_queries;
 	std::vector<std::pair<unsigned int, u64>>		m_timeoutQueries;
@@ -80,6 +82,7 @@ private:
 	Thread*		m_thread = nullptr;
 
 	std::string		m_server;
+	int				m_port = -1;
 	std::string		m_user;
 	std::string		m_password;
 	std::string		m_base;

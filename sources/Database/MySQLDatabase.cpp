@@ -7,19 +7,27 @@
 
 #include "extern/jsoncpp/value.h"
 
-#ifndef _DEBUG
-#ifndef WIN32
 #define MYSQL_ACTIVE
+#include <mysql.h>
+
+#ifdef WIN32
+#ifdef _DEBUG
+#pragma comment(lib, "extern/libmariadb/bin/Win32/Debug/libmariadb.lib")
+#else
+#pragma comment(lib, "extern/libmariadb/bin/Win32/Release/libmariadb.lib")
+#endif
+
+#else
+
+#ifdef _DEBUG
+#pragma comment(lib, "extern/libmariadb/bin/x64/Debug/libmariadb.lib")
+#else
+#pragma comment(lib, "extern/libmariadb/bin/x64/Release/libmariadb.lib")
 #endif
 #endif
 
 #ifdef MYSQL_ACTIVE
-#include <mysql_connection.h>
-
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
+#define SQL_NO_ERROR 0
 #endif
 
 static const u64 s_timeoutQuery = 30;
@@ -43,22 +51,6 @@ static void DisplayMySQLMessage(const std::string& _message)
 	printf(str.c_str());
 	NotifyMySQLEvent(str);
 }
-
-//--------------------------------------------------------------------------------------
-static void DisplayMySQLException(sql::SQLException& _e)
-{
-	std::string str = "WARNING: SQLException ! MySQL error code: " + std::to_string(_e.getErrorCode()) + ", SQLState: " + _e.getSQLState() + "\n";
-	printf(str.c_str());
-	NotifyMySQLEvent(str);
-}
-
-//--------------------------------------------------------------------------------------
-static void DisplayMySQLRuntimeError(std::runtime_error& _e)
-{
-	std::string str = "WARNING: MySQL runtime_err: " + std::string(_e.what()) + "\n";
-	printf(str.c_str());
-	NotifyMySQLEvent(str);
-}
 #endif
 
 //------------------------------------------------------------------------------------------------
@@ -70,8 +62,8 @@ unsigned int MySQLThreadStart(void* arg)
 		MySQLBoroughQuery query;
 		if (db->GetNextQuery(query))
 			query.Process(db);
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		else
+			std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
 
 	return 0;
@@ -89,6 +81,7 @@ void MySQLDatabase::LoadConfigFile()
 	if (Tools::ReadJSON(path.c_str(), root))
 	{
 		m_server = root["Server"].asString();
+		m_port = root["Port"].asUInt();
 		m_user = root["User"].asString();
 		m_password = root["Password"].asString();
 		m_base = root["Base"].asString();
@@ -112,32 +105,30 @@ bool MySQLDatabase::Init()
 	m_thread = new Thread();
 	m_thread->start(MySQLThreadStart, this, "MySQLRequestsThread");
 
-	try {
-		m_driver = get_driver_instance();
-		const char* name = m_driver->getName().c_str();
-		auto major = m_driver->getMajorVersion();
-		auto minor = m_driver->getMinorVersion();
-		auto patch = m_driver->getPatchVersion();
+	MYSQL *mysql = mysql_init(NULL);
+	
+	m_connexion = mysql_real_connect(mysql
+		, m_server.c_str()
+		, m_user.c_str()
+		, m_password.c_str()
+		, m_base.c_str()
+		, m_port, nullptr, 0);
 
-		m_connexion = m_driver->connect(m_server, m_user, m_password);
-		// Connect to the MySQL test database
-		m_connexion->setSchema(m_base);
-
-		char buf[4096];
-		sprintf(buf, "User '%s' connected to database '%s' on server '%s'", m_user.c_str(), m_base.c_str(), m_server.c_str());
+	char buf[4096];
+	if (m_connexion != nullptr)
+	{
+		sprintf(buf, "User '%s' connected to database '%s' on server '%s':%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
 		std::string message = buf;
 		DisplayMySQLMessage(message);
 
-		result = true;
+		return true;
 	}
-	catch (sql::SQLException &e)
+	else
 	{
-		DisplayMySQLException(e);
-		return false;
-	}
-	catch (std::runtime_error &e)
-	{
-		DisplayMySQLRuntimeError(e);
+		sprintf(buf, "CAN'T CONNECT User '%s' to database '%s' on server '%s':%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
+		std::string message = buf;
+		DisplayMySQLMessage(message);
+
 		return false;
 	}
 #endif
@@ -187,37 +178,39 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 		char buf[512];
 		sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s' AND BOROUGH='%s'", m_data.m_city.m_name.c_str(), m_data.m_name.c_str());
 		std::string str = buf;
-		sql::Statement* stmt = nullptr;
-		sql::ResultSet* result = _db->ExecuteQuery(str, stmt);
+		MYSQL_RES* result = _db->ExecuteQuery(str);
 
-		if (result && result->next())
+		while (MYSQL_ROW row = mysql_fetch_row(result))
 		{
-			m_data.m_city.m_name = result->getString("CITY");
-			m_data.m_name = result->getString("BOROUGH");
-			m_data.m_timeUpdate.SetData(result->getUInt("TIMEUPDATE"));
-			m_data.m_key = result->getUInt("BOROUGHKEY");
-			m_data.m_priceBuyApartment.m_val = (float)result->getDouble("APARTMENTBUY");
-			m_data.m_priceBuyApartment.m_min = (float)result->getDouble("APARTMENTBUYMIN");
-			m_data.m_priceBuyApartment.m_max = (float)result->getDouble("APARTMENTBUYMAX");
-			m_data.m_priceBuyHouse.m_val = (float)result->getDouble("HOUSEBUY");
-			m_data.m_priceBuyHouse.m_min = (float)result->getDouble("HOUSEBUYMIN");
-			m_data.m_priceBuyHouse.m_max = (float)result->getDouble("HOUSEBUYMAX");
-			m_data.m_priceRentHouse.m_val = (float)result->getDouble("RENTHOUSE");
-			m_data.m_priceRentHouse.m_min = (float)result->getDouble("RENTHOUSEMIN");
-			m_data.m_priceRentHouse.m_max = (float)result->getDouble("RENTHOUSEMAX");
-			m_data.m_priceRentApartmentT1.m_val = (float)result->getDouble("RENTT1");
-			m_data.m_priceRentApartmentT1.m_min = (float)result->getDouble("RENTT1MIN");
-			m_data.m_priceRentApartmentT1.m_max = (float)result->getDouble("RENTT1MAX");
-			m_data.m_priceRentApartmentT2.m_val = (float)result->getDouble("RENTT2");
-			m_data.m_priceRentApartmentT2.m_min = (float)result->getDouble("RENTT2MIN");
-			m_data.m_priceRentApartmentT2.m_max = (float)result->getDouble("RENTT2MAX");
-			m_data.m_priceRentApartmentT3.m_val = (float)result->getDouble("RENTT3");
-			m_data.m_priceRentApartmentT3.m_min = (float)result->getDouble("RENTT3MIN");
-			m_data.m_priceRentApartmentT3.m_max = (float)result->getDouble("RENTT3MAX");
-			m_data.m_priceRentApartmentT4Plus.m_val = (float)result->getDouble("RENTT4");
-			m_data.m_priceRentApartmentT4Plus.m_min = (float)result->getDouble("RENTT4MIN");
-			m_data.m_priceRentApartmentT4Plus.m_max = (float)result->getDouble("RENTT4MAX");
-}
+			int rowID = 0;
+			m_data.m_city.m_name = row[rowID++];
+			m_data.m_name = row[rowID++];
+			m_data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
+			m_data.m_key = strtoul(row[rowID++], nullptr, 10);
+			m_data.m_priceBuyApartment.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyApartment.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyApartment.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_val = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_min = strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_max = strtod(row[rowID++], nullptr);
+		}
+
+		mysql_free_result(result);
 
 			/*static bool s_test = false;
 			if (s_test)
@@ -229,7 +222,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 					fclose(f);
 				}
 			}*/
-		}
+	}
 	break;
 	case Type_Write:
 	{
@@ -299,9 +292,8 @@ void MySQLDatabase::End()
 	// Stop MySQL connection
 	if (m_connexion)
 	{
-		m_connexion->close();
-		delete m_connexion;
-		m_connexion = NULL;
+		mysql_close(m_connexion);
+		m_connexion = nullptr;
 
 		char buf[4096];
 		sprintf(buf, "Deconnection to server '%s'", m_server.c_str());
@@ -457,39 +449,26 @@ void MySQLDatabase::RemoveBoroughData(BoroughData& _data)
 	char buf[4096];
 	sprintf(buf, "DELETE FROM `BOROUGHS` WHERE CITY='%s' AND BOROUGH='%s'", _data.m_city.m_name.c_str(), _data.m_name.c_str());
 	std::string str = buf;
-	sql::Statement* stmt = nullptr;
-	ExecuteQuery(str, stmt);
+	ExecuteUpdate(str);	
 }
 
 //--------------------------------------------------------------------------------------
-sql::ResultSet* MySQLDatabase::ExecuteQuery(const std::string& _query, sql::Statement* _statement) const
+MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const
 {
 #ifdef MYSQL_ACTIVE
 	NotifyMySQLEvent(_query);
 
 	if (m_connexion)
 	{
-		try {
-			/* create a statement object */
-			_statement = m_connexion->createStatement();
-
-			/* run a query which returns exactly one result set */
-			return _statement->executeQuery(_query);
-		}
-		catch (sql::SQLException &e)
+		if (mysql_query(m_connexion, _query.c_str()) == SQL_NO_ERROR)
 		{
-			DisplayMySQLException(e);
-			return NULL;
-		}
-		catch (std::runtime_error &e)
-		{
-			DisplayMySQLRuntimeError(e);
-			return NULL;
+			MYSQL_RES* res = mysql_use_result(m_connexion);
+			return res;
 		}
 	}
 #endif
 
-	return NULL;
+	return nullptr;
 }
 
 //--------------------------------------------------------------------------------------
@@ -500,22 +479,11 @@ int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 
 	if (m_connexion)
 	{
-		try {
-			/* create a statement object */
-			sql::Statement* stmt = m_connexion->createStatement();
-
-			/* run a query which returns exactly one result set */
-			return stmt->executeUpdate(_query);
-		}
-		catch (sql::SQLException &e)
+		if (mysql_query(m_connexion, _query.c_str()) == SQL_NO_ERROR)
 		{
-			DisplayMySQLException(e);
-			return 0;
-		}
-		catch (std::runtime_error &e)
-		{
-			DisplayMySQLRuntimeError(e);
-			return 0;
+			MYSQL_RES* res = mysql_use_result(m_connexion);
+			mysql_free_result(res);
+			return 1;
 		}
 	}
 #endif

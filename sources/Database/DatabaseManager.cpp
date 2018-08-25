@@ -88,7 +88,7 @@ void DatabaseManager::Process()
 			BoroughData borough;
 			m_externalDB->GetResultBoroughData(queryID, borough);
 			AddBoroughData(borough, false);
-			m_externalBoroughRequests.erase(it);
+			it = m_externalBoroughRequests.erase(it);
 		}
 		else
 			++it;

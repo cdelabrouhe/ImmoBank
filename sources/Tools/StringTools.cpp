@@ -116,3 +116,14 @@ void StringTools::ConvertToImGuiText(std::string& _text)
 	StringTools::ReplaceBadSyntax(_text, "É", "E");
 	StringTools::ReplaceBadSyntax(_text, "é", "e");
 }
+
+constexpr unsigned int HashStrRecur(unsigned int _hash, const char* _str)
+{
+	return (*_str == 0) ? _hash : HashStrRecur(((_hash << 5) + _hash) + *_str, _str + 1);
+}
+
+unsigned int StringTools::GenerateHash(const std::string& _str)
+{
+	const char* str = _str.c_str();
+	return HashStrRecur(5381, str);
+}

@@ -15,4 +15,5 @@ public:
 	static void GetXMLBaliseArray(const std::string& _str, const std::string& _arrayName, const std::string& _entryName, std::vector<std::string>& _list);
 	static void TransformToLower(std::string& _str);
 	static void ConvertToImGuiText(std::string& _text);
+	static unsigned int GenerateHash(const std::string& _str);
 };

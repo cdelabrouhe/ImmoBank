@@ -14,6 +14,18 @@ const int	CONFIG_WINDOW_HEIGHT = 768;
 
 int main(int argc, char** argv)
 {
+	bool quit = false;
+
+	// Init DB
+	DatabaseManager::getSingleton()->Init();
+	bool connectionValid = DatabaseManager::getSingleton()->IsConnectionValid();
+	if (!connectionValid)
+	{
+		printf("Error initializing DB\n");
+		quit = true;
+		system("pause");
+	}
+
 #ifndef DEV_MODE
 	FreeConsole();
 #endif
@@ -29,15 +41,10 @@ int main(int argc, char** argv)
 	// Init Online
 	OnlineManager::getSingleton()->Init();
 
-	// Init DB
-	DatabaseManager::getSingleton()->Init();
-	bool connectionValid = DatabaseManager::getSingleton()->IsConnectionValid();
-
 	// Init RequestManager
 	RequestManager::getSingleton()->Init();
 
 	// Main loop
-	bool quit = false;
 	while (!quit && !ProdToolGL_ShouldClose())
 	{
 		ProdToolGL_NewFrame();

@@ -106,6 +106,11 @@ bool MySQLDatabase::Init()
 
 	LoadConfigFile();
 
+	char buf[4096];
+	sprintf(buf, "Connecting to server %s:%d...", m_server.c_str(), m_port);
+	std::string message = buf;
+	DisplayMySQLMessage(message);
+
 	// Init thread
 	m_thread = new Thread();
 	m_thread->start(MySQLThreadStart, this, "MySQLRequestsThread");
@@ -119,9 +124,9 @@ bool MySQLDatabase::Init()
 		, m_base.c_str()
 		, m_port, nullptr, 0);
 
-	char buf[4096];
 	if (m_connexion != nullptr)
 	{
+		memset(buf, 0, 4096);
 		sprintf(buf, "User '%s' connected to database '%s' on server %s:%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
 		std::string message = buf;
 		DisplayMySQLMessage(message);

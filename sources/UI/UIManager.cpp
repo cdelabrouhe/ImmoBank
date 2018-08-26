@@ -465,9 +465,10 @@ void UIManager::DisplayMySQLRequestsPanel()
 	ImGui::EndChild();
 
 	ImGui::BeginChild("Requests");
-	for (auto& request : m_MySQLRequests)
+	auto nbRequests = m_MySQLRequests.size();
+	for (auto ID = 0; ID < nbRequests; ++ID)
 	{
-		ImGui::TextWrapped("%s", request.c_str());
+		ImGui::TextWrapped("%s", m_MySQLRequests[ID].c_str());
 	}
 	ImGui::EndChild();
 

@@ -161,8 +161,8 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		auto& borough = boroughs.back();
 		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
-		borough.m_key = sqlite3_column_int(_stmt, index++);
+		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
+		borough.m_key = sqlite3_column_int64(_stmt, index++);
 		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
@@ -225,8 +225,8 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		auto& borough = _data.back();
 		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
-		borough.m_key = sqlite3_column_int(_stmt, index++);
+		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
+		borough.m_key = sqlite3_column_int64(_stmt, index++);
 		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
@@ -331,7 +331,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
-		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
+		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
 	});
 
 	if (cities.size() == 1)
@@ -421,7 +421,7 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
-		city.m_timeUpdate.SetData(sqlite3_column_int(_stmt, index++));
+		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
 	});
 
 	if (cities.size() > 0)

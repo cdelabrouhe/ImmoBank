@@ -61,9 +61,12 @@ unsigned int MySQLThreadStart(void* arg)
 	{
 		MySQLBoroughQuery query;
 		if (db->GetNextQuery(query))
+		{
 			query.Process(db);
-		else
 			std::this_thread::sleep_for(std::chrono::milliseconds(25));
+		}
+		else
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
 	return 0;
@@ -117,7 +120,7 @@ bool MySQLDatabase::Init()
 	char buf[4096];
 	if (m_connexion != nullptr)
 	{
-		sprintf(buf, "User '%s' connected to database '%s' on server '%s':%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
+		sprintf(buf, "User '%s' connected to database '%s' on server %s:%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
 		std::string message = buf;
 		DisplayMySQLMessage(message);
 
@@ -125,7 +128,7 @@ bool MySQLDatabase::Init()
 	}
 	else
 	{
-		sprintf(buf, "CAN'T CONNECT User '%s' to database '%s' on server '%s':%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
+		sprintf(buf, "CAN'T CONNECT User '%s' to database '%s' on server %s:%d", m_user.c_str(), m_base.c_str(), m_server.c_str(), m_port);
 		std::string message = buf;
 		DisplayMySQLMessage(message);
 
@@ -319,6 +322,7 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 {
 #ifdef MYSQL_ACTIVE
 	unsigned int key = _data.m_key;
+
 #ifndef _WIN32
 	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, u64>& _pair)->bool
 	{
@@ -335,8 +339,14 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 	}
 #endif
 
+	// Manage timeout
 	if (it != m_timeoutQueries.end())
-		return -1;
+	{
+		if (_type == MySQLBoroughQuery::Type_Read)
+			return -1;
+		else
+			m_timeoutQueries.erase(it);
+	}
 
 	m_mutex->lock();
 	int requestID = GetNextAvailableRequestID();
@@ -479,12 +489,15 @@ int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 
 	if (m_connexion)
 	{
-		if (mysql_query(m_connexion, _query.c_str()) == SQL_NO_ERROR)
+		if (mysql_query(m_connexion, _query.c_str()) != SQL_NO_ERROR)
 		{
-			MYSQL_RES* res = mysql_use_result(m_connexion);
-			mysql_free_result(res);
-			return 1;
+			char buf[4096];
+			sprintf(buf, "SQL ERROR sending update with request '%s'", _query.c_str());
+			std::string message = buf;
+			DisplayMySQLMessage(message);
+			return 0;
 		}
+		return 1;
 	}
 #endif
 

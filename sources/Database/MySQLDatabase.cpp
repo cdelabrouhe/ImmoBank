@@ -6,9 +6,11 @@
 #include <time.h>
 
 #include "extern/jsoncpp/value.h"
+#include "Tools/StringTools.h"
 
 #define MYSQL_ACTIVE
 #include <mysql.h>
+
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -321,26 +323,23 @@ int MySQLDatabase::GetNextAvailableRequestID()
 int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 {
 #ifdef MYSQL_ACTIVE
-	unsigned int key = _data.m_key;
+	std::string str = _data.m_city.m_name + _data.m_name;
+	unsigned int key = StringTools::GenerateHash(str);
 
-#ifndef _WIN32
-	auto it = std::find_if(m_timeoutQueries.begin(), m_timeoutQueries.end(), [key](std::pair<unsigned int, u64>& _pair)->bool
-	{
-		return (_pair.first == key);
-	});
-#else
+	// Search for a recent similar request
 	bool found = false;
 	auto it = m_timeoutQueries.begin();
 	while (!found && (it != m_timeoutQueries.end()))
 	{
 		auto& pair = *it;
-		found = (pair.first == key);
-		++it;
+		if (pair.first == key)
+			found = true;
+		else
+			++it;
 	}
-#endif
 
 	// Manage timeout
-	if (it != m_timeoutQueries.end())
+	if (found)
 	{
 		if (_type == MySQLBoroughQuery::Type_Read)
 			return -1;
@@ -354,7 +353,7 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 	m_mutex->unlock();
 
 	// Store in timeout list
-	m_timeoutQueries.push_back(std::make_pair(_data.m_key, time(0)));
+	m_timeoutQueries.push_back(std::make_pair(key, time(0)));
 
 	return requestID;
 #else

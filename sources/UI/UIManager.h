@@ -28,9 +28,6 @@ public:
 	bool	DisplayConnectionError();
 
 #ifdef DEV_MODE
-	bool	IsDisplayMySQLDebug();
-	void	NotifyMySQLEvent(const std::string& _request);
-	void	DisplayMySQLRequestsPanel();
 #endif
 
 private:
@@ -44,8 +41,4 @@ private:
 	bool							m_cityListRequested = false;
 
 	bool							m_connectionError = false;
-
-#ifdef DEV_MODE
-	std::vector<std::string>		m_MySQLRequests;
-#endif
 };

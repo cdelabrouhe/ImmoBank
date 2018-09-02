@@ -8,6 +8,7 @@
 #include "Request/SearchRequest/SearchRequestCityBoroughData.h"
 #include <algorithm>
 #include "MySQLDatabase.h"
+#include "extern/ImGui/imgui.h"
 
 DatabaseManager* s_singleton = nullptr;
 const std::string s_wholeCityName = "WholeCity";
@@ -93,6 +94,10 @@ void DatabaseManager::Process()
 		else
 			++it;
 	}
+
+#ifdef DEV_MODE
+	DisplayDebug();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -619,3 +624,61 @@ void DatabaseManager::GetConnectionParameters(std::string& _server, std::string&
 	_server = m_externalDB->GetServer();
 	_user = m_externalDB->GetUser();
 }
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::TriggerExternalSQLCommand(const std::string& _query)
+{
+	m_externalDB->DebugQuery(_query);
+}
+
+#ifdef DEV_MODE
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::DisplayDebug()
+{
+	if (!m_displayDebug)
+		return;
+
+#ifdef DEV_MODE
+	DisplayMySQLRequestsPanel();
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::DisplayMySQLRequestsPanel()
+{
+	ImGui::Begin("MySQL Debug panel", &m_displayDebug);
+	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
+
+	// Debug request
+	bool callCommand = ImGui::Button("Call command") && strlen(m_MySQLInputDebug) > 0;
+	ImGui::SameLine();
+	ImGui::InputText("Manual SQL command", (char*)m_MySQLInputDebug, 2048);
+	if (callCommand)
+	{
+		std::string str = m_MySQLInputDebug;
+		DatabaseManager::getSingleton()->TriggerExternalSQLCommand(str);
+	}
+
+	if (ImGui::Button("Clear"))
+		m_MySQLRequests.clear();
+
+	ImGui::Separator();
+
+	ImGui::EndChild();
+
+	ImGui::BeginChild("Requests");
+	auto nbRequests = m_MySQLRequests.size();
+	for (auto ID = 0; ID < nbRequests; ++ID)
+	{
+		ImGui::TextWrapped("%s", m_MySQLRequests[ID].c_str());
+	}
+	ImGui::EndChild();
+
+	ImGui::End();
+}
+
+void DatabaseManager::NotifyMySQLEvent(const std::string& _request)
+{
+	m_MySQLRequests.push_back(_request);
+}
+#endif

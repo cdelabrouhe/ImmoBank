@@ -7,6 +7,7 @@
 
 #include "extern/jsoncpp/value.h"
 #include "Tools/StringTools.h"
+#include "DatabaseManager.h"
 
 #define MYSQL_ACTIVE
 #include <mysql.h>
@@ -41,7 +42,7 @@ static const u64 s_timeoutQuery = 30;
 void NotifyMySQLEvent(const std::string& _str)
 {
 #ifdef DEV_MODE
-	UIManager::getSingleton()->NotifyMySQLEvent(_str);
+	DatabaseManager::getSingleton()->NotifyMySQLEvent(_str);
 #endif
 }
 
@@ -464,6 +465,48 @@ void MySQLDatabase::RemoveBoroughData(BoroughData& _data)
 	sprintf(buf, "DELETE FROM `BOROUGHS` WHERE CITY='%s' AND BOROUGH='%s'", _data.m_city.m_name.c_str(), _data.m_name.c_str());
 	std::string str = buf;
 	ExecuteUpdate(str);	
+}
+
+//--------------------------------------------------------------------------------------
+void MySQLDatabase::DebugQuery(const std::string& _query)
+{
+	MYSQL_RES* result = ExecuteQuery(_query);
+
+	while (MYSQL_ROW row = mysql_fetch_row(result))
+	{
+		int rowID = 0;
+		BoroughData data;
+		data.m_city.m_name = row[rowID++];
+		data.m_name = row[rowID++];
+		data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
+		data.m_key = strtoul(row[rowID++], nullptr, 10);
+		data.m_priceBuyApartment.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceBuyApartment.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceBuyApartment.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_val = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_min = strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_max = strtod(row[rowID++], nullptr);
+
+		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
+		DisplayMySQLMessage(mes);
+	}
+
+	mysql_free_result(result);
 }
 
 //--------------------------------------------------------------------------------------

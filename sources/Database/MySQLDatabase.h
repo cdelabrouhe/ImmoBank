@@ -64,6 +64,8 @@ public:
 	inline std::string GetServer()		{ return m_server;}
 	inline std::string GetUser()		{ return m_user; }
 
+	void DebugQuery(const std::string& _query);
+
 protected:
 	MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 	int ExecuteUpdate(const std::string& _query) const;

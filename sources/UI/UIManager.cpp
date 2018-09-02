@@ -11,8 +11,6 @@
 #include "Tools/StringTools.h"
 #include "Tools/Tools.h"
 
-static bool s_displayDebugMySQL = false;
-
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
 //-------------------------------------------------------------------------------------------------
@@ -111,7 +109,7 @@ bool UIManager::Draw()
 #ifdef DEV_MODE
 		if (ImGui::BeginMenu("DEBUG"))
 		{
-			ImGui::MenuItem("Display MySQL Debug", nullptr, &s_displayDebugMySQL);
+			ImGui::MenuItem("Display MySQL Debug", nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
 
 			ImGui::EndMenu();
 		}
@@ -136,10 +134,6 @@ void UIManager::Process()
 {
 	if (m_displayCityData)
 		DisplayCityInformation();
-
-#ifdef DEV_MODE
-	DisplayMySQLRequestsPanel();
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -438,41 +432,3 @@ bool UIManager::DisplayConnectionError()
 
 	return result;
 }
-
-#ifdef DEV_MODE
-bool UIManager::IsDisplayMySQLDebug()
-{
-	return s_displayDebugMySQL;
-}
-
-void UIManager::NotifyMySQLEvent(const std::string& _request)
-{
-	m_MySQLRequests.push_back(_request);
-}
-
-void UIManager::DisplayMySQLRequestsPanel()
-{
-	if (!s_displayDebugMySQL)
-		return;
-
-	ImGui::Begin("MySQL Debug panel", &s_displayDebugMySQL);
-	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 30), false, ImGuiWindowFlags_NoScrollbar);
-	if (ImGui::Button("Clear"))
-		m_MySQLRequests.clear();
-
-	ImGui::Separator();
-
-	ImGui::EndChild();
-
-	ImGui::BeginChild("Requests");
-	auto nbRequests = m_MySQLRequests.size();
-	for (auto ID = 0; ID < nbRequests; ++ID)
-	{
-		ImGui::TextWrapped("%s", m_MySQLRequests[ID].c_str());
-	}
-	ImGui::EndChild();
-
-	ImGui::End();
-}
-
-#endif

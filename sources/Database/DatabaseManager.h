@@ -62,6 +62,14 @@ public:
 	inline bool IsConnectionValid() const	{ return m_connectionValid;	}
 
 	void GetConnectionParameters(std::string& _server, std::string& _user);
+
+	void TriggerExternalSQLCommand(const std::string& _query);
+
+#ifdef DEV_MODE
+	void	DisplayDebug();
+	void	DisplayMySQLRequestsPanel();
+	void	NotifyMySQLEvent(const std::string& _request);
+#endif
 	
 private:
 	void	CreateTables();
@@ -70,6 +78,9 @@ private:
 
 	void	Test();
 
+public:
+	bool							m_displayDebug = false;
+	
 private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<CityComputeData>	m_cityComputes;
@@ -79,4 +90,10 @@ private:
 	time_t							m_externalTimer = 0;
 	bool							m_modified = false;
 	bool							m_connectionValid = false;
+	
+#ifdef DEV_MODE
+	// Debug panel
+	char							m_MySQLInputDebug[2048];
+	std::vector<std::string>		m_MySQLRequests;
+#endif
 };

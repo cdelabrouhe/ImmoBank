@@ -322,6 +322,9 @@
     <ClInclude Include="sources\Database\MySQLDatabase.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Text\TextManager.h">
+      <Filter>Sources\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -429,6 +432,9 @@
     <ClCompile Include="sources\Database\MySQLDatabase.cpp">
       <Filter>Sources\Database</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Text\TextManager.cpp">
+      <Filter>Sources\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -508,6 +514,9 @@
     </Filter>
     <Filter Include="Sources\extern\MariaDB\mysqlx\devapi\detail">
       <UniqueIdentifier>{95ad0d77-5b8f-45bc-881f-6a7799431d2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Text">
+      <UniqueIdentifier>{26ecba9d-ce40-4662-afdf-840034b8e6c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

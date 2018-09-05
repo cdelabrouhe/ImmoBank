@@ -67,8 +67,8 @@ void TextManager::ChangeLanguage(const std::string& _newLanguage)
 //-------------------------------------------------------------------------------------------------
 const char* TextManager::GetEntryText(const char* _entryName) const
 {
-	std::string str = _entryName;
-	return GetEntryText(str);
+	unsigned int hashName = StringTools::GenerateHash(_entryName);
+	return GetEntryText(hashName);
 }
 
 //-------------------------------------------------------------------------------------------------

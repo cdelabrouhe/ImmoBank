@@ -125,5 +125,10 @@ constexpr unsigned int HashStrRecur(unsigned int _hash, const char* _str)
 unsigned int StringTools::GenerateHash(const std::string& _str)
 {
 	const char* str = _str.c_str();
-	return HashStrRecur(5381, str);
+	return GenerateHash(str);
+}
+
+unsigned int StringTools::GenerateHash(const char* _str)
+{
+	return HashStrRecur(5381, _str);
 }

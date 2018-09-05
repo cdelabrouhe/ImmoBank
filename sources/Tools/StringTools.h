@@ -16,4 +16,5 @@ public:
 	static void TransformToLower(std::string& _str);
 	static void ConvertToImGuiText(std::string& _text);
 	static unsigned int GenerateHash(const std::string& _str);
+	static unsigned int GenerateHash(const char* _str);
 };

@@ -325,6 +325,9 @@
     <ClInclude Include="sources\Text\TextManager.h">
       <Filter>Sources\Text</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Tools\SearchFile.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">

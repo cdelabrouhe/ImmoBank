@@ -1,3 +1,96 @@
 {
-	"Test" : "Couille"
+	"MainWindow" : "ImmoBank",
+	"MainMenuRequest" : "Requete",
+	"MainMenuDatabase" : "Base de donnees",
+	"MainMenuTools" : "Outils",
+	"MainMenuWindow" : "Fenetre",
+	
+	"MenuRequesetNewRequest" : "Nouvelle requete",
+	"MenuDatabaseExploreDB" : "Explorer la base de donnees",
+	"MenuToolsComputeRentabilityRate" : "Caldul de taux de rentabilite",
+	"MenuWindowLanguage" : "Langue",
+	"MenuWindowStyle" : "Style",
+	
+	"MenuWindowStyleClassic" : "Classique",
+	"MenuWindowStyleDark" : "Sombre",
+	"MenuWindowStyleLight" : "Clair",
+	
+	"MenuHelpShowTestWindow" : "Afficher la fenetre de test ImGui",
+	
+	"MenuDebug" : "DEBUG",
+	"MenuDebugDisplayMySQLDebug" : "Afficher le menu de debug MySQL",
+	
+	"PopupComputeRentabilityRate" : "Caldul de taux",
+		
+	// General
+	"GeneralExit" : "Quitter",
+	"GeneralUpdate" : "Mise a jour",
+	"GeneralUpdating" : "Mise a jour en cours",
+	"GeneralCompute" : "Calcul",
+	"GeneralSearching" : "Recherche",
+	
+	// Database window
+	"DatabaseWindowName" : "Base de donnees",
+	"DatabaseWindowSearchCity" : "Recherche ville",
+	"DatabaseWindowCityName" : "Nom",
+	"DatabaseWindowZipCode" : "Code postal",
+	"DatabaseWindowInseeCode" : "Code INSEE",
+	"DatabaseWindowCityUpdateBoroughList" : "MAJ de la liste des quartiers",
+	"DatabaseWindowCityUpdatingBoroughList" : "MAJ de la liste des quartiers en cours",
+	"DatabaseWindowCityAutoUpdatePrice" : "MAJ automatique des prix",
+	"DatabaseWindowCityManualUpdatePrice" : "MAJ manuelle des prix",
+	"DatabaseWindowCityLink" : "Lien",
+	"DatabaseWindowCityDeleteData" : "Suppr donnee",
+	"DatabaseWindowBoroughList" : "Quartiers",
+	"DatabaseWindowBoroughAutoUpdatePrice" : "MAJ Auto",
+	"DatabaseWindowBoroughManualUpdatePrice" : "Edition",
+	"DatabaseWindowBoroughLink" : "Lien",
+	"DatabaseWindowBoroughDeleteData" : "Suppr donnee",
+	
+	// Compute rate tool
+	"ComputeRateToolRent" : "Loyer",
+	"ComputeRateToolPrice" : "Prix",
+	"ComputeRateToolRate" : "Taux",
+		
+	// Borough
+	"BoroughManualEditPopup" : "Edition manuelle",
+	"BoroughManualEditMinAvgMax" : "Min / Moy / Max",
+	"BoroughManualEditBuy" : "ACHAT",
+	"BoroughManualEditRent" : "LOCATION",
+	"BoroughManualEditAppartment" : "App",
+	"BoroughManualEditHouse" : "Maison",
+	"BoroughManualEditSave" : "Sauver",
+	"BoroughManualEditCancel" : "Annuler",
+		
+	// Request window
+	"RequestWindowName" : "Requete",
+	"RequestWindowSearchCity" : "Recherche ville",
+	"RequestWindowCityName" : "Nom de ville",
+	"RequestWindowAppartment" : "Appartement",
+	"RequestWindowHouse" : "Maison",
+	"RequestWindowNbRoomMin" : "Nb pieces min",
+	"RequestWindowNbRoomMax" : "Nb pieces max",
+	"RequestWindowNbBedroomMin" : "Nb chambres min",
+	"RequestWindowNbBedRoomMax" : "Nb chambres max",
+	"RequestWindowSurfaceMin" : "Surface min",
+	"RequestWindowSurfaceMax" : "Surface max",
+	"RequestWindowPriceMin" : "Prix min",
+	"RequestWindowPriceMax" : "Prix max",
+	"RequestWindowLaunch" : "Lancer",
+	"RequestWindowCancel" : "Annuler",
+	"RequestWindowNoRequestSent" : "Aucune requete lancee",
+	"RequestWindowFilter" : "Filtrer",
+	"RequestWindowResultsAvailable" : "resultats disponibles",
+	"RequestWindowSortByRate" : "Trier par taux de rentabilite",
+	"RequestWindowSortByPrice" : "Trier par prix",
+	"RequestWindowSortBySurface" : "Trier par surface",
+	
+	// Price popup
+	"PricePopupPricesM2" : "Prix (au m2) ",
+	"PricePopupBuy" : "ACHAT",
+	"PricePopupRent" : "LOCATION",
+	"PricePopupAppartment" : "App",
+	"PricePopupHouse" : "Maison",
+	"PricePopupUpdate" : "Mise a jour",
+	"PricePopupNoValidData" : "Aucune donnee, mettez a jour !",
 }

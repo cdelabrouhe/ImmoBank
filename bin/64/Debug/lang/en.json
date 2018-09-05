@@ -3,5 +3,94 @@
 	"MainMenuRequest" : "Request",
 	"MainMenuDatabase" : "Database",
 	"MainMenuTools" : "Tools",
-	"MainMenuWindow" : "Window"
+	"MainMenuWindow" : "Window",
+	
+	"MenuRequesetNewRequest" : "New request",
+	"MenuDatabaseExploreDB" : "Explore database",
+	"MenuToolsComputeRentabilityRate" : "Compute rentability rate",
+	"MenuWindowLanguage" : "Language",
+	"MenuWindowStyle" : "Style",
+	
+	"MenuWindowStyleClassic" : "Classic",
+	"MenuWindowStyleDark" : "Dark",
+	"MenuWindowStyleLight" : "Light",
+	
+	"MenuHelpShowTestWindow" : "Show ImGui test window",
+	
+	"MenuDebug" : "DEBUG",
+	"MenuDebugDisplayMySQLDebug" : "Display MySQL Debug",
+	
+	"PopupComputeRentabilityRate" : "Compute rate",
+	
+	// General
+	"GeneralExit" : "Exit",
+	"GeneralUpdate" : "Update",
+	"GeneralUpdating" : "Updating",
+	"GeneralCompute" : "Compute",
+	"GeneralSearching" : "Searching",
+	
+	// Database window
+	"DatabaseWindowName" : "Database",
+	"DatabaseWindowSearchCity" : "Search city",
+	"DatabaseWindowCityName" : "Name",
+	"DatabaseWindowZipCode" : "Zip code",
+	"DatabaseWindowInseeCode" : "INSEE code",
+	"DatabaseWindowCityUpdateBoroughList" : "Update boroughs list",
+	"DatabaseWindowCityUpdatingBoroughList" : "Updating boroughs list",
+	"DatabaseWindowCityAutoUpdatePrice" : "Auto update city price",
+	"DatabaseWindowCityManualUpdatePrice" : "Manual edit city price",
+	"DatabaseWindowCityLink" : "Link",
+	"DatabaseWindowCityDeleteData" : "Del Data",
+	"DatabaseWindowBoroughList" : "Boroughs",
+	"DatabaseWindowBoroughAutoUpdatePrice" : "Auto update",
+	"DatabaseWindowBoroughManualUpdatePrice" : "Edit",
+	"DatabaseWindowBoroughLink" : "Link",
+	"DatabaseWindowBoroughDeleteData" : "Del Data",
+	
+	// Compute rate tool
+	"ComputeRateToolRent" : "Rent",
+	"ComputeRateToolPrice" : "Price",
+	"ComputeRateToolRate" : "Rate",
+		
+	// Borough
+	"BoroughManualEditPopup" : "ManualEdit",
+	"BoroughManualEditMinAvgMax" : "Min / Avg / Max",
+	"BoroughManualEditBuy" : "BUY",
+	"BoroughManualEditRent" : "RENT",
+	"BoroughManualEditAppartment" : "App",
+	"BoroughManualEditHouse" : "House",
+	"BoroughManualEditSave" : "Save",
+	"BoroughManualEditCancel" : "Cancel",
+	
+	// Request window
+	"RequestWindowName" : "Request",
+	"RequestWindowSearchCity" : "Search city",
+	"RequestWindowCityName" : "City name",
+	"RequestWindowAppartment" : "Appartment",
+	"RequestWindowHouse" : "House",
+	"RequestWindowNbRoomMin" : "Nb rooms min",
+	"RequestWindowNbRoomMax" : "Nb rooms max",
+	"RequestWindowNbBedroomMin" : "Nb bedrooms min",
+	"RequestWindowNbBedRoomMax" : "Nb bedrooms max",
+	"RequestWindowSurfaceMin" : "Surface min",
+	"RequestWindowSurfaceMax" : "Surface max",
+	"RequestWindowPriceMin" : "Price min",
+	"RequestWindowPriceMax" : "Price max",
+	"RequestWindowLaunch" : "Launch",
+	"RequestWindowCancel" : "Cancel",
+	"RequestWindowNoRequestSent" : "No request sent",
+	"RequestWindowFilter" : "Filter",
+	"RequestWindowResultsAvailable" : "results available",
+	"RequestWindowSortByRate" : "Sort by rate",
+	"RequestWindowSortByPrice" : "Sort by price",
+	"RequestWindowSortBySurface" : "Sort by surface",
+	
+	// Price popup
+	"PricePopupPricesM2" : "Prices (per m2) ",
+	"PricePopupBuy" : "BUY",
+	"PricePopupRent" : "RENT",
+	"PricePopupAppartment" : "App",
+	"PricePopupHouse" : "House",
+	"PricePopupUpdate" : "Update",
+	"PricePopupNoValidData" : "No valid data, update it !",
 }

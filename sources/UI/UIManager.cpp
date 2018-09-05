@@ -10,6 +10,7 @@
 #include "CitySelector.h"
 #include "Tools/StringTools.h"
 #include "Tools/Tools.h"
+#include "Text/TextManager.h"
 
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
@@ -83,6 +84,19 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("Window"))
 		{
+			if (ImGui::BeginMenu("Language"))
+			{
+				std::vector<std::string> languages;
+				TextManager::getSingleton()->GetLanguagesList(languages);
+
+				for (auto lang : languages)
+				{
+					if (ImGui::MenuItem(lang.c_str()))
+						TextManager::getSingleton()->ChangeLanguage(lang);
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Style"))
 			{
 				if (ImGui::MenuItem("Classic"))

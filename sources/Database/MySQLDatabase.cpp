@@ -1,11 +1,10 @@
 #include "MySQLDatabase.h"
 
-#include <../../jsoncpp/value.h>
+#include "extern/jsoncpp/value.h"
 #include "Tools/Tools.h"
 #include "Tools/Thread/Thread.h"
 #include <time.h>
 
-#include "extern/jsoncpp/value.h"
 #include "Tools/StringTools.h"
 #include "DatabaseManager.h"
 

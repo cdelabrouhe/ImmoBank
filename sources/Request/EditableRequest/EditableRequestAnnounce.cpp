@@ -13,6 +13,7 @@
 #include "Request/SearchRequest/SearchRequestResult.h"
 #include <algorithm>
 #include "Tools/Tools.h"
+#include "Text/TextManager.h"
 
 void EditableRequestAnnounce::Init(SearchRequest* _request)
 {
@@ -90,7 +91,7 @@ void EditableRequestAnnounce::Launch()
 
 void EditableRequestAnnounce::Display(unsigned int _ID)
 {
-	std::string name = "Request##" + std::to_string(_ID);
+	std::string name = std::string(GET_TEXT("RequestWindowName")) + "##" + std::to_string(_ID);
 
 	ImGui::SetNextWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
 	ImGui::Begin(name.c_str());
@@ -98,7 +99,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	// City selector process
 	ImGui::BeginChild("Search request", ImVec2(380, 0), true);
 
-	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
+	if (ImGui::InputText(GET_TEXT("RequestWindowSearchCity"), (char*)m_inputTextCity, 256))
 	{
 		if (strlen(m_inputTextCity) > 1)
 		{
@@ -124,7 +125,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 
 	if (m_cities.size() > 0)
 	{
-		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
+		if (ImGui::Combo(GET_TEXT("RequestWindowCityName"), &m_selectedCityID, cities, (int)m_cities.size()))
 		{
 			std::string str = m_cities[m_selectedCityID].m_name;
 			int size = str.size() < 256 ? (int)str.size() : 256;
@@ -138,7 +139,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	}
 
 	
-	if (ImGui::Checkbox("Appartement", &m_apartment))
+	if (ImGui::Checkbox(GET_TEXT("RequestWindowAppartment"), &m_apartment))
 	{
 		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_Apartment);
 		if (m_apartment)
@@ -152,7 +153,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 				m_searchRequest.m_categories.erase(it);
 		}
 	}
-	if (ImGui::Checkbox("House", &m_house))
+	if (ImGui::Checkbox(GET_TEXT("RequestWindowHouse"), &m_house))
 	{
 		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_House);
 		if (m_house)
@@ -167,20 +168,20 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		}
 	}
 
-	ImGui::SliderInt("Nb rooms min", &m_searchRequest.m_nbRoomsMin, 1, 20);
-	ImGui::SliderInt("Nb rooms max", &m_searchRequest.m_nbRoomsMax, 1, 20);
-	ImGui::SliderInt("Nb bedrooms min", &m_searchRequest.m_nbBedRoomsMin, 1, 20);
-	ImGui::SliderInt("Nb bedrooms max", &m_searchRequest.m_nbBedRoomsMax, 1, 20);
-	ImGui::InputInt("Surface min", &m_searchRequest.m_surfaceMin);
-	ImGui::InputInt("Surface max", &m_searchRequest.m_surfaceMax);
-	ImGui::InputInt("Price min", &m_searchRequest.m_priceMin);
-	ImGui::InputInt("Price max", &m_searchRequest.m_priceMax);
+	ImGui::SliderInt(GET_TEXT("RequestWindowNbRoomMin"), &m_searchRequest.m_nbRoomsMin, 1, 20);
+	ImGui::SliderInt(GET_TEXT("RequestWindowNbRoomMax"), &m_searchRequest.m_nbRoomsMax, 1, 20);
+	ImGui::SliderInt(GET_TEXT("RequestWindowNbBedroomMin"), &m_searchRequest.m_nbBedRoomsMin, 1, 20);
+	ImGui::SliderInt(GET_TEXT("RequestWindowNbBedRoomMax"), &m_searchRequest.m_nbBedRoomsMax, 1, 20);
+	ImGui::InputInt(GET_TEXT("RequestWindowSurfaceMin"), &m_searchRequest.m_surfaceMin);
+	ImGui::InputInt(GET_TEXT("RequestWindowSurfaceMax"), &m_searchRequest.m_surfaceMax);
+	ImGui::InputInt(GET_TEXT("RequestWindowPriceMin"), &m_searchRequest.m_priceMin);
+	ImGui::InputInt(GET_TEXT("RequestWindowPriceMax"), &m_searchRequest.m_priceMax);
 
-	if (ImGui::Button("Launch"))
+	if (ImGui::Button(GET_TEXT("RequestWindowLaunch")))
 		Launch();
 
 	ImGui::SameLine();
-	if (ImGui::Button("Cancel"))
+	if (ImGui::Button(GET_TEXT("RequestWindowCancel")))
 		RequestManager::getSingleton()->AskForDeleteRequest(this);
 
 	ImGui::EndChild();
@@ -196,25 +197,26 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		if (!m_available)
 		{
 			char buf[128];
-			sprintf_s(buf, "Searching... %c", "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+			sprintf_s(buf, "%s... %c", GET_TEXT("GeneralSearching"), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
 			ImGui::Text(buf);
 		}
 		// Display results
 		else
 		{
 			ImGui::BeginChild("Child1", ImVec2(ImGui::GetWindowContentRegionWidth(), 50), false, ImGuiWindowFlags_NoScrollbar);
-			ImGui::Text("%u results available", m_result.size());
+			ImGui::Text("%u %s", m_result.size(), GET_TEXT("RequestWindowResultsAvailable"));
 			ImGui::SameLine();
 			static ImGuiTextFilter filter;
-			filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+			std::string filterName = std::string(GET_TEXT("RequestWindowFilter")) + " (\"incl,-excl\") (\"error\")";
+			filter.Draw(filterName.c_str(), 180);
 			auto sortType = s_sortType;
-			if (ImGui::Button("Sort by rentability rate"))
+			if (ImGui::Button(GET_TEXT("RequestWindowSortByRate")))
 				s_sortType = Tools::SortType::Rate;
 			ImGui::SameLine();
-			if (ImGui::Button("Sort by price"))
+			if (ImGui::Button(GET_TEXT("RequestWindowSortByPrice")))
 				s_sortType = Tools::SortType::Price;
 			ImGui::SameLine();
-			if (ImGui::Button("Sort by surface"))
+			if (ImGui::Button(GET_TEXT("RequestWindowSortBySurface")))
 				s_sortType = Tools::SortType::Surface;
 			m_updateList = sortType != s_sortType;
 
@@ -248,7 +250,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	}
 	// No request launched yet
 	else
-		ImGui::Text("No request sent");
+		ImGui::Text(GET_TEXT("RequestWindowNoRequestSent"));
 
 	ImGui::EndChild();
 

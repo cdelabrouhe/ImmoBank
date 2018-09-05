@@ -12,8 +12,6 @@
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
 
-#define GET_TEXT(name)		TextManager::getSingleton()->GetEntryText(name)
-
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
 //-------------------------------------------------------------------------------------------------
@@ -52,11 +50,11 @@ bool UIManager::Draw()
 	{
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuRequest")))
 		{
-			if (ImGui::MenuItem("New request"))
+			if (ImGui::MenuItem(GET_TEXT("MenuRequesetNewRequest")))
 				RequestManager::getSingleton()->CreateRequestAnnounceDefault();
 
 			ImGui::Separator();
-			if (ImGui::MenuItem("Exit", "ALT+F4"))
+			if (ImGui::MenuItem(GET_TEXT("GeneralExit"), "ALT+F4"))
 				quit = true;
 
 			ImGui::EndMenu();
@@ -64,7 +62,7 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuDatabase")))
 		{
-			if (ImGui::MenuItem("Explore database"))
+			if (ImGui::MenuItem(GET_TEXT("MenuDatabaseExploreDB")))
 				UIManager::getSingleton()->AskForDisplayCityInformation();
 
 			ImGui::EndMenu();
@@ -73,20 +71,20 @@ bool UIManager::Draw()
 		bool openRate = false;
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuTools")))
 		{
-			if (ImGui::MenuItem("Compute rentability rate"))
+			if (ImGui::MenuItem(GET_TEXT("MenuToolsComputeRentabilityRate")))
 				openRate = true;
 
 			ImGui::EndMenu();
 		}
 
 		if (openRate)
-			ImGui::OpenPopup("Compute rate");
+			ImGui::OpenPopup(GET_TEXT("PopupComputeRentabilityRate"));
 
 		DisplayComputeRateTool();
 
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuWindow")))
 		{
-			if (ImGui::BeginMenu("Language"))
+			if (ImGui::BeginMenu(GET_TEXT("MenuWindowLanguage")))
 			{
 				std::vector<std::string> languages;
 				TextManager::getSingleton()->GetLanguagesList(languages);
@@ -99,15 +97,15 @@ bool UIManager::Draw()
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::BeginMenu("Style"))
+			if (ImGui::BeginMenu(GET_TEXT("MenuWindowStyle")))
 			{
-				if (ImGui::MenuItem("Classic"))
+				if (ImGui::MenuItem(GET_TEXT("MenuWindowStyleClassic")))
 					ImGui::StyleColorsClassic();
 
-				if (ImGui::MenuItem("Dark"))
+				if (ImGui::MenuItem(GET_TEXT("MenuWindowStyleDark")))
 					ImGui::StyleColorsDark();
 
-				if (ImGui::MenuItem("Light"))
+				if (ImGui::MenuItem(GET_TEXT("MenuWindowStyleLight")))
 					ImGui::StyleColorsLight();
 
 				ImGui::EndMenu();
@@ -117,15 +115,15 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("?"))
 		{
-			if (ImGui::MenuItem("Show test window"))
+			if (ImGui::MenuItem(GET_TEXT("MenuHelpShowTestWindow")))
 				showTestWindow = !showTestWindow;
 			ImGui::EndMenu();
 		}
 
 #ifdef DEV_MODE
-		if (ImGui::BeginMenu("DEBUG"))
+		if (ImGui::BeginMenu(GET_TEXT("MenuDebug")))
 		{
-			ImGui::MenuItem("Display MySQL Debug", nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
+			ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
 
 			ImGui::EndMenu();
 		}
@@ -184,12 +182,12 @@ void UIManager::DisplayCityInformation()
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
-	ImGui::Begin("City info display", &m_displayCityData);
+	ImGui::Begin(GET_TEXT("DatabaseWindowName"), &m_displayCityData);
 
 	// Left panel (city selector process)
 	bool listUpdated = false;
 	std::vector<std::string> cityListFiltered;
-	ImGui::BeginChild("City search", ImVec2(300, 0), true);
+	ImGui::BeginChild(GET_TEXT("DatabaseWindowSearchCity"), ImVec2(300, 0), true);
 
 	sCity result;
 	if (s_citySelector.Display())
@@ -277,17 +275,22 @@ void UIManager::DisplayCityInformation()
 	{
 		std::string name = selectedCity.m_data.m_name;
 		StringTools::ConvertToImGuiText(name);
-		ImGui::Text("Name: %s    ZipCode: %d   Insee code : %d", name.c_str(), selectedCity.m_data.m_zipCode, selectedCity.m_data.m_inseeCode);
+		ImGui::Text("%s: %s    %s: %d   %s: %d"	, GET_TEXT("DatabaseWindowCityName")
+												, name.c_str()
+												, GET_TEXT("DatabaseWindowZipCode")
+												, selectedCity.m_data.m_zipCode
+												, GET_TEXT("DatabaseWindowInseeCode")
+												, selectedCity.m_data.m_inseeCode);
 		
 		wholeCityData.DisplayAsTooltip();
 
 		if (!DatabaseManager::getSingleton()->IsCityUpdating(selectedCity.m_data.m_name))
 		{
-			if (ImGui::Button("Update boroughs list"))
+			if (ImGui::Button(GET_TEXT("DatabaseWindowCityUpdateBoroughList")))
 				DatabaseManager::getSingleton()->ComputeCityData(selectedCity.m_data.m_name);
 
 			ImGui::SameLine();
-			if (ImGui::Button("Auto update city price"))
+			if (ImGui::Button(GET_TEXT("DatabaseWindowCityAutoUpdatePrice")))
 			{
 				BoroughData data;
 				data.m_city = selectedCity.m_data;
@@ -298,28 +301,28 @@ void UIManager::DisplayCityInformation()
 			ImGui::SameLine();
 
 			static BoroughData* s_selectedData = nullptr;
-			if (ImGui::Button("Manual edit city price"))
+			if (ImGui::Button(GET_TEXT("DatabaseWindowCityManualUpdatePrice")))
 			{
-				ImGui::OpenPopup("ManualEdit");
+				ImGui::OpenPopup(GET_TEXT("BoroughManualEditPopup"));
 				s_selectedData = &wholeCityData;
 			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("Link"))
+			if (ImGui::Button(GET_TEXT("DatabaseWindowCityLink")))
 				wholeCityData.OpenInBrowser();;
 
 #ifdef DEV_MODE
 			ImGui::SameLine();
 
-			if (ImGui::Button("Del Data"))
+			if (ImGui::Button(GET_TEXT("DatabaseWindowCityDeleteData")))
 				wholeCityData.Reset(true);
 #endif
 
 			if (s_selectedData == &wholeCityData)
 				wholeCityData.Edit();
 
-			if (ImGui::TreeNode("Boroughs"))
+			if (ImGui::TreeNode(GET_TEXT("DatabaseWindowBoroughList")))
 			{
 				int cpt = 0;
 				for (auto& borough : selectedCity.m_boroughs)
@@ -330,19 +333,19 @@ void UIManager::DisplayCityInformation()
 					if (!updating)
 					{
 						ImGui::PushID(this + cpt);
-						update = ImGui::Button("Auto update");
+						update = ImGui::Button(GET_TEXT("DatabaseWindowBoroughAutoUpdatePrice"));
 						ImGui::PopID();
 
 						ImGui::SameLine();
 
 						ImGui::PushID(this + cpt + 10000);
-						manual = ImGui::Button("Edit");
+						manual = ImGui::Button(GET_TEXT("DatabaseWindowBoroughManualUpdatePrice"));
 						ImGui::PopID();
 
 						ImGui::SameLine();
 
 						ImGui::PushID(this + cpt + 20000);
-						if (ImGui::Button("Link"))
+						if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughLink")))
 							borough.OpenInBrowser();
 						ImGui::PopID();
 
@@ -350,14 +353,14 @@ void UIManager::DisplayCityInformation()
 						ImGui::SameLine();
 
 						ImGui::PushID(this + cpt + 30000);
-						if (ImGui::Button("DelData"))
+						if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughDeleteData")))
 							borough.Reset(true);
 						ImGui::PopID();
 #endif
 
 						if (manual)
 						{
-							ImGui::OpenPopup("ManualEdit");
+							ImGui::OpenPopup(GET_TEXT("BoroughManualEditPopup"));
 							s_selectedData = &borough;
 						}
 
@@ -372,7 +375,7 @@ void UIManager::DisplayCityInformation()
 					else
 					{
 						char buf[128];
-						sprintf_s(buf, "Updating %s... %c ", borough.m_name.c_str(), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+						sprintf_s(buf, "%s %s... %c ", GET_TEXT("GeneralUpdating"), borough.m_name.c_str(), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
 						ImGui::Text(buf);
 					}
 					
@@ -387,7 +390,7 @@ void UIManager::DisplayCityInformation()
 		else
 		{
 			char buf[128];
-			sprintf_s(buf, "Updating boroughs list... %c", "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+			sprintf_s(buf, "%s... %c", GET_TEXT("DatabaseWindowCityUpdatingBoroughList"), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
 			ImGui::Text(buf);
 		}
 	}
@@ -400,25 +403,25 @@ void UIManager::DisplayCityInformation()
 //-------------------------------------------------------------------------------------------------
 void UIManager::DisplayComputeRateTool()
 {
-	if (ImGui::BeginPopupModal("Compute rate", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal(GET_TEXT("PopupComputeRentabilityRate"), NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::SetWindowFontScale(1.f);
 
 		static int s_rent = 700;
 		static int s_price = 150000;
 		static float s_result = 0.f;
-		ImGui::InputInt("Rent", &s_rent);
-		ImGui::InputInt("Price", &s_price);
+		ImGui::InputInt(GET_TEXT("ComputeRateToolRent"), &s_rent);
+		ImGui::InputInt(GET_TEXT("ComputeRateToolPrice"), &s_price);
 
 		ImGui::Separator();
-		ImGui::Text("Rate: %.2f", s_result);
+		ImGui::Text("%s: %.2f", GET_TEXT("ComputeRateToolRate"), s_result);
 		ImGui::Separator();
 
-		if (ImGui::Button("Compute"))
+		if (ImGui::Button(GET_TEXT("GeneralCompute")))
 			s_result = Tools::ComputeRentabilityRate((float)s_rent, (float)s_price);
 
 		ImGui::SameLine();
-		if (ImGui::Button("Exit"))
+		if (ImGui::Button(GET_TEXT("GeneralExit")))
 			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}

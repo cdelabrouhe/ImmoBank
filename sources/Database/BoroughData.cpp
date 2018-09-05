@@ -10,7 +10,8 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <ctime>
-DISABLE_OPTIMIZE
+#include "Text\TextManager.h"
+
 BoroughData::BoroughData()
 {
 	SetTimeUpdateToNow();
@@ -175,10 +176,18 @@ void BoroughData::Edit()
 			ImGui::Text(#name " : "); \
 			ImGui::SameLine(); \
 			ImGui::PushID(this + localID++); \
-			ImGui::InputFloat3("Min / Avg / Max",&data.m_min, decimal); \
+			ImGui::InputFloat3(GET_TEXT("BoroughManualEditMinAvgMax"), &data.m_min, decimal); \
 			ImGui::PopID(); \
 
-	if (ImGui::BeginPopupModal("ManualEdit", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+#define EDIT_INFO_CSTR(name, data, decimal) \
+			ImGui::SetWindowFontScale(1.f); \
+			ImGui::Text("%s : ", name); \
+			ImGui::SameLine(); \
+			ImGui::PushID(this + localID++); \
+			ImGui::InputFloat3(GET_TEXT("BoroughManualEditMinAvgMax"), &data.m_min, decimal); \
+			ImGui::PopID(); \
+
+	if (ImGui::BeginPopupModal(GET_TEXT("BoroughManualEditPopup"), NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		bool isPaste = ImGui::IsKeyPressed(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_V);
 		if (isPaste)
@@ -200,29 +209,29 @@ void BoroughData::Edit()
 			m_key = s_key;
 #endif
 		ImGui::Separator();
-		ImGui::Text("BUY");
+		ImGui::Text(GET_TEXT("BoroughManualEditBuy"));
 		int localID = 0;
-		EDIT_INFO(App, m_priceBuyApartment, 0);
-		EDIT_INFO(House, m_priceBuyHouse, 0);
+		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditAppartment"), m_priceBuyApartment, 0);
+		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditHouse"), m_priceBuyHouse, 0);
 		ImGui::Separator();
 		ImGui::SetWindowFontScale(1.f);
-		ImGui::Text("RENT");
+		ImGui::Text(GET_TEXT("BoroughManualEditRent"));
 		EDIT_INFO(T1, m_priceRentApartmentT1, 1);
 		EDIT_INFO(T2, m_priceRentApartmentT2, 1);
 		EDIT_INFO(T3, m_priceRentApartmentT3, 1);
-		EDIT_INFO(T4 + , m_priceRentApartmentT4Plus, 1);
-		EDIT_INFO(House, m_priceRentHouse, 1);
+		EDIT_INFO(T4+, m_priceRentApartmentT4Plus, 1);
+		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditHouse"), m_priceRentHouse, 1);
 
 		ImGui::Separator();
 
-		if (ImGui::Button("Save"))
+		if (ImGui::Button(GET_TEXT("BoroughManualEditSave")))
 		{
 			SetTimeUpdateToNow();
 			DatabaseManager::getSingleton()->AddBoroughData(*this);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel"))
+		if (ImGui::Button(GET_TEXT("BoroughManualEditCancel")))
 			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
@@ -260,10 +269,17 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
 			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
 
+#define DISPLAY_INFO_CSTR(name, data) \
+			ImGui::SetWindowFontScale(1.f); \
+			ImGui::Text("%s : ", name); \
+			ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("%.f", data.m_min); ImGui::PopStyleColor(); \
+			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
+			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
+
 #ifdef _DEBUG
 			ImGui::Text("Key: %u", m_key);
 #endif
-			ImGui::Text("Prices (per m2) ");
+			ImGui::Text(GET_TEXT("PricePopupPricesM2"));
 			ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
 			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("max"); ImGui::PopStyleColor();
@@ -271,17 +287,17 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::Separator();
 
 			ImGui::SetWindowFontScale(1.f);
-			ImGui::Text("BUY");
-			DISPLAY_INFO(App, m_priceBuyApartment);
-			DISPLAY_INFO(House, m_priceBuyHouse);
+			ImGui::Text(GET_TEXT("PricePopupBuy"));
+			DISPLAY_INFO_CSTR(GET_TEXT("PricePopupAppartment"), m_priceBuyApartment);
+			DISPLAY_INFO_CSTR(GET_TEXT("PricePopupHouse"), m_priceBuyHouse);
 			ImGui::Separator();
 			ImGui::SetWindowFontScale(1.f);
-			ImGui::Text("RENT");
+			ImGui::Text(GET_TEXT("PricePopupRent"));
 			DISPLAY_INFO(T1, m_priceRentApartmentT1);
 			DISPLAY_INFO(T2, m_priceRentApartmentT2);
 			DISPLAY_INFO(T3, m_priceRentApartmentT3);
 			DISPLAY_INFO(T4 + , m_priceRentApartmentT4Plus);
-			DISPLAY_INFO(House, m_priceRentHouse);
+			DISPLAY_INFO_CSTR(GET_TEXT("PricePopupHouse"), m_priceRentHouse);
 
 			ImGui::Separator();
 
@@ -292,7 +308,8 @@ void BoroughData::DisplayAsTooltip()
 			std::string hour = To2DigitsString(m_timeUpdate.GetHour());
 			std::string minute = To2DigitsString(m_timeUpdate.GetMinute());
 			std::string second = To2DigitsString(m_timeUpdate.GetSecond());
-			ImGui::Text("Update: %s-%s-%s at %s:%s:%s" 
+			ImGui::Text("%s: %s-%s-%s at %s:%s:%s" 
+							, GET_TEXT("GeneralUpdate")
 							, day.c_str()
 							, month.c_str()
 							, year.c_str()
@@ -304,10 +321,9 @@ void BoroughData::DisplayAsTooltip()
 		{
 			static ImVec4 s_colorNoData(1.f, 0.f, 0.f, 1.f);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_colorNoData);
-			ImGui::Text("No valid data, update it !");
+			ImGui::Text(GET_TEXT("PricePopupNoValidData"));
 			ImGui::PopStyleColor();
 		}
 		ImGui::EndTooltip();
 	}
 }
-ENABLE_OPTIMIZE

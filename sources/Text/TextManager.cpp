@@ -6,6 +6,8 @@
 
 TextManager* s_singleton = nullptr;
 
+static const char* s_textUnknownEntry = "UNKNOWN ENTRY";
+
 //-------------------------------------------------------------------------------------------------
 TextManager* TextManager::getSingleton()
 {
@@ -91,5 +93,5 @@ const char* TextManager::GetEntryText(unsigned int _entryHashName) const
 			return itList->second.c_str();
 		}
 	}
-	return nullptr;
+	return s_textUnknownEntry;
 }

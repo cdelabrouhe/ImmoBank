@@ -12,6 +12,8 @@
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
 
+#define GET_TEXT(name)		TextManager::getSingleton()->GetEntryText(name)
+
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
 //-------------------------------------------------------------------------------------------------
@@ -43,12 +45,12 @@ bool UIManager::Draw()
 	ImVec2 vec(ImGui::GetIO().DisplaySize.x - BORDER_WIDTH * 2, ImGui::GetIO().DisplaySize.y - BORDER_WIDTH * 2);
 	ImGui::SetNextWindowSize(vec);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::Begin("ProdTool", NULL, ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoFocusOnAppearing|ImGuiWindowFlags_NoBringToFrontOnFocus|ImGuiWindowFlags_MenuBar);
+	ImGui::Begin(GET_TEXT("MainWindow"), NULL, ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoFocusOnAppearing|ImGuiWindowFlags_NoBringToFrontOnFocus|ImGuiWindowFlags_MenuBar);
 
 	static bool showTestWindow = false;
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("Request"))
+		if (ImGui::BeginMenu(GET_TEXT("MainMenuRequest")))
 		{
 			if (ImGui::MenuItem("New request"))
 				RequestManager::getSingleton()->CreateRequestAnnounceDefault();
@@ -60,7 +62,7 @@ bool UIManager::Draw()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Database"))
+		if (ImGui::BeginMenu(GET_TEXT("MainMenuDatabase")))
 		{
 			if (ImGui::MenuItem("Explore database"))
 				UIManager::getSingleton()->AskForDisplayCityInformation();
@@ -69,7 +71,7 @@ bool UIManager::Draw()
 		}
 
 		bool openRate = false;
-		if (ImGui::BeginMenu("Tools"))
+		if (ImGui::BeginMenu(GET_TEXT("MainMenuTools")))
 		{
 			if (ImGui::MenuItem("Compute rentability rate"))
 				openRate = true;
@@ -82,7 +84,7 @@ bool UIManager::Draw()
 
 		DisplayComputeRateTool();
 
-		if (ImGui::BeginMenu("Window"))
+		if (ImGui::BeginMenu(GET_TEXT("MainMenuWindow")))
 		{
 			if (ImGui::BeginMenu("Language"))
 			{

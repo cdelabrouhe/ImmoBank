@@ -1,0 +1,7 @@
+{
+	"MainWindow" : "ImmoBank",
+	"MainMenuRequest" : "Request",
+	"MainMenuDatabase" : "Database",
+	"MainMenuTools" : "Tools",
+	"MainMenuWindow" : "Window"
+}

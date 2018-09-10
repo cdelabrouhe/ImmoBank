@@ -21,30 +21,53 @@ namespace sql
 }
 
 class MySQLDatabase;
-struct MySQLBoroughQuery
+
+struct MySQLQuery
 {
+	enum IO
+	{
+		Read,
+		Write
+	};
+
 	enum Type
 	{
-		Type_Read,
-		Type_Write
+		NONE,
+		Borough,
+		BoroughList,
+		COUNT
 	};
 
 public:
-	MySQLBoroughQuery()	{}
-	MySQLBoroughQuery(int _requestID, Type _type, BoroughData& _data) : m_queryID(_requestID), m_type(_type), m_data(_data)	{}
+	MySQLQuery() {}
+	MySQLQuery(Type _type, int _requestID, IO _IO) : m_type(_type), m_queryID(_requestID), m_IO(_IO) {}
 
-	void Process(MySQLDatabase* _db);
+	virtual void Process(MySQLDatabase* _db) = 0;
+	inline Type GetType() const		{	return m_type;	}
 
 public:
 	int	m_queryID = -1;
-	Type m_type = Type::Type_Read;
-	BoroughData	m_data;
+	Type	m_type = Type::NONE;
+	IO		m_IO = IO::Read;
 	bool	m_finished = false;
 	bool	m_canceled = false;
 };
 
+struct MySQLBoroughQuery : public MySQLQuery
+{
+public:
+	MySQLBoroughQuery()	{}
+	MySQLBoroughQuery(int _requestID, IO _type) : MySQLQuery(Type::Borough, _requestID, _type)	{}
+
+	virtual void Process(MySQLDatabase* _db) override;
+
+public:
+	BoroughData	m_data;
+};
+
 class MySQLDatabase
 {
+	friend struct MySQLQuery;
 	friend struct MySQLBoroughQuery;
 
 public:
@@ -54,10 +77,11 @@ public:
 	void End();
 
 	int AskForBoroughData(BoroughData& _data);
+	int AskForCityBoroughList(sCity& _city);
 	bool IsQueryAvailable(int _queryID) const;
 	bool GetResultBoroughData(int _queryID, BoroughData& _data);
 	void WriteBoroughData(BoroughData& _data);
-	bool GetNextQuery(MySQLBoroughQuery& _request);
+	MySQLQuery* GetNextQuery();
 	void CancelQuery(const int _queryID);
 	void Validate(const int _queryID, BoroughData& _data);
 	void RemoveBoroughData(BoroughData& _data);
@@ -72,13 +96,13 @@ protected:
 
 private:
 	int GetNextAvailableRequestID();
-	int AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data);
+	MySQLQuery* AddQuery(MySQLQuery::IO _IO, unsigned int _key, int& _requestID);
 
 private:
 	MYSQL*  m_connexion = nullptr;
 
-	std::map<int, MySQLBoroughQuery>	m_queries;
-	std::vector<std::pair<unsigned int, u64>>		m_timeoutQueries;
+	std::map<int, MySQLQuery*>					m_queries;
+	std::vector<std::pair<unsigned int, u64>>	m_timeoutQueries;
 
 	std::mutex*	m_mutex = nullptr;
 	Thread*		m_thread = nullptr;

@@ -234,6 +234,7 @@
     <ClInclude Include="extern\sqlite\include\sqlite3.h" />
     <ClInclude Include="sources\Database\BoroughData.h" />
     <ClInclude Include="sources\Database\CityComputeData.h" />
+    <ClInclude Include="sources\Database\CityUpdateData.h" />
     <ClInclude Include="sources\Database\DatabaseManager.h" />
     <ClInclude Include="sources\Database\MySQLDatabase.h" />
     <ClInclude Include="sources\Database\SQLDatabase.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="extern\opengl\libs\gl3w\GL\gl3w.c" />
     <ClCompile Include="sources\Database\BoroughData.cpp" />
     <ClCompile Include="sources\Database\CityComputeData.cpp" />
+    <ClCompile Include="sources\Database\CityUpdateData.cpp" />
     <ClCompile Include="sources\Database\DatabaseManager.cpp" />
     <ClCompile Include="sources\Database\MySQLDatabase.cpp" />
     <ClCompile Include="sources\Database\SQLDatabase.cpp" />

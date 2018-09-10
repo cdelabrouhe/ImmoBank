@@ -57,6 +57,18 @@ void DatabaseManager::Process()
 		printf("DatabaseManager: force external update");
 	}
 
+	// City updates (get borough list from external DB)
+	auto itCityUpdate = m_cityUpdates.begin();
+	while (itCityUpdate != m_cityUpdates.end())
+	{
+		CityUpdateData& data = *itCityUpdate;
+		if (data.Process())
+			itCityUpdate = m_cityUpdates.erase(itCityUpdate);
+		else
+			++itCityUpdate;
+	}
+
+	// Compute city borough list from MeilleursAgents
 	auto itCity = m_cityComputes.begin();
 	while (itCity != m_cityComputes.end())
 	{
@@ -67,6 +79,7 @@ void DatabaseManager::Process()
 			++itCity;
 	}
 
+	// Boroughs computes
 	auto itBorough = m_boroughComputes.begin();
 	while (itBorough != m_boroughComputes.end())
 	{
@@ -589,6 +602,15 @@ void DatabaseManager::Test()
 	BoroughData data2;
 	GetBoroughData("Montpellier", "Antigone", data2);
 	printf("");
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::UpdateCityData(const std::string& _cityName)
+{
+	CityUpdateData data;
+	data.m_city = _cityName;
+	m_cityUpdates.push_back(data);
+	m_cityUpdates.back().Init();
 }
 
 //-------------------------------------------------------------------------------------------------

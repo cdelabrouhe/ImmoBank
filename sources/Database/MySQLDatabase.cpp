@@ -61,10 +61,9 @@ unsigned int MySQLThreadStart(void* arg)
 	MySQLDatabase* db = (MySQLDatabase*)arg;
 	while (true)
 	{
-		MySQLBoroughQuery query;
-		if (db->GetNextQuery(query))
+		if (MySQLQuery* query = db->GetNextQuery())
 		{
-			query.Process(db);
+			query->Process(db);
 			std::this_thread::sleep_for(std::chrono::milliseconds(25));
 		}
 		else
@@ -156,8 +155,12 @@ void MySQLDatabase::Process()
 	auto it = m_queries.begin();
 	while (it != m_queries.end())
 	{
-		if (it->second.m_canceled)
+		MySQLQuery* query = it->second;
+		if (query->m_canceled)
+		{
+			delete query;
 			it = m_queries.erase(it);
+		}
 		else
 			++it;
 	}
@@ -168,7 +171,7 @@ void MySQLDatabase::Process()
 	auto itTimeout = m_timeoutQueries.begin();
 	while (itTimeout != m_timeoutQueries.end())
 	{
-		int result = curTime - itTimeout->second;
+		time_t result = curTime - itTimeout->second;
 		if (result > s_timeoutQuery)
 			itTimeout = m_timeoutQueries.erase(itTimeout);
 		else
@@ -181,9 +184,9 @@ void MySQLDatabase::Process()
 void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 {
 #ifdef MYSQL_ACTIVE
-	switch (m_type)
+	switch (m_IO)
 	{
-	case Type_Read:
+	case IO::Read:
 	{
 		char buf[512];
 		sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s' AND BOROUGH='%s'", m_data.m_city.m_name.c_str(), m_data.m_name.c_str());
@@ -197,27 +200,27 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_name = row[rowID++];
 			m_data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
 			m_data.m_key = strtoul(row[rowID++], nullptr, 10);
-			m_data.m_priceBuyApartment.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceBuyApartment.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceBuyApartment.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceBuyHouse.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceBuyHouse.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceBuyHouse.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentHouse.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentHouse.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentHouse.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_max = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_val = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_min = strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_max = strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 		}
 
 		mysql_free_result(result);
@@ -234,7 +237,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			}*/
 	}
 	break;
-	case Type_Write:
+	case IO::Write:
 	{
 		// Remove current borough data
 		_db->RemoveBoroughData(m_data);
@@ -325,19 +328,16 @@ int MySQLDatabase::GetNextAvailableRequestID()
 }
 
 //--------------------------------------------------------------------------------------
-int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
+MySQLQuery* MySQLDatabase::AddQuery(MySQLQuery::IO _IO, unsigned int _key, int& _requestID)
 {
 #ifdef MYSQL_ACTIVE
-	std::string str = _data.m_city.m_name + _data.m_name;
-	unsigned int key = StringTools::GenerateHash(str);
-
 	// Search for a recent similar request
 	bool found = false;
 	auto it = m_timeoutQueries.begin();
 	while (!found && (it != m_timeoutQueries.end()))
 	{
 		auto& pair = *it;
-		if (pair.first == key)
+		if (pair.first == _key)
 			found = true;
 		else
 			++it;
@@ -346,30 +346,59 @@ int MySQLDatabase::AddQuery(MySQLBoroughQuery::Type _type, BoroughData& _data)
 	// Manage timeout
 	if (found)
 	{
-		if (_type == MySQLBoroughQuery::Type_Read)
-			return -1;
+		if (_IO == MySQLQuery::IO::Read)
+		{
+			_requestID = -1;
+			return nullptr;
+		}
 		else
 			m_timeoutQueries.erase(it);
 	}
 
-	m_mutex->lock();
 	int requestID = GetNextAvailableRequestID();
-	m_queries[requestID] = MySQLBoroughQuery(requestID, _type, _data);
-	m_mutex->unlock();
+	MySQLQuery* query = new MySQLBoroughQuery(requestID, _IO);
+	m_queries[requestID] = query;
 
 	// Store in timeout list
-	m_timeoutQueries.push_back(std::make_pair(key, time(0)));
+	m_timeoutQueries.push_back(std::make_pair(_key, time(0)));
 
-	return requestID;
+	_requestID = requestID;
+	return query;
 #else
-	return -1;
+	_requestID = -1;
+	return nullptr;
 #endif
 }
 
 //--------------------------------------------------------------------------------------
 int MySQLDatabase::AskForBoroughData(BoroughData& _data)
 {
-	return AddQuery(MySQLBoroughQuery::Type_Read, _data);
+	int requestID = -1;
+
+	std::string str = _data.m_city.m_name + _data.m_name;
+	unsigned int key = StringTools::GenerateHash(str);
+
+	m_mutex->lock();
+
+	MySQLQuery* query = AddQuery(MySQLQuery::IO::Read, key, requestID);
+	if (!query || (query->GetType() != MySQLQuery::Type::Borough))
+	{
+		m_mutex->unlock();
+		return -1;
+	}
+
+	MySQLBoroughQuery* result = static_cast<MySQLBoroughQuery*>(query);
+	result->m_data = _data;
+
+	m_mutex->unlock();
+
+	return requestID;
+}
+
+//--------------------------------------------------------------------------------------
+int MySQLDatabase::AskForCityBoroughList(sCity& _city)
+{
+	return -1;
 }
 
 //--------------------------------------------------------------------------------------
@@ -379,7 +408,7 @@ bool MySQLDatabase::IsQueryAvailable(int _queryID) const
 	m_mutex->lock();
 	auto it = m_queries.find(_queryID);
 	if (it != m_queries.end())
-		valReturn = !it->second.m_canceled && it->second.m_finished;
+		valReturn = !it->second->m_canceled && it->second->m_finished;
 	m_mutex->unlock();
 
 	return valReturn;
@@ -394,10 +423,11 @@ bool MySQLDatabase::GetResultBoroughData(int _queryID, BoroughData& _data)
 	auto it = m_queries.find(_queryID);
 	if (it != m_queries.end())
 	{
-		if (it->second.m_finished)
+		MySQLQuery* query = it->second;
+		if ((query->m_finished) && (query->GetType() == MySQLQuery::Type::Borough))
 		{
-			_data = it->second.m_data;
-			it->second.m_canceled = true;
+			_data = ((MySQLBoroughQuery*)query)->m_data;
+			query->m_canceled = true;
 			valid = true;
 		}
 	}
@@ -411,7 +441,7 @@ void MySQLDatabase::CancelQuery(const int _queryID)
 	m_mutex->lock();
 	auto it = m_queries.find(_queryID);
 	if (it != m_queries.end())
-		it->second.m_canceled = true;
+		it->second->m_canceled = true;
 	m_mutex->unlock();
 }
 
@@ -419,29 +449,40 @@ void MySQLDatabase::CancelQuery(const int _queryID)
 void MySQLDatabase::WriteBoroughData(BoroughData& _data)
 {
 	if (_data.IsValid())
-		AddQuery(MySQLBoroughQuery::Type_Write, _data);
+	{
+		int requestID = -1;
+		std::string str = _data.m_city.m_name + _data.m_name;
+		unsigned int key = StringTools::GenerateHash(str);
+
+		m_mutex->lock();
+		auto query = AddQuery(MySQLQuery::IO::Write, key, requestID);
+		MySQLBoroughQuery* result = static_cast<MySQLBoroughQuery*>(query);
+		result->m_data = _data;
+		m_mutex->unlock();
+	}
 }
 
 //--------------------------------------------------------------------------------------
-bool MySQLDatabase::GetNextQuery(MySQLBoroughQuery& _request)
+MySQLQuery* MySQLDatabase::GetNextQuery()
 {
+	MySQLQuery* result = nullptr;
+
 	m_mutex->lock();
 	bool found = false;
 	auto it = m_queries.begin();
 	while (it != m_queries.end() && !found)
 	{
-		if (!it->second.m_canceled && !it->second.m_finished)
+		MySQLQuery* query = it->second;
+		if (!query->m_canceled && !query->m_finished)
 		{
-			_request.m_queryID = it->first;
-			_request.m_type = it->second.m_type;
-			_request.m_data = it->second.m_data;
+			result = query;
 			found = true;
 		}
 		++it;
 	}
 	m_mutex->unlock();
 
-	return found;
+	return result;
 }
 
 //------------------------------------------------------------------------------------------------
@@ -451,8 +492,9 @@ void MySQLDatabase::Validate(const int _queryID, BoroughData& _data)
 	auto it = m_queries.find(_queryID);
 	if (it != m_queries.end())
 	{
-		it->second.m_data = _data;
-		it->second.m_finished = true;
+		MySQLQuery* query = it->second;
+		//query->m_data = _data;
+		query->m_finished = true;
 	}
 	m_mutex->unlock();
 }
@@ -479,27 +521,27 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 		data.m_name = row[rowID++];
 		data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
 		data.m_key = strtoul(row[rowID++], nullptr, 10);
-		data.m_priceBuyApartment.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceBuyApartment.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceBuyApartment.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceBuyHouse.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceBuyHouse.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceBuyHouse.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceRentHouse.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceRentHouse.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceRentHouse.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_max = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_val = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_min = strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_max = strtod(row[rowID++], nullptr);
+		data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 
 		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
 		DisplayMySQLMessage(mes);

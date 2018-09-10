@@ -328,6 +328,9 @@
     <ClInclude Include="sources\Tools\SearchFile.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Database\CityUpdateData.h">
+      <Filter>Sources\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -437,6 +440,9 @@
     </ClCompile>
     <ClCompile Include="sources\Text\TextManager.cpp">
       <Filter>Sources\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Database\CityUpdateData.cpp">
+      <Filter>Sources\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

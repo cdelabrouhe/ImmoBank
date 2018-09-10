@@ -261,6 +261,8 @@ void UIManager::DisplayCityInformation()
 			selectedCity.m_data.FixName();
 			wholeCityData.m_city = selectedCity.m_data;
 			wholeCityData.SetWholeCity();
+
+			DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data.m_name);
 		}
 	}
 

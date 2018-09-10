@@ -5,6 +5,7 @@
 #include "Tools\Types.h"
 #include "BoroughData.h"
 #include "CityComputeData.h"
+#include "CityUpdateData.h"
 
 enum DataTables
 {
@@ -52,6 +53,7 @@ public:
 	bool	ListAllCities(std::vector<sCity>& _list);
 	void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
 
+	void	UpdateCityData(const std::string& _cityName);
 	void	ComputeCityData(const std::string& _cityName);
 	void	ComputeBoroughData(BoroughData& _data);
 
@@ -84,6 +86,7 @@ public:
 private:
 	sqlite3*						m_tables[DataTables_COUNT];
 	std::vector<CityComputeData>	m_cityComputes;
+	std::vector<CityUpdateData>		m_cityUpdates;
 	std::vector<BoroughData>		m_boroughComputes;
 	MySQLDatabase*					m_externalDB = nullptr;
 	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;

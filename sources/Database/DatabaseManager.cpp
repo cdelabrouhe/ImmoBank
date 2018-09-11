@@ -296,13 +296,26 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	return false;
 }
 
+//-------------------------------------------------------------------------------------------------
 bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
 {
-	auto it = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](CityComputeData& _cityData)->bool
+	bool result = true;
+	auto itCompute = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](CityComputeData& _cityData)->bool
 	{
 		return (_cityData.m_city == _cityName) && (_cityData.m_city == _cityName);
 	});
-	return it != m_cityComputes.end();
+	result &= itCompute != m_cityComputes.end();
+
+	if (result)
+	{
+		auto itUpdate = std::find_if(m_cityUpdates.begin(), m_cityUpdates.end(), [_cityName](CityUpdateData& _cityData)->bool
+		{
+			return (_cityData.m_city.m_name == _cityName) && (_cityData.m_city.m_name == _cityName);
+		});
+		result &= itUpdate != m_cityUpdates.end();
+	}
+
+	return result;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -605,10 +618,10 @@ void DatabaseManager::Test()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::UpdateCityData(const std::string& _cityName)
+void DatabaseManager::UpdateCityData(const sCity& _city)
 {
 	CityUpdateData data;
-	data.m_city = _cityName;
+	data.m_city = _city;
 	m_cityUpdates.push_back(data);
 	m_cityUpdates.back().Init();
 }
@@ -627,6 +640,23 @@ void DatabaseManager::ComputeBoroughData(BoroughData& _data)
 {
 	m_boroughComputes.push_back(_data);
 	m_boroughComputes.back().Init();
+}
+
+//-------------------------------------------------------------------------------------------------
+int DatabaseManager::AskForExternalDBCityBoroughs(const sCity& _city)
+{
+	return m_externalDB->AskForCityBoroughList(_city);
+}
+
+//-------------------------------------------------------------------------------------------------
+bool DatabaseManager::IsExternalDBCityBoroughsAvailable(int _requestID, std::vector<BoroughData>& _boroughs)
+{
+	if (m_externalDB->IsQueryAvailable(_requestID))
+	{
+		m_externalDB->GetResultBoroughList(_requestID, _boroughs);
+		return true;
+	}
+	return false;
 }
 
 //-------------------------------------------------------------------------------------------------

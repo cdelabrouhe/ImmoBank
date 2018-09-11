@@ -289,10 +289,69 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 	break;
 	}
 
-	_db->Validate(m_queryID, m_data);
+	_db->Validate(m_queryID);
 #endif
 }
 
+//--------------------------------------------------------------------------------------
+void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
+{
+#ifdef MYSQL_ACTIVE
+	switch (m_IO)
+	{
+	case IO::Read:
+	{
+		char buf[512];
+		sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s'", m_city.m_name.c_str());
+		std::string str = buf;
+		MYSQL_RES* result = _db->ExecuteQuery(str);
+
+		while (MYSQL_ROW row = mysql_fetch_row(result))
+		{
+			BoroughData data;
+			int rowID = 0;
+			data.m_city.m_name = row[rowID++];
+			data.m_name = row[rowID++];
+			data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
+			data.m_key = strtoul(row[rowID++], nullptr, 10);
+			data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+
+			m_list.push_back(data);
+		}
+
+		mysql_free_result(result);
+	}
+	break;
+	case IO::Write:
+	{
+		// TODO (if relevant)
+	}
+	break;
+	}
+
+	_db->Validate(m_queryID);
+#endif
+}
 
 //--------------------------------------------------------------------------------------
 void MySQLDatabase::End()
@@ -328,7 +387,7 @@ int MySQLDatabase::GetNextAvailableRequestID()
 }
 
 //--------------------------------------------------------------------------------------
-MySQLQuery* MySQLDatabase::AddQuery(MySQLQuery::IO _IO, unsigned int _key, int& _requestID)
+MySQLQuery* MySQLDatabase::AddQuery(MySQLQuery::Type _type, MySQLQuery::IO _IO, unsigned int _key, int& _requestID)
 {
 #ifdef MYSQL_ACTIVE
 	// Search for a recent similar request
@@ -356,7 +415,17 @@ MySQLQuery* MySQLDatabase::AddQuery(MySQLQuery::IO _IO, unsigned int _key, int& 
 	}
 
 	int requestID = GetNextAvailableRequestID();
-	MySQLQuery* query = new MySQLBoroughQuery(requestID, _IO);
+	MySQLQuery* query = nullptr;
+	switch (_type)
+	{
+	case MySQLQuery::Borough:
+		query = new MySQLBoroughQuery(requestID, _IO);
+		break;
+
+	case MySQLQuery::BoroughList:
+		query = new MySQLBoroughListQuery(requestID, _IO);
+		break;
+	}
 	m_queries[requestID] = query;
 
 	// Store in timeout list
@@ -380,7 +449,7 @@ int MySQLDatabase::AskForBoroughData(BoroughData& _data)
 
 	m_mutex->lock();
 
-	MySQLQuery* query = AddQuery(MySQLQuery::IO::Read, key, requestID);
+	MySQLQuery* query = AddQuery(MySQLQuery::Type::Borough, MySQLQuery::IO::Read, key, requestID);
 	if (!query || (query->GetType() != MySQLQuery::Type::Borough))
 	{
 		m_mutex->unlock();
@@ -396,9 +465,27 @@ int MySQLDatabase::AskForBoroughData(BoroughData& _data)
 }
 
 //--------------------------------------------------------------------------------------
-int MySQLDatabase::AskForCityBoroughList(sCity& _city)
+int MySQLDatabase::AskForCityBoroughList(const sCity& _city)
 {
-	return -1;
+	int requestID = -1;
+
+	unsigned int key = StringTools::GenerateHash(_city.m_name);
+
+	m_mutex->lock();
+
+	MySQLQuery* query = AddQuery(MySQLQuery::Type::BoroughList, MySQLQuery::IO::Read, key, requestID);
+	if (!query || (query->GetType() != MySQLQuery::Type::BoroughList))
+	{
+		m_mutex->unlock();
+		return -1;
+	}
+
+	MySQLBoroughListQuery* result = static_cast<MySQLBoroughListQuery*>(query);
+	result->m_city = _city;
+
+	m_mutex->unlock();
+
+	return requestID;
 }
 
 //--------------------------------------------------------------------------------------
@@ -436,6 +523,27 @@ bool MySQLDatabase::GetResultBoroughData(int _queryID, BoroughData& _data)
 }
 
 //------------------------------------------------------------------------------------------------
+bool MySQLDatabase::GetResultBoroughList(int _queryID, std::vector<BoroughData>& _list)
+{
+	bool valid = false;
+
+	m_mutex->lock();
+	auto it = m_queries.find(_queryID);
+	if (it != m_queries.end())
+	{
+		MySQLQuery* query = it->second;
+		if ((query->m_finished) && (query->GetType() == MySQLQuery::Type::BoroughList))
+		{
+			_list = ((MySQLBoroughListQuery*)query)->m_list;
+			query->m_canceled = true;
+			valid = true;
+		}
+	}
+	m_mutex->unlock();
+	return valid;
+}
+
+//------------------------------------------------------------------------------------------------
 void MySQLDatabase::CancelQuery(const int _queryID)
 {
 	m_mutex->lock();
@@ -455,7 +563,7 @@ void MySQLDatabase::WriteBoroughData(BoroughData& _data)
 		unsigned int key = StringTools::GenerateHash(str);
 
 		m_mutex->lock();
-		auto query = AddQuery(MySQLQuery::IO::Write, key, requestID);
+		auto query = AddQuery(MySQLQuery::Type::Borough, MySQLQuery::IO::Write, key, requestID);
 		MySQLBoroughQuery* result = static_cast<MySQLBoroughQuery*>(query);
 		result->m_data = _data;
 		m_mutex->unlock();
@@ -486,14 +594,13 @@ MySQLQuery* MySQLDatabase::GetNextQuery()
 }
 
 //------------------------------------------------------------------------------------------------
-void MySQLDatabase::Validate(const int _queryID, BoroughData& _data)
+void MySQLDatabase::Validate(const int _queryID)
 {
 	m_mutex->lock();
 	auto it = m_queries.find(_queryID);
 	if (it != m_queries.end())
 	{
 		MySQLQuery* query = it->second;
-		//query->m_data = _data;
 		query->m_finished = true;
 	}
 	m_mutex->unlock();

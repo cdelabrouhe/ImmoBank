@@ -53,9 +53,12 @@ public:
 	bool	ListAllCities(std::vector<sCity>& _list);
 	void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
 
-	void	UpdateCityData(const std::string& _cityName);
+	void	UpdateCityData(const sCity& _city);
 	void	ComputeCityData(const std::string& _cityName);
 	void	ComputeBoroughData(BoroughData& _data);
+
+	int		AskForExternalDBCityBoroughs(const sCity& _city);
+	bool	IsExternalDBCityBoroughsAvailable(int _requestID, std::vector<BoroughData>& _boroughs);
 
 	inline bool IsModified() const		{ return m_modified; }
 

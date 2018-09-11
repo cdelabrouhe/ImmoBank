@@ -7,56 +7,21 @@
 //-------------------------------------------------------------------------------------------------
 void CityUpdateData::Init()
 {
-	m_state = UpdateStep_GetCityData;
-
-	sCityData data;
-	if (DatabaseManager::getSingleton()->GetCityData(m_city, data))
-	{
-		SearchRequestCityBoroughs boroughs;
-		boroughs.m_city = m_city;
-		m_boroughsListID = OnlineManager::getSingleton()->SendRequest(&boroughs);
-
-		m_state = UpdateStep_GetBoroughList;
-	}
+	m_boroughsListID = DatabaseManager::getSingleton()->AskForExternalDBCityBoroughs(m_city);
 }
 
 //-------------------------------------------------------------------------------------------------
 bool CityUpdateData::Process()
 {
-	switch (m_state)
+	std::vector<BoroughData>	list;
+	if ((m_boroughsListID > -1) && DatabaseManager::getSingleton()->IsExternalDBCityBoroughsAvailable(m_boroughsListID, list))
 	{
-		// Borough list
-	case UpdateStep_GetBoroughList:
-		if ((m_boroughsListID > -1) && OnlineManager::getSingleton()->IsRequestAvailable(m_boroughsListID))
+		for (auto& borough : list)
 		{
-			std::vector<SearchRequestResult*> list;
-			OnlineManager::getSingleton()->GetRequestResult(m_boroughsListID, list);
-			m_boroughsListID = -1;
-
-			for (auto result : list)
-			{
-				if (result->m_resultType == SearchRequestType_CityBoroughs)
-				{
-					SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
-					BoroughData data;
-					data.m_city = m_city;
-					data.m_name = borough->m_name;
-					data.m_key = borough->m_internalID;
-					m_boroughs.push_back(data);
-
-					// Store data into DB
-					BoroughData localData;
-					if (!DatabaseManager::getSingleton()->GetBoroughData(data.m_city.m_name, data.m_name, localData))
-						DatabaseManager::getSingleton()->AddBoroughData(data);
-
-					delete borough;
-				}
-			}
-
-			IncreaseStep();
+			DatabaseManager::getSingleton()->AddBoroughData(borough);
 		}
-		break;
-	}
 
-	return m_state == UpdateStep_COUNT;
+		return true;
+	}
+	return false;
 }

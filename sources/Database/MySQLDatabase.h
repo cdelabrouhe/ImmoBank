@@ -65,10 +65,24 @@ public:
 	BoroughData	m_data;
 };
 
+struct MySQLBoroughListQuery : public MySQLQuery
+{
+public:
+	MySQLBoroughListQuery() {}
+	MySQLBoroughListQuery(int _requestID, IO _type) : MySQLQuery(Type::BoroughList, _requestID, _type) {}
+
+	virtual void Process(MySQLDatabase* _db) override;
+
+public:
+	sCity						m_city;
+	std::vector<BoroughData>	m_list;
+};
+
 class MySQLDatabase
 {
 	friend struct MySQLQuery;
 	friend struct MySQLBoroughQuery;
+	friend struct MySQLBoroughListQuery;
 
 public:
 	bool Init();
@@ -77,13 +91,14 @@ public:
 	void End();
 
 	int AskForBoroughData(BoroughData& _data);
-	int AskForCityBoroughList(sCity& _city);
+	int AskForCityBoroughList(const sCity& _city);
 	bool IsQueryAvailable(int _queryID) const;
 	bool GetResultBoroughData(int _queryID, BoroughData& _data);
+	bool GetResultBoroughList(int _queryID, std::vector<BoroughData>& _list);
 	void WriteBoroughData(BoroughData& _data);
 	MySQLQuery* GetNextQuery();
 	void CancelQuery(const int _queryID);
-	void Validate(const int _queryID, BoroughData& _data);
+	void Validate(const int _queryID);
 	void RemoveBoroughData(BoroughData& _data);
 	inline std::string GetServer()		{ return m_server;}
 	inline std::string GetUser()		{ return m_user; }
@@ -96,7 +111,7 @@ protected:
 
 private:
 	int GetNextAvailableRequestID();
-	MySQLQuery* AddQuery(MySQLQuery::IO _IO, unsigned int _key, int& _requestID);
+	MySQLQuery* AddQuery(MySQLQuery::Type _type, MySQLQuery::IO _IO, unsigned int _key, int& _requestID);
 
 private:
 	MYSQL*  m_connexion = nullptr;

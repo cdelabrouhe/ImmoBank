@@ -319,6 +319,11 @@ void UIManager::DisplayCityInformation()
 
 			if (ImGui::Button(GET_TEXT("DatabaseWindowCityDeleteData")))
 				wholeCityData.Reset(true);
+
+			ImGui::SameLine();
+
+			if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughExternalUpdateList")))
+				DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data);
 #endif
 
 			if (s_selectedData == &wholeCityData)

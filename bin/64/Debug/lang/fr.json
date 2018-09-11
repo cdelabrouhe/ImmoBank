@@ -46,6 +46,7 @@
 	"DatabaseWindowBoroughManualUpdatePrice" : "Edition",
 	"DatabaseWindowBoroughLink" : "Lien",
 	"DatabaseWindowBoroughDeleteData" : "Suppr donnee",
+	"DatabaseWindowBoroughExternalUpdateList" : "Force UP list",
 	
 	// Compute rate tool
 	"ComputeRateToolRent" : "Loyer",

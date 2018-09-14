@@ -16,6 +16,7 @@
 // FORWARD DECLARATIONS
 //-------------------------------------------------------------------------------------------------
 UIManager* s_singleton = nullptr;
+static bool s_computeRentabilityRate = false;
 
 //-------------------------------------------------------------------------------------------------
 UIManager* UIManager::getSingleton()
@@ -68,19 +69,16 @@ bool UIManager::Draw()
 			ImGui::EndMenu();
 		}
 
-		bool openRate = false;
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuTools")))
 		{
 			if (ImGui::MenuItem(GET_TEXT("MenuToolsComputeRentabilityRate")))
-				openRate = true;
+				s_computeRentabilityRate = true;
 
 			ImGui::EndMenu();
 		}
 
-		if (openRate)
-			ImGui::OpenPopup(GET_TEXT("PopupComputeRentabilityRate"));
-
-		DisplayComputeRateTool();
+		if (s_computeRentabilityRate)
+			DisplayComputeRateTool();
 
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuWindow")))
 		{
@@ -410,7 +408,7 @@ void UIManager::DisplayCityInformation()
 //-------------------------------------------------------------------------------------------------
 void UIManager::DisplayComputeRateTool()
 {
-	if (ImGui::BeginPopupModal(GET_TEXT("PopupComputeRentabilityRate"), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::Begin(GET_TEXT("PopupComputeRentabilityRate"), &s_computeRentabilityRate, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::SetWindowFontScale(1.f);
 
@@ -429,9 +427,9 @@ void UIManager::DisplayComputeRateTool()
 
 		ImGui::SameLine();
 		if (ImGui::Button(GET_TEXT("GeneralExit")))
-			ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
+			s_computeRentabilityRate = false;
 	}
+	ImGui::End();
 }
 
 bool UIManager::DisplayConnectionError()

@@ -139,7 +139,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	}
 
 	
-	if (ImGui::Checkbox(GET_TEXT("RequestWindowAppartment"), &m_apartment))
+	if (ImGui::Checkbox(GET_TEXT("GeneralAppartment"), &m_apartment))
 	{
 		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_Apartment);
 		if (m_apartment)
@@ -153,7 +153,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 				m_searchRequest.m_categories.erase(it);
 		}
 	}
-	if (ImGui::Checkbox(GET_TEXT("RequestWindowHouse"), &m_house))
+	if (ImGui::Checkbox(GET_TEXT("GeneralHouse"), &m_house))
 	{
 		auto it = std::find(m_searchRequest.m_categories.begin(), m_searchRequest.m_categories.end(), Category_House);
 		if (m_house)

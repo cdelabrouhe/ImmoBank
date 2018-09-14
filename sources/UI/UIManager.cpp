@@ -417,11 +417,11 @@ void UIManager::DisplayComputeRateTool()
 		static int s_rent = 700;
 		static int s_price = 150000;
 		static float s_result = 0.f;
-		ImGui::InputInt(GET_TEXT("ComputeRateToolRent"), &s_rent);
-		ImGui::InputInt(GET_TEXT("ComputeRateToolPrice"), &s_price);
+		ImGui::InputInt(GET_TEXT("GeneralRent"), &s_rent);
+		ImGui::InputInt(GET_TEXT("GeneralPrice"), &s_price);
 
 		ImGui::Separator();
-		ImGui::Text("%s: %.2f", GET_TEXT("ComputeRateToolRate"), s_result);
+		ImGui::Text("%s: %.2f", GET_TEXT("GeneralRate"), s_result);
 		ImGui::Separator();
 
 		if (ImGui::Button(GET_TEXT("GeneralCompute")))

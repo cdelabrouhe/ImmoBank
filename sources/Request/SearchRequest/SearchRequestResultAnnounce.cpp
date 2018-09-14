@@ -5,6 +5,7 @@
 #include <shellapi.h>
 #include <algorithm>
 #include "Tools\Tools.h"
+#include "Text\TextManager.h"
 
 void SearchRequestResultAnnounce::PostProcess()
 {
@@ -86,7 +87,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::Separator();
 	ImGui::Separator();
 	ImGui::SetWindowFontScale(1.2f);
-	std::string name = (m_category == Category_Apartment ? "Apartment" : "House");
+	std::string name = (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
 	name += ", " + m_name;
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), name.c_str());
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
@@ -96,7 +97,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::SetWindowFontScale(1.f);
 
 	ImGui::PushID(this + 123456);
-	if (ImGui::Button("Remove"))
+	if (ImGui::Button(GET_TEXT("GeneralRemove")))
 		keep = false;
 	ImGui::PopID();
 
@@ -112,12 +113,12 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	for (auto ID = 0; ID < m_boroughs.size(); ++ID)
 		data[ID + 1] = m_boroughs[ID].m_name.c_str();
 	ImGui::PushID(this + 12345);
-	ImGui::Combo("Borough", &m_selectedBoroughID, data.data(), (int)data.size());
+	ImGui::Combo(GET_TEXT("GeneralBorough"), &m_selectedBoroughID, data.data(), (int)data.size());
 	ImGui::PopID();
 
 	// Compute rentability rate
 	bool needNeighboorUpdate = false;
-	std::string rate = "<= Select borough";
+	std::string rate = std::string("<= ") + GET_TEXT("SearchRequestResultSelectBorough");
 	BoroughData requestBorough;
 	if (m_selectedBoroughID > 0)
 	{
@@ -138,7 +139,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		std::round(tmp);
 		char buf[128];
 		sprintf(buf, "%.1f", tmp);
-		rate = "Rate: " + std::string(buf);
+		rate = GET_TEXT("GeneralRate") +  std::string(": ") + std::string(buf);
 	}
 
 	ImGui::NextColumn();
@@ -147,10 +148,10 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	else if (m_waitingForDBUpdate)
 	{
 		char buf[128];
-		sprintf_s(buf, "Updating borough... %c", "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+		sprintf_s(buf, "%s... %c", GET_TEXT("SearchRequestResultUpdatingBorough"), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
 		ImGui::Text(buf);
 	}
-	else if (ImGui::Button("Update borough"))
+	else if (ImGui::Button(GET_TEXT("SearchRequestResultUpdateBorough")))
 	{
 		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);
 		m_waitingForDBUpdate = true;
@@ -158,20 +159,20 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::NextColumn();
 	float rent = GetEstimatedRent();
 	if (rent > 0.f)
-		ImGui::Text("Estimated rent: %.0f     ", rent);
-	else if(ImGui::Button("Update borough"))
+		ImGui::Text("%s: %.0f     ", GET_TEXT("SearchRequestResultEstimatedRent"),rent);
+	else if(ImGui::Button(GET_TEXT("SearchRequestResultUpdateBorough")))
 	{
 		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);
 		m_waitingForDBUpdate = true;
 	}
 	ImGui::NextColumn();
-	ImGui::Text("Price: %u     ", m_price);
+	ImGui::Text("%s: %u     ", GET_TEXT("GeneralPrice"), m_price);
 	ImGui::NextColumn();
 	ImGui::Text("Surface: %.0f m2     ", m_surface);
 	ImGui::NextColumn();
-	ImGui::Text("Nb rooms: %u     ", m_nbRooms);
+	ImGui::Text("%s: %u     ", GET_TEXT("SearchRequestResultNbRooms"), m_nbRooms);
 	ImGui::NextColumn();
-	ImGui::Text("Nb bedrooms: %u     ", m_nbBedRooms);
+	ImGui::Text("%s: %u     ", GET_TEXT("SearchRequestResultNbBedRooms"), m_nbBedRooms);
 
 	ImGui::Columns(1);
 	ImGui::Separator();

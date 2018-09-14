@@ -28,6 +28,14 @@
 	"GeneralUpdating" : "Updating",
 	"GeneralCompute" : "Compute",
 	"GeneralSearching" : "Searching",
+	"GeneralAppartment" : "Appartment",
+	"GeneralHouse" : "House",
+	"GeneralRemove" : "Remove",
+	"GeneralBorough" : "Borough",
+	"GeneralRate" : "Rate",
+	"GeneralRent" : "Rent",
+	"GeneralPrice" : "Price",
+	"GeneralSurface" : "Surface",
 	
 	// Database window
 	"DatabaseWindowName" : "Database",
@@ -47,12 +55,7 @@
 	"DatabaseWindowBoroughLink" : "Link",
 	"DatabaseWindowBoroughDeleteData" : "Del Data",
 	"DatabaseWindowBoroughExternalUpdateList" : "Force UP list",
-	
-	// Compute rate tool
-	"ComputeRateToolRent" : "Rent",
-	"ComputeRateToolPrice" : "Price",
-	"ComputeRateToolRate" : "Rate",
-		
+			
 	// Borough
 	"BoroughManualEditPopup" : "ManualEdit",
 	"BoroughManualEditMinAvgMax" : "Min / Avg / Max",
@@ -67,8 +70,6 @@
 	"RequestWindowName" : "Request",
 	"RequestWindowSearchCity" : "Search city",
 	"RequestWindowCityName" : "City name",
-	"RequestWindowAppartment" : "Appartment",
-	"RequestWindowHouse" : "House",
 	"RequestWindowNbRoomMin" : "Nb rooms min",
 	"RequestWindowNbRoomMax" : "Nb rooms max",
 	"RequestWindowNbBedroomMin" : "Nb bedrooms min",
@@ -94,4 +95,12 @@
 	"PricePopupHouse" : "House",
 	"PricePopupUpdate" : "Update",
 	"PricePopupNoValidData" : "No valid data, update it !",
+
+	// Search request result
+	"SearchRequestResultSelectBorough" : "Select borough",
+	"SearchRequestResultUpdatingBorough" : "Updating borough",
+	"SearchRequestResultUpdateBorough" : "Update borough",
+	"SearchRequestResultEstimatedRent" : "Estimated rent",
+	"SearchRequestResultNbRooms" : "Nb rooms",
+	"SearchRequestResultNbBedRooms" : "Nb bedrooms"
 }

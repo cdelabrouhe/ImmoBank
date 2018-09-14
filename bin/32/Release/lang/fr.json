@@ -28,6 +28,14 @@
 	"GeneralUpdating" : "Mise a jour en cours",
 	"GeneralCompute" : "Calcul",
 	"GeneralSearching" : "Recherche",
+	"GeneralAppartment" : "Appartement",
+	"GeneralHouse" : "Maison",
+	"GeneralRemove" : "Supprimer",
+	"GeneralBorough" : "Quartier",
+	"GeneralRate" : "Taux",
+	"GeneralRent" : "Loyer",
+	"GeneralPrice" : "Prix",
+	"GeneralSurface" : "Surface",
 	
 	// Database window
 	"DatabaseWindowName" : "Base de donnees",
@@ -47,12 +55,7 @@
 	"DatabaseWindowBoroughLink" : "Lien",
 	"DatabaseWindowBoroughDeleteData" : "Suppr donnee",
 	"DatabaseWindowBoroughExternalUpdateList" : "Force UP list",
-	
-	// Compute rate tool
-	"ComputeRateToolRent" : "Loyer",
-	"ComputeRateToolPrice" : "Prix",
-	"ComputeRateToolRate" : "Taux",
-		
+			
 	// Borough
 	"BoroughManualEditPopup" : "Edition manuelle",
 	"BoroughManualEditMinAvgMax" : "Min / Moy / Max",
@@ -94,4 +97,13 @@
 	"PricePopupHouse" : "Maison",
 	"PricePopupUpdate" : "Mise a jour",
 	"PricePopupNoValidData" : "Aucune donnee, mettez a jour !",
+
+
+	// Search request result
+	"SearchRequestResultSelectBorough" : "Selectionner quartier",
+	"SearchRequestResultUpdatingBorough" : "MAJ quartier",
+	"SearchRequestResultUpdateBorough" : "MAJ quartier",
+	"SearchRequestResultEstimatedRent" : "Loyer",
+	"SearchRequestResultNbRooms" : "Nb pieces",
+	"SearchRequestResultNbBedRooms" : "Nb chambres"
 }

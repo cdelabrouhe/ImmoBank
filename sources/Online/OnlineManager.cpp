@@ -4,6 +4,7 @@
 #include "Tools/StringTools.h"
 #include "SeLogerOnlineDatabase.h"
 #include "LeSiteImmoOnlineDatabase.h"
+#include "extern/ImGui/imgui.h"
 
 OnlineManager* s_singleton = nullptr;
 
@@ -46,6 +47,10 @@ void OnlineManager::Process()
 
 	for (auto& request : m_requests)
 		request.second->Process();
+
+#ifdef DEV_MODE
+	DisplayDebug();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,4 +145,45 @@ bool OnlineManager::GetBasicHTTPRequestResult(const int _requestID, std::string&
 void OnlineManager::CancelBasicHTTPRequest(const int _requestID)
 {
 	s_downloader.CancelRequest(_requestID);
+}
+
+//-------------------------------------------------------------------------------------------------
+void OnlineManager::DisplayDebug()
+{
+	if (!m_displayDebug)
+		return;
+
+	ImGui::Begin("OnlineManager Debug panel", &m_displayDebug);
+	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
+
+	// Debug request
+	bool callCommand = ImGui::Button("Call") && strlen(m_inputDebug) > 0;
+	ImGui::SameLine();
+	ImGui::InputText("HTTP request", (char*)m_inputDebug, 2048);
+	if ((m_testRequest == -1) && callCommand)
+	{
+		std::string str = m_inputDebug;
+		m_testRequest = OnlineManager::getSingleton()->SendBasicHTTPRequest(str);
+	}
+
+	if (ImGui::Button("Clear"))
+		m_testRequestResult.clear();
+
+	ImGui::Separator();
+
+	ImGui::EndChild();
+
+	if (m_testRequest == -1)
+		ImGui::TextWrapped("%s", m_testRequestResult.c_str());
+	else
+	{
+		ImGui::Text("Processing request...");
+		if (IsBasicHTTPRequestAvailable(m_testRequest))
+		{
+			GetBasicHTTPRequestResult(m_testRequest, m_testRequestResult);
+			m_testRequest = -1;
+		}
+	}
+
+	ImGui::End();
 }

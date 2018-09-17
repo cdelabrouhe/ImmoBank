@@ -29,9 +29,18 @@ public:
 	bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
 	void	CancelBasicHTTPRequest(const int _requestID);
 
+	void	DisplayDebug();
+
 	std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
+
+public:
+	bool	m_displayDebug = false;
 
 protected:
 	std::vector<OnlineDatabase*>		m_databases;
 	std::map<int,SearchRequest*>		m_requests;
+
+	std::string m_testRequestResult;
+	char	m_inputDebug[2048];
+	int		m_testRequest = -1;
 };

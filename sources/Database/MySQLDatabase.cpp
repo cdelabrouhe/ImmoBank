@@ -64,7 +64,7 @@ unsigned int MySQLThreadStart(void* arg)
 		if (MySQLQuery* query = db->GetNextQuery())
 		{
 			query->Process(db);
-			std::this_thread::sleep_for(std::chrono::milliseconds(25));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 		else
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));

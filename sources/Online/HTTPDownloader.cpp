@@ -31,9 +31,12 @@ unsigned int ThreadStart(void* arg)
 	{
 		sRequest request;
 		if (downloader->GetNextRequest(request))
+		{
 			request.Process(downloader);
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+		else
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
 	return 0;

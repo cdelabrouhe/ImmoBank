@@ -7,6 +7,7 @@
 #include "extern/ImGui/imgui.h"
 #include "Request/RequestManager.h"
 #include "Database/DatabaseManager.h"
+#include "Online/OnlineManager.h"
 #include "CitySelector.h"
 #include "Tools/StringTools.h"
 #include "Tools/Tools.h"
@@ -122,6 +123,7 @@ bool UIManager::Draw()
 		if (ImGui::BeginMenu(GET_TEXT("MenuDebug")))
 		{
 			ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
+			ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
 
 			ImGui::EndMenu();
 		}

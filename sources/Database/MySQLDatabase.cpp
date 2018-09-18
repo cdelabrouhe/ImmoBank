@@ -221,6 +221,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 		}
 
 		mysql_free_result(result);
@@ -245,7 +246,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 		// Insert new borough data
 		char buf[4096];
 		memset(buf, 0, 4096);
-		sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
+		sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u)",
 			m_data.m_city.m_name.c_str(),
 			m_data.m_name.c_str(),
 			m_data.m_timeUpdate.GetData(),
@@ -270,7 +271,8 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT3.m_max,
 			m_data.m_priceRentApartmentT4Plus.m_val,
 			m_data.m_priceRentApartmentT4Plus.m_min,
-			m_data.m_priceRentApartmentT4Plus.m_max);
+			m_data.m_priceRentApartmentT4Plus.m_max,
+			m_data.m_selogerKey);
 
 		std::string str = buf;
 		_db->ExecuteUpdate(str);
@@ -335,6 +337,7 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 			data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
 			data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 
 			m_list.push_back(data);
 		}
@@ -649,6 +652,7 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 		data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
 		data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 		data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 
 		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
 		DisplayMySQLMessage(mes);

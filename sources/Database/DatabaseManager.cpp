@@ -135,7 +135,7 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
-		localData.m_key,
+		localData.m_meilleursAgentsKey,
 		localData.m_priceBuyApartment.m_val,
 		localData.m_priceBuyApartment.m_min,
 		localData.m_priceBuyApartment.m_max,
@@ -181,7 +181,7 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-		borough.m_key = sqlite3_column_int64(_stmt, index++);
+		borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
 		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
@@ -246,7 +246,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-		borough.m_key = sqlite3_column_int64(_stmt, index++);
+		borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
 		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
@@ -279,7 +279,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		// Ask data to external database
 		if (!borough.IsValid())
 		{
-			unsigned int key = borough.m_key;
+			unsigned int key = borough.m_meilleursAgentsKey;
 			auto it = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
 			{
 				return (_pair.first == key);
@@ -399,7 +399,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 			// Ask data to external database
 			if (!data.IsValid())
 			{
-				unsigned int key = data.m_key;
+				unsigned int key = data.m_meilleursAgentsKey;
 				auto itExternal = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
 				{
 					return (_pair.first == key);
@@ -589,7 +589,7 @@ void DatabaseManager::Test()
 	BoroughData data;
 	data.m_name = "Antigone";
 	data.m_city.m_name = "Montpellier";
-	data.m_key = 13245;
+	data.m_meilleursAgentsKey = 13245;
 	data.m_timeUpdate = date;
 
 	data.m_priceBuyApartment.m_val = 1;

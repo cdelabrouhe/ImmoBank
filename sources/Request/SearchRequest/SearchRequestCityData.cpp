@@ -77,7 +77,7 @@ void SearchRequestCityData::Process()
 					BoroughData data;
 					data.m_city = m_city;
 					data.m_name = borough->m_name;
-					data.m_key = borough->m_internalID;
+					data.m_meilleursAgentsKey = borough->m_internalID;
 					m_boroughs.push_back(data);
 
 					// Store data into DB

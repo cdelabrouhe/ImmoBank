@@ -23,7 +23,7 @@ public:
 	std::string			m_name;
 	sCity				m_city;
 	sDate				m_timeUpdate;
-	unsigned int		m_key = 0xffffffff;
+	unsigned int		m_meilleursAgentsKey = 0xffffffff;
 	unsigned int		m_selogerKey = 0;
 	sPrice				m_priceRentApartmentT1;
 	sPrice				m_priceRentApartmentT2;

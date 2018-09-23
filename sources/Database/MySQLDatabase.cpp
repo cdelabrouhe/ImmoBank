@@ -199,7 +199,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_city.m_name = row[rowID++];
 			m_data.m_name = row[rowID++];
 			m_data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
-			m_data.m_key = strtoul(row[rowID++], nullptr, 10);
+			m_data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
 			m_data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
@@ -250,7 +250,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_city.m_name.c_str(),
 			m_data.m_name.c_str(),
 			m_data.m_timeUpdate.GetData(),
-			m_data.m_key,
+			m_data.m_meilleursAgentsKey,
 			m_data.m_priceBuyApartment.m_val,
 			m_data.m_priceBuyApartment.m_min,
 			m_data.m_priceBuyApartment.m_max,
@@ -315,7 +315,7 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 			data.m_city.m_name = row[rowID++];
 			data.m_name = row[rowID++];
 			data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
-			data.m_key = strtoul(row[rowID++], nullptr, 10);
+			data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
 			data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
 			data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
 			data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
@@ -630,7 +630,7 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 		data.m_city.m_name = row[rowID++];
 		data.m_name = row[rowID++];
 		data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
-		data.m_key = strtoul(row[rowID++], nullptr, 10);
+		data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
 		data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
 		data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
 		data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);

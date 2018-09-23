@@ -152,7 +152,7 @@ std::string BoroughData::ComputeRequestURL() const
 	{
 		request = request + "-" + zipCode + "/";
 		if (!IsWholeCity())
-			request += "quartier_" + boroughName + "-" + std::to_string(m_key);
+			request += "quartier_" + boroughName + "-" + std::to_string(m_meilleursAgentsKey);
 		StringTools::TransformToLower(request);
 	}
 	else
@@ -202,12 +202,7 @@ void BoroughData::Edit()
 		}
 
 		ImGui::SetWindowFontScale(1.f);
-#ifdef _DEBUG
-		static int s_key;
-		s_key = m_key;
-		if (ImGui::InputInt("Key", &s_key))
-			m_key = s_key;
-#endif
+
 		ImGui::Separator();
 		ImGui::Text(GET_TEXT("BoroughManualEditBuy"));
 		int localID = 0;
@@ -276,8 +271,9 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
 			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
 
-#ifdef _DEBUG
-			ImGui::Text("Key: %u", m_key);
+#ifdef DEV_MODE
+			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
+			ImGui::Text("SeLogerKey: %u", m_selogerKey);
 #endif
 			ImGui::Text(GET_TEXT("PricePopupPricesM2"));
 			ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();

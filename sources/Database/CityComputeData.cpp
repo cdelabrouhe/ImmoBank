@@ -42,6 +42,7 @@ bool CityComputeData::Process()
 					data.m_city = m_city;
 					data.m_name = borough->m_name;
 					data.m_key = borough->m_internalID;
+					data.m_selogerKey = borough->m_selogerID;
 					m_boroughs.push_back(data);
 
 					// Store data into DB

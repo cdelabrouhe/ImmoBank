@@ -13,4 +13,5 @@ struct SearchRequestResulCityBorough : public SearchRequestResult
 
 	std::string		m_name;
 	unsigned int	m_internalID = 0xFFFFFFFF;
+	unsigned int	m_selogerID = 0xFFFFFFFF;
 };

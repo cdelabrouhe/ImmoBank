@@ -1,14 +1,25 @@
 #pragma once
 
-#include "SearchRequest.h"
+#include "SearchRequestResulCityBorough.h"
 
 struct SearchRequestCityBoroughs : public SearchRequest
 {
+	enum State
+	{
+		State_NONE = -1,
+		State_GetRawList,
+		State_CheckSeLoger,
+		State_DONE,
+		Stat_COUNT
+	};
+
 	SearchRequestCityBoroughs() : SearchRequest(SearchRequestType_CityBoroughs) {}
 	virtual ~SearchRequestCityBoroughs() {}
 
 	virtual void Init() override;
+	virtual void Process() override;
 
+	void SwitchState(State _state);
 	virtual void copyTo(SearchRequest* _target) override;
 	virtual bool IsAvailable() const;
 
@@ -19,5 +30,7 @@ struct SearchRequestCityBoroughs : public SearchRequest
 	sCity					m_city;
 
 private:
-	std::vector<int>		m_httpRequestsID;
+	std::vector<int>			m_httpRequestsID;
+	std::vector<SearchRequestResulCityBorough>	m_boroughs;
+	State	m_state = State_NONE;
 };

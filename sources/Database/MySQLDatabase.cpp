@@ -623,6 +623,7 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 {
 	MYSQL_RES* result = ExecuteQuery(_query);
 
+	int cpt = 0;
 	while (MYSQL_ROW row = mysql_fetch_row(result))
 	{
 		int rowID = 0;
@@ -656,7 +657,12 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 
 		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
 		DisplayMySQLMessage(mes);
+
+		++cpt;
 	}
+
+	std::string mes = std::to_string(cpt) + " results";
+	DisplayMySQLMessage(mes);
 
 	mysql_free_result(result);
 }

@@ -154,6 +154,7 @@ void OnlineManager::DisplayDebug()
 		return;
 
 	ImGui::Begin("OnlineManager Debug panel", &m_displayDebug);
+	ImGui::Text("Number of active requests: %u", m_requests.size());
 	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
 
 	// Debug request

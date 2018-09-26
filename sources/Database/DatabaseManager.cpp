@@ -110,6 +110,9 @@ void DatabaseManager::Process()
 
 #ifdef DEV_MODE
 	DisplayDebug();
+
+	if (m_generateSeLogerIndices)
+		m_generateSeLogerIndices = m_externalDB->UpdateAllSeLogerKeys();
 #endif
 }
 

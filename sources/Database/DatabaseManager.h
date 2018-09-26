@@ -101,5 +101,8 @@ private:
 	// Debug panel
 	char							m_MySQLInputDebug[2048];
 	std::vector<std::string>		m_MySQLRequests;
+
+public:
+	bool							m_generateSeLogerIndices = false;
 #endif
 };

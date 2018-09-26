@@ -105,6 +105,8 @@ public:
 
 	void DebugQuery(const std::string& _query);
 
+	bool UpdateAllSeLogerKeys();
+
 protected:
 	MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 	int ExecuteUpdate(const std::string& _query) const;
@@ -127,4 +129,15 @@ private:
 	std::string		m_user;
 	std::string		m_password;
 	std::string		m_base;
+#ifdef DEV_MODE
+	struct sBoroughData
+	{
+		sBoroughData()	{}
+		sBoroughData(BoroughData& _data, int _requestID = -1) : m_data(_data), m_requestID(_requestID)	{}
+		BoroughData	m_data;
+		int m_requestID = -1;
+	};
+	std::vector<sBoroughData>	m_boroughData;
+	bool			m_updateSelogerInProgress = false;
+#endif
 };

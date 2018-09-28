@@ -720,7 +720,6 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 		std::string query = "SELECT * FROM BOROUGHS";
 		MYSQL_RES* result = ExecuteQuery(query);
 
-		int cpt = 0;
 		while (MYSQL_ROW row = mysql_fetch_row(result))
 		{
 			int rowID = 0;
@@ -752,31 +751,37 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 
-			/*std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
-			DisplayMySQLMessage(mes);*/
+			if (data.m_selogerKey != 0)
+				continue;
 
 			if (data.m_name == s_wholeCityName)
 				continue;
 
-			std::string request = "https://autocomplete.svc.groupe-seloger.com/auto/complete/0/ALL/6?text=" + data.m_name;
+			std::string str = data.m_name;
+			auto delimiter = str.find("e (");
+			if (delimiter != std::string::npos)
+				str = str.substr(0, delimiter);
+
+			delimiter = str.find("er (");
+			if (delimiter != std::string::npos)
+				str = str.substr(0, delimiter);
+
+			std::string request = "https://autocomplete.svc.groupe-seloger.com/auto/complete/0/ALL/6?text=" + str;
 			StringTools::ReplaceBadSyntax(request, " ", "+");
 			int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
 			m_boroughData.push_back(sBoroughData(data, requestID));
-
-			++cpt;
 		}
-
-		//std::string mes = std::to_string(cpt) + " results";
-		//DisplayMySQLMessage(mes);
 
 		mysql_free_result(result);
 	}
 	else
 	{
 		bool available = true;
-		for (auto& borough : m_boroughData)
+		auto it = m_boroughData.begin();
+		while (it != m_boroughData.end())
 		{
+			auto& borough = *it;
 			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(borough.m_requestID))
 			{
 				std::string str;
@@ -798,9 +803,13 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 						Json::Value val = places.get(placeID, Json::nullValue);
 						std::string name = val["Display"].asString();
 						std::string type = val["Type"].asString();
-						if (type != "Quartier")
+						bool isBorough = (type == "Quartier");
+						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+
+						bool valid = isBorough || isCity;
+						if (!valid)
 						{
-							std::string mes = "Rejected because of Quartier for " + name;
+							std::string mes = "Rejected because invalid for " + name;
 							DisplayMySQLMessage(mes);
 							continue;
 						}
@@ -811,8 +820,11 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 						if (findID == std::string::npos)
 							continue;
 
-						std::string strIndexID = val["Params"]["idq"].asString();
+						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
 						unsigned int index = std::stoi(strIndexID);
+
+						if (isCity)
+							index += 1 << 31;
 
 						borough.m_data.m_selogerKey = index;
 
@@ -827,9 +839,14 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 					std::string mes = "Rejected because no place in " + boroughCityName;
 					DisplayMySQLMessage(mes);
 				}
+
+				it = m_boroughData.erase(it);
 			}
 			else
+			{
 				available = false;
+				++it;
+			}
 		}
 
 		if (available)

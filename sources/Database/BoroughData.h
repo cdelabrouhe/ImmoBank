@@ -51,6 +51,7 @@ public:
 	void SetTimeUpdateToNow();
 
 	std::string ComputeRequestURL() const;
+	std::string ComputeSeLogerKeyURL() const;
 
 	static bool compare(const BoroughData &_a, const BoroughData &_b)
 	{

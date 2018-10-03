@@ -168,6 +168,24 @@ std::string BoroughData::ComputeRequestURL() const
 }
 
 //-------------------------------------------------------------------------------------------------
+std::string BoroughData::ComputeSeLogerKeyURL() const
+{
+	std::string str = m_name;
+	auto delimiter = str.find("e (");
+	if (delimiter != std::string::npos)
+		str = str.substr(0, delimiter);
+
+	delimiter = str.find("er (");
+	if (delimiter != std::string::npos)
+		str = str.substr(0, delimiter);
+
+	std::string request = "https://autocomplete.svc.groupe-seloger.com/auto/complete/0/ALL/6?text=" + str;
+	StringTools::ReplaceBadSyntax(request, " ", "+");
+
+	return request;
+}
+
+//-------------------------------------------------------------------------------------------------
 void BoroughData::Edit()
 {
 	// Popup ?

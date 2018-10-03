@@ -43,8 +43,9 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 		m_httpRequestsID.clear();
 		for (auto& borough : m_boroughs)
 		{
-			std::string name = borough.m_name;
-			std::string request = "https://autocomplete.svc.groupe-seloger.com/auto/complete/0/ALL/6?text=" + name;
+			BoroughData data;
+			data.m_name = borough.m_name;
+			std::string request = data.ComputeSeLogerKeyURL();
 			m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendBasicHTTPRequest(request));
 		}
 		break;

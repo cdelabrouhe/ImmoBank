@@ -4,6 +4,7 @@
 #include "extern/jsoncpp/value.h"
 #include "Tools\StringTools.h"
 #include "SearchRequestResulCityBorough.h"
+#include <algorithm>
 
 static const char* s_characters = "abcdefghijklmnopqrstuvwxyz123456789";
 static auto s_nbCharacters = strlen(s_characters);
@@ -168,18 +169,24 @@ void SearchRequestCityBoroughs::Process()
 							{
 								Json::Value val = places.get(placeID, Json::nullValue);
 								std::string type = val["Type"].asString();
-								if (type != "Quartier")
+								std::string name = val["Display"].asString();
+								wchar_t wStr[1024];
+								mbstowcs(wStr, name.c_str(), 1024);
+								std::wstring wName = wStr;
+								const bool isNeighboor = type == "Quartier";
+								const bool isCity = type == "Ville";
+								if (isCity && (std::find_if(wName.begin(), wName.end(), ::isdigit) == wName.end()))
 									continue;
 
-								std::string name = val["Display"].asString();
 								std::string tmp = name;
 								StringTools::TransformToLower(tmp);
 								auto findID = tmp.find(cityName);
 								if (findID == std::string::npos)
 									continue;
 
-								std::string strIndexID = val["Params"]["idq"].asString();
+								std::string strIndexID = isCity ? val["Params"]["ci"].asString() : val["Params"]["idq"].asString();
 								unsigned int index = std::stoi(strIndexID);
+								index = BoroughData::ConvertSelogerKey(index, isCity);
 
 								SearchRequestResulCityBorough& borough = m_boroughs[ID];
 								borough.m_selogerID = index;

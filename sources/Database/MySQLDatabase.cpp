@@ -813,11 +813,8 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 
 						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
 						unsigned int index = std::stoi(strIndexID);
-
-						if (isCity)
-							index += 1 << 31;
-
-						borough.m_data.m_selogerKey = index;
+						
+						borough.m_data.SetSelogerKey(index, isCity);
 
 						DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
 

@@ -49,6 +49,8 @@ public:
 	bool IsValid() const;
 
 	void SetTimeUpdateToNow();
+	void SetSelogerKey(unsigned int _key, bool _isCity);
+	static unsigned int ConvertSelogerKey(unsigned int _key, bool _isCity);
 
 	std::string ComputeRequestURL() const;
 	std::string ComputeSeLogerKeyURL() const;

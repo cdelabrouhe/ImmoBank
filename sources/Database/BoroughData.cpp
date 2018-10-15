@@ -110,6 +110,21 @@ void BoroughData::SetTimeUpdateToNow()
 }
 
 //-------------------------------------------------------------------------------------------------
+void BoroughData::SetSelogerKey(unsigned int _key, bool _isCity)
+{
+	m_selogerKey = ConvertSelogerKey(_key, _isCity);
+}
+
+//-------------------------------------------------------------------------------------------------
+unsigned int BoroughData::ConvertSelogerKey(unsigned int _key, bool _isCity)
+{
+	if (_isCity)
+		_key += 1 << 31;
+
+	return _key;
+}
+
+//-------------------------------------------------------------------------------------------------
 int GetBoroughNumber(const std::string& _boroughName)
 {
 	int maxBoroughNumber = 30;
@@ -266,6 +281,11 @@ void BoroughData::DisplayAsTooltip()
 		ImGui::BeginTooltip();
 		ImGui::SetWindowFontScale(1.f);
 
+#ifdef DEV_MODE
+		ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
+		ImGui::Text("SeLogerKey: %u", m_selogerKey);
+#endif
+
 		if (IsValid())
 		{
 			static float s_sizeMin = 0.8f;
@@ -289,10 +309,6 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text("   %.f   ", data.m_val); ImGui::PopStyleColor(); \
 			ImGui::SetWindowFontScale(s_sizeMax); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMax); ImGui::Text("%.f", data.m_max); ImGui::PopStyleColor(); \
 
-#ifdef DEV_MODE
-			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
-			ImGui::Text("SeLogerKey: %u", m_selogerKey);
-#endif
 			ImGui::Text(GET_TEXT("PricePopupPricesM2"));
 			ImGui::SetWindowFontScale(s_sizeMin); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_colorMin); ImGui::Text("min"); ImGui::PopStyleColor();
 			ImGui::SetWindowFontScale(s_size); ImGui::SameLine(); ImGui::PushStyleColor(ImGuiCol_Text, s_color); ImGui::Text(" medium "); ImGui::PopStyleColor();
@@ -333,6 +349,10 @@ void BoroughData::DisplayAsTooltip()
 		}
 		else
 		{
+#ifdef DEV_MODE
+			ImGui::Separator();
+#endif
+
 			static ImVec4 s_colorNoData(1.f, 0.f, 0.f, 1.f);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_colorNoData);
 			ImGui::Text(GET_TEXT("PricePopupNoValidData"));

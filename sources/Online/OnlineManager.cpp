@@ -170,6 +170,10 @@ void OnlineManager::DisplayDebug()
 	if (ImGui::Button("Clear"))
 		m_testRequestResult.clear();
 
+	ImGui::SameLine();
+	if (ImGui::Button("Copy"))
+		ImGui::SetClipboardText(m_testRequestResult.c_str());
+
 	ImGui::Separator();
 
 	ImGui::EndChild();

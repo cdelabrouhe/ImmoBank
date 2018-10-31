@@ -10,6 +10,7 @@ void sCity::FixName(std::string& _name)
 {
 	StringTools::ReplaceBadSyntax(_name, "Ã‰", "É");
 	StringTools::ReplaceBadSyntax(_name, "Ã©", "é");
+	StringTools::ReplaceBadSyntax(_name, "Ã¨", "è");
 }
 
 void sCity::UnFixName()
@@ -21,4 +22,5 @@ void sCity::UnFixName(std::string& _name)
 {
 	StringTools::ReplaceBadSyntax(_name, "É", "Ã‰");
 	StringTools::ReplaceBadSyntax(_name, "é", "Ã©");
+	StringTools::ReplaceBadSyntax(_name, "è", "Ã¨");
 }

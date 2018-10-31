@@ -34,7 +34,7 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 			str.resize(4);
 			std::string name = m_city.m_name;
 			StringTools::ReplaceBadSyntax(name, " ", "%20");
-			std::string request = "https://api.meilleursagents.com/geo/v1/?q=" + name + str + "&types=arrmuns,boroughs";
+			std::string request = "https://geo.meilleursagents.com/geo/v1/?q=" + name + str + "&types=arrmuns,boroughs";
 			m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendBasicHTTPRequest(request));
 		}
 		break;

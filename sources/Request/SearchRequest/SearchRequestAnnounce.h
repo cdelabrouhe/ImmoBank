@@ -19,17 +19,18 @@ struct SearchRequestAnnounce : public SearchRequest
 
 	virtual SearchRequest* Clone() { return new SearchRequestAnnounce(); }
 
-	sCity					m_city;
-	Type					m_type = Type_NONE;
-	std::vector<Category>	m_categories;
-	int						m_priceMin = 0;
-	int						m_priceMax = 0;
-	int						m_surfaceMin = 0;
-	int						m_surfaceMax = 0;
-	int						m_nbRoomsMin = 0;
-	int						m_nbRoomsMax = 0;
-	int						m_nbBedRoomsMin = 0;
-	int						m_nbBedRoomsMax = 0;
+	sCity						m_city;
+	std::vector<BoroughData>	m_boroughList;
+	Type						m_type = Type_NONE;
+	std::vector<Category>		m_categories;
+	int							m_priceMin = 0;
+	int							m_priceMax = 0;
+	int							m_surfaceMin = 0;
+	int							m_surfaceMax = 0;
+	int							m_nbRoomsMin = 0;
+	int							m_nbRoomsMax = 0;
+	int							m_nbBedRoomsMin = 0;
+	int							m_nbBedRoomsMax = 0;
 
 private:
 	std::vector<std::string>	m_boroughs;

@@ -125,6 +125,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 
 	if (m_cities.size() > 0)
 	{
+		// City selection
 		if (ImGui::Combo(GET_TEXT("RequestWindowCityName"), &m_selectedCityID, cities, (int)m_cities.size()))
 		{
 			std::string str = m_cities[m_selectedCityID].m_name;
@@ -135,7 +136,31 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		}
 
 		if ((m_selectedCityID > -1) && (m_selectedCityID < m_cities.size()))
+		{
 			m_searchRequest.m_city = m_cities[m_selectedCityID];
+			DatabaseManager::getSingleton()->GetBoroughs(m_searchRequest.m_city, m_boroughList);
+			m_selectedBoroughID = 0;
+			m_searchRequest.m_boroughList.clear();
+		}
+
+		// Borough selection
+		std::vector<std::string> boroughsList;
+		boroughsList.resize(m_boroughList.size());
+		const char* boroughs[500];
+		for (size_t ID = 0; ID < m_boroughList.size(); ++ID)
+		{
+			boroughsList[ID] = m_boroughList[ID].m_name;
+			StringTools::ConvertToImGuiText(boroughsList[ID]);
+			boroughs[ID] = boroughsList[ID].c_str();
+		}
+		ImGui::Combo(GET_TEXT("RequestWindowBoroughName"), &m_selectedBoroughID, boroughs, (int)m_boroughList.size());
+
+		if ((m_selectedBoroughID > -1) && (m_selectedBoroughID < m_cities.size()))
+		{
+			auto it = std::find(m_searchRequest.m_boroughList.begin(), m_searchRequest.m_boroughList.end(), m_boroughList[m_selectedBoroughID]);
+			if (it == m_searchRequest.m_boroughList.end())
+				m_searchRequest.m_boroughList.push_back(m_boroughList[m_selectedBoroughID]);
+		}
 	}
 
 	

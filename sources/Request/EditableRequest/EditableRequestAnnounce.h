@@ -28,7 +28,11 @@ protected:
 	bool								m_available = false;
 
 	std::vector<sCity>					m_cities;
+	BoroughData							m_borough;
+	std::vector<BoroughData>			m_boroughList;
 	char								m_inputTextCity[256];
+	char								m_inputTextBorough[256];
 	int									m_selectedCityID = 0;
+	int									m_selectedBoroughID = 0;
 	bool								m_updateList = true;
 };

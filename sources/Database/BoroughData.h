@@ -55,6 +55,14 @@ public:
 	std::string ComputeRequestURL() const;
 	std::string ComputeSeLogerKeyURL() const;
 
+	bool operator==(const BoroughData &_other) const
+	{
+		return (_other.m_city.m_name == _other.m_city.m_name)
+			&& (_other.m_name == _other.m_name)
+			&& (_other.m_selogerKey == _other.m_selogerKey)
+			&& (_other.m_meilleursAgentsKey == _other.m_meilleursAgentsKey);
+	}
+
 	static bool compare(const BoroughData &_a, const BoroughData &_b)
 	{
 		return _a.m_name < _b.m_name;

@@ -9,7 +9,6 @@ struct SearchRequestAnnounce : public SearchRequest
 	virtual ~SearchRequestAnnounce() {}
 
 	virtual void Init() override;
-	virtual void Process() override;
 	virtual void End() override;
 
 	virtual void copyTo(SearchRequest* _target) override;
@@ -37,7 +36,6 @@ struct SearchRequestAnnounce : public SearchRequest
 	int							m_nbBedRoomsMax = 0;
 
 private:
-	std::vector<std::string>	m_boroughs;
+	std::vector<BoroughData>	m_boroughs;
 	std::vector<std::pair<OnlineDatabase*, int>>	m_internalRequests;
-	int		m_boroughsRequestID = -1;
 };

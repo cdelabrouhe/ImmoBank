@@ -8,35 +8,12 @@
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestAnnounce::Init()
 {
-	SearchRequestCityBoroughs boroughs;
-	boroughs.m_city = m_city;
-	m_boroughsRequestID = OnlineManager::getSingleton()->SendRequest(&boroughs);
-}
+	DatabaseManager::getSingleton()->GetBoroughs(m_city, m_boroughs);
 
-//---------------------------------------------------------------------------------------------------------------------------------
-void SearchRequestAnnounce::Process()
-{
-	if ((m_boroughsRequestID > -1) && OnlineManager::getSingleton()->IsRequestAvailable(m_boroughsRequestID))
-	{
-		std::vector<SearchRequestResult*> list;
-		OnlineManager::getSingleton()->GetRequestResult(m_boroughsRequestID, list);
-		m_boroughsRequestID = -1;
-
-		for (auto result : list)
-		{
-			if (result->m_resultType == SearchRequestType_CityBoroughs)
-			{
-				SearchRequestResulCityBorough* borough = static_cast<SearchRequestResulCityBorough*>(result);
-				m_boroughs.push_back(borough->m_name);
-				delete borough;
-			}
-		}
-
-		// Trigger internal requests
-		auto databases = OnlineManager::getSingleton()->GetOnlineDatabases();
-		for (auto db : databases)
-			m_internalRequests.push_back(std::make_pair(db, db->SendRequest(this)));
-	}
+	// Trigger internal requests
+	std::vector<OnlineDatabase*>& databases = OnlineManager::getSingleton()->GetOnlineDatabases();
+	for (auto db : databases)
+		m_internalRequests.push_back(std::make_pair(db, db->SendRequest(this)));
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -60,6 +37,7 @@ void SearchRequestAnnounce::copyTo(SearchRequest* _target)
 	SearchRequestAnnounce* target = (SearchRequestAnnounce*)_target;
 	target->m_city = m_city;
 	target->m_type = m_type;
+	target->m_boroughList = m_boroughList;
 	target->m_categories = m_categories;
 	target->m_priceMin = m_priceMin;
 	target->m_priceMax = m_priceMax;
@@ -74,9 +52,6 @@ void SearchRequestAnnounce::copyTo(SearchRequest* _target)
 //---------------------------------------------------------------------------------------------------------------------------------
 bool SearchRequestAnnounce::IsAvailable() const
 {
-	if (m_boroughsRequestID > -1)
-		return false;
-
 	bool valid = true;
 	for (auto& request : m_internalRequests)
 	{
@@ -91,9 +66,6 @@ bool SearchRequestAnnounce::IsAvailable() const
 bool SearchRequestAnnounce::GetResult(std::vector<SearchRequestResult*>& _results)
 {
 	if (!IsAvailable())
-		return false;
-
-	if (m_boroughsRequestID > -1)
 		return false;
 
 	bool valid = true;

@@ -3,6 +3,7 @@
 #include "Online\OnlineDatabase.h"
 #include "SearchRequestResulCityBorough.h"
 #include "SearchRequestCityBoroughs.h"
+#include <algorithm>
 
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestAnnounce::Init()
@@ -107,4 +108,30 @@ bool SearchRequestAnnounce::GetResult(std::vector<SearchRequestResult*>& _result
 	m_internalRequests.clear();
 
 	return valid;
+}
+
+void SearchRequestAnnounce::AddBorough(BoroughData& _data)
+{
+	m_boroughList.push_back(_data);
+}
+
+void SearchRequestAnnounce::RemoveBorough(const std::string& _name)
+{
+	auto it = std::find_if(m_boroughList.begin(), m_boroughList.end(), [_name](const BoroughData& _data)->bool
+	{
+		return _data.m_name == _name;
+	});
+
+	if (it != m_boroughList.end())
+		m_boroughList.erase(it);
+}
+
+bool SearchRequestAnnounce::HasBorough(const std::string& _name)
+{
+	auto it = std::find_if(m_boroughList.begin(), m_boroughList.end(), [_name](const BoroughData& _data)->bool
+	{
+		return _data.m_name == _name;
+	});
+
+	return (it != m_boroughList.end());
 }

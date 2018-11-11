@@ -19,6 +19,8 @@ private:
 	virtual void Launch() override;
 	virtual void Reset() override;
 
+	void RecomputeBoroughSelections();
+
 protected:
 	SearchRequestAnnounce				m_searchRequest;
 	CitySelector						m_citySelector;
@@ -30,8 +32,9 @@ protected:
 	std::vector<sCity>					m_cities;
 	BoroughData							m_borough;
 	std::vector<BoroughData>			m_boroughList;
+	std::vector<int>					m_selectionIDs;
+	std::vector<int>					m_subSelections;
 	char								m_inputTextCity[256];
-	char								m_inputTextBorough[256];
 	int									m_selectedCityID = 0;
 	int									m_selectedBoroughID = 0;
 	bool								m_updateList = true;

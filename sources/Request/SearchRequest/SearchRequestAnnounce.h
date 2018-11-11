@@ -19,6 +19,10 @@ struct SearchRequestAnnounce : public SearchRequest
 
 	virtual SearchRequest* Clone() { return new SearchRequestAnnounce(); }
 
+	void AddBorough(BoroughData& _data);
+	void RemoveBorough(const std::string& _name);
+	bool HasBorough(const std::string& _name);
+
 	sCity						m_city;
 	std::vector<BoroughData>	m_boroughList;
 	Type						m_type = Type_NONE;

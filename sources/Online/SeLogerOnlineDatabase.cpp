@@ -72,7 +72,7 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 		{
 			bool isCity = false;
 			int boroughKey = -1;
-			borough.GetSelogerKey(boroughKey, isCity);
+			boroughKey = borough.GetSelogerKey(&isCity);
 			if (!isCity)
 			{
 				if (!firstBorough)
@@ -191,6 +191,7 @@ bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::str
 		result->m_nbRooms = annonce.m_nbRooms;
 		result->m_nbBedRooms = annonce.m_nbBedRooms;
 		result->m_category = annonce.m_category;
+		result->m_inseeCode = annonce.m_inseeCode;
 
 		_results.push_back(result);
 	}
@@ -244,6 +245,9 @@ void SeLogerOnlineDatase::sAnnonce::Serialize(const std::string& _str)
 
 	str = StringTools::GetXMLBaliseContent(_str, "nbChambre");
 	if (!str.empty())	m_nbBedRooms = std::stoi(str);
+
+	str = StringTools::GetXMLBaliseContent(_str, "codeInsee");
+	if (!str.empty())	m_inseeCode = std::stoi(str);
 
 	str = StringTools::GetXMLBaliseContent(_str, "idTypeBien");
 	if (!str.empty())

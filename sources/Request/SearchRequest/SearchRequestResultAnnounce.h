@@ -24,6 +24,7 @@ struct SearchRequestResultAnnounce : public SearchRequestResult
 	int			m_nbRooms = 0;
 	int			m_nbBedRooms = 0;
 	int			m_selectedBoroughID = 0;
+	int			m_inseeCode = 0;
 
 	virtual void PostProcess() override;
 	virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;

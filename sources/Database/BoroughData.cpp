@@ -116,12 +116,12 @@ void BoroughData::SetSelogerKey(unsigned int _key, bool _isCity)
 }
 
 //-------------------------------------------------------------------------------------------------
-void BoroughData::GetSelogerKey(int& _key, bool& _isCity)
+int BoroughData::GetSelogerKey(bool* _isCity)
 {
 	auto test = m_selogerKey & (1 << 31);
-	_isCity = (test > 0) || (m_selogerKey == 0);
-	unsigned int val = m_selogerKey - (m_selogerKey & (1 << 31));
-	_key = val;
+	if (_isCity != nullptr)
+		*_isCity = (test > 0) || (m_selogerKey == 0);
+	return m_selogerKey - (m_selogerKey & (1 << 31));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ void BoroughData::Edit()
 		EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
 		static int s_seLogerKey = 0;
 		static bool s_isCity = false;
-		GetSelogerKey(s_seLogerKey, s_isCity);
+		s_seLogerKey = GetSelogerKey(&s_isCity);
 		ImGui::SetWindowFontScale(1.f);
 		ImGui::Text("SeLogerKey : ");
 		ImGui::SameLine();

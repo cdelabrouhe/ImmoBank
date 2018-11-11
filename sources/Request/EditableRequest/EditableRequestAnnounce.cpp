@@ -168,6 +168,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			DatabaseManager::getSingleton()->GetBoroughs(m_searchRequest.m_city, m_boroughList);
 			m_selectedBoroughID = 0;
 			m_searchRequest.m_boroughList.clear();
+			std::sort(m_boroughList.begin(), m_boroughList.end(), BoroughData::compare);
 		}
 
 		// Borough selection

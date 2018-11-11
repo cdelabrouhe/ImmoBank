@@ -50,6 +50,7 @@ public:
 
 	void SetTimeUpdateToNow();
 	void SetSelogerKey(unsigned int _key, bool _isCity);
+	void GetSelogerKey(int& _key, bool& _isCity);
 	static unsigned int ConvertSelogerKey(unsigned int _key, bool _isCity);
 
 	std::string ComputeRequestURL() const;

@@ -116,6 +116,15 @@ void BoroughData::SetSelogerKey(unsigned int _key, bool _isCity)
 }
 
 //-------------------------------------------------------------------------------------------------
+void BoroughData::GetSelogerKey(int& _key, bool& _isCity)
+{
+	auto test = m_selogerKey & (1 << 31);
+	_isCity = (test > 0) || (m_selogerKey == 0);
+	unsigned int val = m_selogerKey - (m_selogerKey & (1 << 31));
+	_key = val;
+}
+
+//-------------------------------------------------------------------------------------------------
 unsigned int BoroughData::ConvertSelogerKey(unsigned int _key, bool _isCity)
 {
 	if (_isCity)
@@ -206,7 +215,15 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 void BoroughData::Edit()
 {
 	// Popup ?
-#define EDIT_INFO(name, data, decimal) \
+#define EDIT_INFO_UINT(name, data) \
+			ImGui::SetWindowFontScale(1.f); \
+			ImGui::Text(#name " : "); \
+			ImGui::SameLine(); \
+			ImGui::PushID(this + localID++); \
+			ImGui::InputInt("Value", (int*)&data); \
+			ImGui::PopID(); \
+
+#define EDIT_INFO_FLOAT3(name, data, decimal) \
 			ImGui::SetWindowFontScale(1.f); \
 			ImGui::Text(#name " : "); \
 			ImGui::SameLine(); \
@@ -246,11 +263,28 @@ void BoroughData::Edit()
 		ImGui::Separator();
 		ImGui::SetWindowFontScale(1.f);
 		ImGui::Text(GET_TEXT("BoroughManualEditRent"));
-		EDIT_INFO(T1, m_priceRentApartmentT1, 1);
-		EDIT_INFO(T2, m_priceRentApartmentT2, 1);
-		EDIT_INFO(T3, m_priceRentApartmentT3, 1);
-		EDIT_INFO(T4+, m_priceRentApartmentT4Plus, 1);
+		EDIT_INFO_FLOAT3(T1, m_priceRentApartmentT1, 1);
+		EDIT_INFO_FLOAT3(T2, m_priceRentApartmentT2, 1);
+		EDIT_INFO_FLOAT3(T3, m_priceRentApartmentT3, 1);
+		EDIT_INFO_FLOAT3(T4+, m_priceRentApartmentT4Plus, 1);
 		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditHouse"), m_priceRentHouse, 1);
+
+#ifdef DEV_MODE
+		EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
+		static int s_seLogerKey = 0;
+		static bool s_isCity = false;
+		GetSelogerKey(s_seLogerKey, s_isCity);
+		ImGui::SetWindowFontScale(1.f);
+		ImGui::Text("SeLogerKey : ");
+		ImGui::SameLine();
+		ImGui::PushID(this + localID++);
+		bool modified = ImGui::InputInt("Value", &s_seLogerKey);
+		ImGui::PopID();
+		ImGui::SameLine();
+		modified |= ImGui::Checkbox("City", &s_isCity);
+		if (modified)
+			SetSelogerKey(s_seLogerKey, s_isCity);
+#endif
 
 		ImGui::Separator();
 

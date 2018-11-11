@@ -52,11 +52,56 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	}
 
 	// Force city to Montpellier (INSEE code)
-	int code = announce->m_city.m_inseeCode;
-	int rightCode = code % 1000;
-	int leftCode = (code - rightCode) / 1000;
-	code = ((leftCode * 10) * 1000) + rightCode;
-	request += "&ci=" + std::to_string(code);
+	if (announce->m_boroughList.size() == 0)
+	{
+		int code = announce->m_city.m_inseeCode;
+		int rightCode = code % 1000;
+		int leftCode = (code - rightCode) / 1000;
+		code = ((leftCode * 10) * 1000) + rightCode;
+		request += "&ci=" + std::to_string(code);
+	}
+	else
+	{
+		std::string boroughData = "&idq=";
+		std::string cityData = "&ci=";
+		bool hasBoroughData = false;
+		bool hasCityData = false;
+		bool firstBorough = true;
+		bool firstCity = true;
+		for (auto& borough : announce->m_boroughList)
+		{
+			bool isCity = false;
+			int boroughKey = -1;
+			borough.GetSelogerKey(boroughKey, isCity);
+			if (!isCity)
+			{
+				if (!firstBorough)
+					request += ",";
+				request += std::to_string(boroughKey);
+				hasBoroughData = true;
+				firstBorough = false;
+			}
+			else
+			{
+				int code = announce->m_city.m_inseeCode;
+				int rightCode = code % 1000;
+				int leftCode = (code - rightCode) / 1000;
+				code = ((leftCode * 10) * 1000) + rightCode;
+
+				if (!firstCity)
+					cityData += ",";
+				cityData += std::to_string(code);
+				hasCityData = true;
+				firstCity = false;
+			}
+		}
+
+		if (hasBoroughData)
+			request += boroughData;
+
+		if (hasCityData)
+			request += cityData;
+	}
 
 	// Tri
 	request += "&tri=initial";

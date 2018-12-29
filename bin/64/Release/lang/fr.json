@@ -32,6 +32,7 @@
 	"GeneralHouse" : "Maison",
 	"GeneralRemove" : "Supprimer",
 	"GeneralBorough" : "Quartier",
+	"GeneralCity" : "Ville",
 	"GeneralRate" : "Taux",
 	"GeneralRent" : "Loyer",
 	"GeneralPrice" : "Prix",

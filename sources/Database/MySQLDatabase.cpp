@@ -11,7 +11,7 @@
 
 #define MYSQL_ACTIVE
 #include <mysql.h>
-#include "../../jsoncpp/reader.h"
+#include "extern/jsoncpp/reader.h"
 
 #ifdef WIN32
 #ifdef _DEBUG

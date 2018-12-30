@@ -11,6 +11,7 @@
 #include <shellapi.h>
 #include <ctime>
 #include "Text\TextManager.h"
+#include "extern/jsoncpp/reader.h"
 
 BoroughData::BoroughData()
 {
@@ -68,6 +69,8 @@ void BoroughData::Reset(bool _resetDB)
 	m_priceBuyApartment.Reset();
 	m_priceBuyHouse.Reset();
 	m_priceRentHouse.Reset();
+	m_meilleursAgentsKey = 0;
+	m_selogerKey = 0;
 
 	// Reset all data in DBs
 	if (_resetDB)
@@ -248,8 +251,55 @@ void BoroughData::Edit()
 			if (strlen(clipboard) > 0)
 			{
 				std::string str(clipboard);
-				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse))
+				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse, m_meilleursAgentsKey))
+				{
 					DatabaseManager::getSingleton()->AddBoroughData(*this);
+
+					// We need to update the SeLoger key
+					std::string request = ComputeSeLogerKeyURL();
+					m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+				}
+			}
+		}
+
+		// Process request
+		if (m_selogerKeyRequestID == -1)
+		{
+			if (m_selogerKey == 0)
+			{
+				std::string request = ComputeSeLogerKeyURL();
+				m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+			}
+		}
+		else
+		{
+			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_selogerKeyRequestID))
+			{
+				std::string str;
+				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_selogerKeyRequestID, str);
+				m_selogerKeyRequestID = -1;
+
+				Json::Reader reader;
+				Json::Value root;
+				reader.parse(str, root);
+
+				Json::Value& places = root;
+				if (places.isArray())
+				{
+					const int nbPlaces = places.size();
+					for (int placeID = 0; placeID < nbPlaces; ++placeID)
+					{
+						Json::Value val = places.get(placeID, Json::nullValue);
+						std::string type = val["Type"].asString();
+						bool isBorough = (type == "Quartier");
+						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+
+						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
+						unsigned int index = std::stoi(strIndexID);
+
+						SetSelogerKey(index, isCity);
+					}
+				}
 			}
 		}
 
@@ -319,7 +369,9 @@ void BoroughData::DisplayAsTooltip()
 
 #ifdef DEV_MODE
 		ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
-		ImGui::Text("SeLogerKey: %u", m_selogerKey);
+		bool isCity = false;
+		int selogerKey = GetSelogerKey(&isCity);
+		ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
 #endif
 
 		if (IsValid())

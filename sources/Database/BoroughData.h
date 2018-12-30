@@ -71,4 +71,5 @@ public:
 
 private:
 	int m_httpRequestID = -1;
+	int m_selogerKeyRequestID = -1;
 };

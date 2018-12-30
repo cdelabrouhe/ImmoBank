@@ -10,7 +10,7 @@ float Tools::ComputeRentabilityRate(float _rent, float _price)
 	return _rent * 12.f * 100.f / _price;
 }
 
-bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rentT1, sPrice& _rentT2, sPrice& _rentT3, sPrice& _rentT4Plus, sPrice& _buyApartment, sPrice& _buyHouse)
+bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rentT1, sPrice& _rentT2, sPrice& _rentT3, sPrice& _rentT4Plus, sPrice& _buyApartment, sPrice& _buyHouse, unsigned int& _meilleursAgentsKey)
 {
 	std::string searchStr("MA.Context.placePrices = ");
 	auto findID = _source.find(searchStr);
@@ -72,6 +72,7 @@ bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _ren
 	Json::Value& sellHouse = root["sell"]["house"];
 	_buyApartment = sPrice((float)sellApartment["value"].asDouble(), (float)sellApartment["low"].asDouble(), (float)sellApartment["high"].asDouble());
 	_buyHouse = sPrice((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
+	_meilleursAgentsKey = root["place"]["id"].asUInt();
 
 	return true;
 }

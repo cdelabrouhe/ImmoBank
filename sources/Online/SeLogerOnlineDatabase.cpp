@@ -76,8 +76,8 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 			if (!isCity)
 			{
 				if (!firstBorough)
-					request += ",";
-				request += std::to_string(boroughKey);
+					boroughData += ",";
+				boroughData += std::to_string(boroughKey);
 				hasBoroughData = true;
 				firstBorough = false;
 			}

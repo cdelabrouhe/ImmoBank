@@ -331,6 +331,15 @@
     <ClInclude Include="sources\Database\CityUpdateData.h">
       <Filter>Sources\Database</Filter>
     </ClInclude>
+    <ClInclude Include="extern\stb\stb_image.h">
+      <Filter>Sources\extern\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\stb\stb_image_resize.h">
+      <Filter>Sources\extern\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\stb\stb_image_write.h">
+      <Filter>Sources\extern\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -444,6 +453,9 @@
     <ClCompile Include="sources\Database\CityUpdateData.cpp">
       <Filter>Sources\Database</Filter>
     </ClCompile>
+    <ClCompile Include="extern\stb\stb_image_implementation.cpp">
+      <Filter>Sources\extern\stb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -526,6 +538,9 @@
     </Filter>
     <Filter Include="Sources\Text">
       <UniqueIdentifier>{26ecba9d-ce40-4662-afdf-840034b8e6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\stb">
+      <UniqueIdentifier>{b688550d-91cc-421d-af45-15b9a2931d3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

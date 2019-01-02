@@ -33,6 +33,22 @@ static void error_callback(int error, const char* description)
 	fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
+#define NB_MAX_IMAGES 100
+GLuint s_textures[NB_MAX_IMAGES];
+
+void ProdToolGL_GenerateTexture(unsigned char* _data, unsigned int _width, unsigned int _height, unsigned int& _textureID)
+{
+	glGenTextures(1, &_textureID);
+	glBindTexture(GL_TEXTURE_2D, _textureID);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
+}
+
+void ProdToolGL_DeleteTexture(unsigned int* _textureID)
+{
+	glDeleteTextures(1, _textureID);
+}
+
 GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 {
 	glfwSetErrorCallback(error_callback);
@@ -45,6 +61,8 @@ GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 	glfwSwapInterval(1); // Enable vsync
 
 	gl3wInit();
+
+	memset(s_textures, 0, NB_MAX_IMAGES * sizeof(void*));
 
 	s_Window = window;
 

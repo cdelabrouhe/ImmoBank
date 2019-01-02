@@ -12,6 +12,13 @@
 #include "Tools/StringTools.h"
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
+#include <GL/ProdToolGL.h>
+
+#define IMAGE_TEST
+
+#ifdef IMAGE_TEST
+#include "extern/stb/stb_image.h"
+#endif
 
 //-------------------------------------------------------------------------------------------------
 // FORWARD DECLARATIONS
@@ -411,8 +418,29 @@ void UIManager::DisplayCityInformation()
 //-------------------------------------------------------------------------------------------------
 void UIManager::DisplayComputeRateTool()
 {
+#ifdef IMAGE_TEST
+	static unsigned int textureID = 0;
+	static unsigned char* image_data = nullptr;
+#endif
 	if (ImGui::Begin(GET_TEXT("PopupComputeRentabilityRate"), &s_computeRentabilityRate, ImGuiWindowFlags_AlwaysAutoResize))
 	{
+#ifdef IMAGE_TEST
+		// Turn the RGBA pixel data into an OpenGL texture:
+		int image_width = 64, image_height = 64;
+		if (textureID == 0)
+		{
+			image_data = stbi_load("test.png", &image_width, &image_height, NULL, 4);
+			int size = image_width * image_height;
+			for (auto ID = 0; ID < size; ++ID)
+				image_data[ID] = rand() % 0xFF;
+
+			ProdToolGL_GenerateTexture(image_data, image_width, image_height, textureID);
+		}
+		
+		// Now that we have an OpenGL texture, assuming our imgui rendering function (imgui_impl_xxx.cpp file) takes GLuint as ImTextureID, we can display it:
+		ImGui::Image((void*)(intptr_t)textureID, ImVec2(image_width, image_height));
+#endif
+
 		ImGui::SetWindowFontScale(1.f);
 
 		static int s_rent = 700;
@@ -432,6 +460,15 @@ void UIManager::DisplayComputeRateTool()
 		if (ImGui::Button(GET_TEXT("GeneralExit")))
 			s_computeRentabilityRate = false;
 	}
+#ifdef IMAGE_TEST
+	else
+	{
+		ProdToolGL_DeleteTexture(&textureID);
+		textureID = 0;
+		free(image_data);
+		image_data = nullptr;
+	}
+#endif
 	ImGui::End();
 }
 

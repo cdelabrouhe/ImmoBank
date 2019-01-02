@@ -18,6 +18,7 @@ private:
 		int m_nbRooms;
 		int m_nbBedRooms;
 		int	m_ID;
+		int m_inseeCode;
 	};
 
 	struct sSummary

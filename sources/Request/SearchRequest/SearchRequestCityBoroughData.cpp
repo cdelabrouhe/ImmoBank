@@ -74,7 +74,8 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 			sPrice rentT4;
 			sPrice buyApartment;
 			sPrice buyHouse;
-			Tools::ExtractPricesFromHTMLSource(str, rentT1, rentT2, rentT3, rentT4, buyApartment, buyHouse);
+			unsigned int meilleursAgentsKey = 0;
+			Tools::ExtractPricesFromHTMLSource(str, rentT1, rentT2, rentT3, rentT4, buyApartment, buyHouse, meilleursAgentsKey);
 			/*std::string searchStr("MA.Context.placePrices = ");
 			auto findID = str.find(searchStr);
 			if (findID == std::string::npos)
@@ -138,6 +139,7 @@ bool SearchRequestCityBoroughData::GetResult(std::vector<SearchRequestResult*>& 
 			result->m_data.m_priceRentApartmentT4Plus = rentT4;
 			result->m_data.m_priceBuyApartment = buyApartment;
 			result->m_data.m_priceBuyHouse = buyHouse;
+			result->m_data.m_meilleursAgentsKey = meilleursAgentsKey;
 			_results.push_back(result);
 		}
 		else

@@ -32,6 +32,7 @@
 	"GeneralHouse" : "House",
 	"GeneralRemove" : "Remove",
 	"GeneralBorough" : "Borough",
+	"GeneralCity" : "City",
 	"GeneralRate" : "Rate",
 	"GeneralRent" : "Rent",
 	"GeneralPrice" : "Price",
@@ -86,6 +87,7 @@
 	"RequestWindowSortByRate" : "Sort by rate",
 	"RequestWindowSortByPrice" : "Sort by price",
 	"RequestWindowSortBySurface" : "Sort by surface",
+	"RequestWindowAddBorough" : "Add borough",
 	
 	// Price popup
 	"PricePopupPricesM2" : "Prices (per m2) ",

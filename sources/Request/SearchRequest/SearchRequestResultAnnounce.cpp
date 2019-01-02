@@ -24,25 +24,44 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 	std::string description = m_description;
 	StringTools::TransformToLower(description);
 
+	bool found = false;
 	int ID = 0;
 	for (auto& borough : m_boroughs)
 	{
-		std::string name = borough.m_name;
-		StringTools::TransformToLower(name);
-		auto findIndex = description.find(name);
-		if (findIndex != std::string::npos)
+		int selogerKey = borough.GetSelogerKey();
+		if (selogerKey == m_inseeCode)
 		{
 			m_selectedBorough = borough;
 			m_selectedBoroughID = ID + 1;
+			found = true;
 			break;
-		}
-		else
-		{
-			if ((m_selectedBoroughID == 0) && (borough.m_name == s_wholeCityName))
-				m_selectedBoroughID = ID + 1;
 		}
 
 		++ID;
+	}
+
+	if (!found)
+	{
+		ID = 0;
+		for (auto& borough : m_boroughs)
+		{
+			std::string name = borough.m_name;
+			StringTools::TransformToLower(name);
+			auto findIndex = description.find(name);
+			if (findIndex != std::string::npos)
+			{
+				m_selectedBorough = borough;
+				m_selectedBoroughID = ID + 1;
+				break;
+			}
+			else
+			{
+				if ((m_selectedBoroughID == 0) && (borough.m_name == s_wholeCityName))
+					m_selectedBoroughID = ID + 1;
+			}
+
+			++ID;
+		}
 	}
 }
 

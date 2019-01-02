@@ -83,6 +83,26 @@ void EditableRequestAnnounce::Reset()
 	m_result.clear();
 }
 
+void EditableRequestAnnounce::RecomputeBoroughSelections()
+{
+	m_selectionIDs.resize(m_searchRequest.m_boroughList.size());
+	int cpt = 0;
+	for (auto& searchRequestBorough : m_searchRequest.m_boroughList)
+	{
+		int ID = 0;
+		for (auto& requestBorough : m_boroughList)
+		{
+			if (searchRequestBorough.m_name == requestBorough.m_name)
+			{
+				m_selectionIDs[cpt] = ID;
+				break;
+			}
+			++ID;
+		}
+		++cpt;
+	}
+}
+
 void EditableRequestAnnounce::Launch()
 {
 	Reset();
@@ -99,6 +119,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	// City selector process
 	ImGui::BeginChild("Search request", ImVec2(380, 0), true);
 
+	const auto nbCitiesPrevious = m_cities.size();
 	if (ImGui::InputText(GET_TEXT("RequestWindowSearchCity"), (char*)m_inputTextCity, 256))
 	{
 		if (strlen(m_inputTextCity) > 1)
@@ -125,6 +146,9 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 
 	if (m_cities.size() > 0)
 	{
+		// City selection
+		bool updateCity = nbCitiesPrevious != m_cities.size();
+		std::string oldStr = m_cities[m_selectedCityID].m_name;
 		if (ImGui::Combo(GET_TEXT("RequestWindowCityName"), &m_selectedCityID, cities, (int)m_cities.size()))
 		{
 			std::string str = m_cities[m_selectedCityID].m_name;
@@ -132,12 +156,92 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			char* dest = m_inputTextCity;
 			const char* source = str.c_str();
 			memcpy(dest, source, size);
+			updateCity = true;
 		}
 
-		if ((m_selectedCityID > -1) && (m_selectedCityID < m_cities.size()))
-			m_searchRequest.m_city = m_cities[m_selectedCityID];
-	}
+		if (!updateCity && (oldStr != m_cities[m_selectedCityID].m_name))
+			updateCity = true;
 
+		if (updateCity && (m_selectedCityID > -1) && (m_selectedCityID < m_cities.size()))
+		{
+			m_searchRequest.m_city = m_cities[m_selectedCityID];
+			DatabaseManager::getSingleton()->GetBoroughs(m_searchRequest.m_city, m_boroughList);
+			m_selectedBoroughID = 0;
+			m_searchRequest.m_boroughList.clear();
+			std::sort(m_boroughList.begin(), m_boroughList.end(), BoroughData::compare);
+		}
+
+		// Borough selection
+		std::vector<std::string> boroughsList;
+		boroughsList.resize(m_boroughList.size());
+		const char* boroughs[500];
+		for (size_t ID = 0; ID < m_boroughList.size(); ++ID)
+		{
+			boroughsList[ID] = m_boroughList[ID].m_name;
+			StringTools::ConvertToImGuiText(boroughsList[ID]);
+			boroughs[ID] = boroughsList[ID].c_str();
+		}
+
+		std::string deleteRequest;
+		int cpt = 0;
+		for (auto& selection : m_searchRequest.m_boroughList)
+		{
+			bool change = false;
+
+			ImGui::PushID(this + cpt + 500);
+			if (ImGui::Button("X"))
+				deleteRequest = m_searchRequest.m_boroughList[cpt].m_name;
+			ImGui::PopID();
+
+			ImGui::SameLine();
+
+			ImGui::PushID(this + cpt);
+			int oldSelection = m_selectionIDs[cpt];
+			if (ImGui::Combo(GET_TEXT("GeneralBorough"), &m_selectionIDs[cpt], boroughs, (int)m_boroughList.size()))
+			{
+				int selection = m_selectionIDs[cpt];
+				if ((oldSelection > -1) && (oldSelection < m_boroughList.size()) && (oldSelection != selection))
+				{
+					if (m_searchRequest.HasBorough(m_boroughList[oldSelection].m_name))
+					{
+						m_searchRequest.RemoveBorough(m_boroughList[oldSelection].m_name);
+						RecomputeBoroughSelections();
+						change = true;
+					}
+				}
+
+				if ((selection > -1) && (selection < m_boroughList.size()))
+				{
+					if (!m_searchRequest.HasBorough(m_boroughList[selection].m_name))
+					{
+						m_searchRequest.AddBorough(m_boroughList[selection]);
+						RecomputeBoroughSelections();
+						change = true;
+					}
+				}
+			}
+			ImGui::PopID();
+
+			if (change)
+				break;
+			
+			++cpt;
+		}
+
+		if (!deleteRequest.empty())
+		{
+			m_searchRequest.RemoveBorough(deleteRequest);
+			RecomputeBoroughSelections();
+		}
+
+		ImGui::PushID(this + cpt + 1000);
+		if (ImGui::Button(GET_TEXT("RequestWindowAddBorough")))
+		{
+			m_searchRequest.AddBorough(m_boroughList[0]);
+			RecomputeBoroughSelections();
+		}
+		ImGui::PopID();
+	}
 	
 	if (ImGui::Checkbox(GET_TEXT("GeneralAppartment"), &m_apartment))
 	{

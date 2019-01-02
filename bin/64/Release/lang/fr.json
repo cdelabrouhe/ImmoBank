@@ -32,6 +32,7 @@
 	"GeneralHouse" : "Maison",
 	"GeneralRemove" : "Supprimer",
 	"GeneralBorough" : "Quartier",
+	"GeneralCity" : "Ville",
 	"GeneralRate" : "Taux",
 	"GeneralRent" : "Loyer",
 	"GeneralPrice" : "Prix",
@@ -88,6 +89,7 @@
 	"RequestWindowSortByRate" : "Trier par taux de rentabilite",
 	"RequestWindowSortByPrice" : "Trier par prix",
 	"RequestWindowSortBySurface" : "Trier par surface",
+	"RequestWindowAddBorough" : "Ajouter quartier",
 	
 	// Price popup
 	"PricePopupPricesM2" : "Prix (au m2) ",

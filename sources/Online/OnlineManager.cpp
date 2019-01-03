@@ -6,6 +6,8 @@
 #include "LeSiteImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 
+using namespace ImmoBank;
+
 OnlineManager* s_singleton = nullptr;
 
 //-------------------------------------------------------------------------------------------------

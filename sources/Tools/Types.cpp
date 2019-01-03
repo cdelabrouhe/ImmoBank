@@ -1,6 +1,8 @@
 #include "Types.h"
 #include "StringTools.h"
 
+using namespace ImmoBank;
+
 void sCity::FixName()
 {
 	sCity::FixName(m_name);

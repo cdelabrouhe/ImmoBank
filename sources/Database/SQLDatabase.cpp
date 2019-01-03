@@ -2,6 +2,8 @@
 
 #pragma comment(lib, "sqlite3.lib")
 
+using namespace ImmoBank;
+
 static void SQLLog(const char* _log, ...)
 {
 	va_list args;
@@ -13,7 +15,7 @@ static void SQLLog(const char* _log, ...)
 	printf(log.c_str());
 }
 
-sqlite3* SQLOpenDB(const char* _path)
+sqlite3* ImmoBank::SQLOpenDB(const char* _path)
 {
 	// Make sure the directory exists, or sqlite_open will fail to create the file.
 	//Pasta::FileMgr::getSingleton()->createDirectories(_path);
@@ -45,12 +47,12 @@ sqlite3* SQLOpenDB(const char* _path)
 	return db;
 }
 
-void SQLCloseDB(sqlite3* _db)
+void ImmoBank::SQLCloseDB(sqlite3* _db)
 {
 	sqlite3_close(_db);
 }
 
-bool SQLExecute(sqlite3* _db, const char* _sql, ...)
+bool ImmoBank::SQLExecute(sqlite3* _db, const char* _sql, ...)
 {
 	Str256 sql;
 
@@ -81,7 +83,7 @@ bool SQLExecute(sqlite3* _db, const char* _sql, ...)
 	return true;
 }
 
-bool SQLExecuteSelect(sqlite3* _db, const char* _sql, std::function<void(sqlite3_stmt*)> _column_getter)
+bool ImmoBank::SQLExecuteSelect(sqlite3* _db, const char* _sql, std::function<void(sqlite3_stmt*)> _column_getter)
 {
 	sqlite3_stmt* stmt = nullptr;
 	if (sqlite3_prepare_v2(_db, _sql, -1, &stmt, nullptr) != SQLITE_OK)

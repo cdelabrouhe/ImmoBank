@@ -3,15 +3,18 @@
 #include "SearchRequestResult.h"
 #include "SearchRequestAnnounce.h"
 
-struct SearchRequestResulCityBorough : public SearchRequestResult
+namespace ImmoBank
 {
-	SearchRequestResulCityBorough() : SearchRequestResult(SearchRequestType_CityBoroughs) {}
-	SearchRequestResulCityBorough(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughs)
+	struct SearchRequestResulCityBorough : public SearchRequestResult
 	{
-		*this = _request;
-	}
+		SearchRequestResulCityBorough() : SearchRequestResult(SearchRequestType_CityBoroughs) {}
+		SearchRequestResulCityBorough(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughs)
+		{
+			*this = _request;
+		}
 
-	std::string		m_name;
-	unsigned int	m_internalID = 0xFFFFFFFF;
-	unsigned int	m_selogerID = 0xFFFFFFFF;
-};
+		std::string		m_name;
+		unsigned int	m_internalID = 0xFFFFFFFF;
+		unsigned int	m_selogerID = 0xFFFFFFFF;
+	};
+}

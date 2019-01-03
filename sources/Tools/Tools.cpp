@@ -5,6 +5,8 @@
 #include <extern/jsoncpp/reader.h>
 #include <windows.h>
 
+using namespace ImmoBank;
+
 float Tools::ComputeRentabilityRate(float _rent, float _price)
 {
 	return _rent * 12.f * 100.f / _price;

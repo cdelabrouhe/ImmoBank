@@ -4,41 +4,45 @@
 #include <vector>
 #include "Tools\Types.h"
 
-//-------------------------------------------------------------------------------------------------
-// DATA
-//-------------------------------------------------------------------------------------------------
 struct ImFont;
-class UIManager
+
+namespace ImmoBank
 {
-public:
-	static UIManager* getSingleton();
+	//-------------------------------------------------------------------------------------------------
+	// DATA
+	//-------------------------------------------------------------------------------------------------
+	class UIManager
+	{
+	public:
+		static UIManager* getSingleton();
 
-	ImFont*		FontDefault;
+		ImFont*		FontDefault;
 
-	UIManager();
+		UIManager();
 
-	bool	Draw();
+		bool	Draw();
 
-	void	Process();
+		void	Process();
 
-	void	AskForDisplayCityInformation();
-	void	InitDisplayCityInformation();
-	void	DisplayCityInformation();
-	void	DisplayComputeRateTool();
-	bool	DisplayConnectionError();
+		void	AskForDisplayCityInformation();
+		void	InitDisplayCityInformation();
+		void	DisplayCityInformation();
+		void	DisplayComputeRateTool();
+		bool	DisplayConnectionError();
 
 #ifdef DEV_MODE
 #endif
 
-private:
-	// Display panel
-	int								m_selectedCityID = 0;
-	std::vector<sCity>				m_cityListFull;
-	int								m_hovered = -1;
-	int								m_selected = -1;
+	private:
+		// Display panel
+		int								m_selectedCityID = 0;
+		std::vector<sCity>				m_cityListFull;
+		int								m_hovered = -1;
+		int								m_selected = -1;
 
-	bool							m_displayCityData = false;
-	bool							m_cityListRequested = false;
+		bool							m_displayCityData = false;
+		bool							m_cityListRequested = false;
 
-	bool							m_connectionError = false;
-};
+		bool							m_connectionError = false;
+	};
+}

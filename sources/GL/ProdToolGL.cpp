@@ -20,6 +20,8 @@
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
 
+using namespace ImmoBank;
+
 //-------------------------------------------------------------------------------------------------
 // DATA
 //-------------------------------------------------------------------------------------------------
@@ -36,7 +38,7 @@ static void error_callback(int error, const char* description)
 #define NB_MAX_IMAGES 100
 GLuint s_textures[NB_MAX_IMAGES];
 
-void ProdToolGL_GenerateTexture(unsigned char* _data, unsigned int _width, unsigned int _height, unsigned int& _textureID)
+void ImmoBank::ProdToolGL_GenerateTexture(unsigned char* _data, unsigned int _width, unsigned int _height, unsigned int& _textureID)
 {
 	glGenTextures(1, &_textureID);
 	glBindTexture(GL_TEXTURE_2D, _textureID);
@@ -44,12 +46,12 @@ void ProdToolGL_GenerateTexture(unsigned char* _data, unsigned int _width, unsig
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
 }
 
-void ProdToolGL_DeleteTexture(unsigned int* _textureID)
+void ImmoBank::ProdToolGL_DeleteTexture(unsigned int* _textureID)
 {
 	glDeleteTextures(1, _textureID);
 }
 
-GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
+GLFWwindow*		ImmoBank::ProdToolGL_InitCreateWindow(int width, int height)
 {
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
@@ -69,7 +71,7 @@ GLFWwindow*		ProdToolGL_InitCreateWindow(int width, int height)
 	return window;
 }
 
-void ProdToolGL_Shutdown()
+void ImmoBank::ProdToolGL_Shutdown()
 {
 	ImGui_ImplGlfwGL_Shutdown();
 	glfwTerminate();
@@ -107,7 +109,7 @@ void AddReplacementGlyph(ImFont* font, unsigned short missing_glyph_char, unsign
 	font->IndexLookup[missing_glyph_char] = font->IndexLookup[replace_glyph_char];
 }
 
-void ProdToolGL_InitImGui()
+void ImmoBank::ProdToolGL_InitImGui()
 {
 	ASSERT(s_Window != NULL);
 
@@ -132,24 +134,24 @@ void ProdToolGL_InitImGui()
 		AddReplacementGlyph(font, 0x2019, '\'');
 }
 
-bool	ProdToolGL_IsMinimized()
+bool	ImmoBank::ProdToolGL_IsMinimized()
 {
 	HWND hwnd = glfwGetWin32Window(s_Window);
 	return hwnd && IsIconic(hwnd);
 }
 
-int ProdToolGL_ShouldClose()
+int ImmoBank::ProdToolGL_ShouldClose()
 {
 	return glfwWindowShouldClose(s_Window);
 }
 
-void	ProdToolGL_GetHwnd(void* out_hwnd)
+void	ImmoBank::ProdToolGL_GetHwnd(void* out_hwnd)
 {
 	HWND hwnd = glfwGetWin32Window(s_Window);
 	*(HWND*)out_hwnd = hwnd;
 }
 
-void ProdToolGL_NewFrame()
+void ImmoBank::ProdToolGL_NewFrame()
 {
 	glfwPollEvents();
 
@@ -158,7 +160,7 @@ void ProdToolGL_NewFrame()
 	ImGui_ImplGlfwGL_NewFrame();
 }
 
-void	ProdToolGL_Render()
+void	ImmoBank::ProdToolGL_Render()
 {
 	// Rendering
 	int display_w, display_h;

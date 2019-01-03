@@ -3,44 +3,47 @@
 #include <vector>
 #include <map>
 
-//-------------------------------------------------------------------------------------------------
-// DATA
-//-------------------------------------------------------------------------------------------------
-class OnlineDatabase;
-struct SearchRequest;
-struct SearchRequestResult;
-
-class OnlineManager
+namespace ImmoBank
 {
-public:
-	static OnlineManager* getSingleton();
+	//-------------------------------------------------------------------------------------------------
+	// DATA
+	//-------------------------------------------------------------------------------------------------
+	class OnlineDatabase;
+	struct SearchRequest;
+	struct SearchRequestResult;
 
-	void	Init();
-	void	Process();
-	void	End();
-	
-	int		SendRequest(SearchRequest* _request);
-	bool	GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result);
+	class OnlineManager
+	{
+	public:
+		static OnlineManager* getSingleton();
 
-	bool	IsRequestAvailable(int _requestID) const;
-	void	DeleteRequest(int _requestID);
-	int		SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent = false);
-	bool	IsBasicHTTPRequestAvailable(int _requestID) const;
-	bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
-	void	CancelBasicHTTPRequest(const int _requestID);
+		void	Init();
+		void	Process();
+		void	End();
 
-	void	DisplayDebug();
+		int		SendRequest(SearchRequest* _request);
+		bool	GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result);
 
-	std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
+		bool	IsRequestAvailable(int _requestID) const;
+		void	DeleteRequest(int _requestID);
+		int		SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent = false);
+		bool	IsBasicHTTPRequestAvailable(int _requestID) const;
+		bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
+		void	CancelBasicHTTPRequest(const int _requestID);
 
-public:
-	bool	m_displayDebug = false;
+		void	DisplayDebug();
 
-protected:
-	std::vector<OnlineDatabase*>		m_databases;
-	std::map<int,SearchRequest*>		m_requests;
+		std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
 
-	std::string m_testRequestResult;
-	char	m_inputDebug[2048];
-	int		m_testRequest = -1;
-};
+	public:
+		bool	m_displayDebug = false;
+
+	protected:
+		std::vector<OnlineDatabase*>		m_databases;
+		std::map<int, SearchRequest*>		m_requests;
+
+		std::string m_testRequestResult;
+		char	m_inputDebug[2048];
+		int		m_testRequest = -1;
+	};
+}

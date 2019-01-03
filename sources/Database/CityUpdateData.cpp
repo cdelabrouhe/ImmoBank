@@ -4,6 +4,8 @@
 #include "Online\OnlineManager.h"
 #include "Request\SearchRequest\SearchRequestResulCityBorough.h"
 
+using namespace ImmoBank;
+
 //-------------------------------------------------------------------------------------------------
 void CityUpdateData::Init()
 {

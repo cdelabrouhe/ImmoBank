@@ -4,6 +4,8 @@
 #include <Tools/SearchFile.h>
 #include "Tools/StringTools.h"
 
+using namespace ImmoBank;
+
 TextManager* s_singleton = nullptr;
 
 static const char* s_textUnknownEntry = "UNKNOWN ENTRY";

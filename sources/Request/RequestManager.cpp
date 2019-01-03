@@ -3,6 +3,8 @@
 #include <algorithm>
 #include "EditableRequest/EditableRequestAnnounce.h"
 
+using namespace ImmoBank;
+
 RequestManager* s_singleton = nullptr;
 
 //-------------------------------------------------------------------------------------------------

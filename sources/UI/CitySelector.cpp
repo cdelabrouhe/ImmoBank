@@ -5,6 +5,8 @@
 #include "extern/jsoncpp/reader.h"
 #include <time.h>
 
+using namespace ImmoBank;
+
 bool CitySelector::Display()
 {
 	m_changed = false;

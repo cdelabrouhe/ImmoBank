@@ -6,6 +6,8 @@
 #include "SearchRequestResulCityBorough.h"
 #include <algorithm>
 
+using namespace ImmoBank;
+
 static const char* s_characters = "abcdefghijklmnopqrstuvwxyz123456789";
 static auto s_nbCharacters = strlen(s_characters);
 

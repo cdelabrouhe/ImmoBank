@@ -2,6 +2,8 @@
 #include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 
+using namespace ImmoBank;
+
 void LeSiteImmoOnlineDatabase::Init()
 {
 	SetName("LeSiteImmo");

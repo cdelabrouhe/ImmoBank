@@ -10,8 +10,10 @@
 #include "MySQLDatabase.h"
 #include "extern/ImGui/imgui.h"
 
+using namespace ImmoBank;
+
 DatabaseManager* s_singleton = nullptr;
-const std::string s_wholeCityName = "WholeCity";
+const std::string ImmoBank::s_wholeCityName = "WholeCity";
 #ifdef DEV_MODE
 static int s_externalDBUpdateInterval = 1000000;
 #else

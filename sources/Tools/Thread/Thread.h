@@ -6,38 +6,41 @@
 #endif
 typedef void* HANDLE;
 
-enum ThreadPriority
+namespace ImmoBank
 {
-	TP_IDLE,
-	TP_LOWEST,
-	TP_BELOW_NORMAL,
-	TP_NORMAL,
-	TP_ABOVE_NORMAL,
-	TP_HIGHEST,
-	TP_TIME_CRITICAL
-};
-
-typedef unsigned int(*UserFuncPtr)(void*);
-class Thread
-{
-private:
-	struct StartFuncParam
+	enum ThreadPriority
 	{
-		UserFuncPtr  m_userFunc;
-		void*        m_userParam;
-		bool		specificGraphicContext;
-		void *hDC, *hRC;
-		char const *		m_threadName;
+		TP_IDLE,
+		TP_LOWEST,
+		TP_BELOW_NORMAL,
+		TP_NORMAL,
+		TP_ABOVE_NORMAL,
+		TP_HIGHEST,
+		TP_TIME_CRITICAL
 	};
 
-	static unsigned int WINAPI startFunc(void* startParam);
+	typedef unsigned int(*UserFuncPtr)(void*);
+	class Thread
+	{
+	private:
+		struct StartFuncParam
+		{
+			UserFuncPtr  m_userFunc;
+			void*        m_userParam;
+			bool		specificGraphicContext;
+			void *hDC, *hRC;
+			char const *		m_threadName;
+		};
 
-public:
-	void start(UserFuncPtr _userFunc, void* _userParam, const char* _name, ThreadPriority _priority = TP_NORMAL);
-	void stop();
-	static void sleep(unsigned int milliseconds);
+		static unsigned int WINAPI startFunc(void* startParam);
 
-private:
-	StartFuncParam m_startParam;
-	HANDLE m_handle;
-};
+	public:
+		void start(UserFuncPtr _userFunc, void* _userParam, const char* _name, ThreadPriority _priority = TP_NORMAL);
+		void stop();
+		static void sleep(unsigned int milliseconds);
+
+	private:
+		StartFuncParam m_startParam;
+		HANDLE m_handle;
+	};
+}

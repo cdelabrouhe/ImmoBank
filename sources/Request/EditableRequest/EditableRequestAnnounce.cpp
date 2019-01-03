@@ -15,6 +15,8 @@
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
 
+using namespace ImmoBank;
+
 void EditableRequestAnnounce::Init(SearchRequest* _request)
 {
 	if (_request)

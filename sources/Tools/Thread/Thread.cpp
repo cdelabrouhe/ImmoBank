@@ -2,6 +2,8 @@
 #include <windows.h>
 #include "Tools/Types.h"
 
+using namespace ImmoBank;
+
 void Thread::start(UserFuncPtr userFunc, void* userParam, const char* _name, ThreadPriority _priority)
 {
 	m_startParam.m_threadName = _name;

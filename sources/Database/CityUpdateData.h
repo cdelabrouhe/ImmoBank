@@ -4,12 +4,15 @@
 #include <vector>
 #include "BoroughData.h"
 
-class CityUpdateData
+namespace ImmoBank
 {
-public:
-	void Init();
-	bool Process();
+	class CityUpdateData
+	{
+	public:
+		void Init();
+		bool Process();
 
-	sCity	m_city;
-	int		m_boroughsListID = -1;
-};
+		sCity	m_city;
+		int		m_boroughsListID = -1;
+	};
+}

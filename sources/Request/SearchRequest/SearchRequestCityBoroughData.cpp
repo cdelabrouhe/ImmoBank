@@ -6,6 +6,8 @@
 #include "extern/jsoncpp/value.h"
 #include <Tools\Tools.h>
 
+using namespace ImmoBank;
+
 //#define TEST_HTML
 
 //---------------------------------------------------------------------------------------------------------------------------------

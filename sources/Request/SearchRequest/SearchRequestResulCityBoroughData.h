@@ -3,13 +3,16 @@
 #include "SearchRequestResult.h"
 #include "SearchRequestAnnounce.h"
 
-struct SearchRequestResulCityBoroughData : public SearchRequestResult
+namespace ImmoBank
 {
-	SearchRequestResulCityBoroughData() : SearchRequestResult(SearchRequestType_CityBoroughData) {}
-	SearchRequestResulCityBoroughData(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughData)
+	struct SearchRequestResulCityBoroughData : public SearchRequestResult
 	{
-		*this = _request;
-	}
+		SearchRequestResulCityBoroughData() : SearchRequestResult(SearchRequestType_CityBoroughData) {}
+		SearchRequestResulCityBoroughData(SearchRequestAnnounce& _request) : SearchRequestResult(SearchRequestType_CityBoroughData)
+		{
+			*this = _request;
+		}
 
-	BoroughData	m_data;
-};
+		BoroughData	m_data;
+	};
+}

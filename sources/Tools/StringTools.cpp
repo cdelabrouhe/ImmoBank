@@ -1,6 +1,8 @@
 #include "StringTools.h"
 #include <algorithm>
 
+using namespace ImmoBank;
+
 //------------------------------------------------------------------------------------------------
 void StringTools::ReplaceBadSyntax(std::string& _str, const std::string& _lookFor, const std::string& _replaceBy)
 {

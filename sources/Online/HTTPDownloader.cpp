@@ -5,6 +5,8 @@
 #include "Tools/StringTools.h"
 #include "Tools/Thread/Thread.h"
 
+using namespace ImmoBank;
+
 static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
 
 #ifdef WIN32

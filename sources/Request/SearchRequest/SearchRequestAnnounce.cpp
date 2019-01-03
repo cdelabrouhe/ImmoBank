@@ -5,6 +5,8 @@
 #include "SearchRequestCityBoroughs.h"
 #include <algorithm>
 
+using namespace ImmoBank;
+
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequestAnnounce::Init()
 {

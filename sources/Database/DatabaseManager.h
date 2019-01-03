@@ -7,102 +7,106 @@
 #include "CityComputeData.h"
 #include "CityUpdateData.h"
 
-enum DataTables
-{
-	DataTables_NONE = -1,
-	DataTables_Cities,
-	DataTables_Boroughs,
-	DataTables_COUNT
-};
-
 struct sqlite3;
-class MySQLDatabase;
 
-extern const std::string	s_wholeCityName;
-
-struct sCityData
+namespace ImmoBank
 {
-	sCity				m_data;
-	sDate				m_timeUpdate;
+	enum DataTables
+	{
+		DataTables_NONE = -1,
+		DataTables_Cities,
+		DataTables_Boroughs,
+		DataTables_COUNT
+	};
 
-	std::vector<BoroughData>	m_boroughs;
-};
+	class MySQLDatabase;
 
-//-------------------------------------------------------------------------------------------------
-// DATA
-//-------------------------------------------------------------------------------------------------
-class DatabaseManager
-{
-public:
-	static DatabaseManager* getSingleton();
+	extern const std::string	s_wholeCityName;
 
-	void	Init();
-	void	Process();
-	void	End();
+	struct sCityData
+	{
+		sCity				m_data;
+		sDate				m_timeUpdate;
 
-	void	AddBoroughData(const BoroughData& _data, bool _saveExternal = true);
-	bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
-	bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
-	bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
-	bool	IsCityUpdating(const std::string& _cityName);
-	bool	IsBoroughUpdating(const BoroughData& _data);
+		std::vector<BoroughData>	m_boroughs;
+	};
 
-	void	AddCity(const sCityData& _data);
-	bool	GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity = nullptr);
-	bool	RemoveCityData(const std::string& _name);
-	bool	ListAllCities(std::vector<sCity>& _list);
-	void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
+	//-------------------------------------------------------------------------------------------------
+	// DATA
+	//-------------------------------------------------------------------------------------------------
+	class DatabaseManager
+	{
+	public:
+		static DatabaseManager* getSingleton();
 
-	void	UpdateCityData(const sCity& _city);
-	void	ComputeCityData(const std::string& _cityName);
-	void	ComputeBoroughData(BoroughData& _data);
+		void	Init();
+		void	Process();
+		void	End();
 
-	int		AskForExternalDBCityBoroughs(const sCity& _city);
-	bool	IsExternalDBCityBoroughsAvailable(int _requestID, std::vector<BoroughData>& _boroughs);
+		void	AddBoroughData(const BoroughData& _data, bool _saveExternal = true);
+		bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
+		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
+		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
+		bool	IsCityUpdating(const std::string& _cityName);
+		bool	IsBoroughUpdating(const BoroughData& _data);
 
-	inline bool IsModified() const		{ return m_modified; }
+		void	AddCity(const sCityData& _data);
+		bool	GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity = nullptr);
+		bool	RemoveCityData(const std::string& _name);
+		bool	ListAllCities(std::vector<sCity>& _list);
+		void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
 
-	void	ForceBoroughReset(BoroughData& _data);
+		void	UpdateCityData(const sCity& _city);
+		void	ComputeCityData(const std::string& _cityName);
+		void	ComputeBoroughData(BoroughData& _data);
 
-	inline bool IsConnectionValid() const	{ return m_connectionValid;	}
+		int		AskForExternalDBCityBoroughs(const sCity& _city);
+		bool	IsExternalDBCityBoroughsAvailable(int _requestID, std::vector<BoroughData>& _boroughs);
 
-	void GetConnectionParameters(std::string& _server, std::string& _user);
+		inline bool IsModified() const { return m_modified; }
 
-	void TriggerExternalSQLCommand(const std::string& _query);
+		void	ForceBoroughReset(BoroughData& _data);
+
+		inline bool IsConnectionValid() const { return m_connectionValid; }
+
+		void GetConnectionParameters(std::string& _server, std::string& _user);
+
+		void TriggerExternalSQLCommand(const std::string& _query);
 
 #ifdef DEV_MODE
-	void	DisplayDebug();
-	void	DisplayMySQLRequestsPanel();
-	void	NotifyMySQLEvent(const std::string& _request);
+		void	DisplayDebug();
+		void	DisplayMySQLRequestsPanel();
+		void	NotifyMySQLEvent(const std::string& _request);
 #endif
-	
-private:
-	void	CreateTables();
-	void	OpenTables();
-	void	CloseTables();
 
-	void	Test();
+	private:
+		void	CreateTables();
+		void	OpenTables();
+		void	CloseTables();
 
-public:
-	bool							m_displayDebug = false;
-	
-private:
-	sqlite3*						m_tables[DataTables_COUNT];
-	std::vector<CityComputeData>	m_cityComputes;
-	std::vector<CityUpdateData>		m_cityUpdates;
-	std::vector<BoroughData>		m_boroughComputes;
-	MySQLDatabase*					m_externalDB = nullptr;
-	std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
-	time_t							m_externalTimer = 0;
-	bool							m_modified = false;
-	bool							m_connectionValid = false;
-	
+		void	Test();
+
+	public:
+		bool							m_displayDebug = false;
+
+	private:
+		sqlite3*						m_tables[DataTables_COUNT];
+		std::vector<CityComputeData>	m_cityComputes;
+		std::vector<CityUpdateData>		m_cityUpdates;
+		std::vector<BoroughData>		m_boroughComputes;
+		MySQLDatabase*					m_externalDB = nullptr;
+		std::vector<std::pair<unsigned int, int>>				m_externalBoroughRequests;
+		time_t							m_externalTimer = 0;
+		bool							m_modified = false;
+		bool							m_connectionValid = false;
+
 #ifdef DEV_MODE
-	// Debug panel
-	char							m_MySQLInputDebug[2048];
-	std::vector<std::string>		m_MySQLRequests;
+		// Debug panel
+		char							m_MySQLInputDebug[2048];
+		std::vector<std::string>		m_MySQLRequests;
 
-public:
-	bool							m_generateSeLogerIndices = false;
+	public:
+		bool							m_generateSeLogerIndices = false;
 #endif
-};
+	};
+}

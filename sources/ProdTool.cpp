@@ -13,6 +13,8 @@
 const int	CONFIG_WINDOW_WIDTH = 1280;
 const int	CONFIG_WINDOW_HEIGHT = 768;
 
+using namespace ImmoBank;
+
 int main(int argc, char** argv)
 {
 	bool quit = false;

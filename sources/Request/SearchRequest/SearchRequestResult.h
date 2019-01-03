@@ -4,22 +4,26 @@
 #include "Tools\Tools.h"
 
 struct ImGuiTextFilter;
-struct SearchRequestResult
+
+namespace ImmoBank
 {
-	SearchRequestResult(SearchRequestType _type) : m_resultType(_type) {}
-
-	SearchRequestType m_resultType;
-
-	virtual void PostProcess() {}
-	virtual bool Display(ImGuiTextFilter* _filter = nullptr) { return true; }
-
-	static bool compare(const SearchRequestResult* _a, const SearchRequestResult* _b, Tools::SortType _sortType)
+	struct SearchRequestResult
 	{
-		return _a->Compare(_b, _sortType);
-	}
+		SearchRequestResult(SearchRequestType _type) : m_resultType(_type) {}
 
-	virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType) const
-	{
-		return false;
-	}
-};
+		SearchRequestType m_resultType;
+
+		virtual void PostProcess() {}
+		virtual bool Display(ImGuiTextFilter* _filter = nullptr) { return true; }
+
+		static bool compare(const SearchRequestResult* _a, const SearchRequestResult* _b, Tools::SortType _sortType)
+		{
+			return _a->Compare(_b, _sortType);
+		}
+
+		virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType) const
+		{
+			return false;
+		}
+	};
+}

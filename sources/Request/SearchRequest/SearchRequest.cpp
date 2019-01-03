@@ -1,5 +1,7 @@
 #include "SearchRequest.h"
 
+using namespace ImmoBank;
+
 //---------------------------------------------------------------------------------------------------------------------------------
 void SearchRequest::copyTo(SearchRequest* _target)
 {

@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "SearchRequestCityBoroughData.h"
 
+using namespace ImmoBank;
+
 //#define GET_BOROUGH_PRICES
 
 //---------------------------------------------------------------------------------------------------------------------------------

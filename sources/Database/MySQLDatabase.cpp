@@ -9,6 +9,8 @@
 #include "DatabaseManager.h"
 #include "Online/OnlineManager.h"
 
+using namespace ImmoBank;
+
 #define MYSQL_ACTIVE
 #include <mysql.h>
 #include "extern/jsoncpp/reader.h"

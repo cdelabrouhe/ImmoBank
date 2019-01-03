@@ -13,6 +13,8 @@
 #include "Text\TextManager.h"
 #include "extern/jsoncpp/reader.h"
 
+using namespace ImmoBank;
+
 BoroughData::BoroughData()
 {
 	SetTimeUpdateToNow();

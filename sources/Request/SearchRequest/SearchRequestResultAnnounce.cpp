@@ -7,6 +7,8 @@
 #include "Tools\Tools.h"
 #include "Text\TextManager.h"
 
+using namespace ImmoBank;
+
 void SearchRequestResultAnnounce::PostProcess()
 {
 	StringTools::RemoveSpecialCharacters(m_name);

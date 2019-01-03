@@ -5,6 +5,8 @@
 #include "Request/SearchRequest/SearchRequestAnnounce.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 
+using namespace ImmoBank;
+
 void SeLogerOnlineDatase::Init()
 {
 	SetName("SeLoger");

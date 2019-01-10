@@ -12,6 +12,7 @@ namespace ImmoBank
 	void			ProdToolGL_Render();
 	void			ProdToolGL_GetHwnd(void* out_hwnd);
 	void			ProdToolGL_NewFrame();
+	unsigned char*	ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID);
 	unsigned char*	ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width, int& _height, unsigned int& _textureID);
 	void			ProdToolGL_GenerateTexture(unsigned char* _data, int _width, int _height, unsigned int& _textureID);
 	void			ProdToolGL_DeleteTexture(unsigned int* _textureID);

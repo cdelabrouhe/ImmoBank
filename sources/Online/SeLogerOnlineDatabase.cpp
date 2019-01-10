@@ -190,10 +190,13 @@ bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::str
 		result->m_price = annonce.m_price;
 		result->m_surface = annonce.m_surface;
 		result->m_URL = annonce.m_URL;
+		result->m_imageURL = annonce.m_imageURL;
 		result->m_nbRooms = annonce.m_nbRooms;
 		result->m_nbBedRooms = annonce.m_nbBedRooms;
 		result->m_category = annonce.m_category;
 		result->m_inseeCode = annonce.m_inseeCode;
+
+		result->Init();
 
 		_results.push_back(result);
 	}
@@ -235,6 +238,10 @@ void SeLogerOnlineDatase::sAnnonce::Serialize(const std::string& _str)
 	m_name = StringTools::GetXMLBaliseContent(_str, "libelle");
 	m_description = StringTools::GetXMLBaliseContent(_str, "descriptif");
 	m_URL = StringTools::GetXMLBaliseContent(_str, "permaLien");
+
+	str = StringTools::GetXMLBaliseContent(_str, "photos");
+	str = StringTools::GetXMLBaliseContent(str, "photo");
+	m_imageURL = StringTools::GetXMLBaliseContent(str, "stdUrl");
 
 	str = StringTools::GetXMLBaliseContent(_str, "prix");
 	if (!str.empty())	m_price = std::stoi(str);

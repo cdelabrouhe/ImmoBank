@@ -67,7 +67,10 @@ void HTTPDownloader::Process()
 	while (it != m_requests.end())
 	{
 		if (it->second.m_canceled)
+		{
+			it->second.Clear();
 			it = m_requests.erase(it);
+		}
 		else
 			++it;
 	}
@@ -86,7 +89,7 @@ void HTTPDownloader::End()
 }
 
 //------------------------------------------------------------------------------------------------
-int HTTPDownloader::SendRequest(const std::string& _request, bool _modifyUserAgent)
+int HTTPDownloader::SendRequest(const std::string& _request, RequestResultType _resultType, bool _modifyUserAgent)
 {
 	m_mutex->lock();
 
@@ -96,7 +99,8 @@ int HTTPDownloader::SendRequest(const std::string& _request, bool _modifyUserAge
 		++ID;
 
 	// Store request
-	auto& request = m_requests[ID];
+	sStoreRequest& request = m_requests[ID];
+	request.m_type = _resultType;
 	request.m_request = _request;
 	request.m_protectUserAgent = _modifyUserAgent;
 
@@ -128,6 +132,7 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 			_request.m_requestID = it->first;
 			_request.m_request = it->second.m_request;
 			_request.m_protectUserAgent = it->second.m_protectUserAgent;
+			_request.m_type = it->second.m_type;
 			found = true;
 		}
 		++it;
@@ -138,20 +143,26 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 }
 
 //------------------------------------------------------------------------------------------------
-void HTTPDownloader::SetResult(const int _requestID, std::string& _result)
+void HTTPDownloader::SetResult(const int _requestID, sRequest& _result)
 {
 	m_mutex->lock();
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
 	{
-		it->second.m_result = _result;
+		it->second.m_result = _result.m_result;
 		it->second.m_finished = true;
+		if (_result.m_resultBinarySize > 0)
+		{
+			it->second.m_resultBinary = (char*)malloc(_result.m_resultBinarySize);
+			it->second.m_resultBinarySize = _result.m_resultBinarySize;
+			memcpy(it->second.m_resultBinary, _result.m_resultBinary, _result.m_resultBinarySize);
+		}
 	}
 	m_mutex->unlock();
 }
 
 //------------------------------------------------------------------------------------------------
-bool HTTPDownloader::GetResult(const int _requestID, std::string& _result)
+bool HTTPDownloader::GetResultString(const int _requestID, std::string& _result)
 {
 	bool valid = false;
 
@@ -159,10 +170,38 @@ bool HTTPDownloader::GetResult(const int _requestID, std::string& _result)
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
 	{
-		if (it->second.m_finished)
+		sStoreRequest& request = it->second;
+		if (request.m_finished)
 		{
-			_result = it->second.m_result;
-			it->second.m_canceled = true;
+			_result = request.m_result;
+			request.m_canceled = true;
+			valid = true;
+		}
+	}
+	m_mutex->unlock();
+	return valid;
+}
+
+//------------------------------------------------------------------------------------------------
+bool HTTPDownloader::GetResultBinary(const int _requestID, unsigned char*& _result, int& _size)
+{
+	bool valid = false;
+
+	m_mutex->lock();
+	auto it = m_requests.find(_requestID);
+	if (it != m_requests.end())
+	{
+		sStoreRequest& request = it->second;
+		if (request.m_finished)
+		{
+			if (request.m_resultBinarySize > 0)
+			{
+				_size = request.m_resultBinarySize;
+				_result = (unsigned char*)malloc(_size);
+				memcpy(_result, request.m_resultBinary, _size);
+			}
+
+			request.m_canceled = true;
 			valid = true;
 		}
 	}
@@ -192,20 +231,18 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 }
 
 //------------------------------------------------------------------------------------------------
-std::string HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent)
+void HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out)
 {
 	const char* url = _url.c_str();
 	curl_easy_setopt(m_curl, CURLOPT_URL, url);
 	/* example.com is redirected, so we tell libcurl to follow redirection */
 	if (_modifyUserAgent)
 		curl_easy_setopt(m_curl, CURLOPT_USERAGENT, s_curlUserAgent);
-
 	curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
-	std::stringstream out;
 	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data);
-	curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &out);
+	curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &_out);
 	/* Perform the request, res will get the return code */
 	CURLcode res = curl_easy_perform(m_curl);
 	/* Check for errors */
@@ -213,16 +250,36 @@ std::string HTTPDownloader::download(const std::string& _url, bool _modifyUserAg
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 	}
-	return out.str();
 }
 
 //------------------------------------------------------------------------------------------------
 void sRequest::Process(HTTPDownloader* _downloader)
 {
-	m_result = _downloader->download(m_request, m_protectUserAgent);
+	std::stringstream stream;
+	_downloader->download(m_request, m_protectUserAgent, stream);
+	switch (m_type)
+	{
+	case RequestResultType_String:
+		{
+			m_result = stream.str();
 
-	// Remove any space / tab from string
-	StringTools::RemoveEOL(m_result);
+			// Remove any space / tab from string
+			StringTools::RemoveEOL(m_result);
+		}
+		break;
 
-	_downloader->SetResult(m_requestID, m_result);
+	case RequestResultType_Binary:
+		{
+			int size = stream.str().size();
+			m_resultBinary = (char*)malloc(size);
+			m_resultBinarySize = size;
+			memcpy(m_resultBinary, stream.str().c_str(), size);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	_downloader->SetResult(m_requestID, *this);
 }

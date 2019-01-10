@@ -128,7 +128,13 @@ bool OnlineManager::GetRequestResult(const int _requestID, std::vector<SearchReq
 //-------------------------------------------------------------------------------------------------
 int OnlineManager::SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent)
 {
-	return s_downloader.SendRequest(_request, _modifyUserAgent);
+	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_String,_modifyUserAgent);
+}
+
+//-------------------------------------------------------------------------------------------------
+int OnlineManager::SendBinaryHTTPRequest(const std::string& _request, bool _modifyUserAgent)
+{
+	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_Binary, _modifyUserAgent);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,7 +146,13 @@ bool OnlineManager::IsBasicHTTPRequestAvailable(int _requestID) const
 //-------------------------------------------------------------------------------------------------
 bool OnlineManager::GetBasicHTTPRequestResult(const int _requestID, std::string& _result)
 {
-	return s_downloader.GetResult(_requestID, _result);
+	return s_downloader.GetResultString(_requestID, _result);
+}
+
+//-------------------------------------------------------------------------------------------------
+bool OnlineManager::GetBinaryHTTPRequestResult(const int _requestID, unsigned char*& _result, int& _size)
+{
+	return s_downloader.GetResultBinary(_requestID, _result, _size);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -6,8 +6,22 @@
 #include <algorithm>
 #include "Tools\Tools.h"
 #include "Text\TextManager.h"
+#include <Online\OnlineManager.h>
+#include <GL\ProdToolGL.h>
 
 using namespace ImmoBank;
+
+ImmoBank::SearchRequestResultAnnounce::~SearchRequestResultAnnounce()
+{
+	if (m_imageTextureID > 0)
+		ProdToolGL_DeleteTexture(&m_imageTextureID);
+}
+
+void SearchRequestResultAnnounce::Init()
+{
+	if (!m_imageURL.empty())
+		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+}
 
 void SearchRequestResultAnnounce::PostProcess()
 {
@@ -104,6 +118,30 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 			return true;
 	}
 
+	// Download image
+	if (!m_imageDownloaded && (m_imageDownloadRequestID > -1))
+	{
+		if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
+		{
+			unsigned char* buffer = nullptr;
+			int size = 0;
+			OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
+			if (buffer)
+			{
+				ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
+				free(buffer);
+			}
+		}
+	}
+
+	if (m_imageTextureID > 0)
+	{
+		ImGui::BeginChild("Image", ImVec2(100, 0), true);
+		ImGui::Image((void*)(intptr_t)m_imageTextureID, ImVec2(m_imageWidth, m_imageHeight));
+		ImGui::EndChild();
+		ImGui::SameLine();
+	}
+
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::Separator();
@@ -198,6 +236,9 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::Text(" ");
+
+	if (m_imageTextureID > 0)
+		ImGui::EndChild();
 
 	return keep;
 }

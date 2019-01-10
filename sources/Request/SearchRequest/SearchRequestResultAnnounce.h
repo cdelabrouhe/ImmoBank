@@ -12,10 +12,13 @@ namespace ImmoBank
 		{
 			*this = _request;
 		}
+		virtual ~SearchRequestResultAnnounce();
+
 		std::string m_database;
 		std::string m_name;
 		std::string m_description;
 		std::string m_URL;
+		std::string m_imageURL;
 		sCity		m_city;
 		Type		m_type = Type_NONE;
 		Category	m_category = Category_NONE;
@@ -27,7 +30,13 @@ namespace ImmoBank
 		int			m_nbBedRooms = 0;
 		int			m_selectedBoroughID = 0;
 		int			m_inseeCode = 0;
+		int			m_imageDownloadRequestID = -1;
+		int			m_imageWidth = 0;
+		int			m_imageHeight = 0;
+		unsigned int	m_imageTextureID = 0;
+		bool		m_imageDownloaded = false;
 
+		void Init();
 		virtual void PostProcess() override;
 		virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;
 		float GetRentabilityRate() const;

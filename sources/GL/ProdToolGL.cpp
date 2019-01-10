@@ -19,6 +19,8 @@
 
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
+#include "Tools/Tools.h"
+#include "extern/stb/stb_image.h"
 
 using namespace ImmoBank;
 
@@ -38,12 +40,23 @@ static void error_callback(int error, const char* description)
 #define NB_MAX_IMAGES 100
 GLuint s_textures[NB_MAX_IMAGES];
 
-void ImmoBank::ProdToolGL_GenerateTexture(unsigned char* _data, unsigned int _width, unsigned int _height, unsigned int& _textureID)
+unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width, int& _height, unsigned int& _textureID)
+{
+	std::string exePath = Tools::GetExePath() + "test.jpg";
+	unsigned char* image_data = stbi_load(exePath.c_str(), &_width, &_height, NULL, 3);
+	if (image_data)
+		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
+
+	return image_data;
+}
+
+void ImmoBank::ProdToolGL_GenerateTexture(unsigned char* _data, int _width, int _height, unsigned int& _textureID)
 {
 	glGenTextures(1, &_textureID);
 	glBindTexture(GL_TEXTURE_2D, _textureID);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
 }
 
 void ImmoBank::ProdToolGL_DeleteTexture(unsigned int* _textureID)
@@ -64,7 +77,7 @@ GLFWwindow*		ImmoBank::ProdToolGL_InitCreateWindow(int width, int height)
 
 	gl3wInit();
 
-	memset(s_textures, 0, NB_MAX_IMAGES * sizeof(void*));
+	memset(s_textures, 0, NB_MAX_IMAGES * sizeof(GLuint));
 
 	s_Window = window;
 

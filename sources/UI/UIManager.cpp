@@ -14,11 +14,7 @@
 #include "Text/TextManager.h"
 #include <GL/ProdToolGL.h>
 
-#define IMAGE_TEST
-
-#ifdef IMAGE_TEST
-#include "extern/stb/stb_image.h"
-#endif
+//#define IMAGE_TEST
 
 using namespace ImmoBank;
 
@@ -428,19 +424,12 @@ void UIManager::DisplayComputeRateTool()
 	{
 #ifdef IMAGE_TEST
 		// Turn the RGBA pixel data into an OpenGL texture:
-		int image_width = 64, image_height = 64;
+		static int image_width = 0, image_height = 0;
 		if (textureID == 0)
-		{
-			image_data = stbi_load("test.png", &image_width, &image_height, NULL, 4);
-			int size = image_width * image_height;
-			for (auto ID = 0; ID < size; ++ID)
-				image_data[ID] = rand() % 0xFF;
-
-			ProdToolGL_GenerateTexture(image_data, image_width, image_height, textureID);
-		}
-		
-		// Now that we have an OpenGL texture, assuming our imgui rendering function (imgui_impl_xxx.cpp file) takes GLuint as ImTextureID, we can display it:
-		ImGui::Image((void*)(intptr_t)textureID, ImVec2(image_width, image_height));
+			image_data = ProdToolGL_GenerateTextureFromFile("test.jpg", image_width, image_height, textureID);
+		else
+			// Now that we have an OpenGL texture, assuming our imgui rendering function (imgui_impl_xxx.cpp file) takes GLuint as ImTextureID, we can display it:
+			ImGui::Image((void*)(intptr_t)textureID, ImVec2(image_width * 2, image_height * 2));
 #endif
 
 		ImGui::SetWindowFontScale(1.f);

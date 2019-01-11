@@ -11,16 +11,17 @@
 
 using namespace ImmoBank;
 
-ImmoBank::SearchRequestResultAnnounce::~SearchRequestResultAnnounce()
-{
-	if (m_imageTextureID > 0)
-		ProdToolGL_DeleteTexture(&m_imageTextureID);
-}
-
 void SearchRequestResultAnnounce::Init()
 {
 	if (!m_imageURL.empty())
 		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+}
+
+void SearchRequestResultAnnounce::End()
+{
+	if (m_imageTextureID > 0)
+		ProdToolGL_DeleteTexture(&m_imageTextureID);
+	m_imageTextureID = 0;
 }
 
 void SearchRequestResultAnnounce::PostProcess()
@@ -136,14 +137,13 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	if (m_imageTextureID > 0)
 	{
-		ImGui::BeginChild("Image", ImVec2(100, 0), true);
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, m_imageWidth + 15.f);
 		ImGui::Image((void*)(intptr_t)m_imageTextureID, ImVec2(m_imageWidth, m_imageHeight));
-		ImGui::EndChild();
-		ImGui::SameLine();
+		ImGui::NextColumn();
 	}
-
-	ImGui::Columns(1);
-	ImGui::Separator();
+	else
+		ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::SetWindowFontScale(1.2f);
 	std::string name = (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
@@ -236,9 +236,6 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::Text(" ");
-
-	if (m_imageTextureID > 0)
-		ImGui::EndChild();
 
 	return keep;
 }

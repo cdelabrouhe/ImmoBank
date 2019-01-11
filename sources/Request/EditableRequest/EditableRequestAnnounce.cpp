@@ -81,7 +81,10 @@ void EditableRequestAnnounce::Reset()
 	m_requestID = -1;
 	m_available = false;
 	for (auto result : m_result)
+	{
+		result->End();
 		delete result;
+	}
 	m_result.clear();
 }
 
@@ -348,8 +351,11 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 				});
 
 				if (it != m_result.end())
+				{
 					m_result.erase(it);
+				}
 
+				request->End();
 				delete request;
 			}
 		}

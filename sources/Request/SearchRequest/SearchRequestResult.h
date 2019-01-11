@@ -13,6 +13,9 @@ namespace ImmoBank
 
 		SearchRequestType m_resultType;
 
+		virtual void Init()	{}
+		virtual void End()	{}
+
 		virtual void PostProcess() {}
 		virtual bool Display(ImGuiTextFilter* _filter = nullptr) { return true; }
 

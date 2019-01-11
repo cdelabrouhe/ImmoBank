@@ -12,7 +12,6 @@ namespace ImmoBank
 		{
 			*this = _request;
 		}
-		virtual ~SearchRequestResultAnnounce();
 
 		std::string m_database;
 		std::string m_name;
@@ -36,7 +35,9 @@ namespace ImmoBank
 		unsigned int	m_imageTextureID = 0;
 		bool		m_imageDownloaded = false;
 
-		void Init();
+		virtual void Init() override;
+		virtual void End() override;
+
 		virtual void PostProcess() override;
 		virtual bool Display(ImGuiTextFilter* _filter = nullptr) override;
 		float GetRentabilityRate() const;

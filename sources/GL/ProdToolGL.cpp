@@ -43,8 +43,7 @@ GLuint s_textures[NB_MAX_IMAGES];
 
 unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
-	static int s_nbBytesPerPixel = 4;
-	unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, s_nbBytesPerPixel);
+	unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
 	if (image_data)
 		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
 

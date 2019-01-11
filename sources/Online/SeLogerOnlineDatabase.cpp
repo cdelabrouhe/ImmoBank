@@ -241,7 +241,7 @@ void SeLogerOnlineDatase::sAnnonce::Serialize(const std::string& _str)
 
 	str = StringTools::GetXMLBaliseContent(_str, "photos");
 	str = StringTools::GetXMLBaliseContent(str, "photo");
-	m_imageURL = StringTools::GetXMLBaliseContent(str, "stdUrl");
+	m_imageURL = StringTools::GetXMLBaliseContent(str, "carreurl");
 
 	str = StringTools::GetXMLBaliseContent(_str, "prix");
 	if (!str.empty())	m_price = std::stoi(str);

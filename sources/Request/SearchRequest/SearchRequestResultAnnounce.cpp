@@ -138,8 +138,9 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	if (m_imageTextureID > 0)
 	{
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, m_imageWidth + 15.f);
-		ImGui::Image((void*)(intptr_t)m_imageTextureID, ImVec2(m_imageWidth, m_imageHeight));
+		ImGui::SetColumnWidth(0, 135.f);
+		if (ImGui::ImageButton((void*)(intptr_t)m_imageTextureID, ImVec2(120.f, 90.f)))
+			ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 		ImGui::NextColumn();
 	}
 	else

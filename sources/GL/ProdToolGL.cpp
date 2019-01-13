@@ -37,15 +37,13 @@ static void error_callback(int error, const char* description)
 	fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
-#define NB_MAX_IMAGES 100
-GLuint s_textures[NB_MAX_IMAGES];
-
-
 unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
 	unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
 	if (image_data)
 		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
+	else
+		printf("ERROR: %s\n", stbi_failure_reason());
 
 	return image_data;
 }
@@ -56,6 +54,8 @@ unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, i
 	unsigned char* image_data = stbi_load(exePath.c_str(), &_width, &_height, NULL, 3);
 	if (image_data)
 		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
+	else
+		printf("ERROR: %s\n", stbi_failure_reason());
 
 	return image_data;
 }
@@ -86,8 +86,6 @@ GLFWwindow*		ImmoBank::ProdToolGL_InitCreateWindow(int width, int height)
 	glfwSwapInterval(1); // Enable vsync
 
 	gl3wInit();
-
-	memset(s_textures, 0, NB_MAX_IMAGES * sizeof(GLuint));
 
 	s_Window = window;
 

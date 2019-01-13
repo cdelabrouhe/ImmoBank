@@ -9,19 +9,25 @@
 #include <Online\OnlineManager.h>
 #include <GL\ProdToolGL.h>
 
+//#define LOAD_BIG_IMAGE
+
 using namespace ImmoBank;
 
 void SearchRequestResultAnnounce::Init()
 {
-	if (!m_imageURL.empty())
-		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+	if (!m_imageTinyURL.empty())
+		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
 }
 
 void SearchRequestResultAnnounce::End()
 {
+	if (m_imageTinyTextureID > 0)
+		ProdToolGL_DeleteTexture(&m_imageTinyTextureID);
+	m_imageTinyTextureID = 0;
+
 	if (m_imageTextureID > 0)
 		ProdToolGL_DeleteTexture(&m_imageTextureID);
-	m_imageTextureID = 0;
+	m_imageTextureID = 0;	
 }
 
 void SearchRequestResultAnnounce::PostProcess()
@@ -120,26 +126,58 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	}
 
 	// Download image
-	if (!m_imageDownloaded && (m_imageDownloadRequestID > -1))
+	if (m_imageDownloadRequestID > -1)
 	{
-		if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
+		if (!m_imageTinyDownloaded)
 		{
-			unsigned char* buffer = nullptr;
-			int size = 0;
-			OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
-			if (buffer)
+			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
 			{
-				ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
-				free(buffer);
+				unsigned char* buffer = nullptr;
+				int size = 0;
+				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
+				if (buffer)
+				{
+					if (ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTinyTextureID))
+					{
+						free(buffer);
+						m_imageDownloadRequestID = -1;
+						m_imageTinyDownloaded = true;
+					}
+					else
+						m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+				}
+#ifdef LOAD_BIG_IMAGE
+				// Trigger full res image download
+				if (!m_imageURL.empty())
+					m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+#endif
 			}
 		}
+#ifdef LOAD_BIG_IMAGE
+		if (!m_imageFullDownloaded)
+		{
+			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
+			{
+				m_imageFullDownloaded = true;
+				unsigned char* buffer = nullptr;
+				int size = 0;
+				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
+				if (buffer)
+				{
+					ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
+					free(buffer);
+				}
+				m_imageDownloadRequestID = -1;
+			}
+		}
+#endif
 	}
 
-	if (m_imageTextureID > 0)
+	if (m_imageTinyTextureID > 0)
 	{
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, 135.f);
-		if (ImGui::ImageButton((void*)(intptr_t)m_imageTextureID, ImVec2(120.f, 90.f)))
+		if (ImGui::ImageButton((void*)(intptr_t)m_imageTinyTextureID, ImVec2(120.f, 90.f)))
 			ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 		ImGui::NextColumn();
 	}

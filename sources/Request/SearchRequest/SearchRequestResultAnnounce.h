@@ -18,6 +18,7 @@ namespace ImmoBank
 		std::string m_description;
 		std::string m_URL;
 		std::string m_imageURL;
+		std::string m_imageTinyURL;
 		sCity		m_city;
 		Type		m_type = Type_NONE;
 		Category	m_category = Category_NONE;
@@ -32,8 +33,10 @@ namespace ImmoBank
 		int			m_imageDownloadRequestID = -1;
 		int			m_imageWidth = 0;
 		int			m_imageHeight = 0;
+		unsigned int	m_imageTinyTextureID = 0;
 		unsigned int	m_imageTextureID = 0;
-		bool		m_imageDownloaded = false;
+		bool		m_imageTinyDownloaded = false;
+		bool		m_imageFullDownloaded = false;
 
 		virtual void Init() override;
 		virtual void End() override;

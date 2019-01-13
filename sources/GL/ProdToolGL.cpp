@@ -37,27 +37,31 @@ static void error_callback(int error, const char* description)
 	fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
-unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
+bool ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
 	unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
 	if (image_data)
+	{
 		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
-	else
-		printf("ERROR: %s\n", stbi_failure_reason());
-
-	return image_data;
+		return true;
+	}
+	
+	printf("ERROR: %s\n", stbi_failure_reason());
+	return false;
 }
 
-unsigned char* ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width, int& _height, unsigned int& _textureID)
+bool ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width, int& _height, unsigned int& _textureID)
 {
 	std::string exePath = Tools::GetExePath() + "test.jpg";
 	unsigned char* image_data = stbi_load(exePath.c_str(), &_width, &_height, NULL, 3);
 	if (image_data)
+	{
 		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
-	else
-		printf("ERROR: %s\n", stbi_failure_reason());
+		return true;
+	}
 
-	return image_data;
+	printf("ERROR: %s\n", stbi_failure_reason());
+	return false;
 }
 
 void ImmoBank::ProdToolGL_GenerateTexture(unsigned char* _data, int _width, int _height, unsigned int& _textureID)

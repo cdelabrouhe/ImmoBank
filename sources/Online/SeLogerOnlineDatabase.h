@@ -15,6 +15,7 @@ namespace ImmoBank
 			std::string m_description;
 			std::string m_URL;
 			std::string m_imageURL;
+			std::string m_imageTinyURL;
 			Category m_category;
 			int m_price;
 			float m_surface;

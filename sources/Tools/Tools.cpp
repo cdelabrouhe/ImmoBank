@@ -113,3 +113,16 @@ bool Tools::ReadJSON(const char* _path, Json::Value& _data)
 	}
 	return false;
 }
+
+bool Tools::WriteJSON(const char* _path, Json::Value& _data)
+{
+	std::string str = _data.toStyledString();
+	FILE* f = fopen(_path, "wt");
+	if (f)
+	{
+		fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+		fclose(f);
+		return true;
+	}
+	return false;
+}

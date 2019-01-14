@@ -53,6 +53,7 @@ bool UIManager::Draw()
 	ImGui::Begin(GET_TEXT("MainWindow"), NULL, ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoFocusOnAppearing|ImGuiWindowFlags_NoBringToFrontOnFocus|ImGuiWindowFlags_MenuBar);
 
 	static bool showTestWindow = false;
+	static bool showAbout = false;
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuRequest")))
@@ -119,8 +120,12 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("?"))
 		{
+#ifdef DEV_MODE
 			if (ImGui::MenuItem(GET_TEXT("MenuHelpShowTestWindow")))
 				showTestWindow = !showTestWindow;
+#endif
+			if (ImGui::MenuItem(GET_TEXT("MenuHelpShowAbout")))
+				showAbout = !showAbout;
 			ImGui::EndMenu();
 		}
 
@@ -142,6 +147,16 @@ bool UIManager::Draw()
 
 	if (showTestWindow)
 		ImGui::ShowTestWindow();
+
+	if (showAbout)
+	{
+		ImGui::Begin("About ImmoBank", &showAbout, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Text("                          Immobank v1.0");
+		ImGui::Separator();
+		ImGui::Text("Copyright 2018-2019 - Christophe de Labrouhe");
+		ImGui::Text("                    mastertof@hotmail.com");
+		ImGui::End();
+	}
 
 	ImGui::End();
 	ImGui::PopStyleVar();

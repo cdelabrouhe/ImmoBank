@@ -9,6 +9,7 @@
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
 #include "Text/TextManager.h"
+#include <Config/ConfigManager.h>
 
 const int	CONFIG_WINDOW_WIDTH = 1280;
 const int	CONFIG_WINDOW_HEIGHT = 768;
@@ -18,6 +19,8 @@ using namespace ImmoBank;
 int main(int argc, char** argv)
 {
 	bool quit = false;
+
+	ConfigManager::getSingleton()->Init();
 
 	// Init DB
 	DatabaseManager::getSingleton()->Init();
@@ -99,6 +102,9 @@ int main(int argc, char** argv)
 
 	// End Text manager
 	TextManager::getSingleton()->End();
+
+	// End Config manager
+	ConfigManager::getSingleton()->End();
 
 	ProdToolGL_Shutdown();
 

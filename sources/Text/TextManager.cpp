@@ -3,6 +3,7 @@
 #include <Tools/Tools.h>
 #include <Tools/SearchFile.h>
 #include "Tools/StringTools.h"
+#include <Config/ConfigManager.h>
 
 using namespace ImmoBank;
 
@@ -48,9 +49,15 @@ void TextManager::Init()
 		}
 	}
 
-	// Auto select first language
-	if (m_database.size() > 0)
-		m_languageIndex = m_database.begin()->first;
+	auto data = ConfigManager::getSingleton()->GetEntry("lang");
+	if (data)
+		ChangeLanguage(data->asString());
+	else
+	{
+		// Auto select first language
+		if (m_database.size() > 0)
+			m_languageIndex = m_database.begin()->first;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -62,6 +69,8 @@ void TextManager::End()
 //-------------------------------------------------------------------------------------------------
 void TextManager::ChangeLanguage(const std::string& _newLanguage)
 {
+	ConfigManager::getSingleton()->SetEntryData("lang", _newLanguage);
+
 	unsigned int hashLang = StringTools::GenerateHash(_newLanguage);
 	auto it = m_database.find(hashLang);
 	if (it != m_database.end())

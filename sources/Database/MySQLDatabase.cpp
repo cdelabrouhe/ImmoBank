@@ -8,12 +8,13 @@
 #include "Tools/StringTools.h"
 #include "DatabaseManager.h"
 #include "Online/OnlineManager.h"
+#include "extern/jsoncpp/reader.h"
+#include <Config/ConfigManager.h>
 
 using namespace ImmoBank;
 
 #define MYSQL_ACTIVE
 #include <mysql.h>
-#include "extern/jsoncpp/reader.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -80,18 +81,14 @@ unsigned int MySQLThreadStart(void* arg)
 void MySQLDatabase::LoadConfigFile()
 {
 #ifdef MYSQL_ACTIVE
-	// Load config file
-	std::string path = Tools::GetExePath();
-	path += "database.cfg";
-
-	Json::Value root;
-	if (Tools::ReadJSON(path.c_str(), root))
+	const Json::Value* data = ConfigManager::getSingleton()->GetEntry("Database");
+	if (data)
 	{
-		m_server = root["Server"].asString();
-		m_port = root["Port"].asUInt();
-		m_user = root["User"].asString();
-		m_password = root["Password"].asString();
-		m_base = root["Base"].asString();
+		m_server = (*data)["Server"].asString();
+		m_port = (*data)["Port"].asUInt();
+		m_user = (*data)["User"].asString();
+		m_password = (*data)["Password"].asString();
+		m_base = (*data)["Base"].asString();
 	}
 #endif
 }

@@ -11,8 +11,8 @@
 #include "Text/TextManager.h"
 #include <Config/ConfigManager.h>
 
-const int	CONFIG_WINDOW_WIDTH = 1280;
-const int	CONFIG_WINDOW_HEIGHT = 768;
+const int	CONFIG_WINDOW_WIDTH = 1600;
+const int	CONFIG_WINDOW_HEIGHT = 900;
 
 using namespace ImmoBank;
 

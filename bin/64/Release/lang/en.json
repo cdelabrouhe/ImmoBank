@@ -16,6 +16,7 @@
 	"MenuWindowStyleLight" : "Light",
 	
 	"MenuHelpShowTestWindow" : "Show ImGui test window",
+	"MenuHelpShowAbout" : "About",
 	
 	"MenuDebug" : "DEBUG",
 	"MenuDebugDisplayMySQLDebug" : "Display MySQL Debug",

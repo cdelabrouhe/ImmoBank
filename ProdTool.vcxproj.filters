@@ -340,6 +340,9 @@
     <ClInclude Include="extern\stb\stb_image_write.h">
       <Filter>Sources\extern\stb</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Config\ConfigManager.h">
+      <Filter>Sources\Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -456,6 +459,9 @@
     <ClCompile Include="extern\stb\stb_image_implementation.cpp">
       <Filter>Sources\extern\stb</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Config\ConfigManager.cpp">
+      <Filter>Sources\Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -541,6 +547,9 @@
     </Filter>
     <Filter Include="Sources\extern\stb">
       <UniqueIdentifier>{b688550d-91cc-421d-af45-15b9a2931d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Config">
+      <UniqueIdentifier>{2cfbdd78-5793-406d-8240-6c57801d4cb3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

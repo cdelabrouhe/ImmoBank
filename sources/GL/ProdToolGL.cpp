@@ -39,11 +39,19 @@ static void error_callback(int error, const char* description)
 
 bool ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
-	unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
-	if (image_data)
+	try
 	{
-		ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
-		return true;
+		unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
+		if (image_data)
+		{
+			ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
+			return true;
+		}
+	}
+	catch (const std::exception& e)
+	{
+		printf("ERROR: Exception raised %s\n", e.what());
+		return false;
 	}
 	
 	printf("ERROR: %s\n", stbi_failure_reason());

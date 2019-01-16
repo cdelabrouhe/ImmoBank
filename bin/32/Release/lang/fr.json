@@ -21,7 +21,7 @@
 	"MenuDebug" : "DEBUG",
 	"MenuDebugDisplayMySQLDebug" : "Afficher le menu de debug MySQL",
 	
-	"PopupComputeRentabilityRate" : "Caldul de taux",
+	"PopupComputeRentabilityRate" : "Calcul de taux de rentabilité",
 		
 	// General
 	"GeneralExit" : "Quitter",

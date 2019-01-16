@@ -173,16 +173,23 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 #endif
 	}
 
+	ImGui::Columns(2);
+	float width = 140.f;
+	ImGui::SetColumnWidth(0, width + 15.f);
 	if (m_imageTinyTextureID > 0)
 	{
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 135.f);
-		if (ImGui::ImageButton((void*)(intptr_t)m_imageTinyTextureID, ImVec2(120.f, 90.f)))
+		if (ImGui::ImageButton((void*)(intptr_t)m_imageTinyTextureID, ImVec2(140.f, width / 1.333f)))
 			ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-		ImGui::NextColumn();
 	}
 	else
-		ImGui::Columns(1);
+	{
+		if (m_imageDownloadRequestID > -1)
+			ImGui::Text("Loading...");
+		else
+			ImGui::Text("No image");
+	}
+
+	ImGui::NextColumn();
 	ImGui::Separator();
 	ImGui::SetWindowFontScale(1.2f);
 	std::string name = (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
@@ -203,6 +210,14 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	ImGui::Columns(7);
 
+	int columnID = 0;
+	ImGui::SetColumnWidth(columnID++, 250.f);
+	ImGui::SetColumnWidth(columnID++, 80.f);
+	ImGui::SetColumnWidth(columnID++, 150.f);
+	ImGui::SetColumnWidth(columnID++, 110.f);
+	ImGui::SetColumnWidth(columnID++, 120.f);
+	ImGui::SetColumnWidth(columnID++, 110.f);
+	ImGui::SetColumnWidth(columnID++, 120.f);
 	ImGui::Separator();
 
 	std::vector<const char*> data;

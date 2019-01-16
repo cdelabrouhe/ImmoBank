@@ -240,10 +240,13 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		}
 
 		ImGui::PushID(this + cpt + 1000);
-		if (ImGui::Button(GET_TEXT("RequestWindowAddBorough")))
+		if (m_boroughList.size() > 0)
 		{
-			m_searchRequest.AddBorough(m_boroughList[0]);
-			RecomputeBoroughSelections();
+			if (ImGui::Button(GET_TEXT("RequestWindowAddBorough")))
+			{
+				m_searchRequest.AddBorough(m_boroughList[0]);
+				RecomputeBoroughSelections();
+			}
 		}
 		ImGui::PopID();
 	}

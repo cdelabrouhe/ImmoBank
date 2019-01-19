@@ -14,8 +14,6 @@
 #include "Text/TextManager.h"
 #include <GL/ProdToolGL.h>
 
-//#define IMAGE_TEST
-
 using namespace ImmoBank;
 
 //-------------------------------------------------------------------------------------------------
@@ -85,7 +83,7 @@ bool UIManager::Draw()
 		}
 
 		if (s_computeRentabilityRate)
-			DisplayComputeRateTool();
+			DisplayComputeRateTool(true);
 
 		if (ImGui::BeginMenu(GET_TEXT("MainMenuWindow")))
 		{
@@ -429,24 +427,10 @@ void UIManager::DisplayCityInformation()
 }
 
 //-------------------------------------------------------------------------------------------------
-void UIManager::DisplayComputeRateTool()
+void UIManager::DisplayComputeRateTool(bool _independantWindow)
 {
-#ifdef IMAGE_TEST
-	static unsigned int textureID = 0;
-	static unsigned char* image_data = nullptr;
-#endif
-	if (ImGui::Begin(GET_TEXT("PopupComputeRentabilityRate"), &s_computeRentabilityRate, ImGuiWindowFlags_AlwaysAutoResize))
+	if (_independantWindow ? ImGui::Begin(GET_TEXT("PopupComputeRentabilityRate"), &s_computeRentabilityRate, ImGuiWindowFlags_AlwaysAutoResize) : true)
 	{
-#ifdef IMAGE_TEST
-		// Turn the RGBA pixel data into an OpenGL texture:
-		static int image_width = 0, image_height = 0;
-		if (textureID == 0)
-			image_data = ProdToolGL_GenerateTextureFromFile("test.jpg", image_width, image_height, textureID);
-		else
-			// Now that we have an OpenGL texture, assuming our imgui rendering function (imgui_impl_xxx.cpp file) takes GLuint as ImTextureID, we can display it:
-			ImGui::Image((void*)(intptr_t)textureID, ImVec2(image_width * 2, image_height * 2));
-#endif
-
 		ImGui::SetWindowFontScale(1.f);
 
 		static int s_rent = 700;
@@ -466,16 +450,9 @@ void UIManager::DisplayComputeRateTool()
 		if (ImGui::Button(GET_TEXT("GeneralExit")))
 			s_computeRentabilityRate = false;
 	}
-#ifdef IMAGE_TEST
-	else
-	{
-		ProdToolGL_DeleteTexture(&textureID);
-		textureID = 0;
-		free(image_data);
-		image_data = nullptr;
-	}
-#endif
-	ImGui::End();
+
+	if (_independantWindow)
+		ImGui::End();
 }
 
 bool UIManager::DisplayConnectionError()

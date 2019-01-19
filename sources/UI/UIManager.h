@@ -27,7 +27,7 @@ namespace ImmoBank
 		void	AskForDisplayCityInformation();
 		void	InitDisplayCityInformation();
 		void	DisplayCityInformation();
-		void	DisplayComputeRateTool();
+		void	DisplayComputeRateTool(bool _independantWindow);
 		bool	DisplayConnectionError();
 
 #ifdef DEV_MODE

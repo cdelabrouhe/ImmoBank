@@ -14,6 +14,7 @@
 #include <algorithm>
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
+#include "UI/UIManager.h"
 
 using namespace ImmoBank;
 
@@ -295,6 +296,12 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	ImGui::SameLine();
 	if (ImGui::Button(GET_TEXT("RequestWindowCancel")))
 		RequestManager::getSingleton()->AskForDeleteRequest(this);
+
+	ImGui::Separator();
+	ImGui::Separator();
+
+	ImGui::Text(GET_TEXT("PopupComputeRentabilityRate"));
+	UIManager::getSingleton()->DisplayComputeRateTool(false);
 
 	ImGui::EndChild();
 	ImGui::SameLine();

@@ -19,5 +19,7 @@ namespace ImmoBank
 		static void ConvertToImGuiText(std::string& _text);
 		static unsigned int GenerateHash(const std::string& _str);
 		static unsigned int GenerateHash(const char* _str);
+		static void FixName(std::string& _name);
+		static void UnFixName(std::string& _name);
 	};
 }

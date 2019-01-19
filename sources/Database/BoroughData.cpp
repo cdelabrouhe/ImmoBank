@@ -169,6 +169,8 @@ std::string BoroughData::ComputeRequestURL() const
 	StringTools::ReplaceBadSyntax(boroughName, "Ste-", "sainte-");
 	StringTools::ReplaceBadSyntax(boroughName, "é", "e");
 	StringTools::ReplaceBadSyntax(boroughName, "è", "e");
+	StringTools::ReplaceBadSyntax(boroughName, "É", "E");
+	StringTools::ReplaceBadSyntax(boroughName, "î", "i");
 	std::string zipCode = std::to_string(m_city.m_zipCode);
 	while (zipCode.size() < 5)
 		zipCode = "0" + zipCode;

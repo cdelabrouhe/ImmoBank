@@ -29,6 +29,11 @@ bool CitySelector::Display()
 			{
 				Json::Value& val = root.get(ID, Json::nullValue);
 				std::string name = val["nom"].asString();
+				StringTools::FixName(name);
+				StringTools::ReplaceBadSyntax(name, "é", "e");
+				StringTools::ReplaceBadSyntax(name, "è", "e");
+				StringTools::ReplaceBadSyntax(name, "É", "E");
+				StringTools::ReplaceBadSyntax(name, "î", "i");
 				std::string codeStr = val["code"].asString();
 				std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
 
@@ -60,7 +65,13 @@ bool CitySelector::Display()
 		if (strlen(m_inputTextCity) >= 2)
 		{
 			// Ask for a city list
-			std::string request = "https://geo.api.gouv.fr/communes?nom=" + std::string(m_inputTextCity) + "&boost=population";
+			std::string str = m_inputTextCity;
+			StringTools::ReplaceBadSyntax(str, "é", "e");
+			StringTools::ReplaceBadSyntax(str, "è", "e");
+			StringTools::ReplaceBadSyntax(str, "ê", "e");
+			StringTools::ReplaceBadSyntax(str, "É", "E");
+			StringTools::ReplaceBadSyntax(str, "î", "i");
+			std::string request = "https://geo.api.gouv.fr/communes?nom=" + str + "&boost=population";
 			if (m_cityNameRequestID > -1)
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);

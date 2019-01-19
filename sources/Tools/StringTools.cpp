@@ -136,3 +136,19 @@ unsigned int StringTools::GenerateHash(const char* _str)
 {
 	return HashStrRecur(5381, _str);
 }
+
+void StringTools::FixName(std::string& _name)
+{
+	StringTools::ReplaceBadSyntax(_name, "Ã‰", "É");
+	StringTools::ReplaceBadSyntax(_name, "Ã©", "é");
+	StringTools::ReplaceBadSyntax(_name, "Ã¨", "è");
+	StringTools::ReplaceBadSyntax(_name, "Ã®", "î");
+}
+
+void StringTools::UnFixName(std::string& _name)
+{
+	StringTools::ReplaceBadSyntax(_name, "É", "Ã‰");
+	StringTools::ReplaceBadSyntax(_name, "é", "Ã©");
+	StringTools::ReplaceBadSyntax(_name, "è", "Ã¨");
+	StringTools::ReplaceBadSyntax(_name, "î", "Ã®");
+}

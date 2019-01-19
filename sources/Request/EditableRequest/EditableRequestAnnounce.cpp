@@ -294,7 +294,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		Launch();
 
 	ImGui::SameLine();
-	if (ImGui::Button(GET_TEXT("RequestWindowCancel")))
+	if (ImGui::Button(GET_TEXT("GeneralExit")))
 		RequestManager::getSingleton()->AskForDeleteRequest(this);
 
 	ImGui::Separator();

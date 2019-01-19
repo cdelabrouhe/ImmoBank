@@ -446,9 +446,12 @@ void UIManager::DisplayComputeRateTool(bool _independantWindow)
 		if (ImGui::Button(GET_TEXT("GeneralCompute")))
 			s_result = Tools::ComputeRentabilityRate((float)s_rent, (float)s_price);
 
-		ImGui::SameLine();
-		if (ImGui::Button(GET_TEXT("GeneralExit")))
-			s_computeRentabilityRate = false;
+		if (_independantWindow)
+		{
+			ImGui::SameLine();
+			if (ImGui::Button(GET_TEXT("GeneralExit")))
+				s_computeRentabilityRate = false;
+		}
 	}
 
 	if (_independantWindow)

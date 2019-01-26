@@ -323,22 +323,23 @@ void BoroughData::Edit()
 		EDIT_INFO_FLOAT3(T4+, m_priceRentApartmentT4Plus, 1);
 		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditHouse"), m_priceRentHouse, 1);
 
-#ifdef DEV_MODE
-		EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
-		static int s_seLogerKey = 0;
-		static bool s_isCity = false;
-		s_seLogerKey = GetSelogerKey(&s_isCity);
-		ImGui::SetWindowFontScale(1.f);
-		ImGui::Text("SeLogerKey : ");
-		ImGui::SameLine();
-		ImGui::PushID(this + localID++);
-		bool modified = ImGui::InputInt("Value", &s_seLogerKey);
-		ImGui::PopID();
-		ImGui::SameLine();
-		modified |= ImGui::Checkbox("City", &s_isCity);
-		if (modified)
-			SetSelogerKey(s_seLogerKey, s_isCity);
-#endif
+		if (Tools::IsDevMode())
+		{
+			EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
+			static int s_seLogerKey = 0;
+			static bool s_isCity = false;
+			s_seLogerKey = GetSelogerKey(&s_isCity);
+			ImGui::SetWindowFontScale(1.f);
+			ImGui::Text("SeLogerKey : ");
+			ImGui::SameLine();
+			ImGui::PushID(this + localID++);
+			bool modified = ImGui::InputInt("Value", &s_seLogerKey);
+			ImGui::PopID();
+			ImGui::SameLine();
+			modified |= ImGui::Checkbox("City", &s_isCity);
+			if (modified)
+				SetSelogerKey(s_seLogerKey, s_isCity);
+		}
 
 		ImGui::Separator();
 
@@ -371,12 +372,13 @@ void BoroughData::DisplayAsTooltip()
 		ImGui::BeginTooltip();
 		ImGui::SetWindowFontScale(1.f);
 
-#ifdef DEV_MODE
-		ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
-		bool isCity = false;
-		int selogerKey = GetSelogerKey(&isCity);
-		ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
-#endif
+		if (Tools::IsDevMode())
+		{
+			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
+			bool isCity = false;
+			int selogerKey = GetSelogerKey(&isCity);
+			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
+		}
 
 		if (IsValid())
 		{
@@ -441,9 +443,8 @@ void BoroughData::DisplayAsTooltip()
 		}
 		else
 		{
-#ifdef DEV_MODE
-			ImGui::Separator();
-#endif
+			if (Tools::IsDevMode())
+				ImGui::Separator();
 
 			static ImVec4 s_colorNoData(1.f, 0.f, 0.f, 1.f);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_colorNoData);

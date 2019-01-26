@@ -131,7 +131,7 @@ namespace ImmoBank
 		std::string		m_user;
 		std::string		m_password;
 		std::string		m_base;
-#ifdef DEV_MODE
+
 		struct sBoroughData
 		{
 			sBoroughData() {}
@@ -141,6 +141,5 @@ namespace ImmoBank
 		};
 		std::vector<sBoroughData>	m_boroughData;
 		bool			m_updateSelogerInProgress = false;
-#endif
 	};
 }

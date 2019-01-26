@@ -5,6 +5,7 @@
 #include "SeLogerOnlineDatabase.h"
 #include "LeSiteImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
+#include "Tools/Tools.h"
 
 using namespace ImmoBank;
 
@@ -50,9 +51,8 @@ void OnlineManager::Process()
 	for (auto& request : m_requests)
 		request.second->Process();
 
-#ifdef DEV_MODE
-	DisplayDebug();
-#endif
+	if (Tools::IsDevMode())
+		DisplayDebug();
 }
 
 //-------------------------------------------------------------------------------------------------

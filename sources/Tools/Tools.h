@@ -14,6 +14,13 @@ namespace ImmoBank
 	class Tools
 	{
 	public:
+
+		static bool m_devMode;
+
+		static bool IsDevMode();
+		static void SetDevMode(bool _state);
+		static void InvertDevMode();
+
 		enum SortType
 		{
 			Rate,

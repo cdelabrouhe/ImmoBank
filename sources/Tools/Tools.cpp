@@ -7,6 +7,23 @@
 
 using namespace ImmoBank;
 
+bool ImmoBank::Tools::m_devMode = false;
+
+bool ImmoBank::Tools::IsDevMode()
+{
+	return m_devMode;
+}
+
+void ImmoBank::Tools::SetDevMode(bool _state)
+{
+	m_devMode = _state;
+}
+
+void ImmoBank::Tools::InvertDevMode()
+{
+	m_devMode = !m_devMode;
+}
+
 float Tools::ComputeRentabilityRate(float _rent, float _price)
 {
 	return _rent * 12.f * 100.f / _price;

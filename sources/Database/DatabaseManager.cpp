@@ -14,11 +14,7 @@ using namespace ImmoBank;
 
 DatabaseManager* s_singleton = nullptr;
 const std::string ImmoBank::s_wholeCityName = "WholeCity";
-#ifdef DEV_MODE
-static int s_externalDBUpdateInterval = 1000000;
-#else
 static int s_externalDBUpdateInterval = 600;
-#endif
 
 //-------------------------------------------------------------------------------------------------
 DatabaseManager* DatabaseManager::getSingleton()
@@ -43,6 +39,11 @@ void DatabaseManager::Init()
 	m_connectionValid = m_externalDB->Init();
 	
 	m_externalTimer = time(0);
+
+	if (Tools::IsDevMode())
+		s_externalDBUpdateInterval = 1000000;
+	else
+		s_externalDBUpdateInterval = 600;
 
 	//Test();
 }
@@ -110,12 +111,13 @@ void DatabaseManager::Process()
 			++it;
 	}
 
-#ifdef DEV_MODE
-	DisplayDebug();
+	if (Tools::IsDevMode())
+	{
+		DisplayDebug();
 
-	if (m_generateSeLogerIndices)
-		m_generateSeLogerIndices = m_externalDB->UpdateAllSeLogerKeys();
-#endif
+		if (m_generateSeLogerIndices)
+			m_generateSeLogerIndices = m_externalDB->UpdateAllSeLogerKeys();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -693,16 +695,13 @@ void DatabaseManager::TriggerExternalSQLCommand(const std::string& _query)
 	m_externalDB->DebugQuery(_query);
 }
 
-#ifdef DEV_MODE
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::DisplayDebug()
 {
 	if (!m_displayDebug)
 		return;
 
-#ifdef DEV_MODE
 	DisplayMySQLRequestsPanel();
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -743,4 +742,3 @@ void DatabaseManager::NotifyMySQLEvent(const std::string& _request)
 {
 	m_MySQLRequests.push_back(_request);
 }
-#endif

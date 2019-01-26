@@ -38,15 +38,12 @@ using namespace ImmoBank;
 
 static const u64 s_timeoutQuery = 30;
 
-#ifdef DEV_MODE
 #include "UI/UIManager.h"
-#endif
 
 void NotifyMySQLEvent(const std::string& _str)
 {
-#ifdef DEV_MODE
-	DatabaseManager::getSingleton()->NotifyMySQLEvent(_str);
-#endif
+	if (Tools::IsDevMode())
+		DatabaseManager::getSingleton()->NotifyMySQLEvent(_str);
 }
 
 #ifdef MYSQL_ACTIVE
@@ -713,132 +710,133 @@ int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 bool MySQLDatabase::UpdateAllSeLogerKeys()
 {
 	bool result = true;
-#ifdef DEV_MODE
-	if (!m_updateSelogerInProgress)
+	if (Tools::IsDevMode())
 	{
-		m_updateSelogerInProgress = true;
-		std::string query = "SELECT * FROM BOROUGHS";
-		MYSQL_RES* result = ExecuteQuery(query);
-
-		while (MYSQL_ROW row = mysql_fetch_row(result))
+		if (!m_updateSelogerInProgress)
 		{
-			int rowID = 0;
-			BoroughData data;
-			data.m_city.m_name = row[rowID++];
-			data.m_name = row[rowID++];
-			data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
-			data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
-			data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+			m_updateSelogerInProgress = true;
+			std::string query = "SELECT * FROM BOROUGHS";
+			MYSQL_RES* result = ExecuteQuery(query);
 
-			if (data.m_selogerKey != 0)
-				continue;
-
-			if (data.m_name == s_wholeCityName)
-				continue;
-
-			std::string request = data.ComputeSeLogerKeyURL();
-			int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-
-			m_boroughData.push_back(sBoroughData(data, requestID));
-		}
-
-		mysql_free_result(result);
-	}
-	else
-	{
-		bool available = true;
-		auto it = m_boroughData.begin();
-		while (it != m_boroughData.end())
-		{
-			auto& borough = *it;
-			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(borough.m_requestID))
+			while (MYSQL_ROW row = mysql_fetch_row(result))
 			{
-				std::string str;
-				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(borough.m_requestID, str);
+				int rowID = 0;
+				BoroughData data;
+				data.m_city.m_name = row[rowID++];
+				data.m_name = row[rowID++];
+				data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
+				data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
+				data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 
-				Json::Reader reader;
-				Json::Value root;
-				reader.parse(str, root);
+				if (data.m_selogerKey != 0)
+					continue;
 
-				std::string boroughCityName = borough.m_data.m_city.m_name;
-				Json::Value& places = root;
-				if (places.isArray())
+				if (data.m_name == s_wholeCityName)
+					continue;
+
+				std::string request = data.ComputeSeLogerKeyURL();
+				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+
+				m_boroughData.push_back(sBoroughData(data, requestID));
+			}
+
+			mysql_free_result(result);
+		}
+		else
+		{
+			bool available = true;
+			auto it = m_boroughData.begin();
+			while (it != m_boroughData.end())
+			{
+				auto& borough = *it;
+				if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(borough.m_requestID))
 				{
-					StringTools::TransformToLower(boroughCityName);
+					std::string str;
+					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(borough.m_requestID, str);
 
-					const int nbPlaces = places.size();
-					for (int placeID = 0; placeID < nbPlaces; ++placeID)
+					Json::Reader reader;
+					Json::Value root;
+					reader.parse(str, root);
+
+					std::string boroughCityName = borough.m_data.m_city.m_name;
+					Json::Value& places = root;
+					if (places.isArray())
 					{
-						Json::Value val = places.get(placeID, Json::nullValue);
-						std::string name = val["Display"].asString();
-						std::string type = val["Type"].asString();
-						bool isBorough = (type == "Quartier");
-						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+						StringTools::TransformToLower(boroughCityName);
 
-						bool valid = isBorough || isCity;
-						if (!valid)
+						const int nbPlaces = places.size();
+						for (int placeID = 0; placeID < nbPlaces; ++placeID)
 						{
-							std::string mes = "Rejected because invalid for " + name;
+							Json::Value val = places.get(placeID, Json::nullValue);
+							std::string name = val["Display"].asString();
+							std::string type = val["Type"].asString();
+							bool isBorough = (type == "Quartier");
+							bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+
+							bool valid = isBorough || isCity;
+							if (!valid)
+							{
+								std::string mes = "Rejected because invalid for " + name;
+								DisplayMySQLMessage(mes);
+								continue;
+							}
+
+							std::string tmp = name;
+							StringTools::TransformToLower(tmp);
+							auto findID = tmp.find(boroughCityName);
+							if (findID == std::string::npos)
+								continue;
+
+							std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
+							unsigned int index = std::stoi(strIndexID);
+
+							borough.m_data.SetSelogerKey(index, isCity);
+
+							DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
+
+							std::string mes = "Added borough " + borough.m_data.m_name + " to city " + borough.m_data.m_city.m_name;
 							DisplayMySQLMessage(mes);
-							continue;
 						}
-
-						std::string tmp = name;
-						StringTools::TransformToLower(tmp);
-						auto findID = tmp.find(boroughCityName);
-						if (findID == std::string::npos)
-							continue;
-
-						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
-						unsigned int index = std::stoi(strIndexID);
-						
-						borough.m_data.SetSelogerKey(index, isCity);
-
-						DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
-
-						std::string mes = "Added borough " + borough.m_data.m_name + " to city " + borough.m_data.m_city.m_name;
+					}
+					else
+					{
+						std::string mes = "Rejected because no place in " + boroughCityName;
 						DisplayMySQLMessage(mes);
 					}
+
+					it = m_boroughData.erase(it);
 				}
 				else
 				{
-					std::string mes = "Rejected because no place in " + boroughCityName;
-					DisplayMySQLMessage(mes);
+					available = false;
+					++it;
 				}
+			}
 
-				it = m_boroughData.erase(it);
-			}
-			else
-			{
-				available = false;
-				++it;
-			}
+			if (available)
+				result = false;
 		}
-
-		if (available)
-			result = false;
 	}
-#endif
 	return result;
 }

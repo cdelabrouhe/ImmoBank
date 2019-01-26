@@ -14,6 +14,8 @@
 const int	CONFIG_WINDOW_WIDTH = 1600;
 const int	CONFIG_WINDOW_HEIGHT = 900;
 
+#define FREE_CONSOLE
+
 using namespace ImmoBank;
 
 int main(int argc, char** argv)
@@ -32,10 +34,10 @@ int main(int argc, char** argv)
 		system("pause");
 	}
 
-#ifndef DEV_MODE
+#ifdef FREE_CONSOLE
 	FreeConsole();
 #endif
-		
+
 	// Setup window
 	HWND hwnd = 0;
 	if (!ProdToolGL_InitCreateWindow(CONFIG_WINDOW_WIDTH, CONFIG_WINDOW_HEIGHT))

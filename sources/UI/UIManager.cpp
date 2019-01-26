@@ -13,6 +13,7 @@
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
 #include <GL/ProdToolGL.h>
+#include "GLFW/glfw3.h"
 
 using namespace ImmoBank;
 
@@ -118,25 +119,28 @@ bool UIManager::Draw()
 
 		if (ImGui::BeginMenu("?"))
 		{
-#ifdef DEV_MODE
-			if (ImGui::MenuItem(GET_TEXT("MenuHelpShowTestWindow")))
-				showTestWindow = !showTestWindow;
-#endif
+			if (Tools::IsDevMode())
+			{
+				if (ImGui::MenuItem(GET_TEXT("MenuHelpShowTestWindow")))
+					showTestWindow = !showTestWindow;
+			}
+
 			if (ImGui::MenuItem(GET_TEXT("MenuHelpShowAbout")))
 				showAbout = !showAbout;
 			ImGui::EndMenu();
 		}
 
-#ifdef DEV_MODE
-		if (ImGui::BeginMenu(GET_TEXT("MenuDebug")))
+		if (Tools::IsDevMode())
 		{
-			ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
-			ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
-			ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices);
+			if (ImGui::BeginMenu(GET_TEXT("MenuDebug")))
+			{
+				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
+				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
+				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices);
 
-			ImGui::EndMenu();
+				ImGui::EndMenu();
+			}
 		}
-#endif
 
 		ImGui::EndMenuBar();
 	}
@@ -167,6 +171,19 @@ void UIManager::Process()
 {
 	if (m_displayCityData)
 		DisplayCityInformation();
+
+	// Activate dev mode
+	static bool s_block = false;
+	if (!s_block && ImGui::IsKeyPressed(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_D))
+	{
+		s_block = true;
+		Tools::InvertDevMode();
+	}
+	else if (s_block)
+	{
+		if (!ImGui::IsKeyPressed(GLFW_KEY_D))
+			s_block = false;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -333,17 +350,18 @@ void UIManager::DisplayCityInformation()
 			if (ImGui::Button(GET_TEXT("DatabaseWindowCityLink")))
 				wholeCityData.OpenInBrowser();;
 
-#ifdef DEV_MODE
-			ImGui::SameLine();
+			if (Tools::IsDevMode())
+			{
+				ImGui::SameLine();
 
-			if (ImGui::Button(GET_TEXT("DatabaseWindowCityDeleteData")))
-				wholeCityData.Reset(true);
+				if (ImGui::Button(GET_TEXT("DatabaseWindowCityDeleteData")))
+					wholeCityData.Reset(true);
 
-			ImGui::SameLine();
+				ImGui::SameLine();
 
-			if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughExternalUpdateList")))
-				DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data);
-#endif
+				if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughExternalUpdateList")))
+					DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data);
+			}
 
 			if (s_selectedData == &wholeCityData)
 				wholeCityData.Edit();
@@ -375,14 +393,15 @@ void UIManager::DisplayCityInformation()
 							borough.OpenInBrowser();
 						ImGui::PopID();
 
-#ifdef DEV_MODE
-						ImGui::SameLine();
+						if (Tools::IsDevMode())
+						{
+							ImGui::SameLine();
 
-						ImGui::PushID(this + cpt + 30000);
-						if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughDeleteData")))
-							borough.Reset(true);
-						ImGui::PopID();
-#endif
+							ImGui::PushID(this + cpt + 30000);
+							if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughDeleteData")))
+								borough.Reset(true);
+							ImGui::PopID();
+						}
 
 						if (manual)
 						{

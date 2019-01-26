@@ -30,9 +30,6 @@ namespace ImmoBank
 		void	DisplayComputeRateTool(bool _independantWindow);
 		bool	DisplayConnectionError();
 
-#ifdef DEV_MODE
-#endif
-
 	private:
 		// Display panel
 		int								m_selectedCityID = 0;

@@ -58,7 +58,11 @@ bool BoroughData::Process()
 //-------------------------------------------------------------------------------------------------
 void BoroughData::End()
 {
+	if (m_httpRequestID > -1)
+		OnlineManager::getSingleton()->DeleteRequest(m_httpRequestID);
 
+	if (m_selogerKeyRequestID > -1)
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_selogerKeyRequestID);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -260,6 +264,9 @@ void BoroughData::Edit()
 					DatabaseManager::getSingleton()->AddBoroughData(*this);
 
 					// We need to update the SeLoger key
+					if (m_selogerKeyRequestID > -1)
+						OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_selogerKeyRequestID);
+
 					std::string request = ComputeSeLogerKeyURL();
 					m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 				}

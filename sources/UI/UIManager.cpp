@@ -365,6 +365,8 @@ void UIManager::DisplayCityInformation()
 
 			if (s_selectedData == &wholeCityData)
 				wholeCityData.Edit();
+			else
+				wholeCityData.End();
 
 			if (ImGui::TreeNode(GET_TEXT("DatabaseWindowBoroughList")))
 			{

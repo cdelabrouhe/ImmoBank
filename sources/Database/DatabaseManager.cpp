@@ -88,7 +88,10 @@ void DatabaseManager::Process()
 	{
 		BoroughData& data = *itBorough;
 		if (data.Process())
+		{
+			data.End();
 			itBorough = m_boroughComputes.erase(itBorough);
+		}
 		else
 			++itBorough;
 	}

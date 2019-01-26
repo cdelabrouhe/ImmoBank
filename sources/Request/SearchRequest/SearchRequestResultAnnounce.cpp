@@ -27,7 +27,10 @@ void SearchRequestResultAnnounce::End()
 
 	if (m_imageTextureID > 0)
 		ProdToolGL_DeleteTexture(&m_imageTextureID);
-	m_imageTextureID = 0;	
+	m_imageTextureID = 0;
+
+	if (m_imageDownloadRequestID > -1)
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_imageDownloadRequestID);
 }
 
 void SearchRequestResultAnnounce::PostProcess()

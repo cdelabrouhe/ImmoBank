@@ -169,6 +169,7 @@ void OnlineManager::DisplayDebug()
 
 	ImGui::Begin("OnlineManager Debug panel", &m_displayDebug);
 	ImGui::Text("Number of active requests: %u", m_requests.size());
+	ImGui::Text("Number of active HTTP requests: %d", s_downloader.GetNbRequests());
 	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
 
 	// Debug request

@@ -75,6 +75,8 @@ namespace ImmoBank
 
 		bool GetNextRequest(sRequest& _request);
 
+		size_t GetNbRequests() const	{ return m_requests.size(); }
+
 	protected:
 		/**
 		* Download a file using HTTP GET and store in in a std::string

@@ -140,7 +140,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
 				if (buffer)
 				{
-					if (ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTinyTextureID))
+					if (ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTinyTextureID))
 					{
 						free(buffer);
 						m_imageDownloadRequestID = -1;
@@ -167,7 +167,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
 				if (buffer)
 				{
-					ProdToolGL_GenerateTextureFromBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
+					ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
 					free(buffer);
 				}
 				m_imageDownloadRequestID = -1;

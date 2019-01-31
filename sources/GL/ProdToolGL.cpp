@@ -20,7 +20,22 @@
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
 #include "Tools/Tools.h"
+
+#define USE_STBI
+
+#ifndef USE_STBI
+#define USE_LIBJPEGTURBO
+#endif
+
+#ifdef USE_STBI
 #include "extern/stb/stb_image.h"
+#endif
+
+#ifdef USE_LIBJPEGTURBO
+#include <turbojpeg.h>
+NOT FUNCTIONNAL YET, DEBUUUUUGGG !!!
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
+#endif
 
 using namespace ImmoBank;
 
@@ -37,11 +52,53 @@ static void error_callback(int error, const char* description)
 	fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
-bool ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
+unsigned char* DecompressJPEG(unsigned char* _buffer, const int _bufferSize, int& _width, int& _height)
+{
+	unsigned char* data = nullptr;
+
+#define COLOR_COMPONENTS	3
+
+#ifdef USE_STBI
+	data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, COLOR_COMPONENTS);
+#endif
+
+#ifdef USE_LIBJPEGTURBO
+	int jpegSubsamp;
+	data = (unsigned char*)malloc(_width * _height * COLOR_COMPONENTS);
+
+	try
+	{
+		tjhandle _jpegDecompressor = tjInitDecompress();
+
+		tjDecompressHeader2(_jpegDecompressor, _buffer, _bufferSize, &_width, &_height, &jpegSubsamp);
+
+		tjDecompress2(_jpegDecompressor, _buffer, _bufferSize, data, _width, 0/*pitch*/, _height, TJPF_RGB, TJFLAG_FASTDCT);
+
+		tjDestroy(_jpegDecompressor);
+	}
+	catch (const std::exception& e)
+	{
+		printf("ERROR: Invalid JPEG file %s\n", e.what());
+		free(data);
+		return nullptr;
+	}
+	
+#endif
+	return data;
+}
+
+void DisplayJPEGLoadError()
+{
+#ifdef USE_STBI
+	printf("ERROR: %s\n", stbi_failure_reason());
+#endif
+}
+
+bool ImmoBank::ProdToolGL_GenerateTextureFromJPEGBuffer(unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
 	try
 	{
-		unsigned char* image_data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, 3);
+		unsigned char* image_data = DecompressJPEG(_buffer, _bufferSize, _width, _height);
 		if (image_data)
 		{
 			ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
@@ -54,12 +111,14 @@ bool ImmoBank::ProdToolGL_GenerateTextureFromBuffer(const unsigned char* _buffer
 		return false;
 	}
 	
-	printf("ERROR: %s\n", stbi_failure_reason());
+	DisplayJPEGLoadError();
 	return false;
 }
 
 bool ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width, int& _height, unsigned int& _textureID)
 {
+	// TODO !! Read file and then send it to decompressor, whatever it is (STBI / TJPEG)
+#ifdef USE_STBI
 	std::string exePath = Tools::GetExePath() + "test.jpg";
 	unsigned char* image_data = stbi_load(exePath.c_str(), &_width, &_height, NULL, 3);
 	if (image_data)
@@ -68,7 +127,8 @@ bool ImmoBank::ProdToolGL_GenerateTextureFromFile(const char* _path, int& _width
 		return true;
 	}
 
-	printf("ERROR: %s\n", stbi_failure_reason());
+	DisplayJPEGLoadError();
+#endif
 	return false;
 }
 

@@ -94,13 +94,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost;$(SolutionDir)\extern\libjpeg-turbo\x64\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;_DEBUG;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\libmariadb\include\x64;$(SolutionDir)\extern\libmariadb\bin\x64\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\libmariadb\include\x64;$(SolutionDir)\extern\libjpeg-turbo\x64\lib;$(SolutionDir)\extern\libmariadb\bin\x64\Debug;$(SolutionDir)\extern\libjpeg-turbo\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;legacy_stdio_definitions.lib;jpeg-static.lib;turbojpeg-static.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -109,13 +109,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost;$(SolutionDir)\extern\libjpeg-turbo\Win32\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;WIN32;_DEBUG;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\libmariadb\include\Win32;$(SolutionDir)\extern\libmariadb\bin\Win32\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\libmariadb\include\Win32;$(SolutionDir)\extern\libjpeg-turbo\Win32\lib;$(SolutionDir)\extern\libmariadb\bin\Win32\Debug;$(SolutionDir)\extern\libjpeg-turbo\lib;$(SolutionDir)\extern\libjpeg-turbo\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;legacy_stdio_definitions.lib;jpeg-static.lib;turbojpeg-static.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -126,15 +126,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost;$(SolutionDir)\extern\libjpeg-turbo\x64\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\libmariadb\include\x64;$(SolutionDir)\extern\libmariadb\bin\x64\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\openssl\x64\lib;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-64;$(SolutionDir)\extern\libcurl\lib\x64;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\x64;$(SolutionDir)\extern\libmariadb\include\x64;$(SolutionDir)\extern\libjpeg-turbo\x64\lib;$(SolutionDir)\extern\libmariadb\bin\x64\Release;$(SolutionDir)\extern\libjpeg-turbo\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;legacy_stdio_definitions.lib;jpeg-static.lib;turbojpeg-static.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,15 +144,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)\extern\opengl\libs\glfw\include;$(SolutionDir)\extern\opengl\libs\gl3w;$(SolutionDir)\extern\libmariadb\include;$(SolutionDir)\extern\libcurl\include;$(SolutionDir)\sources;$(SolutionDir)\;$(SolutionDir)\..\Boost;$(SolutionDir)\extern\libjpeg-turbo\Win32\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;OPENGL2;WIN32;CURL_STATICLIB;STATIC_CONCPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\libmariadb\include\Win32;$(SolutionDir)\extern\libmariadb\bin\Win32\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\extern\libcurl\lib\Win32;$(SolutionDir)\extern\opengl\libs\glfw\lib-vc2015-32;$(SolutionDir)\extern\openssl\Win32\lib;%(AdditionalLibraryDirectories);$(SolutionDir)\extern\sqlite\lib\Win32;$(SolutionDir)\extern\libmariadb\include\Win32;$(SolutionDir)\extern\libjpeg-turbo\Win32\lib;$(SolutionDir)\extern\libmariadb\bin\Win32\Release;$(SolutionDir)\extern\libjpeg-turbo\lib;$(SolutionDir)\extern\libjpeg-turbo\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;ws2_32.lib;wldap32.lib;padlock.lib;ossltest.lib;libcrypto.lib;dasync.lib;capi.lib;openssl.lib;libssl.lib;libeay32.lib;ssleay32.lib;sqlite3.lib;libmariadb.lib;legacy_stdio_definitions.lib;jpeg-static.lib;turbojpeg-static.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,6 +179,11 @@
     <ClInclude Include="extern\libcurl\include\curl\stdcheaders.h" />
     <ClInclude Include="extern\libcurl\include\curl\system.h" />
     <ClInclude Include="extern\libcurl\include\curl\typecheck-gcc.h" />
+    <ClInclude Include="extern\libjpeg-turbo\include\jconfig.h" />
+    <ClInclude Include="extern\libjpeg-turbo\include\jerror.h" />
+    <ClInclude Include="extern\libjpeg-turbo\include\jmorecfg.h" />
+    <ClInclude Include="extern\libjpeg-turbo\include\jpeglib.h" />
+    <ClInclude Include="extern\libjpeg-turbo\include\turbojpeg.h" />
     <ClInclude Include="extern\mariadb\include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="extern\mariadb\include\jdbc\cppconn\config.h" />
     <ClInclude Include="extern\mariadb\include\jdbc\cppconn\connection.h" />

@@ -343,6 +343,21 @@
     <ClInclude Include="sources\Config\ConfigManager.h">
       <Filter>Sources\Config</Filter>
     </ClInclude>
+    <ClInclude Include="extern\libjpeg-turbo\include\jconfig.h">
+      <Filter>Sources\extern\libjpeg-turbo</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libjpeg-turbo\include\jerror.h">
+      <Filter>Sources\extern\libjpeg-turbo</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libjpeg-turbo\include\jmorecfg.h">
+      <Filter>Sources\extern\libjpeg-turbo</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libjpeg-turbo\include\jpeglib.h">
+      <Filter>Sources\extern\libjpeg-turbo</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\libjpeg-turbo\include\turbojpeg.h">
+      <Filter>Sources\extern\libjpeg-turbo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -550,6 +565,9 @@
     </Filter>
     <Filter Include="Sources\Config">
       <UniqueIdentifier>{2cfbdd78-5793-406d-8240-6c57801d4cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\libjpeg-turbo">
+      <UniqueIdentifier>{1bcce02a-23be-4250-b9d4-45f5ed0da1ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

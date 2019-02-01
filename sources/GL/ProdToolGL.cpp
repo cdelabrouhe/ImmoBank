@@ -68,13 +68,13 @@ unsigned char* DecompressJPEG(unsigned char* _buffer, const int _bufferSize, int
 
 	try
 	{
-		tjhandle _jpegDecompressor = tjInitDecompress();
+		tjhandle jpegDecompressor = tjInitDecompress();
 
-		tjDecompressHeader2(_jpegDecompressor, _buffer, _bufferSize, &_width, &_height, &jpegSubsamp);
+		tjDecompressHeader2(jpegDecompressor, _buffer, _bufferSize, &_width, &_height, &jpegSubsamp);
 
-		tjDecompress2(_jpegDecompressor, _buffer, _bufferSize, data, _width, 0/*pitch*/, _height, TJPF_RGB, TJFLAG_FASTDCT);
+		tjDecompress2(jpegDecompressor, _buffer, _bufferSize, data, _width, 0, _height, TJPF_RGB, TJFLAG_FASTDCT);
 
-		tjDestroy(_jpegDecompressor);
+		tjDestroy(jpegDecompressor);
 	}
 	catch (const std::exception& e)
 	{

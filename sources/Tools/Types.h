@@ -5,6 +5,9 @@
 
 #define ASSERT assert
 
+#define DISABLE_OPTIMIZE	__pragma(optimize("",off))
+#define ENABLE_OPTIMIZE	__pragma(optimize("",on))
+
 #ifdef WIN32
 typedef unsigned int			ux;
 typedef int						ix;

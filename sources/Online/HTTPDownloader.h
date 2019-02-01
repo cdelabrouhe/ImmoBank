@@ -24,12 +24,12 @@ namespace ImmoBank
 
 	struct sStoreRequest
 	{
-		void Clear() { if (m_resultBinary) free(m_resultBinary); }
+		void End();
 
 		std::string m_request;
 		std::string m_result;
-		char*		m_resultBinary = nullptr;
-		int			m_resultBinarySize = 0;
+		unsigned char*	m_resultBinary = nullptr;
+		int				m_resultBinarySize = 0;
 		RequestResultType		m_type = RequestResultType_NONE;
 		bool m_finished = false;
 		bool m_canceled = false;
@@ -50,7 +50,7 @@ namespace ImmoBank
 		int			m_requestID;
 		std::string	m_request;
 		std::string	m_result;
-		char*		m_resultBinary = nullptr;
+		unsigned char*		m_resultBinary = nullptr;
 		int			m_resultBinarySize = 0;
 		bool		m_protectUserAgent = false;
 	};
@@ -84,6 +84,7 @@ namespace ImmoBank
 		* @return The download result
 		*/
 		void download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out);
+		void downloadBinary(const std::string& _url, bool _modifyUserAgent, unsigned char* & _out, int &_bufferSize);
 
 	private:
 		void* m_curl;

@@ -4,9 +4,6 @@
 #include <vector>
 #include "extern/jsoncpp/value.h"
 
-#define DISABLE_OPTIMIZE	__pragma(optimize("",off))
-#define ENABLE_OPTIMIZE	__pragma(optimize("",on))
-
 namespace ImmoBank
 {
 	struct sPrice;

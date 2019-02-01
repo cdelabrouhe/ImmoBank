@@ -8,6 +8,7 @@
 using namespace ImmoBank;
 
 bool ImmoBank::Tools::m_devMode = false;
+static float s_versionNumber = 1.01f;
 
 bool ImmoBank::Tools::IsDevMode()
 {
@@ -22,6 +23,11 @@ void ImmoBank::Tools::SetDevMode(bool _state)
 void ImmoBank::Tools::InvertDevMode()
 {
 	m_devMode = !m_devMode;
+}
+
+float ImmoBank::Tools::GetVersionNumber()
+{
+	return s_versionNumber;
 }
 
 float Tools::ComputeRentabilityRate(float _rent, float _price)

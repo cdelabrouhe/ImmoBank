@@ -14,6 +14,7 @@
 #include "Text/TextManager.h"
 #include <GL/ProdToolGL.h>
 #include "GLFW/glfw3.h"
+#include <shellapi.h>
 
 using namespace ImmoBank;
 
@@ -153,10 +154,13 @@ bool UIManager::Draw()
 	if (showAbout)
 	{
 		ImGui::Begin("About ImmoBank", &showAbout, ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::Text("                          Immobank v1.0");
+		ImGui::Text("                     Immobank version %.2f", Tools::GetVersionNumber());
 		ImGui::Separator();
 		ImGui::Text("Copyright 2018-2019 - Christophe de Labrouhe");
-		ImGui::Text("                    mastertof@hotmail.com");
+		ImGui::TextColored(ImVec4(0.f,0.5f,1.f,1.f), "                    mastertof@hotmail.com");
+		if (ImGui::IsItemClicked())
+			ShellExecuteA(NULL, "open", "mailto:mastertof@hotmail.com", NULL, NULL, SW_SHOWDEFAULT);
+
 		ImGui::End();
 	}
 

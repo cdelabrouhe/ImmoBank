@@ -31,6 +31,7 @@ namespace ImmoBank
 		static std::string GetExePath();
 		static bool ReadJSON(const char* _path, Json::Value& _data);
 		static bool WriteJSON(const char* _path, Json::Value& _data);
+		static float GetVersionNumber();
 
 		static int reduce(int gap)
 		{

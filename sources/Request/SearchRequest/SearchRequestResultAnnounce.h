@@ -26,6 +26,7 @@ namespace ImmoBank
 		std::vector<BoroughData> m_boroughs;
 		int			m_price = 0;
 		float		m_surface = 0.f;
+		int			m_rent = 0;
 		int			m_nbRooms = 0;
 		int			m_nbBedRooms = 0;
 		int			m_selectedBoroughID = 0;

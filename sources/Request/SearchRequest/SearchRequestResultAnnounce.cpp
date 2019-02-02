@@ -39,6 +39,8 @@ void SearchRequestResultAnnounce::PostProcess()
 	StringTools::RemoveSpecialCharacters(m_description);
 
 	UpdateBoroughs();
+
+	m_rent = GetEstimatedRent();
 }
 
 void SearchRequestResultAnnounce::UpdateBoroughs()
@@ -93,7 +95,7 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 
 float SearchRequestResultAnnounce::GetRentabilityRate() const
 {
-	return Tools::ComputeRentabilityRate(GetEstimatedRent(), (float)m_price);
+	return Tools::ComputeRentabilityRate(m_rent, (float)m_price);
 }
 
 float SearchRequestResultAnnounce::GetEstimatedRent() const
@@ -273,9 +275,14 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		m_waitingForDBUpdate = true;
 	}
 	ImGui::NextColumn();
-	float rent = GetEstimatedRent();
-	if (rent > 0.f)
-		ImGui::Text("%s: %.0f     ", GET_TEXT("SearchRequestResultEstimatedRent"),rent);
+	if (m_rent > 0)
+	{
+		ImGui::PushID(this + 51384);
+		ImGui::Text(GET_TEXT("SearchRequestResultEstimatedRent"));
+		ImGui::SameLine();
+		ImGui::InputInt("€", &m_rent, 10, min(m_rent * 2, 2000));
+		ImGui::PopID();
+	}
 	else if(ImGui::Button(GET_TEXT("SearchRequestResultUpdateBorough")))
 	{
 		DatabaseManager::getSingleton()->ComputeBoroughData(requestBorough);

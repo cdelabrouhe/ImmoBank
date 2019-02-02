@@ -39,8 +39,6 @@ void SearchRequestResultAnnounce::PostProcess()
 	StringTools::RemoveSpecialCharacters(m_description);
 
 	UpdateBoroughs();
-
-	m_rent = GetEstimatedRent();
 }
 
 void SearchRequestResultAnnounce::UpdateBoroughs()
@@ -91,6 +89,8 @@ void SearchRequestResultAnnounce::UpdateBoroughs()
 			++ID;
 		}
 	}
+
+	m_rent = GetEstimatedRent();
 }
 
 float SearchRequestResultAnnounce::GetRentabilityRate() const
@@ -230,15 +230,16 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	data[0] = "";
 	for (auto ID = 0; ID < m_boroughs.size(); ++ID)
 		data[ID + 1] = m_boroughs[ID].m_name.c_str();
+
 	ImGui::PushID(this + 12345);
-	ImGui::Combo(GET_TEXT("GeneralBorough"), &m_selectedBoroughID, data.data(), (int)data.size());
+	bool forceChange = ImGui::Combo(GET_TEXT("GeneralBorough"), &m_selectedBoroughID, data.data(), (int)data.size());
 	ImGui::PopID();
 
 	// Compute rentability rate
 	bool needNeighboorUpdate = false;
 	std::string rate = std::string("<= ") + GET_TEXT("SearchRequestResultSelectBorough");
 	BoroughData requestBorough;
-	if (m_selectedBoroughID > 0)
+	if (forceChange || (m_selectedBoroughID > 0))
 	{
 		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
 		if (borough.m_priceRentApartmentT1.m_val < 0.1f)
@@ -247,7 +248,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 			requestBorough = borough;
 		}
 
-		if (m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough))
+		if (forceChange || (m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough)))
 		{
 			m_waitingForDBUpdate = false;
 			UpdateBoroughs();

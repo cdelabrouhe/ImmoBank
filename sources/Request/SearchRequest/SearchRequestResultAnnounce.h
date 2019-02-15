@@ -69,7 +69,7 @@ namespace ImmoBank
 		}
 
 	private:
-		void UpdateBoroughs();
+		void UpdateBoroughs(bool _lookForBorough);
 
 	private:
 		bool m_waitingForDBUpdate = false;

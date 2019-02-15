@@ -39,55 +39,58 @@ void SearchRequestResultAnnounce::PostProcess()
 	StringTools::RemoveSpecialCharacters(m_name);
 	StringTools::RemoveSpecialCharacters(m_description);
 
-	UpdateBoroughs();
+	UpdateBoroughs(true);
 }
 
-void SearchRequestResultAnnounce::UpdateBoroughs()
+void SearchRequestResultAnnounce::UpdateBoroughs(bool _lookForBorough)
 {
 	DatabaseManager::getSingleton()->GetBoroughs(m_city, m_boroughs);
 
 	std::sort(m_boroughs.begin(), m_boroughs.end(), BoroughData::compare);
 
-	std::string description = m_description;
-	StringTools::TransformToLower(description);
-
-	bool found = false;
-	int ID = 0;
-	for (auto& borough : m_boroughs)
+	if (_lookForBorough)
 	{
-		int selogerKey = borough.GetSelogerKey();
-		if (selogerKey == m_inseeCode)
-		{
-			m_selectedBorough = borough;
-			m_selectedBoroughID = ID + 1;
-			found = true;
-			break;
-		}
+		std::string description = m_description;
+		StringTools::TransformToLower(description);
 
-		++ID;
-	}
-
-	if (!found)
-	{
-		ID = 0;
+		bool found = false;
+		int ID = 0;
 		for (auto& borough : m_boroughs)
 		{
-			std::string name = borough.m_name;
-			StringTools::TransformToLower(name);
-			auto findIndex = description.find(name);
-			if (findIndex != std::string::npos)
+			int selogerKey = borough.GetSelogerKey();
+			if (selogerKey == m_inseeCode)
 			{
 				m_selectedBorough = borough;
 				m_selectedBoroughID = ID + 1;
+				found = true;
 				break;
-			}
-			else
-			{
-				if ((m_selectedBoroughID == 0) && (borough.m_name == s_wholeCityName))
-					m_selectedBoroughID = ID + 1;
 			}
 
 			++ID;
+		}
+
+		if (!found)
+		{
+			ID = 0;
+			for (auto& borough : m_boroughs)
+			{
+				std::string name = borough.m_name;
+				StringTools::TransformToLower(name);
+				auto findIndex = description.find(name);
+				if (findIndex != std::string::npos)
+				{
+					m_selectedBorough = borough;
+					m_selectedBoroughID = ID + 1;
+					break;
+				}
+				else
+				{
+					if ((m_selectedBoroughID == 0) && (borough.m_name == s_wholeCityName))
+						m_selectedBoroughID = ID + 1;
+				}
+
+				++ID;
+			}
 		}
 	}
 
@@ -252,7 +255,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		if (forceChange || (m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough)))
 		{
 			m_waitingForDBUpdate = false;
-			UpdateBoroughs();
+			UpdateBoroughs(false);
 		}
 
 		float tmp = GetRentabilityRate();

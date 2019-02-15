@@ -16,7 +16,7 @@
 	"MenuWindowStyleLight" : "Light",
 	
 	"MenuHelpShowTestWindow" : "Show ImGui test window",
-	MenuHelpShowAbout
+	"MenuHelpShowAbout" : "About",
 	
 	"MenuDebug" : "DEBUG",
 	"MenuDebugDisplayMySQLDebug" : "Display MySQL Debug",
@@ -103,7 +103,7 @@
 	"SearchRequestResultSelectBorough" : "Select borough",
 	"SearchRequestResultUpdatingBorough" : "Updating borough",
 	"SearchRequestResultUpdateBorough" : "Update borough",
-	"SearchRequestResultEstimatedRent" : "Estimated rent",
+	"SearchRequestResultEstimatedRent" : "Rent",
 	"SearchRequestResultNbRooms" : "Nb rooms",
 	"SearchRequestResultNbBedRooms" : "Nb bedrooms"
 }

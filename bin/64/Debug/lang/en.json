@@ -103,7 +103,7 @@
 	"SearchRequestResultSelectBorough" : "Select borough",
 	"SearchRequestResultUpdatingBorough" : "Updating borough",
 	"SearchRequestResultUpdateBorough" : "Update borough",
-	"SearchRequestResultEstimatedRent" : "Estimated rent",
+	"SearchRequestResultEstimatedRent" : "Rent",
 	"SearchRequestResultNbRooms" : "Nb rooms",
 	"SearchRequestResultNbBedRooms" : "Nb bedrooms"
 }

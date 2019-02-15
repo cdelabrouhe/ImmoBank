@@ -28,6 +28,7 @@ namespace ImmoBank
 		void	InitDisplayCityInformation();
 		void	DisplayCityInformation();
 		void	DisplayComputeRateTool(bool _independantWindow);
+		void	ForceRentabilityRateToolValues(int _price, int _rent);
 		bool	DisplayConnectionError();
 
 	private:

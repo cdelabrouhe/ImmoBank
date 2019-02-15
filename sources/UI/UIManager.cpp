@@ -23,6 +23,9 @@ using namespace ImmoBank;
 //-------------------------------------------------------------------------------------------------
 UIManager* s_singleton = nullptr;
 static bool s_computeRentabilityRate = false;
+static int s_rentabilityToolRent = 700;
+static int s_rentabilityToolPrice = 150000;
+static float s_rentabilityToolResult = 0.f;
 
 //-------------------------------------------------------------------------------------------------
 UIManager* UIManager::getSingleton()
@@ -38,6 +41,8 @@ UIManager* UIManager::getSingleton()
 UIManager::UIManager()
 {
 	FontDefault = NULL;
+
+	s_rentabilityToolResult = Tools::ComputeRentabilityRate((float)s_rentabilityToolRent, (float)s_rentabilityToolPrice);
 }
 
 bool UIManager::Draw()
@@ -452,24 +457,29 @@ void UIManager::DisplayCityInformation()
 }
 
 //-------------------------------------------------------------------------------------------------
+void UIManager::ForceRentabilityRateToolValues(int _price, int _rent)
+{
+	s_rentabilityToolRent = _rent;
+	s_rentabilityToolPrice = _price;
+	s_rentabilityToolResult = Tools::ComputeRentabilityRate((float)s_rentabilityToolRent, (float)s_rentabilityToolPrice);
+}
+
+//-------------------------------------------------------------------------------------------------
 void UIManager::DisplayComputeRateTool(bool _independantWindow)
 {
 	if (_independantWindow ? ImGui::Begin(GET_TEXT("PopupComputeRentabilityRate"), &s_computeRentabilityRate, ImGuiWindowFlags_AlwaysAutoResize) : true)
 	{
 		ImGui::SetWindowFontScale(1.f);
 
-		static int s_rent = 700;
-		static int s_price = 150000;
-		static float s_result = 0.f;
-		ImGui::InputInt(GET_TEXT("GeneralRent"), &s_rent);
-		ImGui::InputInt(GET_TEXT("GeneralPrice"), &s_price);
+		ImGui::InputInt(GET_TEXT("GeneralRent"), &s_rentabilityToolRent);
+		ImGui::InputInt(GET_TEXT("GeneralPrice"), &s_rentabilityToolPrice);
 
 		ImGui::Separator();
-		ImGui::Text("%s: %.2f", GET_TEXT("GeneralRate"), s_result);
+		ImGui::Text("%s: %.2f", GET_TEXT("GeneralRate"), s_rentabilityToolResult);
 		ImGui::Separator();
 
 		if (ImGui::Button(GET_TEXT("GeneralCompute")))
-			s_result = Tools::ComputeRentabilityRate((float)s_rent, (float)s_price);
+			s_rentabilityToolResult = Tools::ComputeRentabilityRate((float)s_rentabilityToolRent, (float)s_rentabilityToolPrice);
 
 		if (_independantWindow)
 		{

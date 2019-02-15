@@ -8,6 +8,7 @@
 #include "Text\TextManager.h"
 #include <Online\OnlineManager.h>
 #include <GL\ProdToolGL.h>
+#include <UI\UIManager.h>
 
 //#define LOAD_BIG_IMAGE
 
@@ -217,8 +218,8 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	int columnID = 0;
 	ImGui::SetColumnWidth(columnID++, 250.f);
-	ImGui::SetColumnWidth(columnID++, 80.f);
 	ImGui::SetColumnWidth(columnID++, 150.f);
+	ImGui::SetColumnWidth(columnID++, 190.f);
 	ImGui::SetColumnWidth(columnID++, 110.f);
 	ImGui::SetColumnWidth(columnID++, 120.f);
 	ImGui::SetColumnWidth(columnID++, 110.f);
@@ -263,7 +264,15 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	ImGui::NextColumn();
 	if (!needNeighboorUpdate)
+	{
+		ImGui::PushID(this + 0x3467);
+		if (ImGui::Button(GET_TEXT("GeneralCompute")))
+			UIManager::getSingleton()->ForceRentabilityRateToolValues(m_price, m_rent);
+		ImGui::PopID();
+
+		ImGui::SameLine();
 		ImGui::Text("%s     ", rate.c_str());
+	}
 	else if (m_waitingForDBUpdate)
 	{
 		char buf[128];

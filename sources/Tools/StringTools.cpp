@@ -42,6 +42,8 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 {
 	// Correct some bad characters
 	StringTools::ReplaceBadSyntax(_str, "&#39;", "'");
+	StringTools::ReplaceBadSyntax(_str, "&amp;", "&");
+	StringTools::ReplaceBadSyntax(_str, "Â½", "oe");
 	StringTools::ReplaceBadSyntax(_str, "Ã©", "e");// "é");
 	StringTools::ReplaceBadSyntax(_str, "Ã¨", "e");//  "è");
 	StringTools::ReplaceBadSyntax(_str, "Ã´", "o");//  "è");

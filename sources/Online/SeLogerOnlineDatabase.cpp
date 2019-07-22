@@ -19,7 +19,7 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
 
-	std::string request = "http://ws.seloger.com/search.xml?";
+	std::string request = "http://ws-seloger.svc.groupe-seloger.com/search.xml?";
 
 	// Buy / rent
 	switch (announce->m_type)

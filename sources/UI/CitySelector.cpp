@@ -43,6 +43,9 @@ bool CitySelector::Display()
 					StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
 
 				int code = std::stoi(codeStr);
+				if (zipCodeStr.empty())
+					continue;
+
 				int zipCode = std::stoi(zipCodeStr);
 				m_cities.push_back(sCity(name, code, zipCode));
 

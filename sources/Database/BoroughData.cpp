@@ -302,9 +302,11 @@ void BoroughData::Edit()
 					{
 						Json::Value val = places.get(placeID, Json::nullValue);
 						std::string type = val["Type"].asString();
+						if (type == "Pays")
+							continue;
+
 						bool isBorough = (type == "Quartier");
 						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
-
 						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
 						unsigned int index = std::stoi(strIndexID);
 

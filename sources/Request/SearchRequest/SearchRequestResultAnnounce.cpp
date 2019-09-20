@@ -18,6 +18,8 @@ void SearchRequestResultAnnounce::Init()
 {
 	if (!m_imageTinyURL.empty())
 		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+
+	m_priceM2 = int((float)m_price / m_surface);
 }
 
 void SearchRequestResultAnnounce::End()
@@ -94,12 +96,12 @@ void SearchRequestResultAnnounce::UpdateBoroughs(bool _lookForBorough)
 		}
 	}
 
-	m_rent = GetEstimatedRent();
+	m_rent = (int)GetEstimatedRent();
 }
 
 float SearchRequestResultAnnounce::GetRentabilityRate() const
 {
-	return Tools::ComputeRentabilityRate(m_rent, (float)m_price);
+	return Tools::ComputeRentabilityRate((float)m_rent, (float)m_price);
 }
 
 float SearchRequestResultAnnounce::GetEstimatedRent() const
@@ -217,16 +219,17 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	ImGui::TextWrapped(m_description.c_str());
 
-	ImGui::Columns(7);
+	ImGui::Columns(8);
 
 	int columnID = 0;
-	ImGui::SetColumnWidth(columnID++, 250.f);
-	ImGui::SetColumnWidth(columnID++, 150.f);
+	ImGui::SetColumnWidth(columnID++, 240.f);
+	ImGui::SetColumnWidth(columnID++, 80.f);
 	ImGui::SetColumnWidth(columnID++, 190.f);
 	ImGui::SetColumnWidth(columnID++, 110.f);
 	ImGui::SetColumnWidth(columnID++, 120.f);
-	ImGui::SetColumnWidth(columnID++, 110.f);
-	ImGui::SetColumnWidth(columnID++, 120.f);
+	ImGui::SetColumnWidth(columnID++, 70.f);
+	ImGui::SetColumnWidth(columnID++, 90.f);
+	ImGui::SetColumnWidth(columnID++, 130.f);
 	ImGui::Separator();
 
 	std::vector<const char*> data;
@@ -268,12 +271,6 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::NextColumn();
 	if (!needNeighboorUpdate)
 	{
-		ImGui::PushID(this + 0x3467);
-		if (ImGui::Button(GET_TEXT("GeneralCompute")))
-			UIManager::getSingleton()->ForceRentabilityRateToolValues(m_price, m_rent);
-		ImGui::PopID();
-
-		ImGui::SameLine();
 		ImGui::Text("%s     ", rate.c_str());
 	}
 	else if (m_waitingForDBUpdate)
@@ -309,6 +306,8 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::Text("%s: %u     ", GET_TEXT("SearchRequestResultNbRooms"), m_nbRooms);
 	ImGui::NextColumn();
 	ImGui::Text("%s: %u     ", GET_TEXT("SearchRequestResultNbBedRooms"), m_nbBedRooms);
+	ImGui::NextColumn();
+	ImGui::Text("%s: %u     ", GET_TEXT("SearchRequestResultPriceM2"), m_priceM2);
 
 	ImGui::Columns(1);
 	ImGui::Separator();

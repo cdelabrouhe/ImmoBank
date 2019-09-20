@@ -337,6 +337,9 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			ImGui::SameLine();
 			if (ImGui::Button(GET_TEXT("RequestWindowSortBySurface")))
 				s_sortType = Tools::SortType::Surface;
+			ImGui::SameLine();
+			if (ImGui::Button(GET_TEXT("RequestWindowSortByPriceM2")))
+				s_sortType = Tools::SortType::PriceM2;
 			m_updateList = sortType != s_sortType;
 
 			ImGui::Separator();

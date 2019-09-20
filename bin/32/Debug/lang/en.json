@@ -88,6 +88,7 @@
 	"RequestWindowSortByRate" : "Sort by rate",
 	"RequestWindowSortByPrice" : "Sort by price",
 	"RequestWindowSortBySurface" : "Sort by surface",
+	"RequestWindowSortByPriceM2" : "Sort by price / m2",
 	"RequestWindowAddBorough" : "Add borough",
 	
 	// Price popup
@@ -104,6 +105,7 @@
 	"SearchRequestResultUpdatingBorough" : "Updating borough",
 	"SearchRequestResultUpdateBorough" : "Update borough",
 	"SearchRequestResultEstimatedRent" : "Rent",
-	"SearchRequestResultNbRooms" : "Nb rooms",
-	"SearchRequestResultNbBedRooms" : "Nb bedrooms"
+	"SearchRequestResultNbRooms" : "Rooms",
+	"SearchRequestResultNbBedRooms" : "Bedrooms",
+	"SearchRequestResultPriceM2" : "Price / m2"
 }

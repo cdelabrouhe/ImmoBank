@@ -23,6 +23,7 @@ namespace ImmoBank
 			Rate,
 			Price,
 			Surface,
+			PriceM2,
 			COUNT
 		};
 

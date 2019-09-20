@@ -90,6 +90,7 @@
 	"RequestWindowSortByRate" : "Trier par taux de rentabilite",
 	"RequestWindowSortByPrice" : "Trier par prix",
 	"RequestWindowSortBySurface" : "Trier par surface",
+	"RequestWindowSortByPriceM2" : "Trier par prix / m2",
 	"RequestWindowAddBorough" : "Ajouter quartier",
 	
 	// Price popup
@@ -107,6 +108,7 @@
 	"SearchRequestResultUpdatingBorough" : "MAJ quartier",
 	"SearchRequestResultUpdateBorough" : "MAJ quartier",
 	"SearchRequestResultEstimatedRent" : "Loyer",
-	"SearchRequestResultNbRooms" : "Nb pieces",
-	"SearchRequestResultNbBedRooms" : "Nb chambres"
+	"SearchRequestResultNbRooms" : "Pieces",
+	"SearchRequestResultNbBedRooms" : "Chambres",
+	"SearchRequestResultPriceM2" : "Prix / m2"
 }

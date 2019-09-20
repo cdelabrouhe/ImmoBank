@@ -25,6 +25,7 @@ namespace ImmoBank
 		BoroughData	m_selectedBorough;
 		std::vector<BoroughData> m_boroughs;
 		int			m_price = 0;
+		int			m_priceM2 = 0;
 		float		m_surface = 0.f;
 		int			m_rent = 0;
 		int			m_nbRooms = 0;
@@ -64,6 +65,8 @@ namespace ImmoBank
 				return m_price < ((SearchRequestResultAnnounce*)_target)->m_price;
 			case Tools::SortType::Surface:
 				return m_surface < ((SearchRequestResultAnnounce*)_target)->m_surface;
+			case Tools::SortType::PriceM2:
+				return m_priceM2 < ((SearchRequestResultAnnounce*)_target)->m_priceM2;
 			}
 			return false;
 		}

@@ -477,6 +477,9 @@
     <ClCompile Include="sources\Config\ConfigManager.cpp">
       <Filter>Sources\Config</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Online\OnlineDatabase.cpp">
+      <Filter>Sources\Online</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

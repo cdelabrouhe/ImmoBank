@@ -135,42 +135,6 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	return ID;
 }
 
-bool SeLogerOnlineDatase::IsRequestAvailable(const int _requestID)
-{
-	auto it = m_requests.find(_requestID);
-	if (it != m_requests.end())
-		return OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(it->second.m_requestID);
-
-	return false;
-}
-
-bool SeLogerOnlineDatase::GetRequestResult(const int _requestID, std::vector<SearchRequestResult*>& _result)
-{
-	auto it = m_requests.find(_requestID);
-	if (it != m_requests.end())
-	{
-		std::string str;
-		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(it->second.m_requestID, str))
-		{
-			SearchRequest* request = it->second.m_initialRequest;
-			bool result = ProcessResult(request, str, _result);
-			DeleteRequest(_requestID);
-			return result;
-		}
-	}
-	return false;
-}
-
-void SeLogerOnlineDatase::Process()
-{
-
-}
-
-void SeLogerOnlineDatase::End()
-{
-
-}
-
 bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)

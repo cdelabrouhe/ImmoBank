@@ -18,6 +18,8 @@ void SearchRequestResultAnnounce::Init()
 {
 	if (!m_imageTinyURL.empty())
 		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+	else if (!m_imageURL.empty())
+		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
 
 	m_priceM2 = int((float)m_price / m_surface);
 }
@@ -60,7 +62,7 @@ void SearchRequestResultAnnounce::UpdateBoroughs(bool _lookForBorough)
 		for (auto& borough : m_boroughs)
 		{
 			int selogerKey = borough.GetSelogerKey();
-			if (selogerKey == m_inseeCode)
+			if ((selogerKey != 0) && (selogerKey == m_inseeCode))
 			{
 				m_selectedBorough = borough;
 				m_selectedBoroughID = ID + 1;
@@ -155,7 +157,12 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 						m_imageTinyDownloaded = true;
 					}
 					else
-						m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+					{
+						if (!m_imageTinyURL.empty())
+							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+						else if (!m_imageURL.empty())
+							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+					}
 				}
 #ifdef LOAD_BIG_IMAGE
 				// Trigger full res image download

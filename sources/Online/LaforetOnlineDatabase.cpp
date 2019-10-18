@@ -6,7 +6,6 @@
 #include "extern/jsoncpp/reader.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 
-DISABLE_OPTIMIZE
 using namespace ImmoBank;
 
 void LaforetOnlineDatabase::Init()
@@ -44,28 +43,8 @@ int LaforetOnlineDatabase::SendRequest(SearchRequest* _request)
 		++categoryID;
 	}
 
-	std::string boroughData = "&idq=";
-	std::string cityData = "&ci=";
-	bool hasBoroughData = false;
-	bool firstBorough = true;
-	bool firstCity = true;
-	for (auto& borough : announce->m_boroughList)
-	{
-		bool isCity = false;
-		int boroughKey = -1;
-		boroughKey = borough.GetSelogerKey(&isCity);
-		if (!isCity)
-		{
-			if (!firstBorough)
-				boroughData += ",";
-			boroughData += std::to_string(boroughKey);
-			hasBoroughData = true;
-			firstBorough = false;
-		}
-	}
-
-	if (hasBoroughData)
-		request += boroughData;
+	// Localisation (no borough for now)
+	request += "&localisation=" + announce->m_city.m_name + "%28" + std::to_string(announce->m_city.m_zipCode) + "%29";
 
 	// Price
 	request += "&price_min=" + std::to_string(announce->m_priceMin);
@@ -97,6 +76,9 @@ bool LaforetOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::s
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;
 
+	if (_str.empty())
+		return true;
+
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
 
 	sRecherche recherche;
@@ -127,13 +109,13 @@ void LaforetOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 {
 	std::string startStr = "json";
 	std::string stopStr = "pictos";
-	int startID = _str.find(startStr);
+	auto startID = _str.find(startStr);
 
 	std::string str = _str.substr(startID, _str.size());
 	while (str.size() > 0)
 	{
-		int start = str.find(startStr);
-		int stop = str.find(stopStr);
+		auto start = str.find(startStr);
+		auto stop = str.find(stopStr);
 
 		// End => stop serialization
 		if ((start == std::string::npos) && (stop == std::string::npos))
@@ -142,23 +124,57 @@ void LaforetOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 			continue;
 		}
 
-		std::string strAnnonce = str.substr(startStr.size(), stop);
-		m_annonces.push_back(sAnnonce());
-		m_annonces.back().Serialize(strAnnonce);
-
-		str = str.substr(stop + stopStr.size());
+		std::string strAnnonce = str.substr(start, stop);
+		sAnnonce announce;
+		if (announce.Serialize(strAnnonce))
+		{
+			m_annonces.push_back(announce);
+			str = str.substr(stop + stopStr.size(), str.size());
+		}
+		else
+			str = "";
 	}
-	printf("");
 }
 
-void ImmoBank::LaforetOnlineDatabase::sAnnonce::Serialize(const std::string& _str)
+bool LaforetOnlineDatabase::sAnnonce::Serialize(const std::string& _str)
 {
-	int start = _str.find_first_of("{");
-	int stop = _str.find_first_of("}");
+	auto start = _str.find_first_of("{");
+	auto stop = _str.find_first_of("}");
+
+	if ((start == std::string::npos) || (stop == std::string::npos))
+		return false;
+
 	std::string strJson = _str.substr(start, stop);
 	StringTools::ReplaceBadSyntax(strJson, "&quot;", "\"");
 	Json::Reader reader;
 	Json::Value root;
 	reader.parse(strJson, root);
-	printf("");
+	
+	m_city = root["city"].asString();
+	m_name = root["title"].asString();
+	m_description = root["description"].asString();
+	StringTools::RemoveSpecialCharacters(m_name);
+	StringTools::RemoveSpecialCharacters(m_description);
+	m_URL = "http://www.laforet.com" + root["url"].asString();
+	m_imageURL = root["imageUrl"].asString();
+	std::string price = root["price"].asString();
+	StringTools::ReplaceBadSyntax(price, " ", "");
+	m_price = std::stoi(price);
+	m_surface = (float)std::stoi(root["surface"].asString());
+	m_nbRooms = std::stoi(root["roomsQuantity"].asString());
+	m_nbBedRooms = std::stoi(root["bedroomsQuantity"].asString());
+
+	std::string str = root["propertyType"].asString();
+	if (!str.empty())
+	{
+		int type = std::stoi(str);
+		switch (type)
+		{
+		case 1:			m_category = Category_House;		break;
+		case 2:			m_category = Category_Apartment;	break;
+		default:		m_category = Category_NONE;			break;
+		}
+	}
+
+	return true;
 }

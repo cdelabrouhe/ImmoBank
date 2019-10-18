@@ -9,8 +9,9 @@ namespace ImmoBank
 	private:
 		struct sAnnonce
 		{
-			void Serialize(const std::string& _str);
+			bool Serialize(const std::string& _str);
 
+			std::string m_city;
 			std::string m_name;
 			std::string m_description;
 			std::string m_URL;

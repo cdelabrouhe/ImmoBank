@@ -3,7 +3,8 @@
 #include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
 #include "SeLogerOnlineDatabase.h"
-#include "LeSiteImmoOnlineDatabase.h"
+#include "LaforetOnlineDatabase.h"
+//#include "LeSiteImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
 
@@ -31,13 +32,17 @@ void OnlineManager::Init()
 {
 	s_downloader.Init();
 
-	auto seLogerDB = new SeLogerOnlineDatase();
+	/*auto seLogerDB = new SeLogerOnlineDatase();
 	seLogerDB->Init();
-	m_databases.push_back(seLogerDB);
+	m_databases.push_back(seLogerDB);*/
 
-	auto leSiteImmoDB = new LeSiteImmoOnlineDatabase();
+	auto laforetDB = new LaforetOnlineDatabase();
+	laforetDB->Init();
+	m_databases.push_back(laforetDB);
+
+	/*auto leSiteImmoDB = new LeSiteImmoOnlineDatabase();
 	leSiteImmoDB->Init();
-	m_databases.push_back(leSiteImmoDB);
+	m_databases.push_back(leSiteImmoDB);*/
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -358,6 +358,9 @@
     <ClInclude Include="extern\libjpeg-turbo\include\turbojpeg.h">
       <Filter>Sources\extern\libjpeg-turbo</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Online\LaforetOnlineDatabase.h">
+      <Filter>Sources\Online</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -478,6 +481,9 @@
       <Filter>Sources\Config</Filter>
     </ClCompile>
     <ClCompile Include="sources\Online\OnlineDatabase.cpp">
+      <Filter>Sources\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Online\LaforetOnlineDatabase.cpp">
       <Filter>Sources\Online</Filter>
     </ClCompile>
   </ItemGroup>

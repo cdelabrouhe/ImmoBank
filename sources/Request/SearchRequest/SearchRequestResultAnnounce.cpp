@@ -210,7 +210,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::NextColumn();
 	ImGui::Separator();
 	ImGui::SetWindowFontScale(1.2f);
-	std::string name = (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
+	std::string name = m_database + " - " + (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
 	name += ", " + m_name;
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), name.c_str());
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))

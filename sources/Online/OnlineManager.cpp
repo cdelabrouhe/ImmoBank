@@ -32,9 +32,9 @@ void OnlineManager::Init()
 {
 	s_downloader.Init();
 
-	/*auto seLogerDB = new SeLogerOnlineDatase();
+	auto seLogerDB = new SeLogerOnlineDatase();
 	seLogerDB->Init();
-	m_databases.push_back(seLogerDB);*/
+	m_databases.push_back(seLogerDB);
 
 	auto laforetDB = new LaforetOnlineDatabase();
 	laforetDB->Init();

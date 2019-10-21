@@ -18,6 +18,8 @@ void SearchRequestResultAnnounce::Init()
 {
 	if (!m_imageTinyURL.empty())
 		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+	else if (!m_imageURL.empty())
+		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
 
 	m_priceM2 = int((float)m_price / m_surface);
 }
@@ -60,7 +62,7 @@ void SearchRequestResultAnnounce::UpdateBoroughs(bool _lookForBorough)
 		for (auto& borough : m_boroughs)
 		{
 			int selogerKey = borough.GetSelogerKey();
-			if (selogerKey == m_inseeCode)
+			if ((selogerKey != 0) && (selogerKey == m_inseeCode))
 			{
 				m_selectedBorough = borough;
 				m_selectedBoroughID = ID + 1;
@@ -155,7 +157,12 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 						m_imageTinyDownloaded = true;
 					}
 					else
-						m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+					{
+						if (!m_imageTinyURL.empty())
+							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+						else if (!m_imageURL.empty())
+							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+					}
 				}
 #ifdef LOAD_BIG_IMAGE
 				// Trigger full res image download
@@ -203,7 +210,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	ImGui::NextColumn();
 	ImGui::Separator();
 	ImGui::SetWindowFontScale(1.2f);
-	std::string name = (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
+	std::string name = m_database + " - " + (m_category == Category_Apartment ? GET_TEXT("GeneralAppartment") : GET_TEXT("GeneralHouse"));
 	name += ", " + m_name;
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), name.c_str());
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))

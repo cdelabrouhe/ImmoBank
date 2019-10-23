@@ -255,6 +255,7 @@
     <ClInclude Include="sources\Online\HTTPDownloader.h" />
     <ClInclude Include="sources\Online\LeSiteImmoOnlineDatabase.h" />
     <ClInclude Include="sources\Online\OnlineDatabase.h" />
+    <ClInclude Include="sources\Online\OrpiOnlineDatabase.h" />
     <ClInclude Include="sources\Online\SeLogerOnlineDatabase.h" />
     <ClInclude Include="sources\Request\EditableRequest\EditableRequest.h" />
     <ClInclude Include="sources\Request\EditableRequest\EditableRequestAnnounce.h" />
@@ -302,6 +303,7 @@
     <ClCompile Include="sources\Online\OnlineManager.cpp" />
     <ClCompile Include="sources\Online\HTTPDownloader.cpp" />
     <ClCompile Include="sources\Online\LeSiteImmoOnlineDatabase.cpp" />
+    <ClCompile Include="sources\Online\OrpiOnlineDatabase.cpp" />
     <ClCompile Include="sources\Online\SeLogerOnlineDatabase.cpp" />
     <ClCompile Include="sources\ProdTool.cpp" />
     <ClCompile Include="sources\Request\EditableRequest\EditableRequestAnnounce.cpp" />

@@ -361,6 +361,9 @@
     <ClInclude Include="sources\Online\LaforetOnlineDatabase.h">
       <Filter>Sources\Online</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Online\OrpiOnlineDatabase.h">
+      <Filter>Sources\Online</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -484,6 +487,9 @@
       <Filter>Sources\Online</Filter>
     </ClCompile>
     <ClCompile Include="sources\Online\LaforetOnlineDatabase.cpp">
+      <Filter>Sources\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Online\OrpiOnlineDatabase.cpp">
       <Filter>Sources\Online</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,7 +7,7 @@
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 
 using namespace ImmoBank;
-DISABLE_OPTIMIZE
+
 void OrpiOnlineDatabase::Init()
 {
 	SetName("ORPI");
@@ -126,18 +126,8 @@ void OrpiOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 	delimiter = str.find(stopStr);
 	str = str.substr(0, delimiter + stopStr.size() - 1);
 
-	static bool s_test = false;
-	if (s_test)
-	{
-		FILE* f = fopen("error.txt", "wt");
-		if (f)
-		{
-			fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
-			fclose(f);
-		}
-	}
-		
 	StringTools::ReplaceBadSyntax(str, "&", "");
+	StringTools::ReplaceBadSyntax(str, "qquot;", "\"");
 	StringTools::ReplaceBadSyntax(str, "quot;quot;", "\"");
 	StringTools::ReplaceBadSyntax(str, "quot;", "\"");
 	StringTools::ReplaceBadSyntax(str, "#x20;", " ");
@@ -147,11 +137,23 @@ void OrpiOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 	StringTools::ReplaceBadSyntax(str, "#x5B;", "[");
 	StringTools::ReplaceBadSyntax(str, "#x5D;", "]");
 	StringTools::ReplaceBadSyntax(str, "#x2F;", "/");
-	StringTools::ReplaceBadSyntax(str, "#x5C;", "\\");
+	StringTools::ReplaceBadSyntax(str, "#x5C;", "");
 
 	Json::Reader reader;
 	Json::Value root;
 	reader.parse(str, root);
+
+	Json::Value& items = root["items"];
+	const int nbItems = (int)items.size();
+	for (int ID = 0; ID < nbItems; ++ID)
+	{
+		Json::Value data = items[ID];
+		sAnnonce announce;
+		if (announce.Serialize(data))
+			m_annonces.push_back(announce);
+	}
+
+#if 0
 	str = root.toStyledString();
 
 	if (s_test)
@@ -186,46 +188,32 @@ void OrpiOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 		else
 			str = "";
 	}
+#endif
 }
 
-bool OrpiOnlineDatabase::sAnnonce::Serialize(const std::string& _str)
+bool OrpiOnlineDatabase::sAnnonce::Serialize(const Json::Value& _data)
 {
-	auto start = _str.find_first_of("{");
-	auto stop = _str.find_first_of("}");
-
-	if ((start == std::string::npos) || (stop == std::string::npos))
-		return false;
-
-	std::string strJson = _str.substr(start, stop);
-	StringTools::ReplaceBadSyntax(strJson, "&quot;", "\"");
-	Json::Reader reader;
-	Json::Value root;
-	reader.parse(strJson, root);
-
-	m_city = root["city"].asString();
-	m_name = root["title"].asString();
-	m_description = root["description"].asString();
+	m_city = _data["locationDescription"].asString();
+	m_name = _data["slug"].asString();
+	m_description = _data["longAd"].asString();
 	StringTools::RemoveSpecialCharacters(m_name);
 	StringTools::RemoveSpecialCharacters(m_description);
-	m_URL = "http://www.laforet.com" + root["url"].asString();
-	m_imageURL = root["imageUrl"].asString();
-	std::string price = root["price"].asString();
-	StringTools::ReplaceBadSyntax(price, " ", "");
-	m_price = std::stoi(price);
-	m_surface = (float)std::stoi(root["surface"].asString());
-	m_nbRooms = std::stoi(root["roomsQuantity"].asString());
-	m_nbBedRooms = std::stoi(root["bedroomsQuantity"].asString());
+	//m_URL = "http://www.laforet.com" + _data["url"].asString();
+	//m_imageURL = _data["imageUrl"].asString();
+	m_price = _data["price"].asUInt();
+	m_surface = _data["surface"].asDouble();
+	m_nbRooms = _data["nbRooms"].asUInt();
+	m_nbBedRooms = m_nbRooms - 1;
 
-	std::string str = root["propertyType"].asString();
+	std::string str = _data["obeType"].asString();
 	if (!str.empty())
 	{
-		int type = std::stoi(str);
-		switch (type)
-		{
-		case 1:			m_category = Category_House;		break;
-		case 2:			m_category = Category_Apartment;	break;
-		default:		m_category = Category_NONE;			break;
-		}
+		if (str == "apartment")
+			m_category = Category_Apartment;
+		else if (str == "house")
+			m_category = Category_House;
+		else
+			m_category = Category_NONE;
 	}
 
 	return true;

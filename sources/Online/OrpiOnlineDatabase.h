@@ -2,6 +2,11 @@
 
 #include "OnlineDatabase.h"
 
+namespace Json
+{
+	class Value;
+}
+
 namespace ImmoBank
 {
 	class OrpiOnlineDatabase : public OnlineDatabase
@@ -9,7 +14,7 @@ namespace ImmoBank
 	private:
 		struct sAnnonce
 		{
-			bool Serialize(const std::string& _str);
+			bool Serialize(const Json::Value& _data);
 
 			std::string m_city;
 			std::string m_name;

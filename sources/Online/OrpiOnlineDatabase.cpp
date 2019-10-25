@@ -20,7 +20,7 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
 
-	std::string request = "http://www.laforet.com/acheter/rechercher?slug=&ajaxValue=0";
+	std::string request = "https://www.orpi.com/recherche/buy?transaction=buy&resultUrl=";
 
 	// Apartment / house
 	int categoryID = 0;
@@ -30,10 +30,10 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 		switch (category)
 		{
 		case Category_Apartment:
-			request += "&appartement=on";
+			request += "&realEstateTypes%5B0%5D=appartement";
 			break;
 		case Category_House:
-			request += "&maison=on";
+			request += "&realEstateTypes%5B0%5D=maison";
 			break;
 		default:
 			printf("Error: unknown request category");
@@ -44,44 +44,58 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 	}
 
 	// Localisation (no borough for now)
-	request += "&localisation=" + announce->m_city.m_name + "%28" + std::to_string(announce->m_city.m_zipCode) + "%29";
+	std::string city = announce->m_city.m_name;
+	StringTools::TransformToLower(city);
+	request += "&locations%5B0%5D%5Bvalue%5D=" + city;
+	request += "&locations%5B0%5D%5Blabel%5D=" + announce->m_city.m_name + "+(" + std::to_string(announce->m_city.m_zipCode) + ")";
 
 	// Price
-	request += "&price_min=" + std::to_string(announce->m_priceMin);
-	request += "&price_max=" + std::to_string(announce->m_priceMax);
+	request += "&minPrice=" + std::to_string(announce->m_priceMin);
+	request += "&maxPrice=" + std::to_string(announce->m_priceMax);
 
 	// Surface
-	request += "&surface_min=" + std::to_string(announce->m_surfaceMin);
-	request += "&surface_max=" + std::to_string(announce->m_surfaceMax);
+	request += "&minSurface=" + std::to_string(announce->m_surfaceMin);
+	request += "&maxSurface=" + std::to_string(announce->m_surfaceMax);
 
 	// Nb rooms
 	for (int roomID = announce->m_nbRoomsMin; roomID <= announce->m_nbRoomsMax; ++roomID)
-		request += "&rooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
+		request += "&nbRooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
 
 	for (int roomID = announce->m_nbBedRoomsMin + 1; roomID <= announce->m_nbBedRoomsMax; ++roomID)
-		request += "&bedrooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
+		request += "&nbBedrooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
 
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
-	m_requests[ID].m_requestID = 0;// OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 	m_requests[ID].m_initialRequest = announce;
+
+	static bool s_test = false;
+	if (s_test)
+	{
+		FILE* f = fopen("result.txt", "wt");
+		if (f)
+		{
+			fwrite(request.data(), sizeof(char), (size_t)request.size(), f);
+			fclose(f);
+		}
+	}
 
 	return ID;
 }
 
 bool OrpiOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
-	/*if (_initialRequest->m_requestType != SearchRequestType_Announce)
+	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;
 
 	if (_str.empty())
-		return true;*/
+		return true;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
 
-	std::string str;
+	/*std::string str;
 	FILE* f = fopen("data_test_orpi.html", "rt");
 	if (f)
 	{
@@ -90,10 +104,10 @@ bool OrpiOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::stri
 		fclose(f);
 		str = test_data;
 		free(test_data);
-	}
+	}*/
 
 	sRecherche recherche;
-	recherche.Serialize(str);
+	recherche.Serialize(_str);
 
 	for (auto& annonce : recherche.m_annonces)
 	{
@@ -126,18 +140,18 @@ void OrpiOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 	delimiter = str.find(stopStr);
 	str = str.substr(0, delimiter + stopStr.size() - 1);
 
-	StringTools::ReplaceBadSyntax(str, "&", "");
-	StringTools::ReplaceBadSyntax(str, "qquot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "quot;quot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "quot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "#x20;", " ");
-	StringTools::ReplaceBadSyntax(str, "#x7B;", "{");
-	StringTools::ReplaceBadSyntax(str, "#x7D;", "}");
-	StringTools::ReplaceBadSyntax(str, "#x3A;", ":");
-	StringTools::ReplaceBadSyntax(str, "#x5B;", "[");
-	StringTools::ReplaceBadSyntax(str, "#x5D;", "]");
-	StringTools::ReplaceBadSyntax(str, "#x2F;", "/");
-	StringTools::ReplaceBadSyntax(str, "#x5C;", "");
+	//StringTools::ReplaceBadSyntax(str, "&", "");
+	StringTools::ReplaceBadSyntax(str, "&qquot;", "\"");
+	StringTools::ReplaceBadSyntax(str, "&quot;quot;", "\"");
+	StringTools::ReplaceBadSyntax(str, "&quot;", "\"");
+	StringTools::ReplaceBadSyntax(str, "&#x20;", " ");
+	StringTools::ReplaceBadSyntax(str, "&#x7B;", "{");
+	StringTools::ReplaceBadSyntax(str, "&#x7D;", "}");
+	StringTools::ReplaceBadSyntax(str, "&#x3A;", ":");
+	StringTools::ReplaceBadSyntax(str, "&#x5B;", "[");
+	StringTools::ReplaceBadSyntax(str, "&#x5D;", "]");
+	StringTools::ReplaceBadSyntax(str, "&#x2F;", "/");
+	StringTools::ReplaceBadSyntax(str, "&#x5C;", "");
 
 	Json::Reader reader;
 	Json::Value root;
@@ -198,12 +212,12 @@ bool OrpiOnlineDatabase::sAnnonce::Serialize(const Json::Value& _data)
 	m_description = _data["longAd"].asString();
 	StringTools::RemoveSpecialCharacters(m_name);
 	StringTools::RemoveSpecialCharacters(m_description);
-	//m_URL = "http://www.laforet.com" + _data["url"].asString();
-	//m_imageURL = _data["imageUrl"].asString();
+	m_URL = "https://www.orpi.com/annonce-vente-" + _data["slug"].asString();
+	m_imageURL = _data["images"].get(0u, Json::nullValue).asString();
 	m_price = _data["price"].asUInt();
-	m_surface = _data["surface"].asDouble();
+	m_surface = (float)_data["surface"].asDouble();
 	m_nbRooms = _data["nbRooms"].asUInt();
-	m_nbBedRooms = m_nbRooms - 1;
+	m_nbBedRooms = !_data["nbBedrooms"].isNull() ? _data["nbBedrooms"].asUInt() : m_nbRooms - 1;
 
 	std::string str = _data["obeType"].asString();
 	if (!str.empty())
@@ -216,10 +230,5 @@ bool OrpiOnlineDatabase::sAnnonce::Serialize(const Json::Value& _data)
 			m_category = Category_NONE;
 	}
 
-	return true;
-}
-
-bool ImmoBank::OrpiOnlineDatabase::IsRequestAvailable(int _requestID)
-{
 	return true;
 }

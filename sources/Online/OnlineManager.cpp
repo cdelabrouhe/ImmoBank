@@ -34,15 +34,15 @@ void OnlineManager::Init()
 
 	/*auto seLogerDB = new SeLogerOnlineDatase();
 	seLogerDB->Init();
-	m_databases.push_back(seLogerDB);*/
+	m_databases.push_back(seLogerDB);
 
 	auto laforetDB = new LaforetOnlineDatabase();
 	laforetDB->Init();
-	m_databases.push_back(laforetDB);
+	m_databases.push_back(laforetDB);*/
 
-	/*auto orpiDB = new OrpiOnlineDatabase();
+	auto orpiDB = new OrpiOnlineDatabase();
 	orpiDB->Init();
-	m_databases.push_back(orpiDB);*/
+	m_databases.push_back(orpiDB);
 }
 
 //-------------------------------------------------------------------------------------------------

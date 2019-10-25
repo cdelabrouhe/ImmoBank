@@ -42,7 +42,6 @@ namespace ImmoBank
 	public:
 		virtual void Init() override;
 		virtual int SendRequest(SearchRequest* _request) override;
-		virtual bool IsRequestAvailable(int _requestID) override;
 
 	protected:
 		virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;

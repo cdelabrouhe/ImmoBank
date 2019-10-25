@@ -18,7 +18,7 @@ bool OnlineDatabase::GetRequestResult(int _requestID, std::vector<SearchRequestR
 	if (it != m_requests.end())
 	{
 		std::string str;
-		if (true)//OnlineManager::getSingleton()->GetBasicHTTPRequestResult(it->second.m_requestID, str))
+		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(it->second.m_requestID, str))
 		{
 			SearchRequest* request = it->second.m_initialRequest;
 			bool result = ProcessResult(request, str, _result);

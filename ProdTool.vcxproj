@@ -251,6 +251,7 @@
     <ClInclude Include="sources\GL\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="sources\GL\ProdToolGL.h" />
     <ClInclude Include="sources\Online\LaforetOnlineDatabase.h" />
+    <ClInclude Include="sources\Online\LogicImmoOnlineDatabase.h" />
     <ClInclude Include="sources\Online\OnlineManager.h" />
     <ClInclude Include="sources\Online\HTTPDownloader.h" />
     <ClInclude Include="sources\Online\LeSiteImmoOnlineDatabase.h" />
@@ -299,6 +300,7 @@
     <ClCompile Include="sources\GL\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="sources\GL\ProdToolGL.cpp" />
     <ClCompile Include="sources\Online\LaforetOnlineDatabase.cpp" />
+    <ClCompile Include="sources\Online\LogicImmoOnlineDatabase.cpp" />
     <ClCompile Include="sources\Online\OnlineDatabase.cpp" />
     <ClCompile Include="sources\Online\OnlineManager.cpp" />
     <ClCompile Include="sources\Online\HTTPDownloader.cpp" />

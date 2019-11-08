@@ -22,18 +22,24 @@ namespace ImmoBank
 		RequestResultType_COUNT
 	};
 
+	struct MemoryStruct
+	{
+		char *memory;
+		size_t size;
+	};
+
 	struct sStoreRequest
 	{
 		void End();
 
-		std::string m_request;
-		std::string m_result;
-		unsigned char*	m_resultBinary = nullptr;
-		int				m_resultBinarySize = 0;
-		RequestResultType		m_type = RequestResultType_NONE;
-		bool m_finished = false;
-		bool m_canceled = false;
-		bool m_protectUserAgent = false;
+		std::string			m_request;
+		std::string			m_result;
+		MemoryStruct		m_resultBinary;
+		int					m_resultBinarySize = 0;
+		RequestResultType	m_type = RequestResultType_NONE;
+		bool				m_finished = false;
+		bool				m_canceled = false;
+		bool				m_protectUserAgent = false;
 	};
 
 	class Thread;
@@ -46,13 +52,13 @@ namespace ImmoBank
 
 		void Process(HTTPDownloader* _downloader);
 
-		RequestResultType		m_type = RequestResultType_NONE;
-		int			m_requestID;
-		std::string	m_request;
-		std::string	m_result;
-		unsigned char*		m_resultBinary = nullptr;
-		int			m_resultBinarySize = 0;
-		bool		m_protectUserAgent = false;
+		RequestResultType	m_type = RequestResultType_NONE;
+		int					m_requestID;
+		std::string			m_request;
+		std::string			m_result;
+		MemoryStruct		m_resultBinary;
+		int					m_resultBinarySize = 0;
+		bool				m_protectUserAgent = false;
 	};
 
 	class HTTPDownloader
@@ -84,7 +90,7 @@ namespace ImmoBank
 		* @return The download result
 		*/
 		void download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out);
-		void downloadBinary(const std::string& _url, bool _modifyUserAgent, unsigned char* & _out, int &_bufferSize);
+		void downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, int &_bufferSize);
 
 	private:
 		void* m_curl;
@@ -92,5 +98,7 @@ namespace ImmoBank
 
 		std::mutex*	m_mutex;
 		Thread*		m_thread;
+
+		MemoryStruct m_memoryChunk;
 	};
 }

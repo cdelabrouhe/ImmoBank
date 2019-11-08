@@ -56,7 +56,7 @@ unsigned char* DecompressJPEG(unsigned char* _buffer, const int _bufferSize, int
 {
 	unsigned char* data = nullptr;
 
-#define COLOR_COMPONENTS	3
+#define COLOR_COMPONENTS	4
 
 #ifdef USE_STBI
 	data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, COLOR_COMPONENTS);
@@ -138,7 +138,7 @@ void ImmoBank::ProdToolGL_GenerateTexture(unsigned char* _data, int _width, int 
 	glBindTexture(GL_TEXTURE_2D, _textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
 }
 
 void ImmoBank::ProdToolGL_DeleteTexture(unsigned int* _textureID)

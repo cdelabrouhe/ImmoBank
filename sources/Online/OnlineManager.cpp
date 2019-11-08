@@ -5,6 +5,7 @@
 #include "SeLogerOnlineDatabase.h"
 #include "LaforetOnlineDatabase.h"
 #include "OrpiOnlineDatabase.h"
+#include "LogicImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
 
@@ -38,11 +39,15 @@ void OnlineManager::Init()
 
 	auto laforetDB = new LaforetOnlineDatabase();
 	laforetDB->Init();
-	m_databases.push_back(laforetDB);*/
+	m_databases.push_back(laforetDB);
 
 	auto orpiDB = new OrpiOnlineDatabase();
 	orpiDB->Init();
-	m_databases.push_back(orpiDB);
+	m_databases.push_back(orpiDB);*/
+
+	auto logicImmoDB = new LogicImmoOnlineDatabase();
+	logicImmoDB->Init();
+	m_databases.push_back(logicImmoDB);
 }
 
 //-------------------------------------------------------------------------------------------------

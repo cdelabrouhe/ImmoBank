@@ -20,6 +20,7 @@ namespace ImmoBank
 	};
 
 	class MySQLDatabase;
+	class ImageDatabase;
 
 	extern const std::string	s_wholeCityName;
 
@@ -97,6 +98,9 @@ namespace ImmoBank
 		time_t							m_externalTimer = 0;
 		bool							m_modified = false;
 		bool							m_connectionValid = false;
+
+		// Image database
+		ImageDatabase*					m_imageDatabase = nullptr;
 
 		// Debug panel
 		char							m_MySQLInputDebug[2048];

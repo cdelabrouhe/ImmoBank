@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "MySQLDatabase.h"
 #include "extern/ImGui/imgui.h"
+#include "ImageDatabase.h"
 
 using namespace ImmoBank;
 
@@ -45,6 +46,9 @@ void DatabaseManager::Init()
 	else
 		s_externalDBUpdateInterval = 600;
 
+	m_imageDatabase = new ImageDatabase();
+	m_imageDatabase->Init();
+	
 	//Test();
 }
 
@@ -114,6 +118,8 @@ void DatabaseManager::Process()
 			++it;
 	}
 
+	m_imageDatabase->Process();
+
 	if (Tools::IsDevMode())
 	{
 		DisplayDebug();
@@ -130,6 +136,7 @@ void DatabaseManager::End()
 
 	m_externalDB->End();
 	delete m_externalDB;
+	delete m_imageDatabase;
 }
 
 //-------------------------------------------------------------------------------------------------

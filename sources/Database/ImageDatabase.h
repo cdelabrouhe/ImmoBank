@@ -12,8 +12,10 @@ namespace ImmoBank
 
 		bool HasImage(const std::string& _URL) const;
 		void StoreImage(const std::string& _URL, const std::string& _path);
+		void RemoveImage(const std::string& _URL);
 
 	private:
+		void _Check();
 		void _Read();
 		void _Write();
 

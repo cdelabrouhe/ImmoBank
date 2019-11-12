@@ -8,6 +8,7 @@ const std::string s_imageDatabaseFileName = "images.dat";
 void ImageDatabase::Init()
 {
 	_Read();
+	_Check();
 }
 
 void ImageDatabase::Process()
@@ -36,6 +37,36 @@ void ImageDatabase::StoreImage(const std::string& _URL, const std::string& _path
 	m_modified = true;
 }
 
+
+void ImmoBank::ImageDatabase::RemoveImage(const std::string& _URL)
+{
+	auto it = m_data.find(_URL);
+	if (it == m_data.end())
+		return;
+
+	std::string path = it->second;
+	m_data.erase(it);
+	if (!Tools::FileExists(path.c_str()))
+		return;
+
+	Tools::DeleteFileOnDisk(path.c_str());
+}
+
+void ImmoBank::ImageDatabase::_Check()
+{
+	std::vector<std::string> URLs;
+	for (auto& pair : m_data)
+	{
+		if (!Tools::FileExists(pair.second.c_str()))
+			URLs.push_back(pair.second);
+	}
+
+	for (auto URL : URLs)
+	{
+		RemoveImage(URL);
+	}
+}
+
 void ImmoBank::ImageDatabase::_Read()
 {
 	std::string path = Tools::GetExePath();
@@ -60,4 +91,6 @@ void ImmoBank::ImageDatabase::_Write()
 	{
 		root[entry.first] = m_data[entry.first];
 	}
+
+	Tools::WriteJSON(path.c_str(), root);
 }

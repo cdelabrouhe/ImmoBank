@@ -90,7 +90,7 @@ namespace ImmoBank
 		* @return The download result
 		*/
 		void download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out);
-		void downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, int &_bufferSize);
+		void downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out);
 
 	private:
 		void* m_curl;

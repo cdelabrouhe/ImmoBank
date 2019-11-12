@@ -276,7 +276,7 @@ size_t write_data_binary(void *contents, size_t size, size_t nmemb, void* _strea
 }
 
 //------------------------------------------------------------------------------------------------
-void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, int &_bufferSize)
+void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out)
 {
 	const char* url = _url.c_str();
 	curl_easy_setopt(m_curl, CURLOPT_URL, url);
@@ -295,7 +295,6 @@ void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAge
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 	}
-	_bufferSize = _out.size;
 }
 
 //------------------------------------------------------------------------------------------------
@@ -322,7 +321,8 @@ void sRequest::Process(HTTPDownloader* _downloader)
 			m_resultBinary.size = 0;
 
 			// Copy data
-			_downloader->downloadBinary(m_request, m_protectUserAgent, m_resultBinary, m_resultBinarySize);
+			_downloader->downloadBinary(m_request, m_protectUserAgent, m_resultBinary);
+			m_resultBinarySize = m_resultBinary.size;
 		}
 		break;
 

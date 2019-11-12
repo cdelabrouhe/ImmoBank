@@ -7,25 +7,30 @@
 
 using namespace ImmoBank;
 
-bool ImmoBank::Tools::m_devMode = false;
+bool Tools::m_devMode = false;
 static float s_versionNumber = 1.01f;
 
-bool ImmoBank::Tools::IsDevMode()
+bool Tools::IsDevMode()
 {
 	return m_devMode;
 }
 
-void ImmoBank::Tools::SetDevMode(bool _state)
+void Tools::SetDevMode(bool _state)
 {
 	m_devMode = _state;
 }
 
-void ImmoBank::Tools::InvertDevMode()
+void Tools::InvertDevMode()
 {
 	m_devMode = !m_devMode;
 }
 
-float ImmoBank::Tools::GetVersionNumber()
+bool Tools::FileExists(const char* _path)
+{
+	return GetFileAttributesA(_path) != INVALID_FILE_ATTRIBUTES;
+}
+
+float Tools::GetVersionNumber()
 {
 	return s_versionNumber;
 }
@@ -148,4 +153,9 @@ bool Tools::WriteJSON(const char* _path, Json::Value& _data)
 		return true;
 	}
 	return false;
+}
+
+void Tools::DeleteFileOnDisk(const char* _path)
+{
+	DeleteFileA(_path);
 }

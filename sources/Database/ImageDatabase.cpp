@@ -1,16 +1,28 @@
 #include "ImageDatabase.h"
 #include "Tools\Tools.h"
+#include "Tools\Types.h"
 
 using namespace ImmoBank;
 
 const std::string s_imageDatabaseFileName = "images.dat";
+ImageDatabase* s_singleton = nullptr;
 
+//-------------------------------------------------------------------------------------------------
+ImageDatabase* ImageDatabase::getSingleton()
+{
+	if (s_singleton == nullptr)
+		s_singleton = new ImageDatabase();
+	return s_singleton;
+}
+
+//-------------------------------------------------------------------------------------------------
 void ImageDatabase::Init()
 {
 	_Read();
 	_Check();
 }
 
+//-------------------------------------------------------------------------------------------------
 void ImageDatabase::Process()
 {
 	if (!m_modified)
@@ -21,23 +33,42 @@ void ImageDatabase::Process()
 	_Write();
 }
 
+//-------------------------------------------------------------------------------------------------
 bool ImageDatabase::HasImage(const std::string& _URL) const
 {
 	auto it = m_data.find(_URL);
 	return it != m_data.end();
 }
 
-void ImageDatabase::StoreImage(const std::string& _URL, const std::string& _path)
+//-------------------------------------------------------------------------------------------------
+void ImageDatabase::StoreImage(const std::string& _URL, unsigned char* _buffer, int _bufferSize)
 {
 	if (HasImage(_URL))
 		return;
 
-	m_data[_URL] = _path;
+	std::string path = GeneratePath();
+	m_data[_URL] = path;
+
+	Tools::Write(path.c_str(), _buffer, _bufferSize);
 
 	m_modified = true;
 }
 
+//-------------------------------------------------------------------------------------------------
+unsigned char* ImmoBank::ImageDatabase::GetImage(const std::string& _URL, int& _size) const
+{
+	auto it = m_data.find(_URL);
+	if (it != m_data.end())
+	{
+		_size = 0;
+		return nullptr;
+	}
 
+	std::string path = it->second;
+	return Tools::Read(path.c_str(), _size);
+}
+
+//-------------------------------------------------------------------------------------------------
 void ImmoBank::ImageDatabase::RemoveImage(const std::string& _URL)
 {
 	auto it = m_data.find(_URL);
@@ -52,6 +83,7 @@ void ImmoBank::ImageDatabase::RemoveImage(const std::string& _URL)
 	Tools::DeleteFileOnDisk(path.c_str());
 }
 
+//-------------------------------------------------------------------------------------------------
 void ImmoBank::ImageDatabase::_Check()
 {
 	std::vector<std::string> URLs;
@@ -67,6 +99,7 @@ void ImmoBank::ImageDatabase::_Check()
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
 void ImmoBank::ImageDatabase::_Read()
 {
 	std::string path = Tools::GetExePath();
@@ -82,6 +115,7 @@ void ImmoBank::ImageDatabase::_Read()
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
 void ImmoBank::ImageDatabase::_Write()
 {
 	std::string path = Tools::GetExePath();
@@ -93,4 +127,15 @@ void ImmoBank::ImageDatabase::_Write()
 	}
 
 	Tools::WriteJSON(path.c_str(), root);
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::ImageDatabase::GeneratePath()
+{
+	std::string path = "Images/" + std::to_string(rand()) + ".jpg";
+	while (Tools::FileExists(path.c_str()))
+	{
+		path = "Images/" + std::to_string(rand()) + ".jpg";
+	}
+	return path;
 }

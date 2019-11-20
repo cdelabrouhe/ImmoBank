@@ -19,6 +19,7 @@ namespace ImmoBank
 		std::string m_URL;
 		std::string m_imageURL;
 		std::string m_imageTinyURL;
+		std::string m_loadedImageURL;
 		sCity		m_city;
 		Type		m_type = Type_NONE;
 		Category	m_category = Category_NONE;
@@ -33,12 +34,8 @@ namespace ImmoBank
 		int			m_selectedBoroughID = 0;
 		int			m_inseeCode = 0;
 		int			m_imageDownloadRequestID = -1;
-		int			m_imageWidth = 0;
-		int			m_imageHeight = 0;
-		unsigned int	m_imageTinyTextureID = 0;
 		unsigned int	m_imageTextureID = 0;
-		bool		m_imageTinyDownloaded = false;
-		bool		m_imageFullDownloaded = false;
+		bool		m_imageDownloaded = false;
 
 		virtual void Init() override;
 		virtual void End() override;
@@ -73,6 +70,7 @@ namespace ImmoBank
 
 	private:
 		void UpdateBoroughs(bool _lookForBorough);
+		bool _LoadImage(const std::string& _path, int& _requestID, unsigned int& _textureID, bool& _downloadStatus);
 
 	private:
 		bool m_waitingForDBUpdate = false;

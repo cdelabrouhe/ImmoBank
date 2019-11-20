@@ -9,27 +9,24 @@
 #include <Online\OnlineManager.h>
 #include <GL\ProdToolGL.h>
 #include <UI\UIManager.h>
-
-//#define LOAD_BIG_IMAGE
+#include <Database\ImageDatabase.h>
 
 using namespace ImmoBank;
 
 void SearchRequestResultAnnounce::Init()
 {
 	if (!m_imageTinyURL.empty())
-		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
+		m_loadedImageURL = m_imageTinyURL;
 	else if (!m_imageURL.empty())
-		m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+		m_loadedImageURL = m_imageURL;
 
+	_LoadImage(m_loadedImageURL, m_imageDownloadRequestID, m_imageTextureID, m_imageDownloaded);
+	
 	m_priceM2 = int((float)m_price / m_surface);
 }
 
 void SearchRequestResultAnnounce::End()
 {
-	if (m_imageTinyTextureID > 0)
-		ProdToolGL_DeleteTexture(&m_imageTinyTextureID);
-	m_imageTinyTextureID = 0;
-
 	if (m_imageTextureID > 0)
 		ProdToolGL_DeleteTexture(&m_imageTextureID);
 	m_imageTextureID = 0;
@@ -129,6 +126,32 @@ float SearchRequestResultAnnounce::GetEstimatedRent() const
 	return 0.f;
 }
 
+bool SearchRequestResultAnnounce::_LoadImage(const std::string& _path, int& _requestID, unsigned int& _textureID, bool& _downloadStatus)
+{
+	if (!_path.empty())
+	{
+		if (!ImageDatabase::getSingleton()->HasImage(_path))
+		{
+			_requestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(_path);
+		}
+		else
+		{
+			int size = 0;
+			unsigned char* buffer = ImageDatabase::getSingleton()->GetImage(_path, size);
+			int width, height;
+			if (ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, width, height, _textureID))
+			{
+				free(buffer);
+				_requestID = -1;
+				_downloadStatus = true;
+				return true;
+			}
+			_downloadStatus = true;
+		}
+	}
+	return false;
+}
+
 bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 {
 	bool keep = true;
@@ -141,7 +164,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	// Download image
 	if (m_imageDownloadRequestID > -1)
 	{
-		if (!m_imageTinyDownloaded)
+		if (!m_imageDownloaded)
 		{
 			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
 			{
@@ -150,53 +173,24 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
 				if (buffer)
 				{
-					if (ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTinyTextureID))
+					ImageDatabase::getSingleton()->StoreImage(m_loadedImageURL, buffer, size);
+
+					if (!_LoadImage(m_loadedImageURL, m_imageDownloadRequestID, m_imageTextureID, m_imageDownloaded))
 					{
-						free(buffer);
-						m_imageDownloadRequestID = -1;
-						m_imageTinyDownloaded = true;
-					}
-					else
-					{
-						if (!m_imageTinyURL.empty())
-							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageTinyURL);
-						else if (!m_imageURL.empty())
-							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
+						if (!m_loadedImageURL.empty())
+							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_loadedImageURL);
 					}
 				}
-#ifdef LOAD_BIG_IMAGE
-				// Trigger full res image download
-				if (!m_imageURL.empty())
-					m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_imageURL);
-#endif
 			}
 		}
-#ifdef LOAD_BIG_IMAGE
-		if (!m_imageFullDownloaded)
-		{
-			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
-			{
-				m_imageFullDownloaded = true;
-				unsigned char* buffer = nullptr;
-				int size = 0;
-				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
-				if (buffer)
-				{
-					ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, m_imageWidth, m_imageHeight, m_imageTextureID);
-					free(buffer);
-				}
-				m_imageDownloadRequestID = -1;
-			}
-		}
-#endif
 	}
 
 	ImGui::Columns(2);
 	float width = 140.f;
 	ImGui::SetColumnWidth(0, width + 15.f);
-	if (m_imageTinyTextureID > 0)
+	if (m_imageTextureID > 0)
 	{
-		if (ImGui::ImageButton((void*)(intptr_t)m_imageTinyTextureID, ImVec2(140.f, width / 1.333f)))
+		if (ImGui::ImageButton((void*)(intptr_t)m_imageTextureID, ImVec2(140.f, width / 1.333f)))
 			ShellExecuteA(NULL, "open", m_URL.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 	}
 	else

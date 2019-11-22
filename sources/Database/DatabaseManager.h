@@ -99,9 +99,6 @@ namespace ImmoBank
 		bool							m_modified = false;
 		bool							m_connectionValid = false;
 
-		// Image database
-		ImageDatabase*					m_imageDatabase = nullptr;
-
 		// Debug panel
 		char							m_MySQLInputDebug[2048];
 		std::vector<std::string>		m_MySQLRequests;

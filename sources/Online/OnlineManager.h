@@ -27,7 +27,7 @@ namespace ImmoBank
 		bool	IsRequestAvailable(int _requestID) const;
 		void	DeleteRequest(int _requestID);
 		int		SendBasicHTTPRequest(const std::string& _request, bool _modifyUserAgent = false);
-		int		SendBinaryHTTPRequest(const std::string& _request, bool _modifyUserAgent = false);
+		int		SendBinaryHTTPRequest(const std::string& _request, const std::string& _writeFilePath = "", bool _modifyUserAgent = false);
 		bool	IsBasicHTTPRequestAvailable(int _requestID) const;
 		bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
 		bool	GetBinaryHTTPRequestResult(const int _requestID, unsigned char*& _result, int& _size);

@@ -132,7 +132,8 @@ bool SearchRequestResultAnnounce::_LoadImage(const std::string& _path, int& _req
 	{
 		if (!ImageDatabase::getSingleton()->HasImage(_path))
 		{
-			_requestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(_path);
+			std::string filePath = ImageDatabase::getSingleton()->GenerateNewImageFullPath(_path);
+			_requestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(_path, filePath);
 		}
 		else
 		{

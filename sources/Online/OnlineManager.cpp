@@ -137,9 +137,9 @@ int OnlineManager::SendBasicHTTPRequest(const std::string& _request, bool _modif
 }
 
 //-------------------------------------------------------------------------------------------------
-int OnlineManager::SendBinaryHTTPRequest(const std::string& _request, bool _modifyUserAgent)
+int OnlineManager::SendBinaryHTTPRequest(const std::string& _request, const std::string& _writeFilePath, bool _modifyUserAgent)
 {
-	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_Binary, _modifyUserAgent);
+	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_Binary, _modifyUserAgent, _writeFilePath);
 }
 
 //-------------------------------------------------------------------------------------------------

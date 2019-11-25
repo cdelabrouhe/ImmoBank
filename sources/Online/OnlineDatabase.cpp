@@ -7,7 +7,7 @@ bool OnlineDatabase::IsRequestAvailable(int _requestID)
 {
 	auto it = m_requests.find(_requestID);
 	if (it != m_requests.end())
-		return OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(it->second.m_requestID);
+		return OnlineManager::getSingleton()->IsHTTPRequestAvailable(it->second.m_requestID);
 
 	return false;
 }

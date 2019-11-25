@@ -12,7 +12,7 @@ bool CitySelector::Display()
 	m_changed = false;
 
 	// Get city name list
-	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_cityNameRequestID))
+	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
 	{
 		m_cities.clear();
 		std::string result;

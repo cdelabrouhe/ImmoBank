@@ -134,6 +134,7 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 			_request.m_requestID = it->first;
 			_request.m_request = it->second.m_request;
 			_request.m_protectUserAgent = it->second.m_protectUserAgent;
+			_request.m_writeFilePath = it->second.m_writeFilePath;
 			_request.m_type = it->second.m_type;
 			found = true;
 		}
@@ -277,6 +278,13 @@ size_t write_data_binary(void *contents, size_t size, size_t nmemb, void* _strea
 }
 
 //------------------------------------------------------------------------------------------------
+size_t write_data_binary_file(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	size_t written = fwrite(ptr, size, nmemb, stream);
+	return written;
+}
+
+//------------------------------------------------------------------------------------------------
 void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, const char* _filePath)
 {
 	const char* url = _url.c_str();
@@ -289,11 +297,14 @@ void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAge
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
 
 	// Save directly as a file
+	CURLcode res = CURL_LAST;
 	if (_filePath)
 	{
 		FILE* fp = fopen(_filePath, "wb");
-		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, NULL);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_binary_file);
 		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+		/* Perform the request, res will get the return code */
+		res = curl_easy_perform(m_curl);
 		fclose(fp);
 	}
 	// Save in memory
@@ -301,9 +312,9 @@ void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAge
 	{
 		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_binary);
 		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &_out);
+		/* Perform the request, res will get the return code */
+		res = curl_easy_perform(m_curl);
 	}
-	/* Perform the request, res will get the return code */
-	CURLcode res = curl_easy_perform(m_curl);
 	/* Check for errors */
 	if (res != CURLE_OK) {
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",

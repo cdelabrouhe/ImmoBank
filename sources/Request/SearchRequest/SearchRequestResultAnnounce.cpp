@@ -167,20 +167,12 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	{
 		if (!m_imageDownloaded)
 		{
-			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_imageDownloadRequestID))
+			if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_imageDownloadRequestID))
 			{
-				unsigned char* buffer = nullptr;
-				int size = 0;
-				OnlineManager::getSingleton()->GetBinaryHTTPRequestResult(m_imageDownloadRequestID, buffer, size);
-				if (buffer)
+				if (!_LoadImage(m_loadedImageURL, m_imageDownloadRequestID, m_imageTextureID, m_imageDownloaded))
 				{
-					ImageDatabase::getSingleton()->StoreImage(m_loadedImageURL, buffer, size);
-
-					if (!_LoadImage(m_loadedImageURL, m_imageDownloadRequestID, m_imageTextureID, m_imageDownloaded))
-					{
-						if (!m_loadedImageURL.empty())
-							m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_loadedImageURL);
-					}
+					if (!m_loadedImageURL.empty())
+						m_imageDownloadRequestID = OnlineManager::getSingleton()->SendBinaryHTTPRequest(m_loadedImageURL);
 				}
 			}
 		}

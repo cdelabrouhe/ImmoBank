@@ -118,9 +118,9 @@ void ImageDatabase::ReferenceImage(const std::string& _URL, const std::string& _
 //-------------------------------------------------------------------------------------------------
 std::string ImageDatabase::GenerateNewImageFullPath(const std::string& _URL)
 {
-	std::string path = m_imagesPath + _GeneratePath();
+	std::string path = _GeneratePath();
 	m_data[_URL] = path;
-	return path;
+	return m_imagesPath + path;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 #include "ImageDatabase.h"
 #include "Tools\Tools.h"
 #include "Tools\Types.h"
+#include "Tools\SearchFile.h"
 #include <windows.h>
 
 using namespace ImmoBank;
@@ -24,7 +25,7 @@ void ImageDatabase::Init()
 	m_imagesPath = exePath + s_imageDatabaseFolder;
 	CreateDirectoryA(m_imagesPath.c_str(), NULL);
 
-	_Read();
+	_ReadDataFile();
 	_Check();
 }
 
@@ -36,7 +37,7 @@ void ImageDatabase::Process()
 
 	m_modified = false;
 
-	_Write();
+	_WriteDataFile();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -95,7 +96,7 @@ unsigned char* ImageDatabase::GetImage(const std::string& _URL, int& _size) cons
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImageDatabase::RemoveImage(const std::string& _URL)
+void ImageDatabase::RemoveURL(const std::string& _URL)
 {
 	auto it = m_data.find(_URL);
 	if (it == m_data.end())
@@ -103,6 +104,17 @@ void ImageDatabase::RemoveImage(const std::string& _URL)
 
 	std::string path = it->second;
 	m_data.erase(it);
+	path = m_imagesPath + path;
+	if (!Tools::FileExists(path.c_str()))
+		return;
+
+	Tools::DeleteFileOnDisk(path.c_str());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ImmoBank::ImageDatabase::RemoveFile(const std::string& _filePath)
+{
+	std::string path = m_imagesPath + _filePath;
 	if (!Tools::FileExists(path.c_str()))
 		return;
 
@@ -120,27 +132,52 @@ std::string ImageDatabase::GenerateNewImageFullPath(const std::string& _URL)
 {
 	std::string path = _GeneratePath();
 	m_data[_URL] = path;
+	m_modified = true;
 	return m_imagesPath + path;
 }
 
 //-------------------------------------------------------------------------------------------------
 void ImageDatabase::_Check()
 {
+	// Clean list from URL
 	std::vector<std::string> URLs;
 	for (auto& pair : m_data)
 	{
-		if (!Tools::FileExists(pair.second.c_str()))
-			URLs.push_back(pair.second);
+		std::string path = m_imagesPath + pair.second;
+		if (!Tools::FileExists(path.c_str()))
+			URLs.push_back(pair.first);
 	}
 
 	for (auto URL : URLs)
 	{
-		RemoveImage(URL);
+		RemoveURL(URL);
+	}
+
+	// Clean list from files
+	SearchFile search;
+	std::string searchPattern = "*.jpg";
+	search("", searchPattern, m_imagesPath);
+
+	for (unsigned int i = 0, n = search.count(); i < n; ++i)
+	{
+		std::string path = search[i];
+		auto it = m_data.begin();
+		bool found = false;
+		while (it != m_data.end() && !found)
+		{
+			if (it->second == path)
+				found = true;
+			else
+				++it;
+		}
+
+		if (!found)
+			RemoveFile(path);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImageDatabase::_Read()
+void ImageDatabase::_ReadDataFile()
 {
 	std::string path = m_imagesPath + s_imageDatabaseFileName;
 	Json::Value root;
@@ -155,7 +192,7 @@ void ImageDatabase::_Read()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImageDatabase::_Write()
+void ImageDatabase::_WriteDataFile()
 {
 	std::string path = m_imagesPath;
 	path += s_imageDatabaseFileName;

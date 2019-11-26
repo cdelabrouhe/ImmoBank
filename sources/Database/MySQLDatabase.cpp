@@ -770,7 +770,7 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 			while (it != m_boroughData.end())
 			{
 				auto& borough = *it;
-				if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(borough.m_requestID))
+				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(borough.m_requestID))
 				{
 					std::string str;
 					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(borough.m_requestID, str);

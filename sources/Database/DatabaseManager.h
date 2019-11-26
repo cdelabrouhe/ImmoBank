@@ -20,6 +20,7 @@ namespace ImmoBank
 	};
 
 	class MySQLDatabase;
+	class ImageDatabase;
 
 	extern const std::string	s_wholeCityName;
 

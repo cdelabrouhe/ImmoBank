@@ -22,18 +22,25 @@ namespace ImmoBank
 		RequestResultType_COUNT
 	};
 
+	struct MemoryStruct
+	{
+		char* m_memory;
+		size_t m_size;
+	};
+
 	struct sStoreRequest
 	{
 		void End();
 
-		std::string m_request;
-		std::string m_result;
-		unsigned char*	m_resultBinary = nullptr;
-		int				m_resultBinarySize = 0;
-		RequestResultType		m_type = RequestResultType_NONE;
-		bool m_finished = false;
-		bool m_canceled = false;
-		bool m_protectUserAgent = false;
+		std::string			m_request;
+		std::string			m_result;
+		std::string			m_writeFilePath;
+		MemoryStruct		m_resultBinary;
+		int					m_resultBinarySize = 0;
+		RequestResultType	m_type = RequestResultType_NONE;
+		bool				m_finished = false;
+		bool				m_canceled = false;
+		bool				m_protectUserAgent = false;
 	};
 
 	class Thread;
@@ -46,13 +53,14 @@ namespace ImmoBank
 
 		void Process(HTTPDownloader* _downloader);
 
-		RequestResultType		m_type = RequestResultType_NONE;
-		int			m_requestID;
-		std::string	m_request;
-		std::string	m_result;
-		unsigned char*		m_resultBinary = nullptr;
-		int			m_resultBinarySize = 0;
-		bool		m_protectUserAgent = false;
+		RequestResultType	m_type = RequestResultType_NONE;
+		int					m_requestID;
+		std::string			m_request;
+		std::string			m_result;
+		MemoryStruct		m_resultBinary;
+		std::string			m_writeFilePath;
+		int					m_resultBinarySize = 0;
+		bool				m_protectUserAgent = false;
 	};
 
 	class HTTPDownloader
@@ -66,7 +74,7 @@ namespace ImmoBank
 		void Process();
 		void End();
 
-		int SendRequest(const std::string& _request, RequestResultType _resultType, bool _modifyUserAgent);
+		int SendRequest(const std::string& _request, RequestResultType _resultType, bool _modifyUserAgent, const std::string& _writeFilePath = "");
 		void SetResult(const int _requestID, sRequest& _result);
 		bool GetResultString(const int _requestID, std::string& _result);
 		bool GetResultBinary(const int _requestID, unsigned char*& _result, int& _size);
@@ -84,7 +92,7 @@ namespace ImmoBank
 		* @return The download result
 		*/
 		void download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out);
-		void downloadBinary(const std::string& _url, bool _modifyUserAgent, unsigned char* & _out, int &_bufferSize);
+		void downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, const char* _filePath = nullptr);
 
 	private:
 		void* m_curl;
@@ -92,5 +100,7 @@ namespace ImmoBank
 
 		std::mutex*	m_mutex;
 		Thread*		m_thread;
+
+		MemoryStruct m_memoryChunk;
 	};
 }

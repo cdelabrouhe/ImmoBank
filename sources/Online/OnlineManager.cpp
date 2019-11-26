@@ -35,7 +35,7 @@ void OnlineManager::Init()
 
 	/*auto seLogerDB = new SeLogerOnlineDatase();
 	seLogerDB->Init();
-	m_databases.push_back(seLogerDB);
+	m_databases.push_back(seLogerDB);*/
 
 	auto laforetDB = new LaforetOnlineDatabase();
 	laforetDB->Init();
@@ -142,13 +142,13 @@ int OnlineManager::SendBasicHTTPRequest(const std::string& _request, bool _modif
 }
 
 //-------------------------------------------------------------------------------------------------
-int OnlineManager::SendBinaryHTTPRequest(const std::string& _request, bool _modifyUserAgent)
+int OnlineManager::SendBinaryHTTPRequest(const std::string& _request, const std::string& _writeFilePath, bool _modifyUserAgent)
 {
-	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_Binary, _modifyUserAgent);
+	return s_downloader.SendRequest(_request, RequestResultType::RequestResultType_Binary, _modifyUserAgent, _writeFilePath);
 }
 
 //-------------------------------------------------------------------------------------------------
-bool OnlineManager::IsBasicHTTPRequestAvailable(int _requestID) const
+bool OnlineManager::IsHTTPRequestAvailable(int _requestID) const
 {
 	return s_downloader.IsRequestAvailable(_requestID);
 }
@@ -208,7 +208,7 @@ void OnlineManager::DisplayDebug()
 	else
 	{
 		ImGui::Text("Processing request...");
-		if (IsBasicHTTPRequestAvailable(m_testRequest))
+		if (IsHTTPRequestAvailable(m_testRequest))
 		{
 			GetBasicHTTPRequestResult(m_testRequest, m_testRequestResult);
 			m_testRequest = -1;

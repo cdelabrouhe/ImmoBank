@@ -364,8 +364,8 @@
     <ClInclude Include="sources\Online\OrpiOnlineDatabase.h">
       <Filter>Sources\Online</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Online\LogicImmoOnlineDatabase.h">
-      <Filter>Sources\Online</Filter>
+    <ClInclude Include="sources\Database\ImageDatabase.h">
+      <Filter>Sources\Database</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -495,8 +495,8 @@
     <ClCompile Include="sources\Online\OrpiOnlineDatabase.cpp">
       <Filter>Sources\Online</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Online\LogicImmoOnlineDatabase.cpp">
-      <Filter>Sources\Online</Filter>
+    <ClCompile Include="sources\Database\ImageDatabase.cpp">
+      <Filter>Sources\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

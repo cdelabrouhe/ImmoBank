@@ -7,25 +7,30 @@
 
 using namespace ImmoBank;
 
-bool ImmoBank::Tools::m_devMode = false;
+bool Tools::m_devMode = false;
 static float s_versionNumber = 1.01f;
 
-bool ImmoBank::Tools::IsDevMode()
+bool Tools::IsDevMode()
 {
 	return m_devMode;
 }
 
-void ImmoBank::Tools::SetDevMode(bool _state)
+void Tools::SetDevMode(bool _state)
 {
 	m_devMode = _state;
 }
 
-void ImmoBank::Tools::InvertDevMode()
+void Tools::InvertDevMode()
 {
 	m_devMode = !m_devMode;
 }
 
-float ImmoBank::Tools::GetVersionNumber()
+bool Tools::FileExists(const char* _path)
+{
+	return GetFileAttributesA(_path) != INVALID_FILE_ATTRIBUTES;
+}
+
+float Tools::GetVersionNumber()
 {
 	return s_versionNumber;
 }
@@ -144,6 +149,40 @@ bool Tools::WriteJSON(const char* _path, Json::Value& _data)
 	if (f)
 	{
 		fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
+void Tools::DeleteFileOnDisk(const char* _path)
+{
+	DeleteFileA(_path);
+}
+
+unsigned char* Tools::Read(const char* _path, int& _size)
+{
+	FILE* file = fopen(_path, "rt");
+	if (file)
+	{
+		fseek(file, 0, SEEK_END); // seek to end of file
+		_size = ftell(file); // get current file pointer
+		fseek(file, 0, SEEK_SET); // seek back to beginning of file
+
+		unsigned char* test_data = (unsigned char*)malloc(1000000);
+		fread(test_data, sizeof(char), 1000000, file);
+		fclose(file);
+		return test_data;
+	}
+	return nullptr;
+}
+
+bool Tools::Write(const char* _path, unsigned char* _buffer, int _size)
+{
+	FILE* f = fopen(_path, "wt");
+	if (f)
+	{
+		fwrite(_buffer, sizeof(char), (size_t)_size, f);
 		fclose(f);
 		return true;
 	}

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "MySQLDatabase.h"
 #include "extern/ImGui/imgui.h"
+#include "ImageDatabase.h"
 
 using namespace ImmoBank;
 

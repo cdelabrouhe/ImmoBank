@@ -6,6 +6,7 @@
 #include "Request/RequestManager.h"
 #include "Online/OnlineManager.h"
 #include "Database/DatabaseManager.h"
+#include "Database/ImageDatabase.h"
 #include "UI/UIManager.h"
 #include "Tools/Types.h"
 #include "Text/TextManager.h"
@@ -55,6 +56,9 @@ int main(int argc, char** argv)
 	// Init RequestManager
 	RequestManager::getSingleton()->Init();
 
+	// Init ImageDatabase
+	ImageDatabase::getSingleton()->Init();
+
 	// Main loop
 	while (!quit && !ProdToolGL_ShouldClose())
 	{
@@ -65,6 +69,7 @@ int main(int argc, char** argv)
 			OnlineManager::getSingleton()->Process();
 			RequestManager::getSingleton()->Process();
 			DatabaseManager::getSingleton()->Process();
+			ImageDatabase::getSingleton()->Process();
 			UIManager::getSingleton()->Process();
 		}
 		else
@@ -98,6 +103,9 @@ int main(int argc, char** argv)
 
 	// End DB
 	DatabaseManager::getSingleton()->End();
+
+	// End ImageDatabase
+	ImageDatabase::getSingleton()->End();
 
 	// End Request manager
 	RequestManager::getSingleton()->End();

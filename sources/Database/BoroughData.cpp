@@ -284,7 +284,7 @@ void BoroughData::Edit()
 		}
 		else
 		{
-			if (OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_selogerKeyRequestID))
+			if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_selogerKeyRequestID))
 			{
 				std::string str;
 				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_selogerKeyRequestID, str);

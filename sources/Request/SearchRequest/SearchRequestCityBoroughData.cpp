@@ -40,7 +40,7 @@ bool SearchRequestCityBoroughData::IsAvailable() const
 {
 	if (m_httpRequestsID > -1)
 #ifndef TEST_HTML
-		return OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID);
+		return OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_httpRequestsID);
 #else
 		return true;
 #endif

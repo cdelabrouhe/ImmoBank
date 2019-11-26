@@ -90,7 +90,7 @@ void HTTPDownloader::End()
 }
 
 //------------------------------------------------------------------------------------------------
-int HTTPDownloader::SendRequest(const std::string& _request, RequestResultType _resultType, bool _modifyUserAgent)
+int HTTPDownloader::SendRequest(const std::string& _request, RequestResultType _resultType, bool _modifyUserAgent, const std::string& _writeFilePath)
 {
 	m_mutex->lock();
 
@@ -104,6 +104,7 @@ int HTTPDownloader::SendRequest(const std::string& _request, RequestResultType _
 	request.m_type = _resultType;
 	request.m_request = _request;
 	request.m_protectUserAgent = _modifyUserAgent;
+	request.m_writeFilePath = _writeFilePath;
 
 	m_mutex->unlock();
 
@@ -133,6 +134,7 @@ bool HTTPDownloader::GetNextRequest(sRequest& _request)
 			_request.m_requestID = it->first;
 			_request.m_request = it->second.m_request;
 			_request.m_protectUserAgent = it->second.m_protectUserAgent;
+			_request.m_writeFilePath = it->second.m_writeFilePath;
 			_request.m_type = it->second.m_type;
 			found = true;
 		}
@@ -154,9 +156,9 @@ void HTTPDownloader::SetResult(const int _requestID, sRequest& _result)
 		it->second.m_finished = true;
 		if (_result.m_resultBinarySize > 0)
 		{
-			it->second.m_resultBinary = (unsigned char*)malloc(_result.m_resultBinarySize);
+			it->second.m_resultBinary.m_memory = (char*)malloc(_result.m_resultBinary.m_size);
 			it->second.m_resultBinarySize = _result.m_resultBinarySize;
-			memcpy(it->second.m_resultBinary, _result.m_resultBinary, _result.m_resultBinarySize);
+			memcpy(it->second.m_resultBinary.m_memory, _result.m_resultBinary.m_memory, _result.m_resultBinarySize);
 		}
 	}
 	m_mutex->unlock();
@@ -199,7 +201,7 @@ bool HTTPDownloader::GetResultBinary(const int _requestID, unsigned char*& _resu
 			{
 				_size = request.m_resultBinarySize;
 				_result = (unsigned char*)malloc(_size);
-				memcpy(_result, request.m_resultBinary, _size);
+				memcpy(_result, request.m_resultBinary.m_memory, request.m_resultBinary.m_size);
 			}
 
 			request.m_canceled = true;
@@ -253,18 +255,37 @@ void HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent, st
 	}
 }
 
-static int s_biraryBufferSize = 0;
 //------------------------------------------------------------------------------------------------
-size_t write_data_binary(void *ptr, size_t size, size_t nmemb, unsigned char* &_stream)
+size_t write_data_binary(void *contents, size_t size, size_t nmemb, void* _stream)
 {
-	_stream = (unsigned char*)malloc(size * nmemb);
-	memcpy(_stream, ptr, size * nmemb);
-	s_biraryBufferSize = size * nmemb;
-	return s_biraryBufferSize;
+	size_t realsize = size * nmemb;
+	MemoryStruct *mem = (MemoryStruct *)_stream;
+
+	char *ptr = (char*)realloc(mem->m_memory, mem->m_size + realsize + 1);
+	if (ptr == NULL)
+	{
+		/* out of memory! */
+		printf("not enough memory (realloc returned NULL)\n");
+		return 0;
+	}
+
+	mem->m_memory = (char*)ptr;
+	memcpy(&(mem->m_memory[mem->m_size]), contents, realsize);
+	mem->m_size += realsize;
+	mem->m_memory[mem->m_size] = 0;
+
+	return realsize;
 }
 
 //------------------------------------------------------------------------------------------------
-void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAgent, unsigned char* &_out, int &_bufferSize)
+size_t write_data_binary_file(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	size_t written = fwrite(ptr, size, nmemb, stream);
+	return written;
+}
+
+//------------------------------------------------------------------------------------------------
+void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAgent, MemoryStruct& _out, const char* _filePath)
 {
 	const char* url = _url.c_str();
 	curl_easy_setopt(m_curl, CURLOPT_URL, url);
@@ -274,16 +295,31 @@ void HTTPDownloader::downloadBinary(const std::string& _url, bool _modifyUserAge
 	curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
-	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_binary);
-	curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &_out);
-	/* Perform the request, res will get the return code */
-	CURLcode res = curl_easy_perform(m_curl);
+
+	// Save directly as a file
+	CURLcode res = CURL_LAST;
+	if (_filePath)
+	{
+		FILE* fp = fopen(_filePath, "wb");
+		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_binary_file);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+		/* Perform the request, res will get the return code */
+		res = curl_easy_perform(m_curl);
+		fclose(fp);
+	}
+	// Save in memory
+	else
+	{
+		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_binary);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &_out);
+		/* Perform the request, res will get the return code */
+		res = curl_easy_perform(m_curl);
+	}
 	/* Check for errors */
 	if (res != CURLE_OK) {
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 	}
-	_bufferSize = s_biraryBufferSize;
 }
 
 //------------------------------------------------------------------------------------------------
@@ -305,8 +341,13 @@ void sRequest::Process(HTTPDownloader* _downloader)
 
 	case RequestResultType_Binary:
 		{
+			// Memory alloc 
+			m_resultBinary.m_memory = (char*)malloc(1);  /* will be grown as needed by the realloc above */
+			m_resultBinary.m_size = 0;
+
 			// Copy data
-			_downloader->downloadBinary(m_request, m_protectUserAgent, m_resultBinary, m_resultBinarySize);
+			_downloader->downloadBinary(m_request, m_protectUserAgent, m_resultBinary, !m_writeFilePath.empty() ? m_writeFilePath.c_str() : nullptr);
+			m_resultBinarySize = m_resultBinary.m_size;
 		}
 		break;
 
@@ -320,9 +361,6 @@ void sRequest::Process(HTTPDownloader* _downloader)
 //------------------------------------------------------------------------------------------------
 void sStoreRequest::End()
 {
-	if (m_resultBinary)
-		free(m_resultBinary);
-
-	m_resultBinary = nullptr;
+	free(m_resultBinary.m_memory);
 	m_resultBinarySize = 0;
 }

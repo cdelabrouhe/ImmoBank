@@ -69,7 +69,7 @@ void SearchRequestCityBoroughs::Process()
 			int ID = 0;
 			for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
 			{
-				available &= OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID[ID]);
+				available &= OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_httpRequestsID[ID]);
 				if (!available)
 					break;
 			}
@@ -141,7 +141,7 @@ void SearchRequestCityBoroughs::Process()
 			int ID = 0;
 			for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
 			{
-				available &= OnlineManager::getSingleton()->IsBasicHTTPRequestAvailable(m_httpRequestsID[ID]);
+				available &= OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_httpRequestsID[ID]);
 				if (!available)
 					break;
 			}

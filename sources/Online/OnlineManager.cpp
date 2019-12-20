@@ -43,7 +43,7 @@ void OnlineManager::Init()
 
 	auto orpiDB = new OrpiOnlineDatabase();
 	orpiDB->Init();
-	m_databases.push_back(orpiDB);*/
+	m_databases.push_back(orpiDB);
 
 	auto logicImmoDB = new LogicImmoOnlineDatabase();
 	logicImmoDB->Init();

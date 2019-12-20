@@ -105,5 +105,6 @@ namespace ImmoBank
 
 	public:
 		bool							m_generateSeLogerIndices = false;
+		bool							m_generateLogicImmoIndices = false;
 	};
 }

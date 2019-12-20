@@ -108,6 +108,7 @@ namespace ImmoBank
 		void DebugQuery(const std::string& _query);
 
 		bool UpdateAllSeLogerKeys();
+		bool UpdateAllLogicImmoKeys();
 
 	protected:
 		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
@@ -141,5 +142,6 @@ namespace ImmoBank
 		};
 		std::vector<sBoroughData>	m_boroughData;
 		bool			m_updateSelogerInProgress = false;
+		bool			m_updateLogicImmoInProgress = false;
 	};
 }

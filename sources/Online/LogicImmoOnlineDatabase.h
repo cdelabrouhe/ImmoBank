@@ -36,6 +36,7 @@ namespace ImmoBank
 
 	public:
 		virtual void Init() override;
+		virtual void Process() override;
 		virtual int SendRequest(SearchRequest* _request) override;
 
 	protected:

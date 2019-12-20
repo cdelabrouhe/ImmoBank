@@ -13,6 +13,11 @@ void LogicImmoOnlineDatabase::Init()
 	SetName("LogicImmo");
 }
 
+void LogicImmoOnlineDatabase::Process()
+{
+
+}
+
 int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 {
 	if (_request->m_requestType != SearchRequestType_Announce)

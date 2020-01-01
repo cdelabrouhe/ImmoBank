@@ -848,9 +848,9 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 	bool result = true;
 	if (Tools::IsDevMode())
 	{
-		if (!m_updateSelogerInProgress)
+		if (!m_updateLogicImmoInProgress)
 		{
-			m_updateSelogerInProgress = true;
+			m_updateLogicImmoInProgress = true;
 			std::string query = "SELECT * FROM BOROUGHS";
 			MYSQL_RES* result = ExecuteQuery(query);
 
@@ -891,7 +891,7 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 				if (data.m_name == s_wholeCityName)
 					continue;
 
-				std::string request = data.ComputeSeLogerKeyURL();
+				std::string request = data.ComputeLogicImmoKeyURL();
 				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
 				m_boroughData.push_back(sBoroughData(data, requestID));

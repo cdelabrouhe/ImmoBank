@@ -70,6 +70,7 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 
 	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 	m_requests[ID].m_initialRequest = announce;
+	m_requests[ID].m_request = request;
 
 	static bool s_test = false;
 	if (s_test)

@@ -157,3 +157,17 @@ void StringTools::UnFixName(std::string& _name)
 	StringTools::ReplaceBadSyntax(_name, "è", "Ã¨");
 	StringTools::ReplaceBadSyntax(_name, "î", "Ã®");
 }
+
+std::string StringTools::ExtractStringFromPosition(const std::string& _str, size_t _position, char _lookForBordersChar)
+{
+	while ((_position > 0) && (_str[_position] != _lookForBordersChar))
+		--_position;
+
+	if (_position == 0)
+		return "";
+
+	std::string tmp = _str.substr(_position + 1, _str.size());
+	auto findID = tmp.find_first_of("\"");
+	tmp = tmp.substr(0, findID);
+	return tmp;
+}

@@ -241,7 +241,9 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 //-------------------------------------------------------------------------------------------------
 std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
 {
-	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + m_city.m_name;
+	std::string name = m_city.m_name;
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
 	return request;
 }
 

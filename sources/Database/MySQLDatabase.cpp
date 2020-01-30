@@ -887,16 +887,18 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 				data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
-				if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
-
-				if (data.m_selogerKey != 0)
-					continue;
+				if (const char* key = row[rowID++])
+				{
+					data.m_logicImmoKey = key;
+					if (!data.m_logicImmoKey.empty())
+						continue;
+				}
 
 				if (data.m_name == s_wholeCityName)
 					continue;
 
 				std::string request = data.ComputeLogicImmoKeyURL();
-				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 
 				m_boroughData.push_back(sBoroughData(data, requestID));
 			}

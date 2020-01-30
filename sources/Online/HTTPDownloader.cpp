@@ -8,7 +8,7 @@
 
 using namespace ImmoBank;
 
-static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
+static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0";
 
 #ifdef WIN32
 #ifdef _DEBUG

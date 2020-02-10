@@ -189,7 +189,7 @@ void OnlineManager::DisplayDebug()
 	if ((m_testRequest == -1) && callCommand)
 	{
 		std::string str = m_inputDebug;
-		m_testRequest = OnlineManager::getSingleton()->SendBasicHTTPRequest(str);
+		m_testRequest = OnlineManager::getSingleton()->SendBasicHTTPRequest(str, true);
 	}
 
 	if (ImGui::Button("Clear"))

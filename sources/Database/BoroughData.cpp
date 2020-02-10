@@ -242,7 +242,9 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
 {
 	std::string name = m_city.m_name;
+	StringTools::RemoveSpecialCharacters(name);
 	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
 	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
 	return request;
 }
@@ -456,6 +458,8 @@ void BoroughData::DisplayAsTooltip()
 			bool isCity = false;
 			int selogerKey = GetSelogerKey(&isCity);
 			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
+			std::string logicImmoKey = GetLogicImmoKey();
+			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str());
 		}
 
 		if (IsValid())

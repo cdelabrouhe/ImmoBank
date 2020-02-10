@@ -50,6 +50,7 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "Ã¨", "e");//  "è");
 	StringTools::ReplaceBadSyntax(_str, "Ã´", "o");//  "è");
 	StringTools::ReplaceBadSyntax(_str, "Ã€", "A");//  "À");
+	StringTools::ReplaceBadSyntax(_str, "Ã¢", "a");//  "â");
 	StringTools::ReplaceBadSyntax(_str, "Â²", "2");
 	StringTools::ReplaceBadSyntax(_str, "Â", "");
 	StringTools::ReplaceBadSyntax(_str, "Ã ", "a");//  "à");
@@ -58,6 +59,7 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "àª", "e");//  "ê");
 	StringTools::ReplaceBadSyntax(_str, "à‰", "E");//  "É");
 	StringTools::ReplaceBadSyntax(_str, "Ã‰", "E");//  "É");
+	StringTools::ReplaceBadSyntax(_str, "Ã§", "c");//  "É");
 	StringTools::ReplaceBadSyntax(_str, "%", "pourcent");
 
 	/*static bool s_test = false;

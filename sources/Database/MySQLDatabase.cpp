@@ -763,7 +763,7 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 				std::string request = data.ComputeSeLogerKeyURL();
 				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
-				m_boroughData.push_back(sBoroughData(data, requestID));
+				m_boroughData.push_back(sBoroughData(data, request, requestID));
 			}
 
 			mysql_free_result(result);
@@ -831,6 +831,8 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 					}
 
 					it = m_boroughData.erase(it);
+					if (m_boroughData.size() == 0)
+						m_updateSelogerInProgress = false;
 				}
 				else
 				{
@@ -846,6 +848,8 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 	return result;
 }
 
+std::map<std::string, std::string> s_logicImmoKeys;
+
 bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 {
 	bool result = true;
@@ -856,9 +860,11 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 			m_updateLogicImmoInProgress = true;
 			std::string query = "SELECT * FROM BOROUGHS";
 			MYSQL_RES* result = ExecuteQuery(query);
+			int nbEntries = 0;
 
 			while (MYSQL_ROW row = mysql_fetch_row(result))
 			{
+				++nbEntries;
 				int rowID = 0;
 				BoroughData data;
 				data.m_city.m_name = row[rowID++];
@@ -891,16 +897,31 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 				{
 					data.m_logicImmoKey = key;
 					if (!data.m_logicImmoKey.empty())
+					{
+						std::string cityName = data.m_city.m_name;
+						StringTools::RemoveSpecialCharacters(cityName);
+						StringTools::ReplaceBadSyntax(cityName, " ", "-");
+						StringTools::TransformToLower(cityName);
+						s_logicImmoKeys[cityName] = data.m_logicImmoKey;
 						continue;
+					}
 				}
 
-				if (data.m_name == s_wholeCityName)
+				std::string cityName = data.m_city.m_name;
+				StringTools::RemoveSpecialCharacters(cityName);
+				StringTools::ReplaceBadSyntax(cityName, " ", "-");
+				StringTools::TransformToLower(cityName);
+				if (s_logicImmoKeys.find(data.m_city.m_name) != s_logicImmoKeys.end())
+				{
+					data.m_logicImmoKey = s_logicImmoKeys[cityName];
+					DatabaseManager::getSingleton()->AddBoroughData(data);
 					continue;
+				}
 
 				std::string request = data.ComputeLogicImmoKeyURL();
 				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 
-				m_boroughData.push_back(sBoroughData(data, requestID));
+				m_boroughData.push_back(sBoroughData(data, request, requestID));
 			}
 
 			mysql_free_result(result);
@@ -922,38 +943,41 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 					reader.parse(str, root);
 
 					std::string boroughCityName = borough.m_data.m_city.m_name;
-					Json::Value& places = root;
+					Json::Value& places = root["items"];
 					if (places.isArray())
 					{
+						StringTools::RemoveSpecialCharacters(boroughCityName);
 						StringTools::TransformToLower(boroughCityName);
+						StringTools::ReplaceBadSyntax(boroughCityName, " ", "-");
 
 						const int nbPlaces = places.size();
 						for (int placeID = 0; placeID < nbPlaces; ++placeID)
 						{
 							Json::Value val = places.get(placeID, Json::nullValue);
-							std::string name = val["Display"].asString();
-							std::string type = val["Type"].asString();
-							bool isBorough = (type == "Quartier");
-							bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
-
-							bool valid = isBorough || isCity;
-							if (!valid)
-							{
-								std::string mes = "Rejected because invalid for " + name;
-								DisplayMySQLMessage(mes);
+							std::string name = val["name"].asString();
+							StringTools::TransformToLower(name);
+							StringTools::ReplaceBadSyntax(name, " ", "-");
+							if (name != boroughCityName)
 								continue;
+
+							std::string key = val["key"].asString();
+							std::string zipCode = val["postCode"].asString();
+							int zip = borough.m_data.m_city.m_zipCode;
+							if (!zipCode.empty())
+							{
+								zip = stoi(zipCode);
+								if ((borough.m_data.m_city.m_zipCode != 0) && (zip != borough.m_data.m_city.m_zipCode))
+									continue;
 							}
 
-							std::string tmp = name;
-							StringTools::TransformToLower(tmp);
-							auto findID = tmp.find(boroughCityName);
-							if (findID == std::string::npos)
-								continue;
+							borough.m_data.m_city.m_zipCode = zip;
+							borough.m_data.SetLogicImmoKey(key);
 
-							std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
-							unsigned int index = std::stoi(strIndexID);
-
-							borough.m_data.SetSelogerKey(index, isCity);
+							std::string cityName = borough.m_data.m_city.m_name;
+							StringTools::RemoveSpecialCharacters(cityName);
+							StringTools::ReplaceBadSyntax(cityName, " ", "-");
+							StringTools::TransformToLower(cityName);
+							s_logicImmoKeys[cityName] = key;
 
 							DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
 
@@ -968,6 +992,8 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 					}
 
 					it = m_boroughData.erase(it);
+					if (m_boroughData.size() == 0)
+						m_updateLogicImmoInProgress = false;
 				}
 				else
 				{

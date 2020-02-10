@@ -74,7 +74,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	while (m_requests.find(ID) != m_requests.end())
 		++ID;
 
-	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 	m_requests[ID].m_initialRequest = announce;
 	m_requests[ID].m_request = request;
 

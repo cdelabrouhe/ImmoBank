@@ -140,7 +140,8 @@ bool UIManager::Draw()
 		{
 			if (ImGui::BeginMenu(GET_TEXT("MenuDebug")))
 			{
-				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebug);
+				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebugMySQL);
+				ImGui::MenuItem("SQlite3 debug panel", nullptr, &DatabaseManager::getSingleton()->m_displayDebugSQLite3);
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
 				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);

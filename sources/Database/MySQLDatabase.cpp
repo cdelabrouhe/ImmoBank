@@ -271,7 +271,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT4Plus.m_min,
 			m_data.m_priceRentApartmentT4Plus.m_max,
 			m_data.m_selogerKey,
-			m_data.m_logicImmoKey.c_str());
+			m_data.m_logicImmoKey.empty() ? "(null)" : m_data.m_logicImmoKey.c_str());
 
 		std::string str = buf;
 		_db->ExecuteUpdate(str);
@@ -1006,5 +1006,18 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 				result = false;
 		}
 	}
+	return result;
+}
+
+bool ImmoBank::MySQLDatabase::UpdateLocalBaseToServer()
+{
+	bool result = false;
+
+	std::vector<BoroughData> data;
+	DatabaseManager::getSingleton()->GetAllBoroughs(data);
+
+	for (auto& entry : data)
+		WriteBoroughData(entry);
+
 	return result;
 }

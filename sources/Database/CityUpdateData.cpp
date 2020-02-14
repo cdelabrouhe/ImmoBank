@@ -20,7 +20,7 @@ bool CityUpdateData::Process()
 	{
 		for (auto& borough : list)
 		{
-			DatabaseManager::getSingleton()->AddBoroughData(borough);
+			DatabaseManager::getSingleton()->AddBoroughData(borough, false);
 		}
 
 		return true;

@@ -48,6 +48,7 @@ namespace ImmoBank
 		bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
 		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
+		void	GetAllBoroughs(std::vector<BoroughData>& _data);
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);
 
@@ -106,5 +107,6 @@ namespace ImmoBank
 	public:
 		bool							m_generateSeLogerIndices = false;
 		bool							m_generateLogicImmoIndices = false;
+		bool							m_updateLocalBaseToServer = false;
 	};
 }

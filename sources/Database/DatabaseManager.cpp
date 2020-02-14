@@ -124,6 +124,9 @@ void DatabaseManager::Process()
 
 		if (m_generateLogicImmoIndices)
 			m_generateLogicImmoIndices = m_externalDB->UpdateAllLogicImmoKeys();
+
+		if (m_updateLocalBaseToServer)
+			m_updateLocalBaseToServer = m_externalDB->UpdateLocalBaseToServer();
 	}
 }
 
@@ -145,7 +148,8 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 	localData.m_city.UnFixName();
 	RemoveBoroughData(localData.m_city.m_name, localData.m_name);
 
-	if (SQLExecute(m_tables[DataTables_Boroughs], "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s')",
+	char buf[4096];
+	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s')",
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
@@ -172,7 +176,21 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentApartmentT4Plus.m_min,
 		localData.m_priceRentApartmentT4Plus.m_max,
 		localData.m_selogerKey,
-		localData.m_logicImmoKey))
+		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str());
+
+	/*static bool s_test = false;
+	if (s_test)
+	{
+		FILE* f = fopen("error.txt", "wt");
+		if (f)
+		{
+			std::string str = buf;
+			fwrite(str.data(), sizeof(char), (size_t)str.size(), f);
+			fclose(f);
+		}
+	}*/
+
+	if (SQLExecute(m_tables[DataTables_Boroughs], buf))
 		printf("Add borough %s to database Boroughs\n", localData.m_name.c_str());
 
 	if (_saveExternal)
@@ -252,7 +270,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		return false;
 
 	_data.clear();
-	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
+	Str128f sql(!_city.m_name.empty() ? ("SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str()) : "SELECT * FROM Boroughs");
 
 	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&_data](sqlite3_stmt* _stmt)
 	{
@@ -290,7 +308,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 
 	for (auto& borough : _data)
 	{
-		borough.m_city = _city;
+		borough.m_city = !_city.m_name.empty() ? _city : borough.m_city;
 		borough.m_city.FixName();
 
 		// Ask data to external database
@@ -314,6 +332,13 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		return true;
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ImmoBank::DatabaseManager::GetAllBoroughs(std::vector<BoroughData>& _data)
+{
+	sCity city;
+	GetBoroughs(city, _data);
 }
 
 //-------------------------------------------------------------------------------------------------

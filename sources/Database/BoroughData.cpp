@@ -375,7 +375,7 @@ void BoroughData::Edit()
 					for (int itemID = 0; itemID < nbPlaces; ++itemID)
 					{
 						Json::Value val = items.get(itemID, Json::nullValue);
-						std::string zipCodeStr = val["postCode"].asString();
+						std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
 						int zipCode = std::stoi(zipCodeStr);
 						if (zipCode != m_city.m_zipCode)
 							continue;

@@ -13,6 +13,8 @@
 
 using namespace ImmoBank;
 
+#define USE_LOGIC_IMMO
+
 DatabaseManager* s_singleton = nullptr;
 const std::string ImmoBank::s_wholeCityName = "WholeCity";
 static int s_externalDBUpdateInterval = 600;
@@ -149,7 +151,11 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 	RemoveBoroughData(localData.m_city.m_name, localData.m_name);
 
 	char buf[4096];
+#ifdef USE_LOGIC_IMMO
 	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s')",
+#else
+	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u)",
+#endif
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
@@ -175,8 +181,12 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentApartmentT4Plus.m_val,
 		localData.m_priceRentApartmentT4Plus.m_min,
 		localData.m_priceRentApartmentT4Plus.m_max,
+#ifdef USE_LOGIC_IMMO
 		localData.m_selogerKey,
 		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str());
+#else
+		localData.m_selogerKey);
+#endif
 
 	/*static bool s_test = false;
 	if (s_test)
@@ -237,7 +247,9 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
+#ifdef USE_LOGIC_IMMO
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
+#endif
 	});
 
 	if (boroughs.size() == 1)
@@ -264,15 +276,14 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
+bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughData>& _data)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	_data.clear();
-	Str128f sql(!_city.m_name.empty() ? ("SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str()) : "SELECT * FROM Boroughs");
 
-	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&_data](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_tables[DataTables_Boroughs], _query.c_str(), [&_data](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		_data.resize(_data.size() + 1);
@@ -303,8 +314,34 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
+#ifdef USE_LOGIC_IMMO
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
+#endif
 	});
+	
+	if (_data.size() >= 1)
+		return true;
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
+{
+	if (m_tables[DataTables_Boroughs] == nullptr)
+		return false;
+
+	_data.clear();
+	
+	char buf[4096];
+	if (!_city.m_name.empty())
+		sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
+	else
+		sprintf(buf, "SELECT * FROM Boroughs");
+
+	std::string sql = buf;
+
+	AddQuery(sql, _data);
 
 	for (auto& borough : _data)
 	{
@@ -573,8 +610,12 @@ void DatabaseManager::CreateTables()
 		"`RENTT4` REAL,\n"			// Buy max price
 		"`RENTT4MIN` REAL,\n"		// Buy min price
 		"`RENTT4MAX` REAL,\n"		// Buy max price
-		"`SELOGERKEY` INTEGER,\n"		// Internal SeLoger key
-		"`LOGICIMMOKEY` TEXT"			// Text for LogicImmo key
+#ifdef USE_LOGIC_IMMO
+		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
+		"`LOGICIMMOKEY` TEXT"		// Text for LogicImmo key
+#else
+		"`SELOGERKEY` INTEGER"		// Internal SeLoger key
+#endif
 		")"
 	);
 }
@@ -735,16 +776,62 @@ void DatabaseManager::TriggerExternalSQLCommand(const std::string& _query)
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::DisplayDebug()
 {
-	if (!m_displayDebug)
+	DisplaySQlite3Debug();
+	DisplayMySQLRequestsPanel();
+}
+
+//-------------------------------------------------------------------------------------------------
+void ImmoBank::DatabaseManager::DisplaySQlite3Debug()
+{
+	if (!m_displayDebugSQLite3)
 		return;
 
-	DisplayMySQLRequestsPanel();
+	ImGui::Begin("SQlite3 Debug panel", &m_displayDebugSQLite3);
+	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
+
+	// Debug request
+	bool callCommand = ImGui::Button("Call command") && strlen(m_SQlite3InputDebug) > 0;
+	ImGui::SameLine();
+	ImGui::InputText("Manual SQL command", (char*)m_SQlite3InputDebug, 2048);
+	static std::vector<BoroughData> s_debugResults;
+	if (callCommand)
+	{
+		std::string str = m_SQlite3InputDebug;
+		DatabaseManager::getSingleton()->AddQuery(str, s_debugResults);
+
+		m_SQlite3Requests.clear();
+		for (auto& result : s_debugResults)
+		{
+			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey) + ", LogicImmoKEY: " + result.m_logicImmoKey;
+			m_SQlite3Requests.push_back(mes);
+		}
+	}
+
+	if (ImGui::Button("Clear"))
+		m_SQlite3Requests.clear();
+
+	ImGui::Separator();
+
+	ImGui::EndChild();
+
+	ImGui::BeginChild("Requests");
+	auto nbRequests = m_SQlite3Requests.size();
+	for (auto ID = 0; ID < nbRequests; ++ID)
+	{
+		ImGui::TextWrapped("%s", m_SQlite3Requests[ID].c_str());
+	}
+	ImGui::EndChild();
+
+	ImGui::End();
 }
 
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::DisplayMySQLRequestsPanel()
 {
-	ImGui::Begin("MySQL Debug panel", &m_displayDebug);
+	if (!m_displayDebugMySQL)
+		return;
+
+	ImGui::Begin("MySQL Debug panel", &m_displayDebugMySQL);
 	ImGui::BeginChild("Tools", ImVec2(ImGui::GetWindowContentRegionWidth(), 60), false, ImGuiWindowFlags_NoScrollbar);
 
 	// Debug request

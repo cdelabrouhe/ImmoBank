@@ -29,9 +29,9 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	// Cherche ville avec http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=Montpellier
 	// Requete avec http://lisemobile.logic-immo.com/li.search_ads.php
 
-	std::string request = "http://www.laforet.com/acheter/rechercher?slug=&ajaxValue=0";
+	std::string request = "http://lisemobile.logic-immo.com/li.search_ads.php?client=v8.a&domain=sales";
 
-	// Apartment / house
+	// Apartment / house => no such information in LogicImmo parameters (or just didn't find it)
 	int categoryID = 0;
 	auto nbCategories = announce->m_categories;
 	for (auto category : announce->m_categories)
@@ -39,13 +39,13 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 		switch (category)
 		{
 		case Category_Apartment:
-			request += "&appartement=on";
+			//request += "&appartement=on";
 			break;
 		case Category_House:
-			request += "&maison=on";
+			//request += "&maison=on";
 			break;
 		default:
-			printf("Error: unknown request category");
+			//printf("Error: unknown request category");
 			return -1;
 		}
 
@@ -53,22 +53,26 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	}
 
 	// Localisation (no borough for now)
-	request += "&localisation=" + announce->m_city.m_name + "%28" + std::to_string(announce->m_city.m_zipCode) + "%29";
+	BoroughData borough;
+	sCityData cityData;
+	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, cityData, &borough);
+	request += "&localities=" + borough.m_logicImmoKey;
 
 	// Price
-	request += "&price_min=" + std::to_string(announce->m_priceMin);
-	request += "&price_max=" + std::to_string(announce->m_priceMax);
+	request += "&price_range=" + std::to_string(announce->m_priceMin) + "," + std::to_string(announce->m_priceMax);
 
 	// Surface
-	request += "&surface_min=" + std::to_string(announce->m_surfaceMin);
-	request += "&surface_max=" + std::to_string(announce->m_surfaceMax);
+	request += "&area_range=" + std::to_string(announce->m_surfaceMin) + "," + std::to_string(announce->m_surfaceMax);
 
 	// Nb rooms
-	for (int roomID = announce->m_nbRoomsMin; roomID <= announce->m_nbRoomsMax; ++roomID)
-		request += "&rooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
+	request += "&rooms_range=" + std::to_string(announce->m_nbRoomsMin);
+	for (int roomID = announce->m_nbRoomsMin + 1; roomID <= announce->m_nbRoomsMax; ++roomID)
+		request += "," + std::to_string(roomID);
 
+	// Nb bedrooms
+	request += "&bedrooms_range=" + std::to_string(announce->m_nbBedRoomsMin);
 	for (int roomID = announce->m_nbBedRoomsMin + 1; roomID <= announce->m_nbBedRoomsMax; ++roomID)
-		request += "&bedrooms" + std::to_string(roomID) + "=" + std::to_string(roomID);
+		request += "," + std::to_string(roomID);
 
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
@@ -91,99 +95,50 @@ bool LogicImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std:
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
 
-	sRecherche recherche;
-	recherche.Serialize(_str);
-
-	for (auto& annonce : recherche.m_annonces)
+	/*std::string str;
+	FILE* f = fopen("data_test_laforet.html", "rt");
+	if (f)
 	{
+		char* test_data = (char*)malloc(10000000);
+		fread(test_data, sizeof(char), 10000000, f);
+		fclose(f);
+		str = test_data;
+		free(test_data);
+	}*/
+
+	Json::Value root;
+	Json::Reader reader;
+	reader.parse(_str, root);
+
+	Json::Value& datas = root["items"];
+	int nbAnnounces = datas.size();
+	for (int announceID = 0; announceID < nbAnnounces; ++announceID)
+	{
+		Json::Value& data = datas[announceID];
 		SearchRequestResultAnnounce* result = new SearchRequestResultAnnounce(*announce);
 		result->m_database = GetName();
-		result->m_name = annonce.m_name;
-		result->m_description = annonce.m_description;
-		result->m_price = annonce.m_price;
-		result->m_surface = annonce.m_surface;
-		result->m_URL = annonce.m_URL;
-		result->m_imageURL = annonce.m_imageURL;
-		result->m_nbRooms = annonce.m_nbRooms;
-		result->m_nbBedRooms = annonce.m_nbBedRooms;
-		result->m_category = annonce.m_category;
+		result->m_name = data["info"]["propertyType"]["name"].asString();
+		StringTools::RemoveSpecialCharacters(result->m_name);
+		result->m_description = data["info"]["text"].asString();
+		StringTools::RemoveSpecialCharacters(result->m_description);
+		result->m_price = data["pricing"]["amount"].asInt();
+		result->m_surface = data["properties"]["area"].asDouble();
+		result->m_URL = data["info"]["link"].asString();
+		result->m_imageURL = data["pictures"].get(0u, Json::nullValue).asString();
+		StringTools::FindAndReplaceAll(result->m_imageURL, "[WIDTH]", "640");
+		StringTools::FindAndReplaceAll(result->m_imageURL, "[HEIGHT]", "480");
+		StringTools::FindAndReplaceAll(result->m_imageURL, "[SCALE]", "1");
+		result->m_nbRooms = data["properties"]["rooms"].asInt();
+		result->m_nbBedRooms = data["properties"]["bedrooms"].asInt();
+		int category = stoi(data["info"]["propertyType"]["identifier"].asString());
+		if (category == 1)
+			result->m_category = Category_Apartment;
+		else
+			result->m_category = Category_House;
 
 		result->Init();
 
 		_results.push_back(result);
-	}
-	return true;
-}
-
-void LogicImmoOnlineDatabase::sRecherche::Serialize(const std::string& _str)
-{
-	std::string startStr = "json";
-	std::string stopStr = "pictos";
-	auto startID = _str.find(startStr);
-
-	std::string str = _str.substr(startID, _str.size());
-	while (str.size() > 0)
-	{
-		auto start = str.find(startStr);
-		auto stop = str.find(stopStr);
-
-		// End => stop serialization
-		if ((start == std::string::npos) && (stop == std::string::npos))
-		{
-			str = "";
-			continue;
-		}
-
-		std::string strAnnonce = str.substr(start, stop);
-		sAnnonce announce;
-		if (announce.Serialize(strAnnonce))
-		{
-			m_annonces.push_back(announce);
-			str = str.substr(stop + stopStr.size(), str.size());
-		}
-		else
-			str = "";
-	}
-}
-
-bool LogicImmoOnlineDatabase::sAnnonce::Serialize(const std::string& _str)
-{
-	auto start = _str.find_first_of("{");
-	auto stop = _str.find_first_of("}");
-
-	if ((start == std::string::npos) || (stop == std::string::npos))
-		return false;
-
-	std::string strJson = _str.substr(start, stop);
-	StringTools::ReplaceBadSyntax(strJson, "&quot;", "\"");
-	Json::Reader reader;
-	Json::Value root;
-	reader.parse(strJson, root);
-
-	m_city = root["city"].asString();
-	m_name = root["title"].asString();
-	m_description = root["description"].asString();
-	StringTools::RemoveSpecialCharacters(m_name);
-	StringTools::RemoveSpecialCharacters(m_description);
-	m_URL = "http://www.laforet.com" + root["url"].asString();
-	m_imageURL = root["imageUrl"].asString();
-	std::string price = root["price"].asString();
-	StringTools::ReplaceBadSyntax(price, " ", "");
-	m_price = std::stoi(price);
-	m_surface = (float)std::stoi(root["surface"].asString());
-	m_nbRooms = std::stoi(root["roomsQuantity"].asString());
-	m_nbBedRooms = std::stoi(root["bedroomsQuantity"].asString());
-
-	std::string str = root["propertyType"].asString();
-	if (!str.empty())
-	{
-		int type = std::stoi(str);
-		switch (type)
-		{
-		case 1:			m_category = Category_House;		break;
-		case 2:			m_category = Category_Apartment;	break;
-		default:		m_category = Category_NONE;			break;
-		}
 	}
 
 	return true;

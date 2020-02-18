@@ -63,7 +63,6 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "เ", "E");//  "ษ");
 	StringTools::ReplaceBadSyntax(_str, "ร", "E");//  "ษ");
 	StringTools::ReplaceBadSyntax(_str, "รง", "c");//  "ษ");
-	StringTools::ReplaceBadSyntax(_str, "%", "pourcent");
 
 	/*static bool s_test = false;
 	if (s_test)
@@ -129,6 +128,7 @@ void StringTools::ConvertToImGuiText(std::string& _text)
 	StringTools::ReplaceBadSyntax(_text, "้", "e");
 	StringTools::ReplaceBadSyntax(_text, "่", "e");
 	StringTools::ReplaceBadSyntax(_text, "๊", "e");
+	StringTools::ReplaceBadSyntax(_text, "๎", "i");
 }
 
 constexpr unsigned int HashStrRecur(unsigned int _hash, const char* _str)

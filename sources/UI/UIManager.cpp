@@ -325,12 +325,26 @@ void UIManager::DisplayCityInformation()
 	{
 		std::string name = selectedCity.m_data.m_name;
 		StringTools::ConvertToImGuiText(name);
-		ImGui::Text("%s: %s    %s: %d   %s: %d"	, GET_TEXT("DatabaseWindowCityName")
-												, name.c_str()
-												, GET_TEXT("DatabaseWindowZipCode")
-												, selectedCity.m_data.m_zipCode
-												, GET_TEXT("DatabaseWindowInseeCode")
-												, selectedCity.m_data.m_inseeCode);
+		if (Tools::IsDevMode())
+		{
+			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s", GET_TEXT("DatabaseWindowCityName")
+				, name.c_str()
+				, GET_TEXT("DatabaseWindowZipCode")
+				, selectedCity.m_data.m_zipCode
+				, GET_TEXT("DatabaseWindowInseeCode")
+				, selectedCity.m_data.m_inseeCode
+				, "LogicImmoKey"
+				, selectedCity.m_data.m_logicImmoKey.c_str());
+		}
+		else
+		{
+			ImGui::Text("%s: %s    %s: %d   %s: %d", GET_TEXT("DatabaseWindowCityName")
+				, name.c_str()
+				, GET_TEXT("DatabaseWindowZipCode")
+				, selectedCity.m_data.m_zipCode
+				, GET_TEXT("DatabaseWindowInseeCode")
+				, selectedCity.m_data.m_inseeCode);
+		}
 		
 		wholeCityData.DisplayAsTooltip();
 

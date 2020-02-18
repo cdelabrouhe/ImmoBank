@@ -417,8 +417,9 @@ void DatabaseManager::AddCity(const sCityData& _data)
 
 	RemoveCityData(_data.m_data.m_name);
 
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', %d, %d, %u)",
+	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %d, %d, %u)",
 		_data.m_data.m_name.c_str(),
+		_data.m_data.m_logicImmoKey.c_str(),
 		_data.m_data.m_zipCode,
 		_data.m_data.m_inseeCode,
 		_data.m_timeUpdate.GetData()))
@@ -442,6 +443,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 		cities.resize(cities.size() + 1);
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
@@ -532,6 +534,7 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 		cities.resize(cities.size() + 1);
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
@@ -577,9 +580,10 @@ void DatabaseManager::CreateTables()
 	SQLExecute(m_tables[DataTables_Cities],
 		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
 		"`NAME` TEXT,\n"			// Name of the city
+		"`LOGICIMMOKEY` TEXT,\n"	// LogicImmoKey
 		"`ZIPCODE` INTEGER,\n"		// ZIP code
-		"`INSEECODE` INTEGER,\n"		// ZIP code
-		"`TIMEUPDATE` INTEGER"	// Last time the borough has been updated
+		"`INSEECODE` INTEGER,\n"	// INSEE code
+		"`TIMEUPDATE` INTEGER"		// Last time the borough has been updated
 		")"
 	);
 

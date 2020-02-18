@@ -43,6 +43,8 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	// Correct some bad characters
 	StringTools::ReplaceBadSyntax(_str, "&#39;", "'");
 	StringTools::ReplaceBadSyntax(_str, "&#039;", "'");
+	StringTools::ReplaceBadSyntax(_str, "&#x27;", "'");
+	StringTools::ReplaceBadSyntax(_str, "&#x2B;", "+");
 	StringTools::ReplaceBadSyntax(_str, "&amp;", "&");
 	StringTools::ReplaceBadSyntax(_str, "&quot;", "`");
 	StringTools::ReplaceBadSyntax(_str, "Â½", "oe");
@@ -52,6 +54,7 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "Ã€", "A");//  "À");
 	StringTools::ReplaceBadSyntax(_str, "Ã¢", "a");//  "â");
 	StringTools::ReplaceBadSyntax(_str, "Â²", "2");
+	StringTools::ReplaceBadSyntax(_str, "Ãª", "e");
 	StringTools::ReplaceBadSyntax(_str, "Â", "");
 	StringTools::ReplaceBadSyntax(_str, "Ã ", "a");//  "à");
 	StringTools::ReplaceBadSyntax(_str, " ", " ");//   "à");
@@ -172,4 +175,24 @@ std::string StringTools::ExtractStringFromPosition(const std::string& _str, size
 	auto findID = tmp.find_first_of("\"");
 	tmp = tmp.substr(0, findID);
 	return tmp;
+}
+
+void ImmoBank::StringTools::ConvertUnicodeToStr(std::string& _str)
+{
+	ReplaceBadSyntax(_str, "u00e0", "a");
+	ReplaceBadSyntax(_str, "u00e2", "a");
+	ReplaceBadSyntax(_str, "u00e4", "a");
+	ReplaceBadSyntax(_str, "u00e7", "c");
+	ReplaceBadSyntax(_str, "u00e8", "e");
+	ReplaceBadSyntax(_str, "u00e9", "e");
+	ReplaceBadSyntax(_str, "u00ea", "e");
+	ReplaceBadSyntax(_str, "u00eb", "e");
+	ReplaceBadSyntax(_str, "u00ee", "i");
+	ReplaceBadSyntax(_str, "u00ef", "i");
+	ReplaceBadSyntax(_str, "u00f4", "o");
+	ReplaceBadSyntax(_str, "u00f6", "o");
+	ReplaceBadSyntax(_str, "u00f9", "u");
+	ReplaceBadSyntax(_str, "u00fb", "u");
+	ReplaceBadSyntax(_str, "u00fc", "u");
+	ReplaceBadSyntax(_str, "u2026", "...");
 }

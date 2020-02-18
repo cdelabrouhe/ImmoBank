@@ -22,5 +22,6 @@ namespace ImmoBank
 		static void FixName(std::string& _name);
 		static void UnFixName(std::string& _name);
 		static std::string ExtractStringFromPosition(const std::string& _str, size_t _position, char _lookForBordersChar);
+		static void ConvertUnicodeToStr(std::string& _str);
 	};
 }

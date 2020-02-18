@@ -5,6 +5,7 @@
 #include "SeLogerOnlineDatabase.h"
 #include "LaforetOnlineDatabase.h"
 #include "OrpiOnlineDatabase.h"
+#include "LogicImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
 
@@ -43,6 +44,10 @@ void OnlineManager::Init()
 	auto orpiDB = new OrpiOnlineDatabase();
 	orpiDB->Init();
 	m_databases.push_back(orpiDB);
+
+	auto logicImmoDB = new LogicImmoOnlineDatabase();
+	logicImmoDB->Init();
+	m_databases.push_back(logicImmoDB);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -184,7 +189,7 @@ void OnlineManager::DisplayDebug()
 	if ((m_testRequest == -1) && callCommand)
 	{
 		std::string str = m_inputDebug;
-		m_testRequest = OnlineManager::getSingleton()->SendBasicHTTPRequest(str);
+		m_testRequest = OnlineManager::getSingleton()->SendBasicHTTPRequest(str, true);
 	}
 
 	if (ImGui::Button("Clear"))

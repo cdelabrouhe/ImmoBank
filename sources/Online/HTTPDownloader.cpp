@@ -8,7 +8,7 @@
 
 using namespace ImmoBank;
 
-static const char* s_curlUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
+static const char* s_curlUserAgent = "curl/7.68.0";// "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0";
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -233,6 +233,16 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 	return size * nmemb;
 }
 
+//#define HTTP_DEBUG
+#ifdef HTTP_DEBUG
+//------------------------------------------------------------------------------------------------
+int debug_callback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
+{
+	printf("%s", data);
+
+	return 0;
+}
+#endif
 //------------------------------------------------------------------------------------------------
 void HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent, std::stringstream& _out)
 {
@@ -242,6 +252,11 @@ void HTTPDownloader::download(const std::string& _url, bool _modifyUserAgent, st
 	if (_modifyUserAgent)
 		curl_easy_setopt(m_curl, CURLOPT_USERAGENT, s_curlUserAgent);
 	curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+#ifdef HTTP_DEBUG
+	curl_easy_setopt(m_curl, CURLOPT_VERBOSE, TRUE);
+	curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, debug_callback);
+	curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1);
+#endif
 	curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
 	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data);

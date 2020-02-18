@@ -27,6 +27,7 @@ namespace ImmoBank
 		sDate				m_timeUpdate;
 		unsigned int		m_meilleursAgentsKey = 0xffffffff;
 		unsigned int		m_selogerKey = 0;
+		std::string			m_logicImmoKey;
 		sPrice				m_priceRentApartmentT1;
 		sPrice				m_priceRentApartmentT2;
 		sPrice				m_priceRentApartmentT3;
@@ -55,14 +56,19 @@ namespace ImmoBank
 		int GetSelogerKey(bool* _isCity = nullptr);
 		static unsigned int ConvertSelogerKey(unsigned int _key, bool _isCity);
 
+		void SetLogicImmoKey(std::string& _key);
+		std::string GetLogicImmoKey();
+
 		std::string ComputeRequestURL() const;
 		std::string ComputeSeLogerKeyURL() const;
+		std::string ComputeLogicImmoKeyURL() const;
 
 		bool operator==(const BoroughData &_other) const
 		{
 			return (_other.m_city.m_name == _other.m_city.m_name)
 				&& (_other.m_name == _other.m_name)
 				&& (_other.m_selogerKey == _other.m_selogerKey)
+				&& (_other.m_logicImmoKey == _other.m_logicImmoKey)
 				&& (_other.m_meilleursAgentsKey == _other.m_meilleursAgentsKey);
 		}
 
@@ -74,5 +80,6 @@ namespace ImmoBank
 	private:
 		int m_httpRequestID = -1;
 		int m_selogerKeyRequestID = -1;
+		int m_logicImmoKeyRequestID = -1;
 	};
 }

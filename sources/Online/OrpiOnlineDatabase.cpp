@@ -70,6 +70,7 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 
 	m_requests[ID].m_requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 	m_requests[ID].m_initialRequest = announce;
+	m_requests[ID].m_request = request;
 
 	static bool s_test = false;
 	if (s_test)
@@ -212,6 +213,8 @@ bool OrpiOnlineDatabase::sAnnonce::Serialize(const Json::Value& _data)
 	m_description = _data["longAd"].asString();
 	StringTools::RemoveSpecialCharacters(m_name);
 	StringTools::RemoveSpecialCharacters(m_description);
+	StringTools::ConvertUnicodeToStr(m_name);
+	StringTools::ConvertUnicodeToStr(m_description);
 	m_URL = "https://www.orpi.com/annonce-vente-" + _data["slug"].asString();
 	m_imageURL = _data["images"].get(0u, Json::nullValue).asString();
 	m_price = _data["price"].asUInt();

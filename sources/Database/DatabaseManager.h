@@ -48,6 +48,7 @@ namespace ImmoBank
 		bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
 		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
 		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
+		void	GetAllBoroughs(std::vector<BoroughData>& _data);
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);
 
@@ -75,6 +76,7 @@ namespace ImmoBank
 		void TriggerExternalSQLCommand(const std::string& _query);
 		
 		void	DisplayDebug();
+		void	DisplaySQlite3Debug();
 		void	DisplayMySQLRequestsPanel();
 		void	NotifyMySQLEvent(const std::string& _request);
 
@@ -83,10 +85,13 @@ namespace ImmoBank
 		void	OpenTables();
 		void	CloseTables();
 
+		bool	AddQuery(const std::string& _query, std::vector<BoroughData>& _data);
+
 		void	Test();
 
 	public:
-		bool							m_displayDebug = false;
+		bool							m_displayDebugSQLite3 = false;
+		bool							m_displayDebugMySQL = false;
 
 	private:
 		sqlite3*						m_tables[DataTables_COUNT];
@@ -102,8 +107,12 @@ namespace ImmoBank
 		// Debug panel
 		char							m_MySQLInputDebug[2048];
 		std::vector<std::string>		m_MySQLRequests;
+		char							m_SQlite3InputDebug[2048];
+		std::vector<std::string>		m_SQlite3Requests;
 
 	public:
 		bool							m_generateSeLogerIndices = false;
+		bool							m_generateLogicImmoIndices = false;
+		bool							m_updateLocalBaseToServer = false;
 	};
 }

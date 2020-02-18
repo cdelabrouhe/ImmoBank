@@ -43,6 +43,8 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	// Correct some bad characters
 	StringTools::ReplaceBadSyntax(_str, "&#39;", "'");
 	StringTools::ReplaceBadSyntax(_str, "&#039;", "'");
+	StringTools::ReplaceBadSyntax(_str, "&#x27;", "'");
+	StringTools::ReplaceBadSyntax(_str, "&#x2B;", "+");
 	StringTools::ReplaceBadSyntax(_str, "&amp;", "&");
 	StringTools::ReplaceBadSyntax(_str, "&quot;", "`");
 	StringTools::ReplaceBadSyntax(_str, "Â½", "oe");
@@ -50,7 +52,9 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "Ã¨", "e");//  "è");
 	StringTools::ReplaceBadSyntax(_str, "Ã´", "o");//  "è");
 	StringTools::ReplaceBadSyntax(_str, "Ã€", "A");//  "À");
+	StringTools::ReplaceBadSyntax(_str, "Ã¢", "a");//  "â");
 	StringTools::ReplaceBadSyntax(_str, "Â²", "2");
+	StringTools::ReplaceBadSyntax(_str, "Ãª", "e");
 	StringTools::ReplaceBadSyntax(_str, "Â", "");
 	StringTools::ReplaceBadSyntax(_str, "Ã ", "a");//  "à");
 	StringTools::ReplaceBadSyntax(_str, " ", " ");//   "à");
@@ -58,6 +62,7 @@ void StringTools::RemoveSpecialCharacters(std::string& _str)
 	StringTools::ReplaceBadSyntax(_str, "àª", "e");//  "ê");
 	StringTools::ReplaceBadSyntax(_str, "à‰", "E");//  "É");
 	StringTools::ReplaceBadSyntax(_str, "Ã‰", "E");//  "É");
+	StringTools::ReplaceBadSyntax(_str, "Ã§", "c");//  "É");
 	StringTools::ReplaceBadSyntax(_str, "%", "pourcent");
 
 	/*static bool s_test = false;
@@ -156,4 +161,38 @@ void StringTools::UnFixName(std::string& _name)
 	StringTools::ReplaceBadSyntax(_name, "é", "Ã©");
 	StringTools::ReplaceBadSyntax(_name, "è", "Ã¨");
 	StringTools::ReplaceBadSyntax(_name, "î", "Ã®");
+}
+
+std::string StringTools::ExtractStringFromPosition(const std::string& _str, size_t _position, char _lookForBordersChar)
+{
+	while ((_position > 0) && (_str[_position] != _lookForBordersChar))
+		--_position;
+
+	if (_position == 0)
+		return "";
+
+	std::string tmp = _str.substr(_position + 1, _str.size());
+	auto findID = tmp.find_first_of("\"");
+	tmp = tmp.substr(0, findID);
+	return tmp;
+}
+
+void ImmoBank::StringTools::ConvertUnicodeToStr(std::string& _str)
+{
+	ReplaceBadSyntax(_str, "u00e0", "a");
+	ReplaceBadSyntax(_str, "u00e2", "a");
+	ReplaceBadSyntax(_str, "u00e4", "a");
+	ReplaceBadSyntax(_str, "u00e7", "c");
+	ReplaceBadSyntax(_str, "u00e8", "e");
+	ReplaceBadSyntax(_str, "u00e9", "e");
+	ReplaceBadSyntax(_str, "u00ea", "e");
+	ReplaceBadSyntax(_str, "u00eb", "e");
+	ReplaceBadSyntax(_str, "u00ee", "i");
+	ReplaceBadSyntax(_str, "u00ef", "i");
+	ReplaceBadSyntax(_str, "u00f4", "o");
+	ReplaceBadSyntax(_str, "u00f6", "o");
+	ReplaceBadSyntax(_str, "u00f9", "u");
+	ReplaceBadSyntax(_str, "u00fb", "u");
+	ReplaceBadSyntax(_str, "u00fc", "u");
+	ReplaceBadSyntax(_str, "u2026", "...");
 }

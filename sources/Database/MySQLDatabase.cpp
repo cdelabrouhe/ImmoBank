@@ -219,6 +219,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 			m_data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+			if (const char* key = row[rowID++])	m_data.m_logicImmoKey = key;
 		}
 
 		mysql_free_result(result);
@@ -243,7 +244,7 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 		// Insert new borough data
 		char buf[4096];
 		memset(buf, 0, 4096);
-		sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u)",
+		sprintf(buf, "INSERT INTO BOROUGHS (CITY, BOROUGH, TIMEUPDATE, BOROUGHKEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s')",
 			m_data.m_city.m_name.c_str(),
 			m_data.m_name.c_str(),
 			m_data.m_timeUpdate.GetData(),
@@ -269,7 +270,8 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT4Plus.m_val,
 			m_data.m_priceRentApartmentT4Plus.m_min,
 			m_data.m_priceRentApartmentT4Plus.m_max,
-			m_data.m_selogerKey);
+			m_data.m_selogerKey,
+			m_data.m_logicImmoKey.empty() ? "(null)" : m_data.m_logicImmoKey.c_str());
 
 		std::string str = buf;
 		_db->ExecuteUpdate(str);
@@ -335,6 +337,7 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 			data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+			if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
 
 			m_list.push_back(data);
 		}
@@ -429,7 +432,7 @@ MySQLQuery* MySQLDatabase::AddQuery(MySQLQuery::Type _type, MySQLQuery::IO _IO, 
 	m_queries[requestID] = query;
 
 	// Store in timeout list
-	m_timeoutQueries.push_back(std::make_pair(_key, time(0)));
+	m_timeoutQueries.push_back(std::make_pair(_key, (u64)time(0)));
 
 	_requestID = requestID;
 	return query;
@@ -651,8 +654,9 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 		data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 		data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 		data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+		if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
 
-		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name;
+		std::string mes = "City: " + data.m_city.m_name + ", Borough: " + data.m_name + ", MeilleursAgentsKEY: " + std::to_string(data.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(data.m_selogerKey) + ", LogicImmoKEY: " + data.m_logicImmoKey;
 		DisplayMySQLMessage(mes);
 
 		++cpt;
@@ -748,6 +752,7 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 				data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
 				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+				if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
 
 				if (data.m_selogerKey != 0)
 					continue;
@@ -758,7 +763,7 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 				std::string request = data.ComputeSeLogerKeyURL();
 				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
-				m_boroughData.push_back(sBoroughData(data, requestID));
+				m_boroughData.push_back(sBoroughData(data, request, requestID));
 			}
 
 			mysql_free_result(result);
@@ -826,6 +831,8 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 					}
 
 					it = m_boroughData.erase(it);
+					if (m_boroughData.size() == 0)
+						m_updateSelogerInProgress = false;
 				}
 				else
 				{
@@ -838,5 +845,179 @@ bool MySQLDatabase::UpdateAllSeLogerKeys()
 				result = false;
 		}
 	}
+	return result;
+}
+
+std::map<std::string, std::string> s_logicImmoKeys;
+
+bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
+{
+	bool result = true;
+	if (Tools::IsDevMode())
+	{
+		if (!m_updateLogicImmoInProgress)
+		{
+			m_updateLogicImmoInProgress = true;
+			std::string query = "SELECT * FROM BOROUGHS";
+			MYSQL_RES* result = ExecuteQuery(query);
+			int nbEntries = 0;
+
+			while (MYSQL_ROW row = mysql_fetch_row(result))
+			{
+				++nbEntries;
+				int rowID = 0;
+				BoroughData data;
+				data.m_city.m_name = row[rowID++];
+				data.m_name = row[rowID++];
+				data.m_timeUpdate.SetData(strtoul(row[rowID++], nullptr, 10));
+				data.m_meilleursAgentsKey = strtoul(row[rowID++], nullptr, 10);
+				data.m_priceBuyApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyApartment.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceBuyHouse.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
+				if (const char* key = row[rowID++])
+				{
+					data.m_logicImmoKey = key;
+					if (!data.m_logicImmoKey.empty())
+					{
+						std::string cityName = data.m_city.m_name;
+						StringTools::RemoveSpecialCharacters(cityName);
+						StringTools::ReplaceBadSyntax(cityName, " ", "-");
+						StringTools::TransformToLower(cityName);
+						s_logicImmoKeys[cityName] = data.m_logicImmoKey;
+						continue;
+					}
+				}
+
+				std::string cityName = data.m_city.m_name;
+				StringTools::RemoveSpecialCharacters(cityName);
+				StringTools::ReplaceBadSyntax(cityName, " ", "-");
+				StringTools::TransformToLower(cityName);
+				if (s_logicImmoKeys.find(data.m_city.m_name) != s_logicImmoKeys.end())
+				{
+					data.m_logicImmoKey = s_logicImmoKeys[cityName];
+					DatabaseManager::getSingleton()->AddBoroughData(data);
+					continue;
+				}
+
+				std::string request = data.ComputeLogicImmoKeyURL();
+				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+
+				m_boroughData.push_back(sBoroughData(data, request, requestID));
+			}
+
+			mysql_free_result(result);
+		}
+		else
+		{
+			bool available = true;
+			auto it = m_boroughData.begin();
+			while (it != m_boroughData.end())
+			{
+				auto& borough = *it;
+				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(borough.m_requestID))
+				{
+					std::string str;
+					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(borough.m_requestID, str);
+
+					Json::Reader reader;
+					Json::Value root;
+					reader.parse(str, root);
+
+					std::string boroughCityName = borough.m_data.m_city.m_name;
+					Json::Value& places = root["items"];
+					if (places.isArray())
+					{
+						StringTools::RemoveSpecialCharacters(boroughCityName);
+						StringTools::TransformToLower(boroughCityName);
+						StringTools::ReplaceBadSyntax(boroughCityName, " ", "-");
+
+						const int nbPlaces = places.size();
+						for (int placeID = 0; placeID < nbPlaces; ++placeID)
+						{
+							Json::Value val = places.get(placeID, Json::nullValue);
+							std::string name = val["name"].asString();
+							StringTools::TransformToLower(name);
+							StringTools::ReplaceBadSyntax(name, " ", "-");
+							if (name != boroughCityName)
+								continue;
+
+							std::string key = val["key"].asString();
+							std::string zipCode = val["postCode"].asString();
+							int zip = borough.m_data.m_city.m_zipCode;
+							if (!zipCode.empty())
+							{
+								zip = stoi(zipCode);
+								if ((borough.m_data.m_city.m_zipCode != 0) && (zip != borough.m_data.m_city.m_zipCode))
+									continue;
+							}
+
+							borough.m_data.m_city.m_zipCode = zip;
+							borough.m_data.SetLogicImmoKey(key);
+
+							std::string cityName = borough.m_data.m_city.m_name;
+							StringTools::RemoveSpecialCharacters(cityName);
+							StringTools::ReplaceBadSyntax(cityName, " ", "-");
+							StringTools::TransformToLower(cityName);
+							s_logicImmoKeys[cityName] = key;
+
+							DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
+
+							std::string mes = "Added borough " + borough.m_data.m_name + " to city " + borough.m_data.m_city.m_name;
+							DisplayMySQLMessage(mes);
+						}
+					}
+					else
+					{
+						std::string mes = "Rejected because no place in " + boroughCityName;
+						DisplayMySQLMessage(mes);
+					}
+
+					it = m_boroughData.erase(it);
+					if (m_boroughData.size() == 0)
+						m_updateLogicImmoInProgress = false;
+				}
+				else
+				{
+					available = false;
+					++it;
+				}
+			}
+
+			if (available)
+				result = false;
+		}
+	}
+	return result;
+}
+
+bool ImmoBank::MySQLDatabase::UpdateLocalBaseToServer()
+{
+	bool result = false;
+
+	std::vector<BoroughData> data;
+	DatabaseManager::getSingleton()->GetAllBoroughs(data);
+
+	for (auto& entry : data)
+		WriteBoroughData(entry);
+
 	return result;
 }

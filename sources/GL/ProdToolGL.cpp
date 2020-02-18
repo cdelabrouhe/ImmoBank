@@ -98,11 +98,14 @@ bool ImmoBank::ProdToolGL_GenerateTextureFromJPEGBuffer(unsigned char* _buffer, 
 {
 	try
 	{
-		unsigned char* image_data = DecompressJPEG(_buffer, _bufferSize, _width, _height);
-		if (image_data)
+		if (_bufferSize > 0)
 		{
-			ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
-			return true;
+			unsigned char* image_data = DecompressJPEG(_buffer, _bufferSize, _width, _height);
+			if (image_data)
+			{
+				ProdToolGL_GenerateTexture(image_data, _width, _height, _textureID);
+				return true;
+			}
 		}
 	}
 	catch (const std::exception& e)

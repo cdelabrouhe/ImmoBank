@@ -4,11 +4,11 @@
 
 namespace ImmoBank
 {
-	struct SearchRequestAnnounce;
-	class LaforetOnlineDatabase : public OnlineDatabase
+	class LogicImmoOnlineDatabase : public OnlineDatabase
 	{
 	public:
 		virtual void Init() override;
+		virtual void Process() override;
 		virtual int SendRequest(SearchRequest* _request) override;
 
 	protected:

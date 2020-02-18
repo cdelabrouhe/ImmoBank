@@ -63,6 +63,9 @@ void BoroughData::End()
 
 	if (m_selogerKeyRequestID > -1)
 		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_selogerKeyRequestID);
+
+	if (m_logicImmoKeyRequestID > -1)
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyRequestID);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -77,6 +80,7 @@ void BoroughData::Reset(bool _resetDB)
 	m_priceRentHouse.Reset();
 	m_meilleursAgentsKey = 0;
 	m_selogerKey = 0;
+	m_logicImmoKey = "";
 
 	// Reset all data in DBs
 	if (_resetDB)
@@ -140,6 +144,18 @@ unsigned int BoroughData::ConvertSelogerKey(unsigned int _key, bool _isCity)
 		_key += 1 << 31;
 
 	return _key;
+}
+
+//-------------------------------------------------------------------------------------------------
+void BoroughData::SetLogicImmoKey(std::string& _key)
+{
+	m_logicImmoKey = _key;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string BoroughData::GetLogicImmoKey()
+{
+	return m_logicImmoKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -223,6 +239,17 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 }
 
 //-------------------------------------------------------------------------------------------------
+std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
+{
+	std::string name = m_city.m_name;
+	StringTools::RemoveSpecialCharacters(name);
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
+	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
+	return request;
+}
+
+//-------------------------------------------------------------------------------------------------
 void BoroughData::Edit()
 {
 	// Popup ?
@@ -269,21 +296,36 @@ void BoroughData::Edit()
 
 					std::string request = ComputeSeLogerKeyURL();
 					m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+
+					// no boroughs in Logic Immo => only store whole city
+					if (IsWholeCity())
+					{
+						// We need to update the LogicImmo key
+						if (m_logicImmoKeyRequestID > -1)
+							OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyRequestID);
+
+						std::string request = ComputeLogicImmoKeyURL();
+						m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+					}
 				}
 			}
 		}
 
 		// Process request
-		if (m_selogerKeyRequestID == -1)
+		if ((m_selogerKeyRequestID == -1) && (m_selogerKey == 0))
 		{
-			if (m_selogerKey == 0)
-			{
-				std::string request = ComputeSeLogerKeyURL();
-				m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-			}
+			std::string request = ComputeSeLogerKeyURL();
+			m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+		}
+		// Process request
+		else if (IsWholeCity() && (m_logicImmoKeyRequestID == -1) && m_logicImmoKey.empty())
+		{
+			std::string request = ComputeLogicImmoKeyURL();
+			m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 		}
 		else
 		{
+			// SeLoger key
 			if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_selogerKeyRequestID))
 			{
 				std::string str;
@@ -311,6 +353,35 @@ void BoroughData::Edit()
 						unsigned int index = std::stoi(strIndexID);
 
 						SetSelogerKey(index, isCity);
+					}
+				}
+			}
+
+			// LogicImmo key
+			if (IsWholeCity() && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyRequestID))
+			{
+				std::string str;
+				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyRequestID, str);
+				m_logicImmoKeyRequestID = -1;
+
+				Json::Reader reader;
+				Json::Value root;
+				reader.parse(str, root);
+
+				Json::Value& items = root["items"];
+				if (items.isArray())
+				{
+					const int nbPlaces = items.size();
+					for (int itemID = 0; itemID < nbPlaces; ++itemID)
+					{
+						Json::Value val = items.get(itemID, Json::nullValue);
+						std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
+						int zipCode = std::stoi(zipCodeStr);
+						if (zipCode != m_city.m_zipCode)
+							continue;
+
+						std::string key = val["key"].asString();
+						SetLogicImmoKey(key);
 					}
 				}
 			}
@@ -348,6 +419,11 @@ void BoroughData::Edit()
 			modified |= ImGui::Checkbox("City", &s_isCity);
 			if (modified)
 				SetSelogerKey(s_seLogerKey, s_isCity);
+
+			static char s_text[64];
+			strcpy(s_text, m_logicImmoKey.c_str());
+			if (ImGui::InputText("Search city", (char*)s_text, 64))
+				m_logicImmoKey = s_text;
 		}
 
 		ImGui::Separator();
@@ -387,6 +463,8 @@ void BoroughData::DisplayAsTooltip()
 			bool isCity = false;
 			int selogerKey = GetSelogerKey(&isCity);
 			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
+			std::string logicImmoKey = GetLogicImmoKey();
+			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str());
 		}
 
 		if (IsValid())

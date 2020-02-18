@@ -37,6 +37,7 @@ namespace ImmoBank
 		{
 			int				m_requestID;
 			SearchRequest*	m_initialRequest;
+			std::string		m_request;
 		};
 		std::map<int, sRequest>	m_requests;
 	};

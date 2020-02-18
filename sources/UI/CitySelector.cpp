@@ -10,54 +10,88 @@ using namespace ImmoBank;
 bool CitySelector::Display()
 {
 	m_changed = false;
-
-	// Get city name list
-	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
+	bool valid = m_logicImmoKeyID == -1;
+	if ((m_logicImmoKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyID))
 	{
-		m_cities.clear();
+		valid = true;
 		std::string result;
-		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
-		m_cityNameRequestID = -1;
-		StringTools::RemoveEOL(result);
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyID, result);
 		Json::Value root;
 		Json::Reader reader;
 		if (reader.parse(result, root))
 		{
-			unsigned int nbMaxCities = 10;
-			unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
+			// Parse LogicImmo keys
+			Json::Value& items = root["items"];
+			unsigned int nbCities = items.size();
 			for (unsigned int ID = 0; ID < nbCities; ++ID)
 			{
-				Json::Value& val = root.get(ID, Json::nullValue);
-				std::string name = val["nom"].asString();
+				Json::Value& val = items.get(ID, Json::nullValue);
+				std::string name = val["name"].asString();
+				StringTools::TransformToLower(name);
 				StringTools::FixName(name);
-				StringTools::ReplaceBadSyntax(name, "é", "e");
-				StringTools::ReplaceBadSyntax(name, "è", "e");
-				StringTools::ReplaceBadSyntax(name, "É", "E");
-				StringTools::ReplaceBadSyntax(name, "î", "i");
-				std::string codeStr = val["code"].asString();
-				std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
+				StringTools::ConvertToImGuiText(name);
+				m_logicImmoKeys[name] = val["key"].asString();
+			}
+		}
+	}
 
-				// Replace 001 by 000
-				auto it = zipCodeStr.find("001");
-				if (it != std::string::npos)
-					StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
+	if (valid)
+	{
+		// Get city name list
+		if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
+		{
+			m_cities.clear();
+			std::string result;
+			OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
+			m_cityNameRequestID = -1;
+			StringTools::RemoveEOL(result);
+			Json::Value root;
+			Json::Reader reader;
 
-				int code = std::stoi(codeStr);
-				if (zipCodeStr.empty())
-					continue;
+			if (reader.parse(result, root))
+			{
+				// Parse LogicImmo keys
+				unsigned int nbMaxCities = 10;
+				unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
+				for (unsigned int ID = 0; ID < nbCities; ++ID)
+				{
+					Json::Value& val = root.get(ID, Json::nullValue);
+					std::string name = val["nom"].asString();
+					StringTools::FixName(name);
+					StringTools::ConvertToImGuiText(name);
+					StringTools::ReplaceBadSyntax(name, "-", " ");
+					std::string codeStr = val["code"].asString();
+					std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
 
-				int zipCode = std::stoi(zipCodeStr);
-				m_cities.push_back(sCity(name, code, zipCode));
+					// Replace 001 by 000
+					auto it = zipCodeStr.find("001");
+					if (it != std::string::npos)
+						StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
 
-				sCityData city;
-				city.m_data.m_name = name;
-				city.m_data.m_zipCode = zipCode;
-				city.m_data.m_inseeCode = code;
-				time_t t = time(0);   // get time now
-				struct tm * now = localtime(&t);
-				int year = 1900 + now->tm_year;
-				city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
-				DatabaseManager::getSingleton()->AddCity(city);
+					int code = std::stoi(codeStr);
+					if (zipCodeStr.empty())
+						continue;
+
+					int zipCode = std::stoi(zipCodeStr);
+					m_cities.push_back(sCity(name, code, zipCode));
+
+					sCityData city;
+					city.m_data.m_name = name;
+					city.m_data.m_zipCode = zipCode;
+					city.m_data.m_inseeCode = code;
+					time_t t = time(0);   // get time now
+					struct tm * now = localtime(&t);
+					int year = 1900 + now->tm_year;
+					city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
+
+					StringTools::TransformToLower(name);
+					auto itKey = m_logicImmoKeys.find(name);
+					if (itKey != m_logicImmoKeys.end())
+					{
+						city.m_data.m_logicImmoKey = itKey->second;
+						DatabaseManager::getSingleton()->AddCity(city);
+					}
+				}
 			}
 		}
 	}
@@ -69,15 +103,26 @@ bool CitySelector::Display()
 		{
 			// Ask for a city list
 			std::string str = m_inputTextCity;
-			StringTools::ReplaceBadSyntax(str, "é", "e");
-			StringTools::ReplaceBadSyntax(str, "è", "e");
-			StringTools::ReplaceBadSyntax(str, "ê", "e");
-			StringTools::ReplaceBadSyntax(str, "É", "E");
-			StringTools::ReplaceBadSyntax(str, "î", "i");
+			StringTools::ConvertToImGuiText(str);
+			StringTools::RemoveSpecialCharacters(str);
+			StringTools::ReplaceBadSyntax(str, " ", "%20");
 			std::string request = "https://geo.api.gouv.fr/communes?nom=" + str + "&boost=population";
 			if (m_cityNameRequestID > -1)
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+
+			if (m_logicImmoKeyID > -1)
+				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyID);
+
+			sCityData data;
+			DatabaseManager::getSingleton()->GetCityData(str, data);
+			if (data.m_data.m_logicImmoKey.empty())
+			{
+				request = BoroughData::ComputeLogicImmoKeyURL(str);
+				m_logicImmoKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+			}
+			else
+				m_logicImmoKeys[str] = data.m_data.m_logicImmoKey;
 		}
 		m_changed = true;
 	}

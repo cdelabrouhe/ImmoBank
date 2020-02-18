@@ -18,9 +18,11 @@ namespace ImmoBank
 
 	private:
 		std::vector<sCity>					m_cities;
+		std::map<std::string, std::string>	m_logicImmoKeys;
 		char								m_inputTextCity[256];
 		int									m_selectedCityID = 0;
 		int									m_cityNameRequestID = -1;
+		int									m_logicImmoKeyID = -1;
 		bool								m_changed = false;
 		bool								m_displayAllResults = true;
 	};

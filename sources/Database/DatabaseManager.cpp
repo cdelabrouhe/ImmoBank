@@ -129,6 +129,9 @@ void DatabaseManager::Process()
 
 		if (m_updateLocalBaseToServer)
 			m_updateLocalBaseToServer = m_externalDB->UpdateLocalBaseToServer();
+
+		if (m_updateServerToLocalBase)
+			m_updateServerToLocalBase = m_externalDB->UpdateServerToLocalBase();
 	}
 }
 

@@ -146,6 +146,7 @@ bool UIManager::Draw()
 				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
+				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
 				ImGui::EndMenu();
 			}

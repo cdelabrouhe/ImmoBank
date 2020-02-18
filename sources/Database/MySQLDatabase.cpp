@@ -303,7 +303,11 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 	case IO::Read:
 	{
 		char buf[512];
-		sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s'", m_city.m_name.c_str());
+		if (!m_city.m_name.empty())
+			sprintf(buf, "SELECT * FROM BOROUGHS WHERE CITY='%s'", m_city.m_name.c_str());
+		else
+			sprintf(buf, "SELECT * FROM BOROUGHS");
+
 		std::string str = buf;
 		MYSQL_RES* result = _db->ExecuteQuery(str);
 
@@ -1020,4 +1024,26 @@ bool ImmoBank::MySQLDatabase::UpdateLocalBaseToServer()
 		WriteBoroughData(entry);
 
 	return result;
+}
+
+bool ImmoBank::MySQLDatabase::UpdateServerToLocalBase()
+{
+	sCity city;
+	static int queryID = -1;
+	if (queryID == -1)
+	{
+		queryID = AskForCityBoroughList(city);
+	}
+	else if (IsQueryAvailable(queryID))
+	{
+		std::vector<BoroughData> list;
+		GetResultBoroughList(queryID, list);
+
+		for (auto& entry : list)
+			DatabaseManager::getSingleton()->AddBoroughData(entry, false);
+
+		return false;
+	}
+
+	return true;
 }

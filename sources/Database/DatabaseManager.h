@@ -114,5 +114,6 @@ namespace ImmoBank
 		bool							m_generateSeLogerIndices = false;
 		bool							m_generateLogicImmoIndices = false;
 		bool							m_updateLocalBaseToServer = false;
+		bool							m_updateServerToLocalBase = false;
 	};
 }

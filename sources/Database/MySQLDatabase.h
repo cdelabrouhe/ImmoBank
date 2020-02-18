@@ -110,6 +110,7 @@ namespace ImmoBank
 		bool UpdateAllSeLogerKeys();
 		bool UpdateAllLogicImmoKeys();
 		bool UpdateLocalBaseToServer();
+		bool UpdateServerToLocalBase();
 
 	protected:
 		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;

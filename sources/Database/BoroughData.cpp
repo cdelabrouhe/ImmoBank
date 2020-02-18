@@ -93,6 +93,8 @@ void BoroughData::Reset(bool _resetDB)
 void BoroughData::SetWholeCity()
 {
 	m_name = s_wholeCityName;
+	if ((m_logicImmoKey.empty() || m_logicImmoKey == "(null)") && (!m_city.m_logicImmoKey.empty()))
+		m_logicImmoKey = m_city.m_logicImmoKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -382,7 +384,7 @@ void BoroughData::Edit()
 					{
 						Json::Value val = items.get(itemID, Json::nullValue);
 						std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
-						int zipCode = std::stoi(zipCodeStr);
+						int zipCode = !zipCodeStr.empty() ? std::stoi(zipCodeStr) : -1;
 						if (zipCode != m_city.m_zipCode)
 							continue;
 

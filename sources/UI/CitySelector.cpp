@@ -21,16 +21,19 @@ bool CitySelector::Display()
 		if (reader.parse(result, root))
 		{
 			// Parse LogicImmo keys
-			Json::Value& items = root["items"];
-			unsigned int nbCities = items.size();
-			for (unsigned int ID = 0; ID < nbCities; ++ID)
+			if (root.isObject())
 			{
-				Json::Value& val = items.get(ID, Json::nullValue);
-				std::string name = val["name"].asString();
-				StringTools::TransformToLower(name);
-				StringTools::FixName(name);
-				StringTools::ConvertToImGuiText(name);
-				m_logicImmoKeys[name] = val["key"].asString();
+				Json::Value& items = root["items"];
+				unsigned int nbCities = items.size();
+				for (unsigned int ID = 0; ID < nbCities; ++ID)
+				{
+					Json::Value& val = items.get(ID, Json::nullValue);
+					std::string name = val["name"].asString();
+					StringTools::TransformToLower(name);
+					StringTools::FixName(name);
+					StringTools::ConvertToImGuiText(name);
+					m_logicImmoKeys[name] = val["key"].asString();
+				}
 			}
 		}
 	}

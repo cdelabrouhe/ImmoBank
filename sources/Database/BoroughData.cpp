@@ -241,7 +241,13 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 //-------------------------------------------------------------------------------------------------
 std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
 {
-	std::string name = m_city.m_name;
+	return ComputeLogicImmoKeyURL(m_city.m_name);
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL(const std::string& _name)
+{
+	std::string name = _name;
 	StringTools::RemoveSpecialCharacters(name);
 	StringTools::ReplaceBadSyntax(name, "-", "%20");
 	StringTools::ReplaceBadSyntax(name, " ", "%20");

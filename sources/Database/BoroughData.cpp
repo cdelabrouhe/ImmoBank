@@ -12,7 +12,7 @@
 #include <ctime>
 #include "Text\TextManager.h"
 #include "extern/jsoncpp/reader.h"
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 BoroughData::BoroughData()
@@ -419,6 +419,11 @@ void BoroughData::Edit()
 			modified |= ImGui::Checkbox("City", &s_isCity);
 			if (modified)
 				SetSelogerKey(s_seLogerKey, s_isCity);
+
+			static char s_text[64];
+			strcpy(s_text, m_logicImmoKey.c_str());
+			if (ImGui::InputText("Search city", (char*)s_text, 64))
+				m_logicImmoKey = s_text;
 		}
 
 		ImGui::Separator();

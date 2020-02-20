@@ -16,6 +16,7 @@ bool CitySelector::Display()
 		valid = true;
 		std::string result;
 		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyID, result);
+		m_logicImmoKeyID = -1;
 		Json::Value root;
 		Json::Reader reader;
 		if (reader.parse(result, root))
@@ -115,7 +116,10 @@ bool CitySelector::Display()
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
 			if (m_logicImmoKeyID > -1)
+			{
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyID);
+				m_logicImmoKeyID = -1;
+			}
 
 			sCityData data;
 			DatabaseManager::getSingleton()->GetCityData(str, data);

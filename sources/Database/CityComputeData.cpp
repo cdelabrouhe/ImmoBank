@@ -12,7 +12,7 @@ void CityComputeData::Init()
 	m_state = UpdateStep_GetCityData;
 
 	sCityData data;
-	if (DatabaseManager::getSingleton()->GetCityData(m_city, data))
+	if (DatabaseManager::getSingleton()->GetCityData(m_city.m_name, data))
 	{
 		SearchRequestCityBoroughs boroughs;
 		boroughs.m_city = m_city;
@@ -45,6 +45,7 @@ bool CityComputeData::Process()
 					data.m_name = borough->m_name;
 					data.m_meilleursAgentsKey = borough->m_internalID;
 					data.m_selogerKey = borough->m_selogerID;
+					data.m_logicImmoKey = borough->m_logicImmoID;
 					m_boroughs.push_back(data);
 
 					// Store data into DB

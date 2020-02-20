@@ -59,7 +59,7 @@ namespace ImmoBank
 		void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
 
 		void	UpdateCityData(const sCity& _city);
-		void	ComputeCityData(const std::string& _cityName);
+		void	ComputeCityData(const sCity& _cityName);
 		void	ComputeBoroughData(BoroughData& _data);
 
 		int		AskForExternalDBCityBoroughs(const sCity& _city);

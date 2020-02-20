@@ -387,7 +387,7 @@ bool DatabaseManager::IsCityUpdating(const std::string& _cityName)
 	bool result = true;
 	auto itCompute = std::find_if(m_cityComputes.begin(), m_cityComputes.end(), [_cityName](CityComputeData& _cityData)->bool
 	{
-		return (_cityData.m_city == _cityName) && (_cityData.m_city == _cityName);
+		return (_cityData.m_city.m_name == _cityName) && (_cityData.m_city.m_name == _cityName);
 	});
 	result &= itCompute != m_cityComputes.end();
 
@@ -724,10 +724,10 @@ void DatabaseManager::UpdateCityData(const sCity& _city)
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::ComputeCityData(const std::string& _cityName)
+void DatabaseManager::ComputeCityData(const sCity& _city)
 {
 	CityComputeData data;
-	data.m_city = _cityName;
+	data.m_city = _city;
 	m_cityComputes.push_back(data);
 	m_cityComputes.back().Init();
 }

@@ -22,7 +22,7 @@ namespace ImmoBank
 		bool Process();
 		void End();
 
-		std::string					m_city;
+		sCity						m_city;
 		std::vector<BoroughData>	m_boroughs;
 		int							m_boroughsListID = -1;
 

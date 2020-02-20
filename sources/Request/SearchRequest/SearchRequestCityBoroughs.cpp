@@ -53,6 +53,14 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 		}
 		break;
 	}
+	case State_CheckLogicImmo:
+	{
+		// No boroughs on LogicImmo => set city key
+		for (auto& borough : m_boroughs)
+			borough.m_logicImmoID = m_city.m_logicImmoKey;
+
+		break;
+	}
 	default:
 		break;
 	}
@@ -206,11 +214,20 @@ void SearchRequestCityBoroughs::Process()
 					for (auto& borough : resultBoroughs)
 						m_boroughs.push_back(borough);
 
-					SwitchState(State_DONE);
+					SwitchState(State_CheckLogicImmo);
 				}
 			}
 		}
 		break;
+
+		case State_CheckLogicImmo:
+		{			
+			SwitchState(State_DONE);
+			break;
+		}
+
+		default:
+			break;
 	}
 }
 
@@ -241,6 +258,7 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 		result->m_name = borough.m_name;
 		result->m_internalID = borough.m_internalID;
 		result->m_selogerID = borough.m_selogerID;
+		result->m_logicImmoID = borough.m_logicImmoID;
 		_results.push_back(result);
 	}
 

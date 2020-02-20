@@ -352,7 +352,7 @@ void UIManager::DisplayCityInformation()
 		if (!DatabaseManager::getSingleton()->IsCityUpdating(selectedCity.m_data.m_name))
 		{
 			if (ImGui::Button(GET_TEXT("DatabaseWindowCityUpdateBoroughList")))
-				DatabaseManager::getSingleton()->ComputeCityData(selectedCity.m_data.m_name);
+				DatabaseManager::getSingleton()->ComputeCityData(selectedCity.m_data);
 
 			ImGui::SameLine();
 			if (ImGui::Button(GET_TEXT("DatabaseWindowCityAutoUpdatePrice")))

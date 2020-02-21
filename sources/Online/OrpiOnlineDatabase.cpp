@@ -20,9 +20,10 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
 
-	std::string request = "https://www.orpi.com/recherche/buy?transaction=buy&resultUrl=";
+	std::string request = "https://www.orpi.com/recherche/ajax/buy";
 
 	// Apartment / house
+	bool first = true;
 	int categoryID = 0;
 	auto nbCategories = announce->m_categories;
 	for (auto category : announce->m_categories)
@@ -30,10 +31,10 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 		switch (category)
 		{
 		case Category_Apartment:
-			request += "&realEstateTypes%5B0%5D=appartement";
+			request += first ? "?realEstateTypes%5B%5D=appartement" : "&realEstateTypes%5B%5D=appartement";
 			break;
 		case Category_House:
-			request += "&realEstateTypes%5B0%5D=maison";
+			request += first ? "?realEstateTypes%5B%5D=maison" : "&realEstateTypes%5B%5D=maison";
 			break;
 		default:
 			printf("Error: unknown request category");
@@ -41,6 +42,7 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 		}
 
 		++categoryID;
+		first = false;
 	}
 
 	// Localisation (no borough for now)
@@ -96,17 +98,6 @@ bool OrpiOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::stri
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
 
-	/*std::string str;
-	FILE* f = fopen("data_test_orpi.html", "rt");
-	if (f)
-	{
-		char* test_data = (char*)malloc(10000000);
-		fread(test_data, sizeof(char), 10000000, f);
-		fclose(f);
-		str = test_data;
-		free(test_data);
-	}*/
-
 	sRecherche recherche;
 	recherche.Serialize(_str);
 
@@ -133,30 +124,9 @@ bool OrpiOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::stri
 
 void OrpiOnlineDatabase::sRecherche::Serialize(const std::string& _str)
 {
-	std::string startStr = "data-result=";
-	std::string stopStr = "&#x7D;\"";
-	auto delimiter = _str.find(startStr);
-	std::string str = _str.substr(delimiter + startStr.size() + 1, _str.size());
-
-	delimiter = str.find(stopStr);
-	str = str.substr(0, delimiter + stopStr.size() - 1);
-
-	//StringTools::ReplaceBadSyntax(str, "&", "");
-	StringTools::ReplaceBadSyntax(str, "&qquot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "&quot;quot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "&quot;", "\"");
-	StringTools::ReplaceBadSyntax(str, "&#x20;", " ");
-	StringTools::ReplaceBadSyntax(str, "&#x7B;", "{");
-	StringTools::ReplaceBadSyntax(str, "&#x7D;", "}");
-	StringTools::ReplaceBadSyntax(str, "&#x3A;", ":");
-	StringTools::ReplaceBadSyntax(str, "&#x5B;", "[");
-	StringTools::ReplaceBadSyntax(str, "&#x5D;", "]");
-	StringTools::ReplaceBadSyntax(str, "&#x2F;", "/");
-	StringTools::ReplaceBadSyntax(str, "&#x5C;", "");
-
 	Json::Reader reader;
 	Json::Value root;
-	reader.parse(str, root);
+	reader.parse(_str, root);
 
 	Json::Value& items = root["items"];
 	const int nbItems = (int)items.size();

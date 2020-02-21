@@ -211,7 +211,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 		keep = false;
 	ImGui::PopID();
 
-	ImGui::TextWrapped(m_description.c_str());
+	ImGui::TextWrapped("%s", m_description.c_str());
 
 	ImGui::Columns(8);
 

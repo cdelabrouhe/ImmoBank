@@ -357,10 +357,16 @@ void BoroughData::Edit()
 
 						bool isBorough = (type == "Quartier");
 						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
-						std::string strIndexID = val["Params"][isBorough ? "idq" : "ci"].asString();
-						unsigned int index = std::stoi(strIndexID);
-
-						SetSelogerKey(index, isCity);
+						Json::Value& params = val["Params"];
+						std::string tmp = isBorough ? "idq" : "ci";
+						if (params.get(tmp, Json::nullValue).isNull())
+							tmp = "cp";
+						std::string strIndexID = params[tmp].asString();
+						if (!strIndexID.empty())
+						{
+							unsigned int index = std::stoi(strIndexID);
+							SetSelogerKey(index, isCity);
+						}
 					}
 				}
 			}

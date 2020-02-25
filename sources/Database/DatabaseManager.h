@@ -113,6 +113,7 @@ namespace ImmoBank
 	public:
 		bool							m_generateSeLogerIndices = false;
 		bool							m_generateLogicImmoIndices = false;
+		bool							m_generatePapIndices = false;
 		bool							m_updateLocalBaseToServer = false;
 		bool							m_updateServerToLocalBase = false;
 	};

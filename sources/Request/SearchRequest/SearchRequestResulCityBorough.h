@@ -17,5 +17,6 @@ namespace ImmoBank
 		std::string		m_logicImmoID;
 		unsigned int	m_internalID = 0xFFFFFFFF;
 		unsigned int	m_selogerID = 0xFFFFFFFF;
+		unsigned int	m_papKeyID = 0xFFFFFFFF;
 	};
 }

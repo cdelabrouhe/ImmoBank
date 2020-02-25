@@ -10,7 +10,9 @@ using namespace ImmoBank;
 bool CitySelector::Display()
 {
 	m_changed = false;
-	bool valid = m_logicImmoKeyID == -1;
+
+	// LogicImmo
+	bool valid = (m_logicImmoKeyID == -1) && (m_papKeyID == -1);
 	if ((m_logicImmoKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyID))
 	{
 		valid = true;
@@ -36,6 +38,36 @@ bool CitySelector::Display()
 					m_logicImmoKeys[name] = val["key"].asString();
 				}
 			}
+		}
+	}
+
+	// Pap
+	if ((m_papKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyID))
+	{
+		valid = true;
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyID, result);
+		m_papKeyID = -1;
+		Json::Value root;
+		Json::Reader reader;
+		if (reader.parse(result, root))
+		{
+			TODO
+			// Parse keys
+			/*if (root.isObject())
+			{
+				Json::Value& items = root["items"];
+				unsigned int nbCities = items.size();
+				for (unsigned int ID = 0; ID < nbCities; ++ID)
+				{
+					Json::Value& val = items.get(ID, Json::nullValue);
+					std::string name = val["name"].asString();
+					StringTools::TransformToLower(name);
+					StringTools::FixName(name);
+					StringTools::ConvertToImGuiText(name);
+					m_logicImmoKeys[name] = val["key"].asString();
+				}
+			}*/
 		}
 	}
 
@@ -115,6 +147,7 @@ bool CitySelector::Display()
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
+			// LogicImmo
 			if (m_logicImmoKeyID > -1)
 			{
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyID);
@@ -130,6 +163,22 @@ bool CitySelector::Display()
 			}
 			else
 				m_logicImmoKeys[str] = data.m_data.m_logicImmoKey;
+
+			// Pap
+			if (m_papKeyID > -1)
+			{
+				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyID);
+				m_papKeyID = -1;
+			}
+
+			DatabaseManager::getSingleton()->GetCityData(str, data);
+			if (data.m_data.m_logicImmoKey.empty())
+			{
+				request = BoroughData::ComputePapKeyURL(data.m_data.m_zipCode);
+				m_papKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+			}
+			else
+				m_papKeys[data.m_data.m_zipCode] = data.m_data.m_papKey;
 		}
 		m_changed = true;
 	}

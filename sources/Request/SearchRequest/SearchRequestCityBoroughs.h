@@ -12,6 +12,7 @@ namespace ImmoBank
 			State_GetRawList,
 			State_CheckSeLoger,
 			State_CheckLogicImmo,
+			State_CheckPap,
 			State_DONE,
 			Stat_COUNT
 		};

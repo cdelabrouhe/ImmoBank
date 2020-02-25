@@ -109,6 +109,7 @@ namespace ImmoBank
 
 		bool UpdateAllSeLogerKeys();
 		bool UpdateAllLogicImmoKeys();
+		bool UpdateAllPapKeys();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();
 
@@ -146,5 +147,6 @@ namespace ImmoBank
 		std::vector<sBoroughData>	m_boroughData;
 		bool			m_updateSelogerInProgress = false;
 		bool			m_updateLogicImmoInProgress = false;
+		bool			m_updatePapInProgress = false;
 	};
 }

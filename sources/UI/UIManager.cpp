@@ -145,6 +145,7 @@ bool UIManager::Draw()
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
 				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
+				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
 				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
@@ -335,7 +336,9 @@ void UIManager::DisplayCityInformation()
 				, GET_TEXT("DatabaseWindowInseeCode")
 				, selectedCity.m_data.m_inseeCode
 				, "LogicImmoKey"
-				, selectedCity.m_data.m_logicImmoKey.c_str());
+				, selectedCity.m_data.m_logicImmoKey.c_str()
+				, "PapKey"
+				, selectedCity.m_data.m_papKey);
 		}
 		else
 		{

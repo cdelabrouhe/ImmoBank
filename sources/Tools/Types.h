@@ -85,11 +85,23 @@ namespace ImmoBank
 
 	struct sCity
 	{
-		sCity(const std::string& _name = "", int _codeInsee = 0, int _zipCode = 0, const std::string& _logicImmoKey = "") : m_name(_name), m_inseeCode(_codeInsee), m_zipCode(_zipCode), m_logicImmoKey(_logicImmoKey){}
-		std::string m_name;
-		std::string	m_logicImmoKey;
-		int			m_inseeCode;
-		int			m_zipCode;
+		sCity(const std::string& _name = ""
+				, int _codeInsee = 0
+				, int _zipCode = 0
+				, const std::string& _logicImmoKey = ""
+				, unsigned int _papKey = 0)
+			: m_name(_name)
+			, m_inseeCode(_codeInsee)
+			, m_zipCode(_zipCode)
+			, m_logicImmoKey(_logicImmoKey)
+			, m_papKey(_papKey)
+		{}
+
+		std::string		m_name;
+		std::string		m_logicImmoKey;
+		int				m_inseeCode;
+		int				m_zipCode;
+		unsigned int	m_papKey = 0xFFFFFFFF;
 
 		void FixName();
 		void UnFixName();

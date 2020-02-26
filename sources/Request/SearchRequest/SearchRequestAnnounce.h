@@ -18,7 +18,7 @@ namespace ImmoBank
 
 		virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
-		virtual SearchRequest* Clone() { return new SearchRequestAnnounce(); }
+		virtual SearchRequest* Clone() override { return new SearchRequestAnnounce(); }
 
 		void AddBorough(BoroughData& _data);
 		void RemoveBorough(const std::string& _name);

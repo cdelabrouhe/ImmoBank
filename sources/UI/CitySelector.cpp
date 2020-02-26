@@ -30,7 +30,7 @@ bool CitySelector::Display()
 				unsigned int nbCities = items.size();
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
-					Json::Value& val = items.get(ID, Json::nullValue);
+					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["name"].asString();
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
@@ -59,7 +59,7 @@ bool CitySelector::Display()
 				unsigned int nbCities = items.size();
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
-					Json::Value& val = items.get(ID, Json::nullValue);
+					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["slug"].asString();
 					if (int delimiter = name.find_first_of("-") != std::string::npos)
 						name = name.substr(0, delimiter);
@@ -93,7 +93,7 @@ bool CitySelector::Display()
 				unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
-					Json::Value& val = root.get(ID, Json::nullValue);
+					Json::Value val = root.get(ID, Json::nullValue);
 					std::string name = val["nom"].asString();
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);

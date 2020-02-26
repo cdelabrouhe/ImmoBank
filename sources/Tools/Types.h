@@ -91,9 +91,9 @@ namespace ImmoBank
 				, const std::string& _logicImmoKey = ""
 				, unsigned int _papKey = 0)
 			: m_name(_name)
+			, m_logicImmoKey(_logicImmoKey)
 			, m_inseeCode(_codeInsee)
 			, m_zipCode(_zipCode)
-			, m_logicImmoKey(_logicImmoKey)
 			, m_papKey(_papKey)
 		{}
 

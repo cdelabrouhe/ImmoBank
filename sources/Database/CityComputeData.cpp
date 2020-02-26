@@ -71,6 +71,9 @@ bool CityComputeData::Process()
 		}
 	}
 	break;
+
+	default:
+		break;
 	}
 
 	return m_state == UpdateStep_COUNT;

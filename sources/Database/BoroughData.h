@@ -12,8 +12,8 @@ namespace ImmoBank
 
 		void Reset() { m_min = 0.f; m_val = 0.f; m_max = 0.f; }
 
-		float m_min = 0.f;
 		float m_val = 0.f;
+		float m_min = 0.f;
 		float m_max = 0.f;
 	};
 

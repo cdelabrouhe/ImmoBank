@@ -399,7 +399,7 @@ void BoroughData::Edit()
 							continue;
 
 						bool isBorough = (type == "Quartier");
-						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+						bool isCity = ((type == "Ville") && (str.find("e (") != std::string::npos)) || (str.find("er (") != std::string::npos);
 						Json::Value& params = val["Params"];
 						std::string tmp = isBorough ? "idq" : "ci";
 						if (params.get(tmp, Json::nullValue).isNull())

@@ -11,6 +11,8 @@ namespace ImmoBank
 	{
 		SearchRequestResult(SearchRequestType _type) : m_resultType(_type) {}
 
+		virtual ~SearchRequestResult() {}
+
 		SearchRequestType m_resultType;
 
 		virtual void Init()	{}

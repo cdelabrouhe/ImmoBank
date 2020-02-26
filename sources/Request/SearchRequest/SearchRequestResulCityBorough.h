@@ -12,6 +12,7 @@ namespace ImmoBank
 		{
 			*this = _request;
 		}
+		virtual ~SearchRequestResulCityBorough() {}
 
 		std::string		m_name;
 		std::string		m_logicImmoID;

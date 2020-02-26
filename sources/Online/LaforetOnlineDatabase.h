@@ -4,7 +4,6 @@
 
 namespace ImmoBank
 {
-	struct SearchRequestAnnounce;
 	class LaforetOnlineDatabase : public OnlineDatabase
 	{
 	public:

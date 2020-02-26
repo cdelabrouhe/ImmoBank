@@ -2,6 +2,7 @@
 #include "value.h"
 #include <utility>
 #include <stdio.h>
+#include <sstream>
 #include <cstring>
 #include <stdexcept>
 #include "Tools/Types.h"

@@ -547,9 +547,11 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
 			bool isCity = false;
 			int selogerKey = GetSelogerKey(&isCity);
+			unsigned int papKey = GetPapKey();
 			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
 			std::string logicImmoKey = GetLogicImmoKey();
-			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str());
+			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str()),
+			ImGui::Text("PapKey: %u", papKey);
 		}
 
 		if (IsValid())

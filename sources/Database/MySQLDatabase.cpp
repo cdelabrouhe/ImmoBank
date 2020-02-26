@@ -220,7 +220,8 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 			m_data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 			if (const char* key = row[rowID++])	m_data.m_logicImmoKey = key;
-			m_data.m_papKey = strtoul(row[rowID++], nullptr, 10);
+			auto papKey = row[rowID++];
+			m_data.m_papKey = papKey != nullptr ? strtoul(papKey, nullptr, 10) : 0;
 		}
 
 		mysql_free_result(result);
@@ -344,7 +345,8 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 			if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
-			data.m_papKey = strtoul(row[rowID++], nullptr, 10);
+			auto papKey = row[rowID++];
+			data.m_papKey = papKey != nullptr ? strtoul(papKey, nullptr, 10) : 0;
 
 			m_list.push_back(data);
 		}
@@ -1077,17 +1079,16 @@ bool ImmoBank::MySQLDatabase::UpdateAllPapKeys()
 				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 				if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
 
-				if (data.m_papKey = strtoul(row[rowID++], nullptr, 10))
+				auto papKey = row[rowID++];
+				data.m_papKey = papKey != nullptr ? strtoul(papKey, nullptr, 10) : 0;
+				if (data.m_papKey > 0)
 				{
-					if (data.m_papKey > 0)
-					{
-						std::string cityName = data.m_city.m_name;
-						StringTools::RemoveSpecialCharacters(cityName);
-						StringTools::ReplaceBadSyntax(cityName, " ", "-");
-						StringTools::TransformToLower(cityName);
-						s_papKeys[cityName] = data.m_papKey;
-						continue;
-					}
+					std::string cityName = data.m_city.m_name;
+					StringTools::RemoveSpecialCharacters(cityName);
+					StringTools::ReplaceBadSyntax(cityName, " ", "-");
+					StringTools::TransformToLower(cityName);
+					s_papKeys[cityName] = data.m_papKey;
+					continue;
 				}
 
 				if ((data.m_papKey != 0xFFFFFFFF) && (data.m_papKey != 0))

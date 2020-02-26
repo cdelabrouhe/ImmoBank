@@ -329,7 +329,7 @@ void UIManager::DisplayCityInformation()
 		StringTools::ConvertToImGuiText(name);
 		if (Tools::IsDevMode())
 		{
-			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s", GET_TEXT("DatabaseWindowCityName")
+			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s  %s: %u", GET_TEXT("DatabaseWindowCityName")
 				, name.c_str()
 				, GET_TEXT("DatabaseWindowZipCode")
 				, selectedCity.m_data.m_zipCode

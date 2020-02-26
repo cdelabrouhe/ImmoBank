@@ -61,13 +61,16 @@ bool CitySelector::Display()
 				{
 					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["slug"].asString();
-					if (int delimiter = name.find_first_of("-") != std::string::npos)
+					int delimiter = name.find_last_of("-");
+					if (delimiter != std::string::npos)
 						name = name.substr(0, delimiter);
 
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					m_papKeys[name] = val["id"].asUInt();
+					auto it = m_papKeys.find(name);
+					if (it == m_papKeys.end())
+						m_papKeys[name] = val["id"].asUInt();
 				}
 			}
 		}
@@ -123,12 +126,12 @@ bool CitySelector::Display()
 					city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 
 					// LogicImmo
+					StringTools::TransformToLower(name);
 					auto itLogicImmo = m_logicImmoKeys.find(name);
 					if (itLogicImmo == m_logicImmoKeys.end())
 						continue;
 
 					// Pap
-					StringTools::TransformToLower(name);
 					auto itPap = m_papKeys.find(name);
 					if (itPap == m_papKeys.end())
 						continue;

@@ -1029,12 +1029,14 @@ bool ImmoBank::MySQLDatabase::UpdateAllLogicImmoKeys()
 	return result;
 }
 
+std::map<std::string, unsigned int> s_papKeys;
 
 bool ImmoBank::MySQLDatabase::UpdateAllPapKeys()
 {
 	bool result = true;
 	if (Tools::IsDevMode())
 	{
+		std::map<std::string, int> cities;
 		if (!m_updatePapInProgress)
 		{
 			m_updatePapInProgress = true;
@@ -1074,10 +1076,33 @@ bool ImmoBank::MySQLDatabase::UpdateAllPapKeys()
 				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
 				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 				if (const char* key = row[rowID++])	data.m_logicImmoKey = key;
-				data.m_papKey = strtoul(row[rowID++], nullptr, 10);				
+
+				if (data.m_papKey = strtoul(row[rowID++], nullptr, 10))
+				{
+					if (data.m_papKey > 0)
+					{
+						std::string cityName = data.m_city.m_name;
+						StringTools::RemoveSpecialCharacters(cityName);
+						StringTools::ReplaceBadSyntax(cityName, " ", "-");
+						StringTools::TransformToLower(cityName);
+						s_papKeys[cityName] = data.m_papKey;
+						continue;
+					}
+				}
 
 				if ((data.m_papKey != 0xFFFFFFFF) && (data.m_papKey != 0))
 					continue;
+
+				std::string cityName = data.m_city.m_name;
+				StringTools::RemoveSpecialCharacters(cityName);
+				StringTools::ReplaceBadSyntax(cityName, " ", "-");
+				StringTools::TransformToLower(cityName);
+				if (s_papKeys.find(data.m_city.m_name) != s_papKeys.end())
+				{
+					data.m_papKey = s_papKeys[cityName];
+					DatabaseManager::getSingleton()->AddBoroughData(data);
+					continue;
+				}
 
 				std::string request = data.ComputePapKeyURL();
 				int requestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
@@ -1102,55 +1127,30 @@ bool ImmoBank::MySQLDatabase::UpdateAllPapKeys()
 					Json::Reader reader;
 					Json::Value root;
 					reader.parse(str, root);
-					TODO
-					/*std::string boroughCityName = borough.m_data.m_city.m_name;
-					Json::Value& places = root["items"];
-					if (places.isArray())
+					
+					Json::Value& places = root["_embedded"]["place"];
+					if (places.isArray() && (places.size() > 0))
 					{
-						StringTools::RemoveSpecialCharacters(boroughCityName);
-						StringTools::TransformToLower(boroughCityName);
-						StringTools::ReplaceBadSyntax(boroughCityName, " ", "-");
+						Json::Value val = places.get(0u, Json::nullValue);
+						unsigned int key = val["id"].asUInt();
+						borough.m_data.SetPapKey(key);
 
-						const int nbPlaces = places.size();
-						for (int placeID = 0; placeID < nbPlaces; ++placeID)
-						{
-							Json::Value val = places.get(placeID, Json::nullValue);
-							std::string name = val["name"].asString();
-							StringTools::TransformToLower(name);
-							StringTools::ReplaceBadSyntax(name, " ", "-");
-							if (name != boroughCityName)
-								continue;
+						std::string cityName = borough.m_data.m_city.m_name;
+						StringTools::RemoveSpecialCharacters(cityName);
+						StringTools::ReplaceBadSyntax(cityName, " ", "-");
+						StringTools::TransformToLower(cityName);
+						s_papKeys[cityName] = key;
 
-							std::string key = val["key"].asString();
-							std::string zipCode = val["postCode"].asString();
-							int zip = borough.m_data.m_city.m_zipCode;
-							if (!zipCode.empty())
-							{
-								zip = stoi(zipCode);
-								if ((borough.m_data.m_city.m_zipCode != 0) && (zip != borough.m_data.m_city.m_zipCode))
-									continue;
-							}
+						DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
 
-							borough.m_data.m_city.m_zipCode = zip;
-							borough.m_data.SetLogicImmoKey(key);
-
-							std::string cityName = borough.m_data.m_city.m_name;
-							StringTools::RemoveSpecialCharacters(cityName);
-							StringTools::ReplaceBadSyntax(cityName, " ", "-");
-							StringTools::TransformToLower(cityName);
-							s_logicImmoKeys[cityName] = key;
-
-							DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
-
-							std::string mes = "Added borough " + borough.m_data.m_name + " to city " + borough.m_data.m_city.m_name;
-							DisplayMySQLMessage(mes);
-						}
+						std::string mes = "Added borough " + borough.m_data.m_name + " to city " + borough.m_data.m_city.m_name;
+						DisplayMySQLMessage(mes);
 					}
 					else
 					{
-						std::string mes = "Rejected because no place in " + boroughCityName;
+						std::string mes = "Rejected because no place in " + root["_embedded"]["place"]["slug"].asString();
 						DisplayMySQLMessage(mes);
-					}*/
+					}
 
 					it = m_boroughData.erase(it);
 					if (m_boroughData.size() == 0)

@@ -68,7 +68,7 @@ namespace ImmoBank
 		std::string ComputeLogicImmoKeyURL() const;
 		static std::string ComputeLogicImmoKeyURL(const std::string& _name);
 		std::string ComputePapKeyURL() const;
-		static std::string ComputePapKeyURL(const unsigned int _zipCode);
+		static std::string ComputePapKeyURL(const std::string& _name);
 
 		bool operator==(const BoroughData &_other) const
 		{

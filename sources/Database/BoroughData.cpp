@@ -276,13 +276,17 @@ std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL(const std::string& _na
 //-------------------------------------------------------------------------------------------------
 std::string ImmoBank::BoroughData::ComputePapKeyURL() const
 {
-	return ComputePapKeyURL(m_city.m_zipCode);
+	return ComputePapKeyURL(m_city.m_name);
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string ImmoBank::BoroughData::ComputePapKeyURL(const unsigned int _zipCode)
+std::string ImmoBank::BoroughData::ComputePapKeyURL(const std::string& _name)
 {
-	std::string str = "https://ws.pap.fr/gis/places?recherche[cible]=pap-recherche-ac&recherche[q]=" + std::to_string(_zipCode);
+	std::string name = _name;
+	StringTools::RemoveSpecialCharacters(name);
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
+	std::string str = "https://ws.pap.fr/gis/places?recherche[cible]=pap-recherche-ac&recherche[q]=" + name;
 	return str;
 }
 

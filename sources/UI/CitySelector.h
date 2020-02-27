@@ -16,6 +16,12 @@ namespace ImmoBank
 		inline void SetDisplayAllResults(bool _state) { m_displayAllResults = _state; }
 
 	private:
+		void _UpdateLogicImmoKeys();
+		void _UpdatePapKeys();
+		void _UpdateCitiesList();
+		void _UpdateAsynchronousData();
+
+	private:
 		std::map<std::string, sCity>		m_cities;
 		std::map<std::string, std::string>	m_logicImmoKeys;
 		std::map<std::string, unsigned int>	m_papKeys;

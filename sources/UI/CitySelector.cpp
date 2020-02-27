@@ -7,15 +7,12 @@
 
 using namespace ImmoBank;
 
-bool CitySelector::Display()
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdateLogicImmoKeys()
 {
-	m_changed = false;
-
 	// LogicImmo
-	bool valid = (m_logicImmoKeyID == -1) && (m_papKeyID == -1);
 	if ((m_logicImmoKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyID))
 	{
-		valid = true;
 		std::string result;
 		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyID, result);
 		m_logicImmoKeyID = -1;
@@ -40,11 +37,14 @@ bool CitySelector::Display()
 			}
 		}
 	}
+}
 
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdatePapKeys()
+{
 	// Pap
 	if ((m_papKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyID))
 	{
-		valid = true;
 		std::string result;
 		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyID, result);
 		m_papKeyID = -1;
@@ -76,7 +76,11 @@ bool CitySelector::Display()
 			}
 		}
 	}
+}
 
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdateCitiesList()
+{
 	// Get city name list
 	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
 	{
@@ -122,7 +126,7 @@ bool CitySelector::Display()
 				city.m_data.m_zipCode = zipCode;
 				city.m_data.m_inseeCode = code;
 				time_t t = time(0);   // get time now
-				struct tm * now = localtime(&t);
+				struct tm* now = localtime(&t);
 				int year = 1900 + now->tm_year;
 				city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 
@@ -130,7 +134,11 @@ bool CitySelector::Display()
 			}
 		}
 	}
+}
 
+//--------------------------------------------------------------------------------------------------------------
+void ImmoBank::CitySelector::_UpdateAsynchronousData()
+{
 	// Asynchronous update different DB keys
 	auto itCity = m_waitingForData.begin();
 	while (itCity != m_waitingForData.end())
@@ -163,6 +171,17 @@ bool CitySelector::Display()
 
 		m_changed = true;
 	}
+}
+
+//--------------------------------------------------------------------------------------------------------------
+bool CitySelector::Display()
+{
+	m_changed = false;
+
+	_UpdateLogicImmoKeys();
+	_UpdatePapKeys();	
+	_UpdateCitiesList();
+	_UpdateAsynchronousData();	
 
 	// left
 	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))

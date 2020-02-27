@@ -239,9 +239,7 @@ void UIManager::DisplayCityInformation()
 	std::vector<std::string> cityListFiltered;
 	ImGui::BeginChild(GET_TEXT("DatabaseWindowSearchCity"), ImVec2(300, 0), true);
 
-	sCity result;
-	if (s_citySelector.Display())
-		result = *s_citySelector.GetSelectedCity();
+	s_citySelector.Display();
 
 	if (strlen(s_citySelector.GetText()) > 0)
 	{

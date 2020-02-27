@@ -99,6 +99,9 @@ void BoroughData::SetWholeCity()
 	m_name = s_wholeCityName;
 	if ((m_logicImmoKey.empty() || m_logicImmoKey == "(null)") && (!m_city.m_logicImmoKey.empty()))
 		m_logicImmoKey = m_city.m_logicImmoKey;
+
+	if (m_papKey == 0)
+		m_papKey = m_city.m_papKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -462,10 +465,23 @@ void BoroughData::Edit()
 						if (nbPlaces > 0)
 						{
 							Json::Value val = places.get(0u, Json::nullValue);
-							std::string idStr = !val["id"].isNull() ? val["id"].asString() : "";
-							int key = !idStr.empty() ? std::stoi(idStr) : -1;
-							if (key != -1)
-								SetPapKey(key);
+							if (!val["id"].isNull())
+							{
+								int key = 0;
+								auto id = val["id"];
+								if (id.isString())
+								{
+									std::string idStr = val["id"].asString();
+									key = !idStr.empty() ? std::stoi(idStr) : -1;
+								}
+								else if (id.isInt() || id.isUInt())
+								{
+									key = id.asInt();
+								}
+
+								if (key != -1)
+									SetPapKey(key);
+							}
 						}
 					}
 				}
@@ -507,8 +523,13 @@ void BoroughData::Edit()
 
 			static char s_text[64];
 			strcpy(s_text, m_logicImmoKey.c_str());
-			if (ImGui::InputText("Search city", (char*)s_text, 64))
+			if (ImGui::InputText("LogicImmoKey", (char*)s_text, 64))
 				m_logicImmoKey = s_text;
+
+			static int s_papKey = -1;
+			s_papKey = m_papKey;
+			if (ImGui::InputInt("PapKey", &s_papKey))
+				m_papKey = s_papKey;
 		}
 
 		ImGui::Separator();

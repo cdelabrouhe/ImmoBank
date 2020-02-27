@@ -65,6 +65,7 @@ bool CitySelector::Display()
 					if (delimiter != std::string::npos)
 						name = name.substr(0, delimiter);
 
+					StringTools::ReplaceBadSyntax(name, "-", " ");
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
@@ -76,72 +77,91 @@ bool CitySelector::Display()
 		}
 	}
 
-	if (valid)
+	// Get city name list
+	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
 	{
-		// Get city name list
-		if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
+		m_cityNameRequestID = -1;
+		StringTools::RemoveEOL(result);
+		Json::Value root;
+		Json::Reader reader;
+
+		if (reader.parse(result, root))
 		{
-			m_cities.clear();
-			std::string result;
-			OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
-			m_cityNameRequestID = -1;
-			StringTools::RemoveEOL(result);
-			Json::Value root;
-			Json::Reader reader;
-
-			if (reader.parse(result, root))
+			// Parse LogicImmo keys
+			unsigned int nbMaxCities = 10;
+			unsigned int nbCities = root.isArray() ? (root.size() < nbMaxCities ? root.size() : nbMaxCities) : 0;
+			for (unsigned int ID = 0; ID < nbCities; ++ID)
 			{
-				// Parse LogicImmo keys
-				unsigned int nbMaxCities = 10;
-				unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
-				for (unsigned int ID = 0; ID < nbCities; ++ID)
-				{
-					Json::Value val = root.get(ID, Json::nullValue);
-					std::string name = val["nom"].asString();
-					StringTools::FixName(name);
-					StringTools::ConvertToImGuiText(name);
-					StringTools::ReplaceBadSyntax(name, "-", " ");
-					std::string codeStr = val["code"].asString();
-					std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
+				Json::Value val = root.get(ID, Json::nullValue);
+				std::string name = val["nom"].asString();
+				StringTools::FixName(name);
+				StringTools::ConvertToImGuiText(name);
+				StringTools::ReplaceBadSyntax(name, "-", " ");
+				std::string codeStr = val["code"].asString();
+				std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
 
-					// Replace 001 by 000
-					auto it = zipCodeStr.find("001");
-					if (it != std::string::npos)
-						StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
+				// Replace 001 by 000
+				auto it = zipCodeStr.find("001");
+				if (it != std::string::npos)
+					StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
 
-					int code = std::stoi(codeStr);
-					if (zipCodeStr.empty())
-						continue;
+				int code = std::stoi(codeStr);
+				if (zipCodeStr.empty())
+					continue;
 
-					int zipCode = std::stoi(zipCodeStr);
-					m_cities.push_back(sCity(name, code, zipCode));
+				int zipCode = std::stoi(zipCodeStr);
+				if (m_cities.find(name) != m_cities.end())
+					continue;
 
-					sCityData city;
-					city.m_data.m_name = name;
-					city.m_data.m_zipCode = zipCode;
-					city.m_data.m_inseeCode = code;
-					time_t t = time(0);   // get time now
-					struct tm * now = localtime(&t);
-					int year = 1900 + now->tm_year;
-					city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
+				m_cities[name] = sCity(name, code, zipCode);
 
-					// LogicImmo
-					StringTools::TransformToLower(name);
-					auto itLogicImmo = m_logicImmoKeys.find(name);
-					if (itLogicImmo == m_logicImmoKeys.end())
-						continue;
+				sCityData city;
+				city.m_data.m_name = name;
+				city.m_data.m_zipCode = zipCode;
+				city.m_data.m_inseeCode = code;
+				time_t t = time(0);   // get time now
+				struct tm * now = localtime(&t);
+				int year = 1900 + now->tm_year;
+				city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 
-					// Pap
-					auto itPap = m_papKeys.find(name);
-					if (itPap == m_papKeys.end())
-						continue;
-
-					city.m_data.m_logicImmoKey = itLogicImmo->second;
-					city.m_data.m_papKey = itPap->second;
-					DatabaseManager::getSingleton()->AddCity(city);
-				}
+				m_waitingForData.push_back(city);
 			}
 		}
+	}
+
+	// Asynchronous update different DB keys
+	auto itCity = m_waitingForData.begin();
+	while (itCity != m_waitingForData.end())
+	{
+		sCityData& city = *itCity;
+		std::string name = city.m_data.m_name;
+
+		// LogicImmo
+		StringTools::TransformToLower(name);
+		auto itLogicImmo = m_logicImmoKeys.find(name);
+		if (itLogicImmo == m_logicImmoKeys.end())
+		{
+			++itCity;
+			continue;
+		}
+
+		// Pap
+		auto itPap = m_papKeys.find(name);
+		if (itPap == m_papKeys.end())
+		{
+			++itCity;
+			continue;
+		}
+
+		city.m_data.m_logicImmoKey = itLogicImmo->second;
+		city.m_data.m_papKey = itPap->second;
+		DatabaseManager::getSingleton()->AddCity(city);
+
+		m_waitingForData.erase(itCity);
+
+		m_changed = true;
 	}
 
 	// left
@@ -194,18 +214,21 @@ bool CitySelector::Display()
 		m_changed = true;
 	}
 
-	if (m_cities.size() > 100)
-		m_cities.resize(100);
-
 	const char* cities[100];
-	for (size_t ID = 0; ID < m_cities.size(); ++ID)
-		cities[ID] = m_cities[ID].m_name.c_str();
+	const int nbCities = m_cities.size() > 100 ? 100 : m_cities.size();
+	auto it = m_cities.begin();
+	int ID = 0;
+	while (ID < nbCities)
+	{
+		cities[ID++] = it->second.m_name.c_str();
+		++it;
+	}
 
 	if (m_displayAllResults && m_cities.size() > 0)
 	{
 		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
 		{
-			std::string str = m_cities[m_selectedCityID].m_name;
+			std::string str = cities[m_selectedCityID];
 			int size = str.size() < 256 ? (int)str.size() : 256;
 			char* dest = m_inputTextCity;
 			const char* source = str.c_str();
@@ -216,11 +239,4 @@ bool CitySelector::Display()
 	}
 
 	return false;
-}
-
-const sCity* CitySelector::GetSelectedCity() const
-{
-	if (m_selectedCityID > -1)
-		return &m_cities[m_selectedCityID];
-	return nullptr;
 }

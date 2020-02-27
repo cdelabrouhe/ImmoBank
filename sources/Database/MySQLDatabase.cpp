@@ -1132,15 +1132,32 @@ bool ImmoBank::MySQLDatabase::UpdateAllPapKeys()
 					Json::Value& places = root["_embedded"]["place"];
 					if (places.isArray() && (places.size() > 0))
 					{
-						Json::Value val = places.get(0u, Json::nullValue);
-						unsigned int key = val["id"].asUInt();
-						borough.m_data.SetPapKey(key);
-
 						std::string cityName = borough.m_data.m_city.m_name;
 						StringTools::RemoveSpecialCharacters(cityName);
 						StringTools::ReplaceBadSyntax(cityName, " ", "-");
 						StringTools::TransformToLower(cityName);
-						s_papKeys[cityName] = key;
+
+						Json::Value val = places.get(0u, Json::nullValue);
+						if (!val["id"].isNull())
+						{
+							int key = 0;
+							auto id = val["id"];
+							if (id.isString())
+							{
+								std::string idStr = val["id"].asString();
+								key = !idStr.empty() ? std::stoi(idStr) : -1;
+							}
+							else if (id.isInt() || id.isUInt())
+							{
+								key = id.asInt();
+							}
+
+							if (key != -1)
+							{
+								borough.m_data.SetPapKey(key);
+								s_papKeys[cityName] = key;
+							}
+						}
 
 						DatabaseManager::getSingleton()->AddBoroughData(borough.m_data);
 

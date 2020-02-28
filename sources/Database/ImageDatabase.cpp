@@ -3,19 +3,20 @@
 #include "Tools\Types.h"
 #include "Tools\SearchFile.h"
 #include <windows.h>
+#include "GL\ProdToolGL.h"
 
 using namespace ImmoBank;
 
 const std::string s_imageDatabaseFolder = "Images/";
 const std::string s_imageDatabaseFileName = "images.dat";
-ImageDatabase* s_singleton = nullptr;
+static ImageDatabase* s_imageDatabaseSingleton = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 ImageDatabase* ImageDatabase::getSingleton()
 {
-	if (s_singleton == nullptr)
-		s_singleton = new ImageDatabase();
-	return s_singleton;
+	if (s_imageDatabaseSingleton == nullptr)
+		s_imageDatabaseSingleton = new ImageDatabase();
+	return s_imageDatabaseSingleton;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -27,6 +28,8 @@ void ImageDatabase::Init()
 
 	_ReadDataFile();
 	_Check();
+
+	//_Test();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -119,6 +122,21 @@ void ImmoBank::ImageDatabase::RemoveFile(const std::string& _filePath)
 		return;
 
 	Tools::DeleteFileOnDisk(path.c_str());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ImmoBank::ImageDatabase::_Test()
+{
+	https://static.pap.fr/photos/D09/D09A1199.thumb.jpg
+	std::string path = m_imagesPath + "7627.jpg";
+	int size = 0;
+	unsigned char* buffer = Tools::Read(path.c_str(), size);
+	int width, height;
+	unsigned int textureID = -1;
+	if (ProdToolGL_GenerateTextureFromJPEGBuffer(buffer, size, width, height, textureID))
+	{
+		free(buffer);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

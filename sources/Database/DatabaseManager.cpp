@@ -13,8 +13,6 @@
 
 using namespace ImmoBank;
 
-#define USE_LOGIC_IMMO
-
 DatabaseManager* s_singleton = nullptr;
 const std::string ImmoBank::s_wholeCityName = "WholeCity";
 static int s_externalDBUpdateInterval = 600;
@@ -127,6 +125,9 @@ void DatabaseManager::Process()
 		if (m_generateLogicImmoIndices)
 			m_generateLogicImmoIndices = m_externalDB->UpdateAllLogicImmoKeys();
 
+		if (m_generatePapIndices)
+			m_generatePapIndices = m_externalDB->UpdateAllPapKeys();
+
 		if (m_updateLocalBaseToServer)
 			m_updateLocalBaseToServer = m_externalDB->UpdateLocalBaseToServer();
 
@@ -154,11 +155,7 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 	RemoveBoroughData(localData.m_city.m_name, localData.m_name);
 
 	char buf[4096];
-#ifdef USE_LOGIC_IMMO
-	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s')",
-#else
-	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u)",
-#endif
+	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY, PAPKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s', %u)",
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
@@ -184,12 +181,9 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentApartmentT4Plus.m_val,
 		localData.m_priceRentApartmentT4Plus.m_min,
 		localData.m_priceRentApartmentT4Plus.m_max,
-#ifdef USE_LOGIC_IMMO
 		localData.m_selogerKey,
-		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str());
-#else
-		localData.m_selogerKey);
-#endif
+		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str(),
+		localData.m_papKey);
 
 	/*static bool s_test = false;
 	if (s_test)
@@ -250,9 +244,8 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
-#ifdef USE_LOGIC_IMMO
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-#endif
+		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
 	});
 
 	if (boroughs.size() == 1)
@@ -317,9 +310,8 @@ bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughDat
 		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
-#ifdef USE_LOGIC_IMMO
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-#endif
+		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
 	});
 	
 	if (_data.size() >= 1)
@@ -420,9 +412,10 @@ void DatabaseManager::AddCity(const sCityData& _data)
 
 	RemoveCityData(_data.m_data.m_name);
 
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %d, %d, %u)",
+	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, PAPKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %u, %d, %d, %u)",
 		_data.m_data.m_name.c_str(),
 		_data.m_data.m_logicImmoKey.c_str(),
+		_data.m_data.m_papKey,
 		_data.m_data.m_zipCode,
 		_data.m_data.m_inseeCode,
 		_data.m_timeUpdate.GetData()))
@@ -447,6 +440,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_papKey = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
@@ -538,6 +532,7 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 		auto& city = cities.back();
 		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
+		city.m_data.m_papKey = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
 		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
 		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
@@ -584,6 +579,7 @@ void DatabaseManager::CreateTables()
 		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
 		"`NAME` TEXT,\n"			// Name of the city
 		"`LOGICIMMOKEY` TEXT,\n"	// LogicImmoKey
+		"`PAPKEY` INTEGER,\n"		// PapKey
 		"`ZIPCODE` INTEGER,\n"		// ZIP code
 		"`INSEECODE` INTEGER,\n"	// INSEE code
 		"`TIMEUPDATE` INTEGER"		// Last time the borough has been updated
@@ -617,12 +613,9 @@ void DatabaseManager::CreateTables()
 		"`RENTT4` REAL,\n"			// Buy max price
 		"`RENTT4MIN` REAL,\n"		// Buy min price
 		"`RENTT4MAX` REAL,\n"		// Buy max price
-#ifdef USE_LOGIC_IMMO
 		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
-		"`LOGICIMMOKEY` TEXT"		// Text for LogicImmo key
-#else
-		"`SELOGERKEY` INTEGER"		// Internal SeLoger key
-#endif
+		"`LOGICIMMOKEY` TEXT,\n"		// Text for LogicImmo key
+		"`PAPKEY` INTEGER"	// Internal SeLoger key
 		")"
 	);
 }
@@ -706,6 +699,7 @@ void DatabaseManager::Test()
 	data.m_priceRentApartmentT4Plus.m_max = 21;
 	data.m_selogerKey = 0;
 	data.m_logicImmoKey = "";
+	data.m_papKey = 0;
 
 	AddBoroughData(data);
 
@@ -809,7 +803,7 @@ void ImmoBank::DatabaseManager::DisplaySQlite3Debug()
 		m_SQlite3Requests.clear();
 		for (auto& result : s_debugResults)
 		{
-			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey) + ", LogicImmoKEY: " + result.m_logicImmoKey;
+			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey) + ", LogicImmoKEY: " + result.m_logicImmoKey + ", PapKEY: " + std::to_string(result.m_papKey);
 			m_SQlite3Requests.push_back(mes);
 		}
 	}

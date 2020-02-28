@@ -12,6 +12,7 @@ namespace ImmoBank
 			State_GetRawList,
 			State_CheckSeLoger,
 			State_CheckLogicImmo,
+			State_CheckPap,
 			State_DONE,
 			Stat_COUNT
 		};
@@ -24,11 +25,11 @@ namespace ImmoBank
 
 		void SwitchState(State _state);
 		virtual void copyTo(SearchRequest* _target) override;
-		virtual bool IsAvailable() const;
+		virtual bool IsAvailable() const override;
 
 		virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
-		virtual SearchRequest* Clone() { return new SearchRequestCityBoroughs(); }
+		virtual SearchRequest* Clone() override { return new SearchRequestCityBoroughs(); }
 
 		sCity					m_city;
 

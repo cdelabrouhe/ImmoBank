@@ -8,6 +8,7 @@
 #include "LogicImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
+#include "PapOnlineDatabase.h"
 
 using namespace ImmoBank;
 
@@ -48,6 +49,10 @@ void OnlineManager::Init()
 	auto logicImmoDB = new LogicImmoOnlineDatabase();
 	logicImmoDB->Init();
 	m_databases.push_back(logicImmoDB);
+
+	auto papDB = new PapOnlineDatabase();
+	papDB->Init();
+	m_databases.push_back(papDB);
 }
 
 //-------------------------------------------------------------------------------------------------

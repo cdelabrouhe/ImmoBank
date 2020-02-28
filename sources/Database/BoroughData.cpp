@@ -66,6 +66,9 @@ void BoroughData::End()
 
 	if (m_logicImmoKeyRequestID > -1)
 		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyRequestID);
+
+	if (m_papKeyRequestID > -1)
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyRequestID);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -81,6 +84,7 @@ void BoroughData::Reset(bool _resetDB)
 	m_meilleursAgentsKey = 0;
 	m_selogerKey = 0;
 	m_logicImmoKey = "";
+	m_papKey = 0;
 
 	// Reset all data in DBs
 	if (_resetDB)
@@ -95,6 +99,9 @@ void BoroughData::SetWholeCity()
 	m_name = s_wholeCityName;
 	if ((m_logicImmoKey.empty() || m_logicImmoKey == "(null)") && (!m_city.m_logicImmoKey.empty()))
 		m_logicImmoKey = m_city.m_logicImmoKey;
+
+	if (m_papKey == 0)
+		m_papKey = m_city.m_papKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -241,6 +248,18 @@ std::string BoroughData::ComputeSeLogerKeyURL() const
 }
 
 //-------------------------------------------------------------------------------------------------
+void ImmoBank::BoroughData::SetPapKey(unsigned int _key)
+{
+	m_papKey = _key;
+}
+
+//-------------------------------------------------------------------------------------------------
+int ImmoBank::BoroughData::GetPapKey()
+{
+	return m_papKey;
+}
+
+//-------------------------------------------------------------------------------------------------
 std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
 {
 	return ComputeLogicImmoKeyURL(m_city.m_name);
@@ -255,6 +274,23 @@ std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL(const std::string& _na
 	StringTools::ReplaceBadSyntax(name, " ", "%20");
 	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
 	return request;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::BoroughData::ComputePapKeyURL() const
+{
+	return ComputePapKeyURL(m_city.m_name);
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::BoroughData::ComputePapKeyURL(const std::string& _name)
+{
+	std::string name = _name;
+	StringTools::RemoveSpecialCharacters(name);
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
+	std::string str = "https://ws.pap.fr/gis/places?recherche[cible]=pap-recherche-ac&recherche[q]=" + name;
+	return str;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -314,6 +350,13 @@ void BoroughData::Edit()
 
 						std::string request = ComputeLogicImmoKeyURL();
 						m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+
+						// We need to update the PAP key
+						if (m_papKeyRequestID > -1)
+							OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyRequestID);
+
+						request = ComputePapKeyURL();
+						m_papKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 					}
 				}
 			}
@@ -330,6 +373,9 @@ void BoroughData::Edit()
 		{
 			std::string request = ComputeLogicImmoKeyURL();
 			m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
+
+			request = ComputePapKeyURL();
+			m_papKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 		}
 		else
 		{
@@ -356,7 +402,7 @@ void BoroughData::Edit()
 							continue;
 
 						bool isBorough = (type == "Quartier");
-						bool isCity = (type == "Ville") && (str.find("e (") != std::string::npos) || (str.find("er (") != std::string::npos);
+						bool isCity = ((type == "Ville") && (str.find("e (") != std::string::npos)) || (str.find("er (") != std::string::npos);
 						Json::Value& params = val["Params"];
 						std::string tmp = isBorough ? "idq" : "ci";
 						if (params.get(tmp, Json::nullValue).isNull())
@@ -372,30 +418,71 @@ void BoroughData::Edit()
 			}
 
 			// LogicImmo key
-			if (IsWholeCity() && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyRequestID))
+			if (IsWholeCity())
 			{
-				std::string str;
-				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyRequestID, str);
-				m_logicImmoKeyRequestID = -1;
-
-				Json::Reader reader;
-				Json::Value root;
-				reader.parse(str, root);
-
-				Json::Value& items = root["items"];
-				if (items.isArray())
+				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyRequestID))
 				{
-					const int nbPlaces = items.size();
-					for (int itemID = 0; itemID < nbPlaces; ++itemID)
-					{
-						Json::Value val = items.get(itemID, Json::nullValue);
-						std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
-						int zipCode = !zipCodeStr.empty() ? std::stoi(zipCodeStr) : -1;
-						if (zipCode != m_city.m_zipCode)
-							continue;
+					std::string str;
+					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyRequestID, str);
+					m_logicImmoKeyRequestID = -1;
 
-						std::string key = val["key"].asString();
-						SetLogicImmoKey(key);
+					Json::Reader reader;
+					Json::Value root;
+					reader.parse(str, root);
+
+					Json::Value& items = root["items"];
+					if (items.isArray())
+					{
+						const int nbPlaces = items.size();
+						for (int itemID = 0; itemID < nbPlaces; ++itemID)
+						{
+							Json::Value val = items.get(itemID, Json::nullValue);
+							std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
+							int zipCode = !zipCodeStr.empty() ? std::stoi(zipCodeStr) : -1;
+							if (zipCode != m_city.m_zipCode)
+								continue;
+
+							std::string key = val["key"].asString();
+							SetLogicImmoKey(key);
+						}
+					}
+				}
+
+				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyRequestID))
+				{
+					std::string str;
+					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyRequestID, str);
+					m_papKeyRequestID = -1;
+
+					Json::Reader reader;
+					Json::Value root;
+					reader.parse(str, root);
+
+					Json::Value& places = root["_embedded"]["place"];
+					if (places.isArray())
+					{
+						const int nbPlaces = places.size();
+						if (nbPlaces > 0)
+						{
+							Json::Value val = places.get(0u, Json::nullValue);
+							if (!val["id"].isNull())
+							{
+								int key = 0;
+								auto id = val["id"];
+								if (id.isString())
+								{
+									std::string idStr = val["id"].asString();
+									key = !idStr.empty() ? std::stoi(idStr) : -1;
+								}
+								else if (id.isInt() || id.isUInt())
+								{
+									key = id.asInt();
+								}
+
+								if (key != -1)
+									SetPapKey(key);
+							}
+						}
 					}
 				}
 			}
@@ -436,8 +523,13 @@ void BoroughData::Edit()
 
 			static char s_text[64];
 			strcpy(s_text, m_logicImmoKey.c_str());
-			if (ImGui::InputText("Search city", (char*)s_text, 64))
+			if (ImGui::InputText("LogicImmoKey", (char*)s_text, 64))
 				m_logicImmoKey = s_text;
+
+			static int s_papKey = -1;
+			s_papKey = m_papKey;
+			if (ImGui::InputInt("PapKey", &s_papKey))
+				m_papKey = s_papKey;
 		}
 
 		ImGui::Separator();
@@ -476,9 +568,11 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
 			bool isCity = false;
 			int selogerKey = GetSelogerKey(&isCity);
+			unsigned int papKey = GetPapKey();
 			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
 			std::string logicImmoKey = GetLogicImmoKey();
-			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str());
+			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str()),
+			ImGui::Text("PapKey: %u", papKey);
 		}
 
 		if (IsValid())

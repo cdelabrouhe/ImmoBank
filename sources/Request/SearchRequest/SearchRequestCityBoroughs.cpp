@@ -61,6 +61,14 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 
 		break;
 	}
+	case State_CheckPap:
+	{
+		// No boroughs on Pap => set city key
+		for (auto& borough : m_boroughs)
+			borough.m_papKeyID = m_city.m_papKey;
+
+		break;
+	}
 	default:
 		break;
 	}
@@ -222,6 +230,12 @@ void SearchRequestCityBoroughs::Process()
 
 		case State_CheckLogicImmo:
 		{			
+			SwitchState(State_CheckPap);
+			break;
+		}
+
+		case State_CheckPap:
+		{
 			SwitchState(State_DONE);
 			break;
 		}
@@ -259,6 +273,7 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 		result->m_internalID = borough.m_internalID;
 		result->m_selogerID = borough.m_selogerID;
 		result->m_logicImmoID = borough.m_logicImmoID;
+		result->m_papKeyID = borough.m_papKeyID;
 		_results.push_back(result);
 	}
 

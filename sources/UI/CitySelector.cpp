@@ -7,13 +7,12 @@
 
 using namespace ImmoBank;
 
-bool CitySelector::Display()
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdateLogicImmoKeys()
 {
-	m_changed = false;
-	bool valid = m_logicImmoKeyID == -1;
+	// LogicImmo
 	if ((m_logicImmoKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyID))
 	{
-		valid = true;
 		std::string result;
 		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyID, result);
 		m_logicImmoKeyID = -1;
@@ -28,7 +27,7 @@ bool CitySelector::Display()
 				unsigned int nbCities = items.size();
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
-					Json::Value& val = items.get(ID, Json::nullValue);
+					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["name"].asString();
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
@@ -38,67 +37,151 @@ bool CitySelector::Display()
 			}
 		}
 	}
+}
 
-	if (valid)
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdatePapKeys()
+{
+	// Pap
+	if ((m_papKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyID))
 	{
-		// Get city name list
-		if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyID, result);
+		m_papKeyID = -1;
+		Json::Value root;
+		Json::Reader reader;
+		if (reader.parse(result, root))
 		{
-			m_cities.clear();
-			std::string result;
-			OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
-			m_cityNameRequestID = -1;
-			StringTools::RemoveEOL(result);
-			Json::Value root;
-			Json::Reader reader;
-
-			if (reader.parse(result, root))
+			// Parse keys
+			if (root.isObject())
 			{
-				// Parse LogicImmo keys
-				unsigned int nbMaxCities = 10;
-				unsigned int nbCities = root.size() < nbMaxCities ? root.size() : nbMaxCities;
+				Json::Value& items = root["_embedded"]["place"];
+				unsigned int nbCities = items.size();
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
-					Json::Value& val = root.get(ID, Json::nullValue);
-					std::string name = val["nom"].asString();
+					Json::Value val = items.get(ID, Json::nullValue);
+					std::string name = val["slug"].asString();
+					int delimiter = name.find_last_of("-");
+					if (delimiter != std::string::npos)
+						name = name.substr(0, delimiter);
+
+					StringTools::ReplaceBadSyntax(name, "-", " ");
+					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					StringTools::ReplaceBadSyntax(name, "-", " ");
-					std::string codeStr = val["code"].asString();
-					std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
-
-					// Replace 001 by 000
-					auto it = zipCodeStr.find("001");
-					if (it != std::string::npos)
-						StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
-
-					int code = std::stoi(codeStr);
-					if (zipCodeStr.empty())
-						continue;
-
-					int zipCode = std::stoi(zipCodeStr);
-					m_cities.push_back(sCity(name, code, zipCode));
-
-					sCityData city;
-					city.m_data.m_name = name;
-					city.m_data.m_zipCode = zipCode;
-					city.m_data.m_inseeCode = code;
-					time_t t = time(0);   // get time now
-					struct tm * now = localtime(&t);
-					int year = 1900 + now->tm_year;
-					city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
-
-					StringTools::TransformToLower(name);
-					auto itKey = m_logicImmoKeys.find(name);
-					if (itKey != m_logicImmoKeys.end())
-					{
-						city.m_data.m_logicImmoKey = itKey->second;
-						DatabaseManager::getSingleton()->AddCity(city);
-					}
+					auto it = m_papKeys.find(name);
+					if (it == m_papKeys.end())
+						m_papKeys[name] = val["id"].asUInt();
 				}
 			}
 		}
 	}
+}
+
+//--------------------------------------------------------------------------------------------------------------
+void CitySelector::_UpdateCitiesList()
+{
+	// Get city name list
+	if ((m_cityNameRequestID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_cityNameRequestID))
+	{
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_cityNameRequestID, result);
+		m_cityNameRequestID = -1;
+		StringTools::RemoveEOL(result);
+		Json::Value root;
+		Json::Reader reader;
+
+		if (reader.parse(result, root))
+		{
+			// Parse LogicImmo keys
+			unsigned int nbMaxCities = 10;
+			unsigned int nbCities = root.isArray() ? (root.size() < nbMaxCities ? root.size() : nbMaxCities) : 0;
+			for (unsigned int ID = 0; ID < nbCities; ++ID)
+			{
+				Json::Value val = root.get(ID, Json::nullValue);
+				std::string name = val["nom"].asString();
+				StringTools::FixName(name);
+				StringTools::ConvertToImGuiText(name);
+				StringTools::ReplaceBadSyntax(name, "-", " ");
+				std::string codeStr = val["code"].asString();
+				std::string zipCodeStr = val["codesPostaux"].get(0u, Json::nullValue).asString();
+
+				// Replace 001 by 000
+				auto it = zipCodeStr.find("001");
+				if (it != std::string::npos)
+					StringTools::ReplaceBadSyntax(zipCodeStr, "001", "000");
+
+				int code = std::stoi(codeStr);
+				if (zipCodeStr.empty())
+					continue;
+
+				int zipCode = std::stoi(zipCodeStr);
+				if (m_cities.find(name) != m_cities.end())
+					continue;
+
+				m_cities[name] = sCity(name, code, zipCode);
+
+				sCityData city;
+				city.m_data.m_name = name;
+				city.m_data.m_zipCode = zipCode;
+				city.m_data.m_inseeCode = code;
+				time_t t = time(0);   // get time now
+				struct tm* now = localtime(&t);
+				int year = 1900 + now->tm_year;
+				city.m_timeUpdate.SetDate(year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
+
+				m_waitingForData.push_back(city);
+			}
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------------
+void ImmoBank::CitySelector::_UpdateAsynchronousData()
+{
+	// Asynchronous update different DB keys
+	auto itCity = m_waitingForData.begin();
+	while (itCity != m_waitingForData.end())
+	{
+		sCityData& city = *itCity;
+		std::string name = city.m_data.m_name;
+
+		// LogicImmo
+		StringTools::TransformToLower(name);
+		auto itLogicImmo = m_logicImmoKeys.find(name);
+		if (itLogicImmo == m_logicImmoKeys.end())
+		{
+			++itCity;
+			continue;
+		}
+
+		// Pap
+		auto itPap = m_papKeys.find(name);
+		if (itPap == m_papKeys.end())
+		{
+			++itCity;
+			continue;
+		}
+
+		city.m_data.m_logicImmoKey = itLogicImmo->second;
+		city.m_data.m_papKey = itPap->second;
+		DatabaseManager::getSingleton()->AddCity(city);
+
+		m_waitingForData.erase(itCity);
+
+		m_changed = true;
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------------
+bool CitySelector::Display()
+{
+	m_changed = false;
+
+	_UpdateLogicImmoKeys();
+	_UpdatePapKeys();	
+	_UpdateCitiesList();
+	_UpdateAsynchronousData();	
 
 	// left
 	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
@@ -115,6 +198,7 @@ bool CitySelector::Display()
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
+			// LogicImmo
 			if (m_logicImmoKeyID > -1)
 			{
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyID);
@@ -130,22 +214,40 @@ bool CitySelector::Display()
 			}
 			else
 				m_logicImmoKeys[str] = data.m_data.m_logicImmoKey;
+
+			// Pap
+			if (m_papKeyID > -1)
+			{
+				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyID);
+				m_papKeyID = -1;
+			}
+
+			if (data.m_data.m_papKey == 0)
+			{
+				request = BoroughData::ComputePapKeyURL(str);
+				m_papKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+			}
+			else
+				m_papKeys[str] = data.m_data.m_papKey;
 		}
 		m_changed = true;
 	}
 
-	if (m_cities.size() > 100)
-		m_cities.resize(100);
-
 	const char* cities[100];
-	for (size_t ID = 0; ID < m_cities.size(); ++ID)
-		cities[ID] = m_cities[ID].m_name.c_str();
+	const int nbCities = m_cities.size() > 100 ? 100 : m_cities.size();
+	auto it = m_cities.begin();
+	int ID = 0;
+	while (ID < nbCities)
+	{
+		cities[ID++] = it->second.m_name.c_str();
+		++it;
+	}
 
 	if (m_displayAllResults && m_cities.size() > 0)
 	{
 		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
 		{
-			std::string str = m_cities[m_selectedCityID].m_name;
+			std::string str = cities[m_selectedCityID];
 			int size = str.size() < 256 ? (int)str.size() : 256;
 			char* dest = m_inputTextCity;
 			const char* source = str.c_str();
@@ -156,11 +258,4 @@ bool CitySelector::Display()
 	}
 
 	return false;
-}
-
-const sCity* CitySelector::GetSelectedCity() const
-{
-	if (m_selectedCityID > -1)
-		return &m_cities[m_selectedCityID];
-	return nullptr;
 }

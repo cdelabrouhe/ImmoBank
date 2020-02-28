@@ -46,6 +46,7 @@ bool CityComputeData::Process()
 					data.m_meilleursAgentsKey = borough->m_internalID;
 					data.m_selogerKey = borough->m_selogerID;
 					data.m_logicImmoKey = borough->m_logicImmoID;
+					data.m_papKey = borough->m_papKeyID;
 					m_boroughs.push_back(data);
 
 					// Store data into DB
@@ -70,6 +71,9 @@ bool CityComputeData::Process()
 		}
 	}
 	break;
+
+	default:
+		break;
 	}
 
 	return m_state == UpdateStep_COUNT;

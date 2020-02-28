@@ -12,8 +12,8 @@ namespace ImmoBank
 
 		void Reset() { m_min = 0.f; m_val = 0.f; m_max = 0.f; }
 
-		float m_min = 0.f;
 		float m_val = 0.f;
+		float m_min = 0.f;
 		float m_max = 0.f;
 	};
 
@@ -27,6 +27,7 @@ namespace ImmoBank
 		sDate				m_timeUpdate;
 		unsigned int		m_meilleursAgentsKey = 0xffffffff;
 		unsigned int		m_selogerKey = 0;
+		unsigned int		m_papKey = 0;
 		std::string			m_logicImmoKey;
 		sPrice				m_priceRentApartmentT1;
 		sPrice				m_priceRentApartmentT2;
@@ -59,10 +60,15 @@ namespace ImmoBank
 		void SetLogicImmoKey(std::string& _key);
 		std::string GetLogicImmoKey();
 
+		void SetPapKey(unsigned int _key);
+		int GetPapKey();
+
 		std::string ComputeRequestURL() const;
 		std::string ComputeSeLogerKeyURL() const;
 		std::string ComputeLogicImmoKeyURL() const;
 		static std::string ComputeLogicImmoKeyURL(const std::string& _name);
+		std::string ComputePapKeyURL() const;
+		static std::string ComputePapKeyURL(const std::string& _name);
 
 		bool operator==(const BoroughData &_other) const
 		{
@@ -82,5 +88,6 @@ namespace ImmoBank
 		int m_httpRequestID = -1;
 		int m_selogerKeyRequestID = -1;
 		int m_logicImmoKeyRequestID = -1;
+		int m_papKeyRequestID = -1;
 	};
 }

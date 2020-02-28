@@ -145,6 +145,7 @@ bool UIManager::Draw()
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
 				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
+				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
 				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
@@ -238,9 +239,7 @@ void UIManager::DisplayCityInformation()
 	std::vector<std::string> cityListFiltered;
 	ImGui::BeginChild(GET_TEXT("DatabaseWindowSearchCity"), ImVec2(300, 0), true);
 
-	sCity result;
-	if (s_citySelector.Display())
-		result = *s_citySelector.GetSelectedCity();
+	s_citySelector.Display();
 
 	if (strlen(s_citySelector.GetText()) > 0)
 	{
@@ -328,14 +327,16 @@ void UIManager::DisplayCityInformation()
 		StringTools::ConvertToImGuiText(name);
 		if (Tools::IsDevMode())
 		{
-			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s", GET_TEXT("DatabaseWindowCityName")
+			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s  %s: %u", GET_TEXT("DatabaseWindowCityName")
 				, name.c_str()
 				, GET_TEXT("DatabaseWindowZipCode")
 				, selectedCity.m_data.m_zipCode
 				, GET_TEXT("DatabaseWindowInseeCode")
 				, selectedCity.m_data.m_inseeCode
 				, "LogicImmoKey"
-				, selectedCity.m_data.m_logicImmoKey.c_str());
+				, selectedCity.m_data.m_logicImmoKey.c_str()
+				, "PapKey"
+				, selectedCity.m_data.m_papKey);
 		}
 		else
 		{

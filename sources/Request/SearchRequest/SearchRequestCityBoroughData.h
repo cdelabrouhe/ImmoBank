@@ -12,11 +12,11 @@ namespace ImmoBank
 		virtual void Init() override;
 
 		virtual void copyTo(SearchRequest* _target) override;
-		virtual bool IsAvailable() const;
+		virtual bool IsAvailable() const override;
 
 		virtual bool GetResult(std::vector<SearchRequestResult*>& _results) override;
 
-		virtual SearchRequest* Clone() { return new SearchRequestCityBoroughData(); }
+		virtual SearchRequest* Clone() override { return new SearchRequestCityBoroughData(); }
 
 		sCity			m_city;
 		BoroughData		m_data;

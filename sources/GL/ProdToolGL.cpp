@@ -36,7 +36,7 @@
 NOT FUNCTIONNAL YET, DEBUUUUUGGG !!!
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 #endif
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 //-------------------------------------------------------------------------------------------------
@@ -59,7 +59,16 @@ unsigned char* DecompressJPEG(unsigned char* _buffer, const int _bufferSize, int
 #define COLOR_COMPONENTS	4
 
 #ifdef USE_STBI
-	data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, COLOR_COMPONENTS);
+	try
+	{
+		data = stbi_load_from_memory(_buffer, _bufferSize, &_width, &_height, NULL, COLOR_COMPONENTS);
+	}
+	catch (const std::exception & e)
+	{
+		printf("ERROR: Invalid JPEG file %s\n", e.what());
+		free(data);
+		return nullptr;
+	}
 #endif
 
 #ifdef USE_LIBJPEGTURBO
@@ -96,10 +105,10 @@ void DisplayJPEGLoadError()
 
 bool ImmoBank::ProdToolGL_GenerateTextureFromJPEGBuffer(unsigned char* _buffer, const int _bufferSize, int& _width, int& _height, unsigned int& _textureID)
 {
-	try
+	if (_bufferSize > 0)
 	{
-		if (_bufferSize > 0)
-		{
+		try
+		{		
 			unsigned char* image_data = DecompressJPEG(_buffer, _bufferSize, _width, _height);
 			if (image_data)
 			{
@@ -107,11 +116,11 @@ bool ImmoBank::ProdToolGL_GenerateTextureFromJPEGBuffer(unsigned char* _buffer, 
 				return true;
 			}
 		}
-	}
-	catch (const std::exception& e)
-	{
-		printf("ERROR: Exception raised %s\n", e.what());
-		return false;
+		catch (const std::exception & e)
+		{
+			printf("ERROR: Exception raised %s\n", e.what());
+			return false;
+		}
 	}
 	
 	DisplayJPEGLoadError();

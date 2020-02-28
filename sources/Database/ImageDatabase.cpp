@@ -10,7 +10,7 @@ using namespace ImmoBank;
 const std::string s_imageDatabaseFolder = "Images/";
 const std::string s_imageDatabaseFileName = "images.dat";
 static ImageDatabase* s_imageDatabaseSingleton = nullptr;
-DISABLE_OPTIMIZE
+
 //-------------------------------------------------------------------------------------------------
 ImageDatabase* ImageDatabase::getSingleton()
 {
@@ -29,7 +29,7 @@ void ImageDatabase::Init()
 	_ReadDataFile();
 	_Check();
 
-	_Test();
+	//_Test();
 }
 
 //-------------------------------------------------------------------------------------------------

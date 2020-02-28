@@ -5,6 +5,7 @@
 #include "OnlineManager.h"
 #include "extern/jsoncpp/reader.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
+#include "Text/TextManager.h"
 
 using namespace ImmoBank;
 
@@ -32,13 +33,13 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 		{
 		case Category_Apartment:
 		{
-			request += !found ? "&types=apartment" : "%2Capartment";
+			request += !found ? "typebien=appartement" : "&typebien=appartement";
 			found = true;
 		}
 		break;
 		case Category_House:
 		{
-			request += !found ? "&types=house" : "%2Chouse";
+			request += !found ? "typebien=maison" : "&typebien=maison";
 			found = true;
 		}
 		break;
@@ -51,18 +52,21 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 	}
 
 	// Localisation (no borough for now)
-	request += "&cities=" + std::to_string(announce->m_city.m_inseeCode);
+	request += "&recherche[geo][ids][]=" + std::to_string(announce->m_city.m_papKey);
 
 	// Price
-	request += "&min=" + std::to_string(announce->m_priceMin);
-	request += "&max=" + std::to_string(announce->m_priceMax);
+	request += "&recherche[prix][min]=" + std::to_string(announce->m_priceMin);
+	request += "&recherche[prix][max]=" + std::to_string(announce->m_priceMax);
 
 	// Surface
-	request += "&surface=" + std::to_string(announce->m_surfaceMin);
+	request += "&recherche[surface][min]=" + std::to_string(announce->m_surfaceMin);
+	request += "&recherche[surface][max]=" + std::to_string(announce->m_surfaceMax);
 
 	// Nb rooms
-	request += "&rooms=" + std::to_string(announce->m_nbRoomsMax);
-	request += "&bedrooms" + std::to_string(announce->m_nbBedRoomsMax);
+	request += "&recherche[nb_pieces][min]=" + std::to_string(announce->m_nbRoomsMin);
+	request += "&recherche[nb_pieces][max]=" + std::to_string(announce->m_nbRoomsMax);
+	/*request += "&recherche[nb_chambres][min]=" + std::to_string(announce->m_nbBedRoomsMin);
+	request += "&recherche[nb_chambres][max]=" + std::to_string(announce->m_nbBedRoomsMax);*/
 
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
@@ -100,28 +104,26 @@ bool PapOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::strin
 	Json::Reader reader;
 	reader.parse(_str, root);
 
-	Json::Value& datas = root["data"];
+	Json::Value& datas = root["_embedded"]["annonce"];
 	int nbAnnounces = datas.size();
 	for (int announceID = 0; announceID < nbAnnounces; ++announceID)
 	{
 		Json::Value& data = datas[announceID];
 		SearchRequestResultAnnounce* result = new SearchRequestResultAnnounce(*announce);
 		result->m_database = GetName();
-		std::string name = data["slug"].asString();
+		std::string name = data["typebien"].asString() + std::string(" ") + std::to_string(data["nb_pieces"].asInt()) + std::string(" ") + std::string(GET_TEXT("SearchRequestResultNbRooms"));
 		result->m_name = name;
-		auto findID = result->m_name.find_last_of("-");
-		result->m_name = result->m_name.substr(0, findID);
-		StringTools::ReplaceBadSyntax(result->m_name, "-", " ");
-		result->m_description = data["description"].asString();
-		StringTools::RemoveSpecialCharacters(result->m_description);
-		result->m_price = data["price"].asInt();
+		result->m_description = name;
+		result->m_price = data["prix"].asInt();
 		result->m_surface = data["surface"].asDouble();
-		result->m_URL = "https://www.laforet.com/agence-immobiliere/" + data["agency"]["slug"].asString() + "/acheter/" + data["address"]["city_slug"].asString() + "/" + name;
-		result->m_imageURL = data["photos"].get(0u, Json::nullValue).asString();
-		result->m_nbRooms = data["rooms"].asInt();
-		result->m_nbBedRooms = data["bedrooms"].asInt();
-		std::string category = data["type"].asString();
-		if (category == "apartment")
+		result->m_URL = data["_links"]["desktop"]["href"].asString();
+		auto& photos = data["_embedded"]["photo"];
+		if (!photos.isNull())
+			result->m_imageURL = photos.get(0u, Json::nullValue)["_links"]["self"]["href"].asString();
+		result->m_nbRooms = data["nb_pieces"].asInt();
+		result->m_nbBedRooms = data["nb_chambres_max"].asInt();
+		std::string category = data["typebien"].asString();
+		if (category == "appartement")
 			result->m_category = Category_Apartment;
 		else
 			result->m_category = Category_House;

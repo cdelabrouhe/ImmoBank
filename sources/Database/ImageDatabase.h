@@ -26,6 +26,7 @@ namespace ImmoBank
 		void _Check();
 		void _ReadDataFile();
 		void _WriteDataFile();
+		void _Test();
 		std::string _GeneratePath();
 
 	private:

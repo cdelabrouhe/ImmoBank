@@ -287,7 +287,7 @@ Blazej Dariusz Roszkowski                                     github:Michaelange
 #endif // STBI_NO_STDIO
 
 #define STBI_VERSION 1
-
+__pragma(optimize("", off))
 enum
 {
 	STBI_default = 0, // only used for desired_channels

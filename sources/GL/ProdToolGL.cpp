@@ -36,7 +36,7 @@
 NOT FUNCTIONNAL YET, DEBUUUUUGGG !!!
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 #endif
-
+DISABLE_OPTIMIZE
 using namespace ImmoBank;
 
 //-------------------------------------------------------------------------------------------------

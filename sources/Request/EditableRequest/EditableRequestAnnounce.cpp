@@ -121,7 +121,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	std::string name = std::string(GET_TEXT("RequestWindowName")) + "##" + std::to_string(_ID);
 
 	ImGui::SetNextWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
-	ImGui::Begin(name.c_str());
+	ImGui::Begin(name.c_str(), &m_display);
 
 	// City selector process
 	ImGui::BeginChild("Search request", ImVec2(380, 0), true);
@@ -299,7 +299,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 		Launch();
 
 	ImGui::SameLine();
-	if (ImGui::Button(GET_TEXT("GeneralExit")))
+	if (!m_display ||ImGui::Button(GET_TEXT("GeneralExit")))
 		RequestManager::getSingleton()->AskForDeleteRequest(this);
 
 	ImGui::Separator();

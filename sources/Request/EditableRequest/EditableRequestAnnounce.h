@@ -40,5 +40,6 @@ namespace ImmoBank
 		int									m_selectedCityID = 0;
 		int									m_selectedBoroughID = 0;
 		bool								m_updateList = true;
+		bool								m_display = true;
 	};
 }

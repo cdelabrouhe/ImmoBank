@@ -396,70 +396,68 @@ void UIManager::DisplayCityInformation()
 			else
 				wholeCityData.End();
 
-			if (ImGui::TreeNode(GET_TEXT("DatabaseWindowBoroughList")))
+			ImGui::Separator();
+
+			int cpt = 0;
+			for (auto& borough : selectedCity.m_boroughs)
 			{
-				int cpt = 0;
-				for (auto& borough : selectedCity.m_boroughs)
+				bool updating = DatabaseManager::getSingleton()->IsBoroughUpdating(borough);
+				bool update = false;
+				bool manual = false;
+				if (!updating)
 				{
-					bool updating = DatabaseManager::getSingleton()->IsBoroughUpdating(borough);
-					bool update = false;
-					bool manual = false;
-					if (!updating)
+					ImGui::PushID(this + cpt);
+					update = ImGui::Button(GET_TEXT("DatabaseWindowBoroughAutoUpdatePrice"));
+					ImGui::PopID();
+
+					ImGui::SameLine();
+
+					ImGui::PushID(this + cpt + 10000);
+					manual = ImGui::Button(GET_TEXT("DatabaseWindowBoroughManualUpdatePrice"));
+					ImGui::PopID();
+
+					ImGui::SameLine();
+
+					ImGui::PushID(this + cpt + 20000);
+					if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughLink")))
+						borough.OpenInBrowser();
+					ImGui::PopID();
+
+					if (Tools::IsDevMode())
 					{
-						ImGui::PushID(this + cpt);
-						update = ImGui::Button(GET_TEXT("DatabaseWindowBoroughAutoUpdatePrice"));
-						ImGui::PopID();
-
 						ImGui::SameLine();
 
-						ImGui::PushID(this + cpt + 10000);
-						manual = ImGui::Button(GET_TEXT("DatabaseWindowBoroughManualUpdatePrice"));
+						ImGui::PushID(this + cpt + 30000);
+						if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughDeleteData")))
+							borough.Reset(true);
 						ImGui::PopID();
-
-						ImGui::SameLine();
-
-						ImGui::PushID(this + cpt + 20000);
-						if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughLink")))
-							borough.OpenInBrowser();
-						ImGui::PopID();
-
-						if (Tools::IsDevMode())
-						{
-							ImGui::SameLine();
-
-							ImGui::PushID(this + cpt + 30000);
-							if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughDeleteData")))
-								borough.Reset(true);
-							ImGui::PopID();
-						}
-
-						if (manual)
-						{
-							ImGui::OpenPopup(GET_TEXT("BoroughManualEditPopup"));
-							s_selectedData = &borough;
-						}
-
-						if (s_selectedData == &borough)
-							borough.Edit();
-
-						ImGui::SameLine();
-
-						ImGui::Text("%s", borough.m_name.c_str());
-						borough.DisplayAsTooltip();
 					}
-					else
+
+					if (manual)
 					{
-						char buf[128];
-						sprintf_s(buf, "%s %s... %c ", GET_TEXT("GeneralUpdating"), borough.m_name.c_str(), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
-						ImGui::Text(buf);
+						ImGui::OpenPopup(GET_TEXT("BoroughManualEditPopup"));
+						s_selectedData = &borough;
 					}
-					
-					if (update)
-						DatabaseManager::getSingleton()->ComputeBoroughData(borough);
 
-					++cpt;
+					if (s_selectedData == &borough)
+						borough.Edit();
+
+					ImGui::SameLine();
+
+					ImGui::Text("%s", borough.m_name.c_str());
+					borough.DisplayAsTooltip();
 				}
-				ImGui::TreePop();
+				else
+				{
+					char buf[128];
+					sprintf_s(buf, "%s %s... %c ", GET_TEXT("GeneralUpdating"), borough.m_name.c_str(), "|/-\\"[(int)(ImGui::GetTime() / 0.1f) & 3]);
+					ImGui::Text(buf);
+				}
+
+				if (update)
+					DatabaseManager::getSingleton()->ComputeBoroughData(borough);
+
+				++cpt;
 			}
 		}
 		else

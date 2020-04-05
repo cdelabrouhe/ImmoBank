@@ -15,6 +15,7 @@
 #include "Tools/Tools.h"
 #include "Text/TextManager.h"
 #include "UI/UIManager.h"
+#include <Online/OnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -289,6 +290,10 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 	ImGui::InputInt(GET_TEXT("RequestWindowSurfaceMax"), &m_searchRequest.m_surfaceMax);
 	ImGui::InputInt(GET_TEXT("RequestWindowPriceMin"), &m_searchRequest.m_priceMin);
 	ImGui::InputInt(GET_TEXT("RequestWindowPriceMax"), &m_searchRequest.m_priceMax);
+
+	const auto& list = OnlineManager::getSingleton()->GetOnlineDatabases();
+	for (OnlineDatabase* db : list)
+		ImGui::Checkbox(db->GetName().c_str(), &db->m_used);
 
 	if (ImGui::Button(GET_TEXT("RequestWindowLaunch")))
 		Launch();

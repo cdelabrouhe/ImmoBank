@@ -15,7 +15,10 @@ void SearchRequestAnnounce::Init()
 	// Trigger internal requests
 	std::vector<OnlineDatabase*>& databases = OnlineManager::getSingleton()->GetOnlineDatabases();
 	for (auto db : databases)
-		m_internalRequests.push_back(std::make_pair(db, db->SendRequest(this)));
+	{
+		if (db->m_used)
+			m_internalRequests.push_back(std::make_pair(db, db->SendRequest(this)));
+	}
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------

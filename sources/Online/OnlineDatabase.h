@@ -30,6 +30,9 @@ namespace ImmoBank
 	protected:
 		virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
 
+	public:
+		bool	m_used = true;
+
 	protected:
 		std::string			m_name;
 

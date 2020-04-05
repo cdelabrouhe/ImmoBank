@@ -13,10 +13,18 @@ namespace ImmoBank
 	public:
 
 		static bool m_devMode;
+		static bool m_viewMode;
+		static bool m_editMode;
 
 		static bool IsDevMode();
 		static void SetDevMode(bool _state);
 		static void InvertDevMode();
+
+		static bool IsViewAllowed();
+		static void SetViewAllowed(bool _state);
+
+		static bool IsEditAllowed();
+		static void SetEditAllowed(bool _state);
 
 		enum SortType
 		{

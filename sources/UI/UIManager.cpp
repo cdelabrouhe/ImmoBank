@@ -73,7 +73,7 @@ bool UIManager::Draw()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu(GET_TEXT("MainMenuDatabase")))
+		if (Tools::IsViewAllowed() && ImGui::BeginMenu(GET_TEXT("MainMenuDatabase")))
 		{
 			if (ImGui::MenuItem(GET_TEXT("MenuDatabaseExploreDB")))
 				UIManager::getSingleton()->AskForDisplayCityInformation();
@@ -352,11 +352,11 @@ void UIManager::DisplayCityInformation()
 
 		if (!DatabaseManager::getSingleton()->IsCityUpdating(selectedCity.m_data.m_name))
 		{
-			if (ImGui::Button(GET_TEXT("DatabaseWindowCityUpdateBoroughList")))
+			if (Tools::IsEditAllowed() && ImGui::Button(GET_TEXT("DatabaseWindowCityUpdateBoroughList")))
 				DatabaseManager::getSingleton()->ComputeCityData(selectedCity.m_data);
 
 			ImGui::SameLine();
-			if (ImGui::Button(GET_TEXT("DatabaseWindowCityAutoUpdatePrice")))
+			if (Tools::IsEditAllowed() && ImGui::Button(GET_TEXT("DatabaseWindowCityAutoUpdatePrice")))
 			{
 				BoroughData data;
 				data.m_city = selectedCity.m_data;
@@ -367,7 +367,7 @@ void UIManager::DisplayCityInformation()
 			ImGui::SameLine();
 
 			static BoroughData* s_selectedData = nullptr;
-			if (ImGui::Button(GET_TEXT("DatabaseWindowCityManualUpdatePrice")))
+			if (Tools::IsEditAllowed() && ImGui::Button(GET_TEXT("DatabaseWindowCityManualUpdatePrice")))
 			{
 				ImGui::OpenPopup(GET_TEXT("BoroughManualEditPopup"));
 				s_selectedData = &wholeCityData;
@@ -406,17 +406,20 @@ void UIManager::DisplayCityInformation()
 				bool manual = false;
 				if (!updating)
 				{
-					ImGui::PushID(this + cpt);
-					update = ImGui::Button(GET_TEXT("DatabaseWindowBoroughAutoUpdatePrice"));
-					ImGui::PopID();
+					if (Tools::IsEditAllowed())
+					{
+						ImGui::PushID(this + cpt);
+						update = ImGui::Button(GET_TEXT("DatabaseWindowBoroughAutoUpdatePrice"));
+						ImGui::PopID();
 
-					ImGui::SameLine();
+						ImGui::SameLine();
 
-					ImGui::PushID(this + cpt + 10000);
-					manual = ImGui::Button(GET_TEXT("DatabaseWindowBoroughManualUpdatePrice"));
-					ImGui::PopID();
+						ImGui::PushID(this + cpt + 10000);
+						manual = ImGui::Button(GET_TEXT("DatabaseWindowBoroughManualUpdatePrice"));
+						ImGui::PopID();
 
-					ImGui::SameLine();
+						ImGui::SameLine();
+					}
 
 					ImGui::PushID(this + cpt + 20000);
 					if (ImGui::Button(GET_TEXT("DatabaseWindowBoroughLink")))

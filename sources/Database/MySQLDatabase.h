@@ -92,6 +92,8 @@ namespace ImmoBank
 		void Process();
 		void End();
 
+		void UpdatePrivileges();
+
 		int AskForBoroughData(BoroughData& _data);
 		int AskForCityBoroughList(const sCity& _city);
 		bool IsQueryAvailable(int _queryID) const;

@@ -8,6 +8,8 @@
 using namespace ImmoBank;
 
 bool Tools::m_devMode = false;
+bool Tools::m_viewMode = false;
+bool Tools::m_editMode = false;
 static float s_versionNumber = 1.01f;
 
 bool Tools::IsDevMode()
@@ -23,6 +25,26 @@ void Tools::SetDevMode(bool _state)
 void Tools::InvertDevMode()
 {
 	m_devMode = !m_devMode;
+}
+
+bool Tools::IsViewAllowed()
+{
+	return m_viewMode || IsDevMode();
+}
+
+void Tools::SetViewAllowed(bool _state)
+{
+	m_viewMode = _state;
+}
+
+bool Tools::IsEditAllowed()
+{
+	return m_editMode || IsDevMode();
+}
+
+void Tools::SetEditAllowed(bool _state)
+{
+	m_editMode = _state;
 }
 
 bool Tools::FileExists(const char* _path)

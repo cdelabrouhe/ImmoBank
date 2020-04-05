@@ -127,6 +127,8 @@ bool MySQLDatabase::Init()
 		std::string message = buf;
 		DisplayMySQLMessage(message);
 
+		UpdatePrivileges();
+
 		return true;
 	}
 	else
@@ -140,6 +142,36 @@ bool MySQLDatabase::Init()
 #endif
 
 	return result;
+}
+
+//--------------------------------------------------------------------------------------
+void MySQLDatabase::UpdatePrivileges()
+{
+	char buf[512];
+	sprintf(buf, "SELECT * FROM `PRIVILEGES` WHERE NAME='%s'", m_user.c_str());
+	std::string str = buf;
+
+	MYSQL_RES* result = ExecuteQuery(str);
+
+	std::string name;
+	int vis = 0;
+	int edit = 0;
+	int dev = 0;
+
+	while (MYSQL_ROW row = mysql_fetch_row(result))
+	{
+		int rowID = 0;
+		name = row[rowID++];
+		vis = strtoul(row[rowID++], nullptr, 10);
+		edit = strtoul(row[rowID++], nullptr, 10);
+		dev = strtoul(row[rowID++], nullptr, 10);
+	}
+
+	Tools::SetDevMode(dev);
+	Tools::SetViewAllowed(vis);
+	Tools::SetEditAllowed(edit);
+
+	mysql_free_result(result);
 }
 
 //--------------------------------------------------------------------------------------

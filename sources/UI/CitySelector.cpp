@@ -73,7 +73,8 @@ void CitySelector::_UpdatePapKeys()
 					{
 						std::string zipStr = name.substr(delimiter + 1, name.size());
 						zip = stoi(zipStr);
-						zip /= 1000;
+						if (zipStr.size() > 3)
+							zip /= 1000;
 						name = name.substr(0, delimiter);
 					}
 

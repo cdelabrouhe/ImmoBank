@@ -32,7 +32,7 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 		for (int ID = 0; ID < s_nbCharacters; ++ID)
 		{
 			char character = s_characters[ID];
-			std::string str = "%20" + std::string((const char*)(&s_characters[ID]));
+			std::string str = "%20" + std::string((const char*)(&character));
 			str.resize(4);
 			std::string name = m_city.m_name;
 			StringTools::ReplaceBadSyntax(name, " ", "%20");
@@ -146,7 +146,7 @@ void SearchRequestCityBoroughs::Process()
 						valid = false;
 				}
 
-				SwitchState(State_CheckSeLoger);
+				SwitchState(State_CheckLogicImmo);
 			}
 		}
 		break;

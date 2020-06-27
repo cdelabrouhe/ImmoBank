@@ -134,7 +134,7 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			// Ask for a city list
 			m_cities.clear();
 			std::string str = m_inputTextCity;
-			DatabaseManager::getSingleton()->ListAllCitiesWithFilter(m_cities, str);
+			DatabaseManager::getSingleton()->ListAllCitiesWithName(m_cities, str);
 		}
 	}
 

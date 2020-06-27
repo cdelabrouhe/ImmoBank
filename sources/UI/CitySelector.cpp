@@ -4,7 +4,7 @@
 #include "Tools/StringTools.h"
 #include "extern/jsoncpp/reader.h"
 #include <time.h>
-
+DISABLE_OPTIMIZE
 using namespace ImmoBank;
 
 //--------------------------------------------------------------------------------------------------------------
@@ -29,10 +29,16 @@ void CitySelector::_UpdateLogicImmoKeys()
 				{
 					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["name"].asString();
+					std::string zipCode = val["postCode"].asString();
+					if (zipCode.size() == 0)
+						continue;
+
+					int zip = stoi(zipCode);
+					zip /= 1000;
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					m_logicImmoKeys[name] = val["key"].asString();
+					m_logicImmoKeys[std::make_pair(name, zip)] = val["key"].asString();
 				}
 			}
 		}
@@ -61,17 +67,24 @@ void CitySelector::_UpdatePapKeys()
 				{
 					Json::Value val = items.get(ID, Json::nullValue);
 					std::string name = val["slug"].asString();
+					int zip = -1;
 					int delimiter = name.find_last_of("-");
 					if (delimiter != std::string::npos)
+					{
+						std::string zipStr = name.substr(delimiter + 1, name.size());
+						zip = stoi(zipStr);
+						zip /= 1000;
 						name = name.substr(0, delimiter);
+					}
 
 					StringTools::ReplaceBadSyntax(name, "-", " ");
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					auto it = m_papKeys.find(name);
+					auto pair = std::make_pair(name, zip);
+					auto it = m_papKeys.find(pair);
 					if (it == m_papKeys.end())
-						m_papKeys[name] = val["id"].asUInt();
+						m_papKeys[pair] = val["id"].asUInt();
 				}
 			}
 		}
@@ -116,10 +129,10 @@ void CitySelector::_UpdateCitiesList()
 					continue;
 
 				int zipCode = std::stoi(zipCodeStr);
-				if (m_cities.find(name) != m_cities.end())
+				if (m_cities.find(std::make_pair(name, zipCode)) != m_cities.end())
 					continue;
 
-				m_cities[name] = sCity(name, code, zipCode);
+				m_cities[std::make_pair(name, zipCode)] = sCity(name, code, zipCode);
 
 				sCityData city;
 				city.m_data.m_name = name;
@@ -148,7 +161,8 @@ void ImmoBank::CitySelector::_UpdateAsynchronousData()
 
 		// LogicImmo
 		StringTools::TransformToLower(name);
-		auto itLogicImmo = m_logicImmoKeys.find(name);
+		int zip = city.m_data.m_zipCode / 1000;
+		auto itLogicImmo = m_logicImmoKeys.find(std::make_pair(name, zip));
 		if (itLogicImmo == m_logicImmoKeys.end())
 		{
 			++itCity;
@@ -156,7 +170,7 @@ void ImmoBank::CitySelector::_UpdateAsynchronousData()
 		}
 
 		// Pap
-		auto itPap = m_papKeys.find(name);
+		auto itPap = m_papKeys.find(std::make_pair(name, zip));
 		if (itPap == m_papKeys.end())
 		{
 			++itCity;
@@ -206,14 +220,14 @@ bool CitySelector::Display()
 			}
 
 			sCityData data;
-			DatabaseManager::getSingleton()->GetCityData(str, data);
+			DatabaseManager::getSingleton()->GetCityData(str, -1, data);
 			if (data.m_data.m_logicImmoKey.empty())
 			{
 				request = BoroughData::ComputeLogicImmoKeyURL(str);
 				m_logicImmoKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 			}
 			else
-				m_logicImmoKeys[str] = data.m_data.m_logicImmoKey;
+				m_logicImmoKeys[std::make_pair(str, -1)] = data.m_data.m_logicImmoKey;
 
 			// Pap
 			if (m_papKeyID > -1)
@@ -228,19 +242,26 @@ bool CitySelector::Display()
 				m_papKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 			}
 			else
-				m_papKeys[str] = data.m_data.m_papKey;
+				m_papKeys[std::make_pair(str, -1)] = data.m_data.m_papKey;
 		}
 		m_changed = true;
 	}
 
+	std::string citiesStr[100];
 	const char* cities[100];
 	const int nbCities = m_cities.size() > 100 ? 100 : m_cities.size();
 	auto it = m_cities.begin();
 	int ID = 0;
 	while (ID < nbCities)
 	{
-		cities[ID++] = it->second.m_name.c_str();
+		citiesStr[ID++] = it->second.m_name + " (" + std::to_string(it->second.m_zipCode) + ")";
 		++it;
+	}
+
+	ID = 0;
+	while (ID < nbCities)
+	{
+		cities[ID] = citiesStr[ID++].c_str();
 	}
 
 	if (m_displayAllResults && m_cities.size() > 0)

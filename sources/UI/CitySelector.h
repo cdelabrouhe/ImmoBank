@@ -22,9 +22,9 @@ namespace ImmoBank
 		void _UpdateAsynchronousData();
 
 	private:
-		std::map<std::string, sCity>		m_cities;
-		std::map<std::string, std::string>	m_logicImmoKeys;
-		std::map<std::string, unsigned int>	m_papKeys;
+		std::map<std::pair<std::string, int>, sCity>		m_cities;
+		std::map<std::pair<std::string, int>, std::string>	m_logicImmoKeys;
+		std::map<std::pair<std::string, int>, unsigned int>	m_papKeys;
 		std::vector<sCityData>				m_waitingForData;
 		char								m_inputTextCity[256];
 		int									m_selectedCityID = 0;

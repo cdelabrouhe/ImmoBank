@@ -530,6 +530,11 @@ void BoroughData::Edit()
 			s_papKey = m_papKey;
 			if (ImGui::InputInt("PapKey", &s_papKey))
 				m_papKey = s_papKey;
+
+			static int s_zipCode = -1;
+			s_zipCode = m_city.m_zipCode;
+			if (ImGui::InputInt("ZipCode", &s_zipCode))
+				m_city.m_zipCode = s_zipCode;
 		}
 
 		ImGui::Separator();
@@ -565,6 +570,7 @@ void BoroughData::DisplayAsTooltip()
 
 		if (Tools::IsDevMode())
 		{
+			ImGui::Text("ZIP code: %d", m_city.m_zipCode);
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
 			bool isCity = false;
 			int selogerKey = GetSelogerKey(&isCity);

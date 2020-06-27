@@ -55,7 +55,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	// Localisation (no borough for now)
 	BoroughData borough;
 	sCityData cityData;
-	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, cityData, &borough);
+	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
 	request += "&localities=" + borough.m_logicImmoKey;
 
 	// Price

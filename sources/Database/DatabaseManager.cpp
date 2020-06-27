@@ -128,6 +128,9 @@ void DatabaseManager::Process()
 		if (m_generatePapIndices)
 			m_generatePapIndices = m_externalDB->UpdateAllPapKeys();
 
+		if (m_generateZipCodesIndices)
+			m_generateZipCodesIndices = m_externalDB->UpdateAllZipCodes();
+
 		if (m_updateLocalBaseToServer)
 			m_updateLocalBaseToServer = m_externalDB->UpdateLocalBaseToServer();
 
@@ -152,10 +155,10 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 
 	BoroughData localData = _data;
 	localData.m_city.UnFixName();
-	RemoveBoroughData(localData.m_city.m_name, localData.m_name);
+	RemoveBoroughData(localData.m_city.m_name, localData.m_name, localData.m_city.m_zipCode);
 
 	char buf[4096];
-	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY, PAPKEY) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s', %u)",
+	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY, PAPKEY, ZIPCODE) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s', %u, %u)",
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
@@ -183,7 +186,8 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentApartmentT4Plus.m_max,
 		localData.m_selogerKey,
 		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str(),
-		localData.m_papKey);
+		localData.m_papKey,
+		localData.m_city.m_zipCode);
 
 	/*static bool s_test = false;
 	if (s_test)
@@ -246,6 +250,7 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
+		borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
 	});
 
 	if (boroughs.size() == 1)
@@ -258,7 +263,7 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std::string& _name)
+bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std::string& _name, const int _zipCode)
 {
 	if (m_tables[DataTables_Boroughs] == nullptr)
 		return false;
@@ -266,7 +271,7 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 	m_modified = true;
 
 	std::vector<sCityData> cities;
-	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
+	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE='%d'", _cityName.c_str(), _name.c_str(), _zipCode);
 
 	return SQLExecute(m_tables[DataTables_Boroughs], sql.c_str());
 }
@@ -312,6 +317,7 @@ bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughDat
 		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
 		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
 		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
+		borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
 	});
 	
 	if (_data.size() >= 1)
@@ -329,19 +335,38 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	_data.clear();
 	
 	char buf[4096];
-	if (!_city.m_name.empty())
-		sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
-	else
-		sprintf(buf, "SELECT * FROM Boroughs");
+	bool checkZipCode = true;
+	do 
+	{
+		if (!_city.m_name.empty())
+		{
+			if (checkZipCode)
+			{
+				checkZipCode = false;
+				sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s' AND ZIPCODE=%d", _city.m_name.c_str(), _city.m_zipCode);
+			}
+			else
+			{
+				checkZipCode = true;
+				sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
+			}
+		}
+		else
+			sprintf(buf, "SELECT * FROM Boroughs");
 
-	std::string sql = buf;
+		std::string sql = buf;
 
-	AddQuery(sql, _data);
+		AddQuery(sql, _data);
+
+	} while (!checkZipCode && (_data.size() == 0));
 
 	for (auto& borough : _data)
 	{
+		int zipCode = borough.m_city.m_zipCode;
 		borough.m_city = !_city.m_name.empty() ? _city : borough.m_city;
 		borough.m_city.FixName();
+		if (zipCode != 0)
+			borough.m_city.m_zipCode = zipCode;
 
 		// Ask data to external database
 		if (!borough.IsValid())
@@ -410,7 +435,7 @@ void DatabaseManager::AddCity(const sCityData& _data)
 {
 	m_modified = true;
 
-	RemoveCityData(_data.m_data.m_name);
+	RemoveCityData(_data.m_data.m_name, _data.m_data.m_zipCode);
 
 	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, PAPKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %u, %d, %d, %u)",
 		_data.m_data.m_name.c_str(),
@@ -423,7 +448,7 @@ void DatabaseManager::AddCity(const sCityData& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity)
+bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity)
 {
 	if (m_tables[DataTables_Cities] == nullptr)
 		return false;
@@ -431,7 +456,13 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 	std::vector<sCityData> cities;
 	std::string name = _name;
 	sCity::UnFixName(name);
-	Str128f sql("SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
+	char buf[1024];
+	if (_zipCode == -1)
+		sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
+	else
+		sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", name.c_str(), _zipCode);
+	
+	Str128f sql(buf);
 
 	SQLExecuteSelect(m_tables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{
@@ -503,7 +534,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, sCityData& _data, Bo
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::RemoveCityData(const std::string& _name)
+bool DatabaseManager::RemoveCityData(const std::string& _name, const int _zipCode)
 {
 	if (m_tables[DataTables_Cities] == nullptr)
 		return false;
@@ -511,7 +542,7 @@ bool DatabaseManager::RemoveCityData(const std::string& _name)
 	m_modified = true;
 
 	std::vector<sCityData> cities;
-	Str128f sql("DELETE FROM Cities WHERE NAME='%s'", _name.c_str());
+	Str128f sql("DELETE FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", _name.c_str(), _zipCode);
 	
 	return SQLExecute(m_tables[DataTables_Cities], sql.c_str());
 }
@@ -552,20 +583,20 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter)
+void DatabaseManager::ListAllCitiesWithName(std::vector<sCity>& _list, std::string _name)
 {
 	std::vector<sCity> list;
 	ListAllCities(list);
 
 	std::sort(list.begin(), list.end(), sCity::compare);
-	std::transform(_filter.begin(), _filter.end(), _filter.begin(), ::tolower);
+	std::transform(_name.begin(), _name.end(), _name.begin(), ::tolower);
 
 	auto it = list.begin();
 	while (it != list.end())
 	{
 		std::string str = (*it).m_name;
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-		auto itFind = str.find(_filter);
+		auto itFind = str.find(_name);
 		if (itFind != std::string::npos)
 			_list.push_back(*it);
 		++it;
@@ -614,8 +645,9 @@ void DatabaseManager::CreateTables()
 		"`RENTT4MIN` REAL,\n"		// Buy min price
 		"`RENTT4MAX` REAL,\n"		// Buy max price
 		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
-		"`LOGICIMMOKEY` TEXT,\n"		// Text for LogicImmo key
-		"`PAPKEY` INTEGER"	// Internal SeLoger key
+		"`LOGICIMMOKEY` TEXT,\n"	// Text for LogicImmo key
+		"`PAPKEY` INTEGER,\n"		// Internal PAP key
+		"`ZIPCODE` INTEGER"			// ZIP code
 		")"
 	);
 }
@@ -668,7 +700,7 @@ void DatabaseManager::Test()
 
 	BoroughData mainCityData;
 	sCityData city2;
-	GetCityData("Montpellier", city2);
+	GetCityData("Montpellier", 34000, city2);
 
 	BoroughData data;
 	data.m_name = "Antigone";
@@ -700,6 +732,7 @@ void DatabaseManager::Test()
 	data.m_selogerKey = 0;
 	data.m_logicImmoKey = "";
 	data.m_papKey = 0;
+	data.m_city.m_zipCode = 0;
 
 	AddBoroughData(data);
 
@@ -753,7 +786,7 @@ bool DatabaseManager::IsExternalDBCityBoroughsAvailable(int _requestID, std::vec
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::ForceBoroughReset(BoroughData& _data)
 {
-	RemoveBoroughData(_data.m_city.m_name, _data.m_name);
+	RemoveBoroughData(_data.m_city.m_name, _data.m_name, _data.m_city.m_zipCode);
 	_data.Reset();
 	AddBoroughData(_data, false);
 	m_externalDB->RemoveBoroughData(_data);

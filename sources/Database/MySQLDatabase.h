@@ -112,6 +112,7 @@ namespace ImmoBank
 		bool UpdateAllSeLogerKeys();
 		bool UpdateAllLogicImmoKeys();
 		bool UpdateAllPapKeys();
+		bool UpdateAllZipCodes();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();
 
@@ -150,5 +151,6 @@ namespace ImmoBank
 		bool			m_updateSelogerInProgress = false;
 		bool			m_updateLogicImmoInProgress = false;
 		bool			m_updatePapInProgress = false;
+		bool			m_updateZipCodesInProgress = false;
 	};
 }

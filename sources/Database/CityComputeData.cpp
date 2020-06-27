@@ -12,7 +12,7 @@ void CityComputeData::Init()
 	m_state = UpdateStep_GetCityData;
 
 	sCityData data;
-	if (DatabaseManager::getSingleton()->GetCityData(m_city.m_name, data))
+	if (DatabaseManager::getSingleton()->GetCityData(m_city.m_name, m_city.m_zipCode, data))
 	{
 		SearchRequestCityBoroughs boroughs;
 		boroughs.m_city = m_city;

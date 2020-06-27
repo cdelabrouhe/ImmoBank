@@ -108,6 +108,11 @@ namespace ImmoBank
 		static void FixName(std::string& _name);
 		static void UnFixName(std::string& _name);
 
+		bool operator!=(const sCity& val)
+		{
+			return (val.m_name != m_name) || (val.m_zipCode != m_zipCode);
+		}
+
 		static bool compare(const sCity &_a, const sCity &_b)
 		{
 			return _a.m_name < _b.m_name;

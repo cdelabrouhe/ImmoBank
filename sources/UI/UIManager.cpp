@@ -146,6 +146,7 @@ bool UIManager::Draw()
 				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
 				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
+				ImGui::MenuItem("GenerateZipCodes", nullptr, &DatabaseManager::getSingleton()->m_generateZipCodesIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
 				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
@@ -236,7 +237,7 @@ void UIManager::DisplayCityInformation()
 
 	// Left panel (city selector process)
 	bool listUpdated = false;
-	std::vector<std::string> cityListFiltered;
+	std::vector<sCity> cityListFiltered;
 	ImGui::BeginChild(GET_TEXT("DatabaseWindowSearchCity"), ImVec2(300, 0), true);
 
 	s_citySelector.Display();
@@ -251,7 +252,7 @@ void UIManager::DisplayCityInformation()
 			StringTools::TransformToLower(tmp);
 			auto findID = tmp.find(s_citySelector.GetText());
 			if (findID != std::string::npos)
-				cityListFiltered.push_back(city.m_name);
+				cityListFiltered.push_back(city);
 		}
 
 		listUpdated = true;
@@ -261,7 +262,7 @@ void UIManager::DisplayCityInformation()
 	if (!listUpdated)
 	{
 		for (auto& city : m_cityListFull)
-			cityListFiltered.push_back(city.m_name);
+			cityListFiltered.push_back(city);
 	}
 
 	int localHovered = -1;
@@ -277,8 +278,8 @@ void UIManager::DisplayCityInformation()
 		else if (isHovered)
 			ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)colHovered);
 
-		StringTools::ConvertToImGuiText(city);
-		ImGui::Text(city.c_str());
+		StringTools::ConvertToImGuiText(city.m_name);
+		ImGui::Text("%s (%d)", city.m_name.c_str(), city.m_zipCode);
 		if (ImGui::IsItemHovered())
 			m_hovered = cpt;
 
@@ -296,21 +297,22 @@ void UIManager::DisplayCityInformation()
 
 	// Only update city data when changed
 	bool forceUpdate = DatabaseManager::getSingleton()->IsModified();
-	static std::string s_currentSelection;
+	static sCity s_currentSelection;
 	static BoroughData wholeCityData;
 	static sCityData selectedCity;
 	if (m_selected > -1)
 	{
-		if (forceUpdate || (s_currentSelection != cityListFiltered[m_selected]))
+		sCity cityFiletered = cityListFiltered[m_selected];
+		if (forceUpdate || (s_currentSelection != cityFiletered))
 		{
-			s_currentSelection = cityListFiltered[m_selected];
+			s_currentSelection = cityFiletered;
 			wholeCityData.Reset();
-			DatabaseManager::getSingleton()->GetCityData(s_currentSelection, selectedCity, &wholeCityData);
+			DatabaseManager::getSingleton()->GetCityData(s_currentSelection.m_name, s_currentSelection.m_zipCode, selectedCity, &wholeCityData);
 			selectedCity.m_data.FixName();
 			wholeCityData.m_city = selectedCity.m_data;
 			wholeCityData.SetWholeCity();
 
-			DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data.m_name);
+			DatabaseManager::getSingleton()->UpdateCityData(selectedCity.m_data);
 		}
 	}
 

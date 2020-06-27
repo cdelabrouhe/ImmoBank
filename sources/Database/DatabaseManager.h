@@ -46,17 +46,17 @@ namespace ImmoBank
 
 		void	AddBoroughData(const BoroughData& _data, bool _saveExternal = true);
 		bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
-		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name);
+		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name, const int _zipCode);
 		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
 		void	GetAllBoroughs(std::vector<BoroughData>& _data);
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);
 
 		void	AddCity(const sCityData& _data);
-		bool	GetCityData(const std::string& _name, sCityData& _data, BoroughData* _wholeCity = nullptr);
-		bool	RemoveCityData(const std::string& _name);
+		bool	GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity = nullptr);
+		bool	RemoveCityData(const std::string& _name, const int _zipCode);
 		bool	ListAllCities(std::vector<sCity>& _list);
-		void	ListAllCitiesWithFilter(std::vector<sCity>& _list, std::string _filter);
+		void	ListAllCitiesWithName(std::vector<sCity>& _list, std::string _name);
 
 		void	UpdateCityData(const sCity& _city);
 		void	ComputeCityData(const sCity& _cityName);
@@ -114,6 +114,7 @@ namespace ImmoBank
 		bool							m_generateSeLogerIndices = false;
 		bool							m_generateLogicImmoIndices = false;
 		bool							m_generatePapIndices = false;
+		bool							m_generateZipCodesIndices = false;
 		bool							m_updateLocalBaseToServer = false;
 		bool							m_updateServerToLocalBase = false;
 	};

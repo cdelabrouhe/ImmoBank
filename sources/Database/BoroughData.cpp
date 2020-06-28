@@ -330,7 +330,7 @@ void BoroughData::Edit()
 			if (strlen(clipboard) > 0)
 			{
 				std::string str(clipboard);
-				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse, m_meilleursAgentsKey))
+				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse, m_meilleursAgentsKey, m_city.m_zipCode))
 				{
 					DatabaseManager::getSingleton()->AddBoroughData(*this);
 

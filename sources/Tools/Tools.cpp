@@ -62,9 +62,10 @@ float Tools::ComputeRentabilityRate(float _rent, float _price)
 	return _rent * 12.f * 100.f / _price;
 }
 
-bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rentT1, sPrice& _rentT2, sPrice& _rentT3, sPrice& _rentT4Plus, sPrice& _buyApartment, sPrice& _buyHouse, unsigned int& _meilleursAgentsKey)
+bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rentT1, sPrice& _rentT2, sPrice& _rentT3, sPrice& _rentT4Plus, sPrice& _buyApartment, sPrice& _buyHouse, unsigned int& _meilleursAgentsKey, int& _zipCode)
 {
 	std::string searchStr("MA.Context.placePrices = ");
+	_zipCode = -1;
 	auto findID = _source.find(searchStr);
 	if (findID == std::string::npos)
 	{
@@ -125,6 +126,26 @@ bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _ren
 	_buyApartment = sPrice((float)sellApartment["value"].asDouble(), (float)sellApartment["low"].asDouble(), (float)sellApartment["high"].asDouble());
 	_buyHouse = sPrice((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
 	_meilleursAgentsKey = root["place"]["id"].asUInt();
+
+
+
+	searchStr = "MA.Context.mapPlace = ";
+	findID = _source.find(searchStr);
+	if (findID != std::string::npos)
+	{
+		tmp = _source.substr(findID + searchStr.size(), _source.size());
+		findID = tmp.find_first_of(";");
+		tmp = tmp.substr(0, findID);
+
+		StringTools::RemoveEOL(tmp);
+
+		Json::Reader reader;
+		Json::Value root;
+		reader.parse(tmp, root);
+		Json::Value& zipData = root["zip"];
+		if (zipData.isString())
+			_zipCode = stoi(zipData.asString());
+	}
 
 	return true;
 }

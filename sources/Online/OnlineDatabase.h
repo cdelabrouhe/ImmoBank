@@ -27,6 +27,9 @@ namespace ImmoBank
 
 		void DeleteRequest(int _requestID);
 
+		virtual void ReferenceCity(const std::string& _name) {}
+		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) { return true; }
+
 	protected:
 		virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
 

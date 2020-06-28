@@ -115,7 +115,7 @@ bool PapOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::strin
 		result->m_name = name;
 		result->m_description = name;
 		result->m_price = data["prix"].asInt();
-		result->m_surface = data["surface"].asDouble();
+		result->m_surface = (float)data["surface"].asDouble();
 		result->m_URL = data["_links"]["desktop"]["href"].asString();
 		auto& photos = data["_embedded"]["photo"];
 		if (!photos.isNull())
@@ -134,4 +134,96 @@ bool PapOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::strin
 	}
 
 	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+void PapOnlineDatabase::Process()
+{
+	if ((m_currentKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_currentKeyID))
+	{
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_currentKeyID, result);
+		m_currentKeyID = -1;
+		Json::Value root;
+		Json::Reader reader;
+		if (reader.parse(result, root))
+		{
+			// Parse keys
+			if (root.isObject())
+			{
+				Json::Value& items = root["_embedded"]["place"];
+				unsigned int nbCities = items.size();
+				for (unsigned int ID = 0; ID < nbCities; ++ID)
+				{
+					Json::Value val = items.get(ID, Json::nullValue);
+					std::string name = val["slug"].asString();
+					int zip = -1;
+					auto delimiter = name.find_last_of("-");
+					if (delimiter != std::string::npos)
+					{
+						std::string zipStr = name.substr(delimiter + 1, name.size());
+						zip = stoi(zipStr);
+						if (zipStr.size() > 3)
+							zip /= 1000;
+						name = name.substr(0, delimiter);
+					}
+
+					StringTools::ReplaceBadSyntax(name, "-", " ");
+					StringTools::TransformToLower(name);
+					StringTools::FixName(name);
+					StringTools::ConvertToImGuiText(name);
+					auto pair = std::make_pair(name, zip);
+					auto it = m_keys.find(pair);
+					if (it == m_keys.end())
+						m_keys[pair] = val["id"].asUInt();
+				}
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void PapOnlineDatabase::ReferenceCity(const std::string& _name)
+{
+	// Pap
+	if (m_currentKeyID > -1)
+	{
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_currentKeyID);
+		m_currentKeyID = -1;
+	}
+
+	sCityData data;
+	DatabaseManager::getSingleton()->GetCityData(_name, -1, data);
+	if (data.m_data.m_papKey == 0)
+	{
+		std::string request = ComputeKeyURL(_name);
+		m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+	}
+	else
+		m_keys[std::make_pair(_name, -1)] = data.m_data.m_papKey;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string PapOnlineDatabase::ComputeKeyURL(const std::string& _name)
+{
+	std::string name = _name;
+	StringTools::RemoveSpecialCharacters(name);
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
+	std::string str = "https://ws.pap.fr/gis/places?recherche[cible]=pap-recherche-ac&recherche[q]=" + name;
+	return str;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
+{
+	int zip = _zipCode / 1000;
+	auto it = m_keys.find(std::make_pair(_name, zip));
+	if (it != m_keys.end())
+	{
+		_city.m_papKey = it->second;
+		return true;
+	}
+
+	return false;
 }

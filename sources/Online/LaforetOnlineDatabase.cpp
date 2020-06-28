@@ -115,7 +115,7 @@ bool LaforetOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::s
 		result->m_description = data["description"].asString();
 		StringTools::RemoveSpecialCharacters(result->m_description);
 		result->m_price = data["price"].asInt();
-		result->m_surface = data["surface"].asDouble();
+		result->m_surface = (float)data["surface"].asDouble();
 		result->m_URL = "https://www.laforet.com/agence-immobiliere/" + data["agency"]["slug"].asString() + "/acheter/" + data["address"]["city_slug"].asString() + "/" + name;
 		result->m_imageURL = data["photos"].get(0u, Json::nullValue).asString();
 		result->m_nbRooms = data["rooms"].asInt();

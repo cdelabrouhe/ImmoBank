@@ -1,96 +1,13 @@
 #include "CitySelector.h"
 #include "extern/ImGui/imgui.h"
 #include "Online/OnlineManager.h"
+#include "Online/OnlineDatabase.h"
 #include "Tools/StringTools.h"
 #include "extern/jsoncpp/reader.h"
 #include <time.h>
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
-//--------------------------------------------------------------------------------------------------------------
-void CitySelector::_UpdateLogicImmoKeys()
-{
-	// LogicImmo
-	if ((m_logicImmoKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyID))
-	{
-		std::string result;
-		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyID, result);
-		m_logicImmoKeyID = -1;
-		Json::Value root;
-		Json::Reader reader;
-		if (reader.parse(result, root))
-		{
-			// Parse LogicImmo keys
-			if (root.isObject())
-			{
-				Json::Value& items = root["items"];
-				unsigned int nbCities = items.size();
-				for (unsigned int ID = 0; ID < nbCities; ++ID)
-				{
-					Json::Value val = items.get(ID, Json::nullValue);
-					std::string name = val["name"].asString();
-					std::string zipCode = val["postCode"].asString();
-					if (zipCode.size() == 0)
-						continue;
-
-					int zip = stoi(zipCode);
-					zip /= 1000;
-					StringTools::TransformToLower(name);
-					StringTools::FixName(name);
-					StringTools::ConvertToImGuiText(name);
-					m_logicImmoKeys[std::make_pair(name, zip)] = val["key"].asString();
-				}
-			}
-		}
-	}
-}
-
-//--------------------------------------------------------------------------------------------------------------
-void CitySelector::_UpdatePapKeys()
-{
-	// Pap
-	if ((m_papKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyID))
-	{
-		std::string result;
-		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyID, result);
-		m_papKeyID = -1;
-		Json::Value root;
-		Json::Reader reader;
-		if (reader.parse(result, root))
-		{
-			// Parse keys
-			if (root.isObject())
-			{
-				Json::Value& items = root["_embedded"]["place"];
-				unsigned int nbCities = items.size();
-				for (unsigned int ID = 0; ID < nbCities; ++ID)
-				{
-					Json::Value val = items.get(ID, Json::nullValue);
-					std::string name = val["slug"].asString();
-					int zip = -1;
-					int delimiter = name.find_last_of("-");
-					if (delimiter != std::string::npos)
-					{
-						std::string zipStr = name.substr(delimiter + 1, name.size());
-						zip = stoi(zipStr);
-						if (zipStr.size() > 3)
-							zip /= 1000;
-						name = name.substr(0, delimiter);
-					}
-
-					StringTools::ReplaceBadSyntax(name, "-", " ");
-					StringTools::TransformToLower(name);
-					StringTools::FixName(name);
-					StringTools::ConvertToImGuiText(name);
-					auto pair = std::make_pair(name, zip);
-					auto it = m_papKeys.find(pair);
-					if (it == m_papKeys.end())
-						m_papKeys[pair] = val["id"].asUInt();
-				}
-			}
-		}
-	}
-}
 
 //--------------------------------------------------------------------------------------------------------------
 void CitySelector::_UpdateCitiesList()
@@ -159,27 +76,21 @@ void ImmoBank::CitySelector::_UpdateAsynchronousData()
 	{
 		sCityData& city = *itCity;
 		std::string name = city.m_data.m_name;
-
-		// LogicImmo
 		StringTools::TransformToLower(name);
-		int zip = city.m_data.m_zipCode / 1000;
-		auto itLogicImmo = m_logicImmoKeys.find(std::make_pair(name, zip));
-		if (itLogicImmo == m_logicImmoKeys.end())
+
+		bool valid = true;
+		auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+		for (auto* db : dbs)
+		{
+			valid &= db->HasCity(name, city.m_data.m_zipCode, city.m_data);
+		}
+
+		if (!valid)
 		{
 			++itCity;
 			continue;
 		}
 
-		// Pap
-		auto itPap = m_papKeys.find(std::make_pair(name, zip));
-		if (itPap == m_papKeys.end())
-		{
-			++itCity;
-			continue;
-		}
-
-		city.m_data.m_logicImmoKey = itLogicImmo->second;
-		city.m_data.m_papKey = itPap->second;
 		DatabaseManager::getSingleton()->AddCity(city);
 
 		m_waitingForData.erase(itCity);
@@ -193,8 +104,6 @@ bool CitySelector::Display()
 {
 	m_changed = false;
 
-	_UpdateLogicImmoKeys();
-	_UpdatePapKeys();	
 	_UpdateCitiesList();
 	_UpdateAsynchronousData();	
 
@@ -213,37 +122,12 @@ bool CitySelector::Display()
 				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_cityNameRequestID);
 			m_cityNameRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
 
-			// LogicImmo
-			if (m_logicImmoKeyID > -1)
+			// Ask for search this city in all the databases
+			auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+			for (auto* db : dbs)
 			{
-				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyID);
-				m_logicImmoKeyID = -1;
+				db->ReferenceCity(str);
 			}
-
-			sCityData data;
-			DatabaseManager::getSingleton()->GetCityData(str, -1, data);
-			if (data.m_data.m_logicImmoKey.empty())
-			{
-				request = BoroughData::ComputeLogicImmoKeyURL(str);
-				m_logicImmoKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
-			}
-			else
-				m_logicImmoKeys[std::make_pair(str, -1)] = data.m_data.m_logicImmoKey;
-
-			// Pap
-			if (m_papKeyID > -1)
-			{
-				OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyID);
-				m_papKeyID = -1;
-			}
-
-			if (data.m_data.m_papKey == 0)
-			{
-				request = BoroughData::ComputePapKeyURL(str);
-				m_papKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
-			}
-			else
-				m_papKeys[std::make_pair(str, -1)] = data.m_data.m_papKey;
 		}
 		m_changed = true;
 	}

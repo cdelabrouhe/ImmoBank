@@ -8,16 +8,13 @@
 
 using namespace ImmoBank;
 
+//-------------------------------------------------------------------------------------------------
 void LogicImmoOnlineDatabase::Init()
 {
 	SetName("LogicImmo");
 }
 
-void LogicImmoOnlineDatabase::Process()
-{
-
-}
-
+//-------------------------------------------------------------------------------------------------
 int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 {
 	if (_request->m_requestType != SearchRequestType_Announce)
@@ -85,6 +82,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	return ID;
 }
 
+//-------------------------------------------------------------------------------------------------
 bool LogicImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
@@ -122,7 +120,7 @@ bool LogicImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std:
 		result->m_description = data["info"]["text"].asString();
 		StringTools::RemoveSpecialCharacters(result->m_description);
 		result->m_price = data["pricing"]["amount"].asInt();
-		result->m_surface = data["properties"]["area"].asDouble();
+		result->m_surface = (float)data["properties"]["area"].asDouble();
 		result->m_URL = data["info"]["link"].asString();
 		result->m_imageURL = data["pictures"].get(0u, Json::nullValue).asString();
 		StringTools::FindAndReplaceAll(result->m_imageURL, "[WIDTH]", "640");
@@ -142,4 +140,87 @@ bool LogicImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std:
 	}
 
 	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::Process()
+{
+	// LogicImmo
+	if ((m_currentKeyID > -1) && OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_currentKeyID))
+	{
+		std::string result;
+		OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_currentKeyID, result);
+		m_currentKeyID = -1;
+		Json::Value root;
+		Json::Reader reader;
+		if (reader.parse(result, root))
+		{
+			// Parse LogicImmo keys
+			if (root.isObject())
+			{
+				Json::Value& items = root["items"];
+				unsigned int nbCities = items.size();
+				for (unsigned int ID = 0; ID < nbCities; ++ID)
+				{
+					Json::Value val = items.get(ID, Json::nullValue);
+					std::string name = val["name"].asString();
+					std::string zipCode = val["postCode"].asString();
+					if (zipCode.size() == 0)
+						continue;
+
+					int zip = stoi(zipCode);
+					zip /= 1000;
+					StringTools::TransformToLower(name);
+					StringTools::FixName(name);
+					StringTools::ConvertToImGuiText(name);
+					m_keys[std::make_pair(name, zip)] = val["key"].asString();
+				}
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::ReferenceCity(const std::string& _name)
+{
+	if (m_currentKeyID > -1)
+	{
+		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_currentKeyID);
+		m_currentKeyID = -1;
+	}
+
+	sCityData data;
+	DatabaseManager::getSingleton()->GetCityData(_name, -1, data);
+	if (data.m_data.m_logicImmoKey.empty())
+	{
+		std::string request = ComputeKeyURL(_name);
+		m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
+	}
+	else
+		m_keys[std::make_pair(_name, -1)] = data.m_data.m_logicImmoKey;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string LogicImmoOnlineDatabase::ComputeKeyURL(const std::string& _name)
+{
+	std::string name = _name;
+	StringTools::RemoveSpecialCharacters(name);
+	StringTools::ReplaceBadSyntax(name, "-", "%20");
+	StringTools::ReplaceBadSyntax(name, " ", "%20");
+	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
+	return request;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool LogicImmoOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
+{
+	int zip = _zipCode / 1000;
+	auto it = m_keys.find(std::make_pair(_name, zip));
+	if (it != m_keys.end())
+	{
+		_city.m_logicImmoKey = it->second;
+		return true;
+	}
+
+	return false;
 }

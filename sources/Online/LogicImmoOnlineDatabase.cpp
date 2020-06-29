@@ -201,6 +201,12 @@ void LogicImmoOnlineDatabase::ReferenceCity(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
+void ImmoBank::LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
+{
+	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
+}
+
+//-------------------------------------------------------------------------------------------------
 std::string LogicImmoOnlineDatabase::ComputeKeyURL(const std::string& _name)
 {
 	std::string name = _name;

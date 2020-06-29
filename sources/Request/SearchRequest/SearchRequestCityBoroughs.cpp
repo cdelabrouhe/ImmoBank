@@ -41,18 +41,6 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 		}
 		break;
 	}
-	case State_CheckSeLoger:
-	{
-		m_httpRequestsID.clear();
-		for (auto& borough : m_boroughs)
-		{
-			BoroughData data;
-			data.m_name = borough.m_name;
-			std::string request = data.ComputeSeLogerKeyURL();
-			m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendBasicHTTPRequest(request));
-		}
-		break;
-	}
 	case State_CheckLogicImmo:
 	{
 		// No boroughs on LogicImmo => set city key
@@ -151,83 +139,6 @@ void SearchRequestCityBoroughs::Process()
 		}
 		break;
 
-		case State_CheckSeLoger:
-		{
-			bool available = true;
-			int ID = 0;
-			for (ID = 0; ID < m_httpRequestsID.size(); ++ID)
-			{
-				available &= OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_httpRequestsID[ID]);
-				if (!available)
-					break;
-			}
-
-			if (available)
-			{
-				std::string cityName = m_city.m_name;
-				StringTools::TransformToLower(cityName);
-
-				std::vector<SearchRequestResulCityBorough>	resultBoroughs;
-
-				bool valid = true;
-				for (int ID = 0; ID < m_httpRequestsID.size(); ++ID)
-				{
-					std::string str;
-					if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_httpRequestsID[ID], str))
-					{
-						Json::Reader reader;
-						Json::Value root;
-						reader.parse(str, root);
-
-						Json::Value& places = root;
-						if (places.isArray())
-						{
-							const int nbPlaces = places.size();
-							for (int placeID = 0; placeID < nbPlaces; ++placeID)
-							{
-								Json::Value val = places.get(placeID, Json::nullValue);
-								std::string type = val["Type"].asString();
-								std::string name = val["Display"].asString();
-								wchar_t wStr[1024];
-								mbstowcs(wStr, name.c_str(), 1024);
-								std::wstring wName = wStr;
-								const bool isNeighboor = type == "Quartier";
-								const bool isCity = type == "Ville";
-								if (isCity && (std::find_if(wName.begin(), wName.end(), ::isdigit) == wName.end()))
-									continue;
-
-								std::string tmp = name;
-								StringTools::TransformToLower(tmp);
-								auto findID = tmp.find(cityName);
-								if (findID == std::string::npos)
-									continue;
-
-								std::string strIndexID = isCity ? val["Params"]["ci"].asString() : val["Params"]["idq"].asString();
-								unsigned int index = std::stoi(strIndexID);
-								index = BoroughData::ConvertSelogerKey(index, isCity);
-
-								SearchRequestResulCityBorough& borough = m_boroughs[ID];
-								borough.m_selogerID = index;
-								resultBoroughs.push_back(borough);
-							}
-						}
-					}
-					else
-						valid = false;
-				}
-
-				if (valid)
-				{
-					m_boroughs.clear();
-					for (auto& borough : resultBoroughs)
-						m_boroughs.push_back(borough);
-
-					SwitchState(State_CheckLogicImmo);
-				}
-			}
-		}
-		break;
-
 		case State_CheckLogicImmo:
 		{			
 			SwitchState(State_CheckPap);
@@ -271,7 +182,6 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 		SearchRequestResulCityBorough* result = new SearchRequestResulCityBorough();
 		result->m_name = borough.m_name;
 		result->m_internalID = borough.m_internalID;
-		result->m_selogerID = borough.m_selogerID;
 		result->m_logicImmoID = borough.m_logicImmoID;
 		result->m_papKeyID = borough.m_papKeyID;
 		_results.push_back(result);

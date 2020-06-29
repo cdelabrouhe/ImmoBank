@@ -12,6 +12,7 @@
 #include <ctime>
 #include "Text\TextManager.h"
 #include "extern/jsoncpp/reader.h"
+#include "Online\OnlineDatabase.h"
 
 using namespace ImmoBank;
 
@@ -60,15 +61,6 @@ void BoroughData::End()
 {
 	if (m_httpRequestID > -1)
 		OnlineManager::getSingleton()->DeleteRequest(m_httpRequestID);
-
-	if (m_selogerKeyRequestID > -1)
-		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_selogerKeyRequestID);
-
-	if (m_logicImmoKeyRequestID > -1)
-		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyRequestID);
-
-	if (m_papKeyRequestID > -1)
-		OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyRequestID);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -82,7 +74,6 @@ void BoroughData::Reset(bool _resetDB)
 	m_priceBuyHouse.Reset();
 	m_priceRentHouse.Reset();
 	m_meilleursAgentsKey = 0;
-	m_selogerKey = 0;
 	m_logicImmoKey = "";
 	m_papKey = 0;
 
@@ -129,30 +120,6 @@ void BoroughData::SetTimeUpdateToNow()
 	std::time_t t = std::time(0);   // get time now
 	std::tm* now = std::localtime(&t);
 	m_timeUpdate.SetDate(now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
-}
-
-//-------------------------------------------------------------------------------------------------
-void BoroughData::SetSelogerKey(unsigned int _key, bool _isCity)
-{
-	m_selogerKey = ConvertSelogerKey(_key, _isCity);
-}
-
-//-------------------------------------------------------------------------------------------------
-int BoroughData::GetSelogerKey(bool* _isCity)
-{
-	auto test = m_selogerKey & (1 << 31);
-	if (_isCity != nullptr)
-		*_isCity = (test > 0) || (m_selogerKey == 0);
-	return m_selogerKey - (m_selogerKey & (1 << 31));
-}
-
-//-------------------------------------------------------------------------------------------------
-unsigned int BoroughData::ConvertSelogerKey(unsigned int _key, bool _isCity)
-{
-	if (_isCity)
-		_key += 1 << 31;
-
-	return _key;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -225,24 +192,6 @@ std::string BoroughData::ComputeRequestURL() const
 		zipCode = std::to_string(zip);
 		request = request + "-" + std::to_string(boroughNumber) + (boroughNumber == 1 ? "er" : "eme") + "-arrondissement-" + zipCode;
 	}
-
-	return request;
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string BoroughData::ComputeSeLogerKeyURL() const
-{
-	std::string str = m_name;
-	auto delimiter = str.find("e (");
-	if (delimiter != std::string::npos)
-		str = str.substr(0, delimiter);
-
-	delimiter = str.find("er (");
-	if (delimiter != std::string::npos)
-		str = str.substr(0, delimiter);
-
-	std::string request = "https://autocomplete.svc.groupe-seloger.com/auto/complete/0/ALL/6?text=" + str;
-	StringTools::ReplaceBadSyntax(request, " ", "+");
 
 	return request;
 }
@@ -334,155 +283,11 @@ void BoroughData::Edit()
 				{
 					DatabaseManager::getSingleton()->AddBoroughData(*this);
 
-					// We need to update the SeLoger key
-					if (m_selogerKeyRequestID > -1)
-						OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_selogerKeyRequestID);
-
-					std::string request = ComputeSeLogerKeyURL();
-					m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-
 					// no boroughs in Logic Immo => only store whole city
-					if (IsWholeCity())
+					auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+					for (auto* db : dbs)
 					{
-						// We need to update the LogicImmo key
-						if (m_logicImmoKeyRequestID > -1)
-							OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_logicImmoKeyRequestID);
-
-						std::string request = ComputeLogicImmoKeyURL();
-						m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-
-						// We need to update the PAP key
-						if (m_papKeyRequestID > -1)
-							OnlineManager::getSingleton()->CancelBasicHTTPRequest(m_papKeyRequestID);
-
-						request = ComputePapKeyURL();
-						m_papKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-					}
-				}
-			}
-		}
-
-		// Process request
-		if ((m_selogerKeyRequestID == -1) && (m_selogerKey == 0))
-		{
-			std::string request = ComputeSeLogerKeyURL();
-			m_selogerKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-		}
-		// Process request
-		else if (IsWholeCity() && (m_logicImmoKeyRequestID == -1) && m_logicImmoKey.empty())
-		{
-			std::string request = ComputeLogicImmoKeyURL();
-			m_logicImmoKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-
-			request = ComputePapKeyURL();
-			m_papKeyRequestID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request);
-		}
-		else
-		{
-			// SeLoger key
-			if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_selogerKeyRequestID))
-			{
-				std::string str;
-				OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_selogerKeyRequestID, str);
-				m_selogerKeyRequestID = -1;
-
-				Json::Reader reader;
-				Json::Value root;
-				reader.parse(str, root);
-
-				Json::Value& places = root;
-				if (places.isArray())
-				{
-					const int nbPlaces = places.size();
-					for (int placeID = 0; placeID < nbPlaces; ++placeID)
-					{
-						Json::Value val = places.get(placeID, Json::nullValue);
-						std::string type = val["Type"].asString();
-						if (type == "Pays")
-							continue;
-
-						bool isBorough = (type == "Quartier");
-						bool isCity = ((type == "Ville") && (str.find("e (") != std::string::npos)) || (str.find("er (") != std::string::npos);
-						Json::Value& params = val["Params"];
-						std::string tmp = isBorough ? "idq" : "ci";
-						if (params.get(tmp, Json::nullValue).isNull())
-							tmp = "cp";
-						std::string strIndexID = params[tmp].asString();
-						if (!strIndexID.empty())
-						{
-							unsigned int index = std::stoi(strIndexID);
-							SetSelogerKey(index, isCity);
-						}
-					}
-				}
-			}
-
-			// LogicImmo key
-			if (IsWholeCity())
-			{
-				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_logicImmoKeyRequestID))
-				{
-					std::string str;
-					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_logicImmoKeyRequestID, str);
-					m_logicImmoKeyRequestID = -1;
-
-					Json::Reader reader;
-					Json::Value root;
-					reader.parse(str, root);
-
-					Json::Value& items = root["items"];
-					if (items.isArray())
-					{
-						const int nbPlaces = items.size();
-						for (int itemID = 0; itemID < nbPlaces; ++itemID)
-						{
-							Json::Value val = items.get(itemID, Json::nullValue);
-							std::string zipCodeStr = !val["postCode"].isNull() ? val["postCode"].asString() : "";
-							int zipCode = !zipCodeStr.empty() ? std::stoi(zipCodeStr) : -1;
-							if (zipCode != m_city.m_zipCode)
-								continue;
-
-							std::string key = val["key"].asString();
-							SetLogicImmoKey(key);
-						}
-					}
-				}
-
-				if (OnlineManager::getSingleton()->IsHTTPRequestAvailable(m_papKeyRequestID))
-				{
-					std::string str;
-					OnlineManager::getSingleton()->GetBasicHTTPRequestResult(m_papKeyRequestID, str);
-					m_papKeyRequestID = -1;
-
-					Json::Reader reader;
-					Json::Value root;
-					reader.parse(str, root);
-
-					Json::Value& places = root["_embedded"]["place"];
-					if (places.isArray())
-					{
-						const int nbPlaces = places.size();
-						if (nbPlaces > 0)
-						{
-							Json::Value val = places.get(0u, Json::nullValue);
-							if (!val["id"].isNull())
-							{
-								int key = 0;
-								auto id = val["id"];
-								if (id.isString())
-								{
-									std::string idStr = val["id"].asString();
-									key = !idStr.empty() ? std::stoi(idStr) : -1;
-								}
-								else if (id.isInt() || id.isUInt())
-								{
-									key = id.asInt();
-								}
-
-								if (key != -1)
-									SetPapKey(key);
-							}
-						}
+						db->ReferenceBorough(*this);
 					}
 				}
 			}
@@ -507,19 +312,6 @@ void BoroughData::Edit()
 		if (Tools::IsDevMode())
 		{
 			EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
-			static int s_seLogerKey = 0;
-			static bool s_isCity = false;
-			s_seLogerKey = GetSelogerKey(&s_isCity);
-			ImGui::SetWindowFontScale(1.f);
-			ImGui::Text("SeLogerKey : ");
-			ImGui::SameLine();
-			ImGui::PushID(this + localID++);
-			bool modified = ImGui::InputInt("Value", &s_seLogerKey);
-			ImGui::PopID();
-			ImGui::SameLine();
-			modified |= ImGui::Checkbox("City", &s_isCity);
-			if (modified)
-				SetSelogerKey(s_seLogerKey, s_isCity);
 
 			static char s_text[64];
 			strcpy(s_text, m_logicImmoKey.c_str());
@@ -573,9 +365,7 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::Text("ZIP code: %d", m_city.m_zipCode);
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
 			bool isCity = false;
-			int selogerKey = GetSelogerKey(&isCity);
 			unsigned int papKey = GetPapKey();
-			ImGui::Text("SeLogerKey: %u, %s", selogerKey, isCity ? GET_TEXT("GeneralCity") : GET_TEXT("GeneralBorough"));
 			std::string logicImmoKey = GetLogicImmoKey();
 			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str()),
 			ImGui::Text("PapKey: %u", papKey);

@@ -14,7 +14,7 @@ void SeLogerOnlineDatase::Init()
 
 int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 {
-	if (_request->m_requestType != SearchRequestType_Announce)
+	/*if (_request->m_requestType != SearchRequestType_Announce)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
@@ -133,7 +133,8 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 	m_requests[ID].m_initialRequest = announce;
 	m_requests[ID].m_request = request;
 
-	return ID;
+	return ID;*/
+return -1;
 }
 
 bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)

@@ -26,7 +26,7 @@ namespace ImmoBank
 		sCity				m_city;
 		sDate				m_timeUpdate;
 		unsigned int		m_meilleursAgentsKey = 0xffffffff;
-		unsigned int		m_selogerKey = 0;
+		unsigned int		m_selogerKey = 0;	// Not used anymore, but we keep it for compatibility matters
 		unsigned int		m_papKey = 0;
 		std::string			m_logicImmoKey;
 		sPrice				m_priceRentApartmentT1;
@@ -53,9 +53,6 @@ namespace ImmoBank
 		bool IsValid() const;
 
 		void SetTimeUpdateToNow();
-		void SetSelogerKey(unsigned int _key, bool _isCity);
-		int GetSelogerKey(bool* _isCity = nullptr);
-		static unsigned int ConvertSelogerKey(unsigned int _key, bool _isCity);
 
 		void SetLogicImmoKey(std::string& _key);
 		std::string GetLogicImmoKey();
@@ -64,7 +61,6 @@ namespace ImmoBank
 		int GetPapKey();
 
 		std::string ComputeRequestURL() const;
-		std::string ComputeSeLogerKeyURL() const;
 		std::string ComputeLogicImmoKeyURL() const;
 		static std::string ComputeLogicImmoKeyURL(const std::string& _name);
 		std::string ComputePapKeyURL() const;
@@ -86,8 +82,5 @@ namespace ImmoBank
 
 	private:
 		int m_httpRequestID = -1;
-		int m_selogerKeyRequestID = -1;
-		int m_logicImmoKeyRequestID = -1;
-		int m_papKeyRequestID = -1;
 	};
 }

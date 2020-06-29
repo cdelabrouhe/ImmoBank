@@ -111,7 +111,6 @@ namespace ImmoBank
 		std::vector<std::string>		m_SQlite3Requests;
 
 	public:
-		bool							m_generateSeLogerIndices = false;
 		bool							m_generateLogicImmoIndices = false;
 		bool							m_generatePapIndices = false;
 		bool							m_generateZipCodesIndices = false;

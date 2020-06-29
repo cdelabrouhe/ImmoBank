@@ -109,7 +109,6 @@ namespace ImmoBank
 
 		void DebugQuery(const std::string& _query);
 
-		bool UpdateAllSeLogerKeys();
 		bool UpdateAllLogicImmoKeys();
 		bool UpdateAllPapKeys();
 		bool UpdateAllZipCodes();
@@ -148,7 +147,6 @@ namespace ImmoBank
 			int m_requestID = -1;
 		};
 		std::vector<sBoroughData>	m_boroughData;
-		bool			m_updateSelogerInProgress = false;
 		bool			m_updateLogicImmoInProgress = false;
 		bool			m_updatePapInProgress = false;
 		bool			m_updateZipCodesInProgress = false;

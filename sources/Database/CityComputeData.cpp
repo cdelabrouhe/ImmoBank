@@ -44,7 +44,6 @@ bool CityComputeData::Process()
 					data.m_city = m_city;
 					data.m_name = borough->m_name;
 					data.m_meilleursAgentsKey = borough->m_internalID;
-					data.m_selogerKey = borough->m_selogerID;
 					data.m_logicImmoKey = borough->m_logicImmoID;
 					data.m_papKey = borough->m_papKeyID;
 					m_boroughs.push_back(data);

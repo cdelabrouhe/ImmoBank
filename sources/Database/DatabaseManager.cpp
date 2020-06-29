@@ -119,9 +119,6 @@ void DatabaseManager::Process()
 	{
 		DisplayDebug();
 
-		if (m_generateSeLogerIndices)
-			m_generateSeLogerIndices = m_externalDB->UpdateAllSeLogerKeys();
-
 		if (m_generateLogicImmoIndices)
 			m_generateLogicImmoIndices = m_externalDB->UpdateAllLogicImmoKeys();
 

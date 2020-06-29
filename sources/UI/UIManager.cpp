@@ -143,7 +143,6 @@ bool UIManager::Draw()
 				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebugMySQL);
 				ImGui::MenuItem("SQlite3 debug panel", nullptr, &DatabaseManager::getSingleton()->m_displayDebugSQLite3);
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
-				ImGui::MenuItem("GenerateSeLogerIndices", nullptr, &DatabaseManager::getSingleton()->m_generateSeLogerIndices, false);
 				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
 				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
 				ImGui::MenuItem("GenerateZipCodes", nullptr, &DatabaseManager::getSingleton()->m_generateZipCodesIndices);

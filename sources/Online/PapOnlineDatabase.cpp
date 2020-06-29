@@ -204,6 +204,12 @@ void PapOnlineDatabase::ReferenceCity(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
+void ImmoBank::PapOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
+{
+	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
+}
+
+//-------------------------------------------------------------------------------------------------
 std::string PapOnlineDatabase::ComputeKeyURL(const std::string& _name)
 {
 	std::string name = _name;

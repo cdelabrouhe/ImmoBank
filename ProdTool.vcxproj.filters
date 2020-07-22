@@ -373,6 +373,9 @@
     <ClInclude Include="sources\Online\PapOnlineDatabase.h">
       <Filter>Sources\Online</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Tools\DatabaseHelper.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -509,6 +512,9 @@
     </ClCompile>
     <ClCompile Include="sources\Online\PapOnlineDatabase.cpp">
       <Filter>Sources\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Tools\DatabaseHelper.cpp">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

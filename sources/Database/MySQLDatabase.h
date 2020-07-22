@@ -109,8 +109,6 @@ namespace ImmoBank
 
 		void DebugQuery(const std::string& _query);
 
-		bool UpdateAllLogicImmoKeys();
-		bool UpdateAllPapKeys();
 		bool UpdateAllZipCodes();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();

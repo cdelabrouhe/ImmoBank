@@ -15,6 +15,7 @@
 #include <GL/ProdToolGL.h>
 #include "GLFW/glfw3.h"
 #include <shellapi.h>
+#include <Online/OnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -143,12 +144,27 @@ bool UIManager::Draw()
 				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebugMySQL);
 				ImGui::MenuItem("SQlite3 debug panel", nullptr, &DatabaseManager::getSingleton()->m_displayDebugSQLite3);
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
-				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
-				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
 				ImGui::MenuItem("GenerateZipCodes", nullptr, &DatabaseManager::getSingleton()->m_generateZipCodesIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
 				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
+				if (ImGui::BeginMenu("Databases"))
+				{
+					auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+					for (auto* db : dbs)
+					{
+						if (ImGui::BeginMenu(db->GetName().c_str()))
+						{
+							if (bool* update = db->ForceUpdate())
+							{
+								std::string name = "Force update internal data for " + db->GetName();
+								ImGui::MenuItem(name.c_str(), nullptr, update);
+							}
+							ImGui::EndMenu();
+						}
+					}
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 		}

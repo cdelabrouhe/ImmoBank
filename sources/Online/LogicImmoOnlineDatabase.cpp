@@ -12,6 +12,12 @@ using namespace ImmoBank;
 void LogicImmoOnlineDatabase::Init()
 {
 	SetName("LogicImmo");
+	SetDatabaseName("DB_LOGICIMMO");
+	AddEntry("CITY", ColumnType_TEXT);
+	AddEntry("ZIPCODE", ColumnType_INT);
+	AddEntry("KEY", ColumnType_TEXT);
+
+	m_intervalBetweenRequests = 30;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -178,6 +184,8 @@ void LogicImmoOnlineDatabase::Process()
 			}
 		}
 	}
+
+	OnlineDatabase::Process();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -201,7 +209,7 @@ void LogicImmoOnlineDatabase::ReferenceCity(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImmoBank::LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
+void LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
 {
 	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
 }
@@ -229,4 +237,96 @@ bool LogicImmoOnlineDatabase::HasCity(const std::string& _name, const int _zipCo
 	}
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool* LogicImmoOnlineDatabase::ForceUpdate()
+{
+	return &m_forceUpdateInProgress;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::UpdateData(const std::string& _cityName, const int _zipCode, const std::string& _key)
+{
+	auto pair = std::make_pair(_cityName, _zipCode);
+	auto it = m_keys.find(pair);
+	if (it == m_keys.end())
+		m_keys[pair] = _key;
+
+	sLocalData localData;
+	localData.m_cityName = _cityName;
+	localData.m_zipCode = _zipCode;
+	localData.m_key = _key;
+	UpdateEntryData(localData);
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::GetEntryDataFromSource(EntryData* _source)
+{
+	sLocalData* source = (sLocalData*)_source;
+	for (auto* data : m_data)
+	{
+		sLocalData* localData = (sLocalData*)data;
+		if ((source->m_cityName == localData->m_cityName) && (source->m_zipCode == localData->m_zipCode))
+			return data;
+	}
+
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::GenerateEntryData()
+{
+	return new sLocalData;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::sLocalData::Generate(DatabaseHelper* _db)
+{
+	m_data.resize(_db->GetEntryCount());
+	m_data[0].m_sVal = m_cityName;
+	m_data[1].m_iVal = m_zipCode;
+	m_data[2].m_sVal = m_key;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::sLocalData::copyTo(EntryData* _target)
+{
+	sLocalData* target = (sLocalData*)_target;
+	target->m_cityName = m_cityName;
+	target->m_zipCode = m_zipCode;
+	target->m_key = m_key;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::DecodeData(const std::string& _data, const sBoroughData& _sourceBorough)
+{
+	Json::Reader reader;
+	Json::Value root;
+	reader.parse(_data, root);
+
+	Json::Value& places = root["items"];
+	if (places.isArray())
+	{
+		const int nbPlaces = places.size();
+		for (int placeID = 0; placeID < nbPlaces; ++placeID)
+		{
+			Json::Value val = places.get(placeID, Json::nullValue);
+			std::string name = val["name"].asString();
+			if (name.empty())
+				continue;
+
+			StringTools::TransformToLower(name);
+			StringTools::ReplaceBadSyntax(name, " ", "-");
+			std::string key = val["key"].asString();
+			std::string zipCode = val["postCode"].asString();
+			int zip = _sourceBorough.m_data.m_city.m_zipCode;
+			if (!zipCode.empty())
+				zip = stoi(zipCode);
+			else
+				continue;
+
+			UpdateData(name, zip, key);
+		}
+	}
 }

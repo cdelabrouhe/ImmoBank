@@ -15,7 +15,7 @@ void PapOnlineDatabase::Init()
 	SetDatabaseName("DB_PAP");
 	AddEntry("CITY", ColumnType_TEXT);
 	AddEntry("ZIPCODE", ColumnType_INT);
-	AddEntry("KEY", ColumnType_INT);
+	AddEntry("DBKEY", ColumnType_INT);
 
 	m_intervalBetweenRequests = 30;
 }
@@ -85,7 +85,7 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 	return ID;
 }
 
-bool PapOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool PapOnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;
@@ -178,16 +178,20 @@ void PapOnlineDatabase::Process()
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					auto pair = std::make_pair(name, zip);
-					auto it = m_keys.find(pair);
-					if (it == m_keys.end())
-						m_keys[pair] = val["id"].asInt();
-
-					sLocalData data;
-					data.m_cityName = name;
-					data.m_zipCode = zip;
-					data.m_key = val["id"].asInt();
-					UpdateDataInternal(&data);
+					EntryData* data = GetEntryData(name, zip);
+					
+					if (data == nullptr)
+					{
+						_UpdateData(name, zip, val["id"].asInt());
+					}
+					else
+					{
+						sLocalData* localData = (sLocalData*)data;
+						localData->m_cityName = name;
+						localData->m_zipCode = zip;
+						localData->m_key = val["id"].asInt();
+						UpdateDataInternal(localData);
+					}
 				}
 			}
 		}
@@ -210,11 +214,13 @@ void PapOnlineDatabase::ReferenceCity(const std::string& _name)
 	DatabaseManager::getSingleton()->GetCityData(_name, -1, data);
 	if (data.m_data.m_papKey == 0)
 	{
-		std::string request = ComputeKeyURL(_name);
+		std::string request = _ComputeKeyURL(_name);
 		m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 	}
 	else
-		m_keys[std::make_pair(_name, -1)] = data.m_data.m_papKey;
+	{
+		_UpdateData(_name, -1, data.m_data.m_papKey);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -224,7 +230,7 @@ void PapOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string PapOnlineDatabase::ComputeKeyURL(const std::string& _name)
+std::string PapOnlineDatabase::_ComputeKeyURL(const std::string& _name)
 {
 	std::string name = _name;
 	StringTools::RemoveSpecialCharacters(name);
@@ -238,10 +244,10 @@ std::string PapOnlineDatabase::ComputeKeyURL(const std::string& _name)
 bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
 {
 	int zip = _zipCode / 1000;
-	auto it = m_keys.find(std::make_pair(_name, zip));
-	if (it != m_keys.end())
+	EntryData* data = GetEntryData(_name, zip);
+	if (data != nullptr)
 	{
-		_city.m_papKey = it->second;
+		_city.m_papKey = ((sLocalData*)data)->m_key;
 		return true;
 	}
 
@@ -249,19 +255,8 @@ bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sC
 }
 
 //-------------------------------------------------------------------------------------------------
-bool* PapOnlineDatabase::ForceUpdate()
+void PapOnlineDatabase::_UpdateData(const std::string& _cityName, const int _zipCode, unsigned int _key)
 {
-	return &m_forceUpdateInProgress;
-}
-
-//-------------------------------------------------------------------------------------------------
-void PapOnlineDatabase::UpdateData(const std::string& _cityName, const int _zipCode, unsigned int _key)
-{
-	auto pair = std::make_pair(_cityName, _zipCode);
-	auto it = m_keys.find(pair);
-	if (it == m_keys.end())
-		m_keys[pair] = _key;
-
 	sLocalData localData;
 	localData.m_cityName = _cityName;
 	localData.m_zipCode = _zipCode;
@@ -270,7 +265,7 @@ void PapOnlineDatabase::UpdateData(const std::string& _cityName, const int _zipC
 }
 
 //-------------------------------------------------------------------------------------------------
-EntryData* PapOnlineDatabase::GetEntryDataFromSource(EntryData* _source)
+EntryData* PapOnlineDatabase::_GetEntryDataFromSource(EntryData* _source)
 {
 	sLocalData* source = (sLocalData*)_source;
 	for (auto* data : m_data)
@@ -284,7 +279,7 @@ EntryData* PapOnlineDatabase::GetEntryDataFromSource(EntryData* _source)
 }
 
 //-------------------------------------------------------------------------------------------------
-EntryData* PapOnlineDatabase::GenerateEntryData()
+EntryData* PapOnlineDatabase::_GenerateEntryData()
 {
 	return new sLocalData;
 }
@@ -299,6 +294,14 @@ void PapOnlineDatabase::sLocalData::Generate(DatabaseHelper* _db)
 }
 
 //-------------------------------------------------------------------------------------------------
+void PapOnlineDatabase::sLocalData::Load(DatabaseHelper* _db)
+{
+	m_cityName = m_data[0].m_sVal;
+	m_zipCode = m_data[1].m_iVal;
+	m_key = m_data[2].m_iVal;
+}
+
+//-------------------------------------------------------------------------------------------------
 void PapOnlineDatabase::sLocalData::copyTo(EntryData* _target)
 {
 	sLocalData* target = (sLocalData*)_target;
@@ -308,7 +311,7 @@ void PapOnlineDatabase::sLocalData::copyTo(EntryData* _target)
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImmoBank::PapOnlineDatabase::DecodeData(const std::string& _data, const sBoroughData& _sourceBorough)
+void PapOnlineDatabase::_DecodeData(const std::string& _data, const sBoroughData& _sourceBorough)
 {
 	Json::Reader reader;
 	Json::Value root;
@@ -359,7 +362,48 @@ void ImmoBank::PapOnlineDatabase::DecodeData(const std::string& _data, const sBo
 			StringTools::FixName(name);
 			StringTools::ConvertToImGuiText(name);
 
-			UpdateData(name, zip, val["id"].asInt());
+			_UpdateData(name, zip, val["id"].asInt());
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* PapOnlineDatabase::_GetEntryDataFromKey(void* _key)
+{
+	std::pair<std::string,int> key = *(std::pair<std::string, int>*)_key;
+	for (auto* entry : m_data)
+	{
+		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[0].m_iVal);
+		if (localKey == key)
+			return entry;
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* PapOnlineDatabase::GetEntryData(const std::string& _cityName, const int _zipCode)
+{
+	std::pair<std::string, int> key = std::make_pair(_cityName, _zipCode);
+	return _GetEntryDataFromKey((void*)&key);
+}
+
+//-------------------------------------------------------------------------------------------------
+void PapOnlineDatabase::ForceUpdateDataFromMainTable()
+{
+	std::vector<BoroughData> list;
+	DatabaseManager::getSingleton()->GetAllBoroughs(list);
+
+	for (auto& entry : list)
+	{
+		std::string name = entry.m_city.m_name;
+		StringTools::ReplaceBadSyntax(name, "-", " ");
+		StringTools::TransformToLower(name);
+		StringTools::FixName(name);
+		StringTools::ConvertToImGuiText(name);
+		EntryData* data = GetEntryData(name, entry.m_city.m_zipCode);
+		if ((data == nullptr) && (entry.m_city.m_zipCode != 0) && (entry.m_papKey != 0))
+		{
+			_UpdateData(name, entry.m_city.m_zipCode, entry.m_papKey);
 		}
 	}
 }

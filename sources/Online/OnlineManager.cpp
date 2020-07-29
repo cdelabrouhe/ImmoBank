@@ -53,6 +53,10 @@ void OnlineManager::Init()
 	auto papDB = new PapOnlineDatabase();
 	papDB->Init();
 	m_databases.push_back(papDB);
+
+	// Notify DatabaseManager that a new DB has been created
+	for (auto* db : m_databases)
+		DatabaseManager::getSingleton()->NotifyOnlineDatabaseCreation(db);
 }
 
 //-------------------------------------------------------------------------------------------------

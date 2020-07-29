@@ -23,7 +23,7 @@ bool OnlineDatabase::GetRequestResult(int _requestID, std::vector<SearchRequestR
 		if (OnlineManager::getSingleton()->GetBasicHTTPRequestResult(it->second.m_requestID, str))
 		{
 			SearchRequest* request = it->second.m_initialRequest;
-			bool result = ProcessResult(request, str, _result);
+			bool result = _ProcessResult(request, str, _result);
 			DeleteRequest(_requestID);
 			return result;
 		}
@@ -55,7 +55,7 @@ void OnlineDatabase::_ProcessForceUpdate()
 
 		for (auto& borough : data)
 		{
-			std::string request = ComputeKeyURL(borough.m_city.m_name);
+			std::string request = _ComputeKeyURL(borough.m_city.m_name);
 			m_boroughData.push_back(sBoroughData(borough, request, -1));
 		}
 		return;
@@ -96,7 +96,7 @@ void OnlineDatabase::_ProcessForceUpdate()
 			std::string str;
 			OnlineManager::getSingleton()->GetBasicHTTPRequestResult(borough.m_requestID, str);
 
-			DecodeData(str, borough);
+			_DecodeData(str, borough);
 
 			it = m_boroughData.erase(it);
 			if (m_boroughData.size() == 0)
@@ -114,4 +114,9 @@ void OnlineDatabase::_ProcessForceUpdate()
 		m_forceUpdateInProgress = false;
 		m_forceUpdateInitialized = false;
 	}
+}
+//-------------------------------------------------------------------------------------------------
+bool* OnlineDatabase::ForceUpdate()
+{
+	return &m_forceUpdateInProgress;
 }

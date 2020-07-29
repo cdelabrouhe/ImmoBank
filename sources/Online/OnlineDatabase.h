@@ -42,13 +42,14 @@ namespace ImmoBank
 		virtual void ReferenceBorough(const BoroughData& _borough)	{}
 		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) { return true; }
 
-		virtual bool* ForceUpdate() { return nullptr; }
+		bool* ForceUpdate();
+		virtual void ForceUpdateDataFromMainTable()	{}
 
 	protected:
-		virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
+		virtual bool _ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) = 0;
 
-		virtual std::string ComputeKeyURL(const std::string& _name) { return ""; }
-		virtual void DecodeData(const std::string& _data, const sBoroughData& _sourceBorough) {}
+		virtual std::string _ComputeKeyURL(const std::string& _name) { return ""; }
+		virtual void _DecodeData(const std::string& _data, const sBoroughData& _sourceBorough) {}
 
 	private:
 		void _ProcessForceUpdate();

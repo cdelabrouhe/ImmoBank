@@ -10,6 +10,7 @@
 #include "MySQLDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "ImageDatabase.h"
+#include <Online/OnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -31,7 +32,7 @@ DatabaseManager* DatabaseManager::getSingleton()
 void DatabaseManager::Init()
 {
 	for (auto ID = 0; ID < DataTables_COUNT; ++ID)
-		m_tables[ID] = nullptr;
+		m_mainTables[ID] = nullptr;
 
 	OpenTables();
 	CreateTables();
@@ -47,6 +48,114 @@ void DatabaseManager::Init()
 		s_externalDBUpdateInterval = 600;
 
 	//Test();
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::CreateTables()
+{
+	SQLExecute(m_mainTables[DataTables_Cities],
+		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
+		"`NAME` TEXT,\n"			// Name of the city
+		"`LOGICIMMOKEY` TEXT,\n"	// LogicImmoKey
+		"`PAPKEY` INTEGER,\n"		// PapKey
+		"`ZIPCODE` INTEGER,\n"		// ZIP code
+		"`INSEECODE` INTEGER,\n"	// INSEE code
+		"`TIMEUPDATE` INTEGER"		// Last time the borough has been updated
+		")"
+	);
+
+	SQLExecute(m_mainTables[DataTables_Boroughs],
+		"CREATE TABLE IF NOT EXISTS 'Boroughs' (\n"
+		"`CITY` TEXT,\n"			// Name of the city
+		"`BOROUGH` TEXT,\n"			// Name of the borough
+		"`TIMEUPDATE` INTEGER,\n"	// Last time the borough has been updated
+		"`KEY` INTEGER,\n"			// Internal meilleursagents.com key
+		"`APARTMENTBUY` REAL,\n"	// Buy min price
+		"`APARTMENTBUYMIN` REAL,\n"	// Buy min price
+		"`APARTMENTBUYMAX` REAL,\n"	// Buy max price
+		"`HOUSEBUY` REAL,\n"		// Buy min price
+		"`HOUSEBUYMIN` REAL,\n"		// Buy max price
+		"`HOUSEBUYMAX` REAL,\n"		// Buy min price
+		"`RENTHOUSE` REAL,\n"		// Buy max price
+		"`RENTHOUSEMIN` REAL,\n"	// Buy min price
+		"`RENTHOUSEMAX` REAL,\n"	// Buy max price
+		"`RENTT1` REAL,\n"			// Buy min price
+		"`RENTT1MIN` REAL,\n"		// Buy max price
+		"`RENTT1MAX` REAL,\n"		// Buy min price
+		"`RENTT2` REAL,\n"			// Buy max price
+		"`RENTT2MIN` REAL,\n"		// Buy min price
+		"`RENTT2MAX` REAL,\n"		// Buy max price
+		"`RENTT3` REAL,\n"			// Buy min price
+		"`RENTT3MIN` REAL,\n"		// Buy max price
+		"`RENTT3MAX` REAL,\n"		// Buy min price
+		"`RENTT4` REAL,\n"			// Buy max price
+		"`RENTT4MIN` REAL,\n"		// Buy min price
+		"`RENTT4MAX` REAL,\n"		// Buy max price
+		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
+		"`LOGICIMMOKEY` TEXT,\n"	// Text for LogicImmo key
+		"`PAPKEY` INTEGER,\n"		// Internal PAP key
+		"`ZIPCODE` INTEGER"			// ZIP code
+		")"
+	);
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::OpenTables()
+{
+	// Find EXE path
+	std::string exePath = Tools::GetExePath();
+
+	// Load SQL databases
+	if (!m_mainTables[DataTables_Cities])
+	{
+		std::string path = exePath + "cities.sqlite";
+		m_mainTables[DataTables_Cities] = SQLOpenDB(path.c_str());
+	}
+
+	if (!m_mainTables[DataTables_Boroughs])
+	{
+		std::string path = exePath + "boroughs.sqlite";
+		m_mainTables[DataTables_Boroughs] = SQLOpenDB(path.c_str());
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::CloseTables()
+{
+	for (int entry = 0; entry < DataTables_COUNT; ++entry)
+	{
+		SQLCloseDB(m_mainTables[entry]);
+		m_mainTables[entry] = nullptr;
+	}
+
+	auto it = m_tables.begin();
+	while (it != m_tables.end())
+	{
+		SQLCloseDB(it->second);
+		++it;
+	}
+	m_tables.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::NotifyOnlineDatabaseCreation(OnlineDatabase* _db)
+{
+	if (_db->GetDatabaseName().empty())
+		return;
+
+	// Find EXE path
+	std::string exePath = Tools::GetExePath();
+
+	// Open secondary tables
+	std::string path = exePath + _db->GetDatabaseName() + ".sqlite";
+	m_tables[_db->GetDatabaseName()] = SQLOpenDB(path.c_str());
+
+	// Create secondary tables
+	std::string request;
+	_db->CreateTableRequest(request);
+	SQLExecute(m_tables[_db->GetDatabaseName()], request.c_str());
+
+	_db->Load();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -118,12 +227,6 @@ void DatabaseManager::Process()
 	if (Tools::IsDevMode())
 	{
 		DisplayDebug();
-
-		if (m_generateLogicImmoIndices)
-			m_generateLogicImmoIndices = m_externalDB->UpdateAllLogicImmoKeys();
-
-		if (m_generatePapIndices)
-			m_generatePapIndices = m_externalDB->UpdateAllPapKeys();
 
 		if (m_generateZipCodesIndices)
 			m_generateZipCodesIndices = m_externalDB->UpdateAllZipCodes();
@@ -198,7 +301,7 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		}
 	}*/
 
-	if (SQLExecute(m_tables[DataTables_Boroughs], buf))
+	if (SQLExecute(m_mainTables[DataTables_Boroughs], buf))
 		printf("Add borough %s to database Boroughs\n", localData.m_name.c_str());
 
 	if (_saveExternal)
@@ -208,13 +311,13 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data)
 {
-	if (m_tables[DataTables_Boroughs] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	std::vector<BoroughData> boroughs;
 	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
 
-	SQLExecuteSelect(m_tables[DataTables_Boroughs], sql.c_str(), [&boroughs](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], sql.c_str(), [&boroughs](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		boroughs.resize(boroughs.size() + 1);
@@ -262,26 +365,26 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std::string& _name, const int _zipCode)
 {
-	if (m_tables[DataTables_Boroughs] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	m_modified = true;
 
 	std::vector<sCityData> cities;
-	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE='%d'", _cityName.c_str(), _name.c_str(), _zipCode);
+	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
 
-	return SQLExecute(m_tables[DataTables_Boroughs], sql.c_str());
+	return SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
 }
 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughData>& _data)
 {
-	if (m_tables[DataTables_Boroughs] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	_data.clear();
 
-	SQLExecuteSelect(m_tables[DataTables_Boroughs], _query.c_str(), [&_data](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], _query.c_str(), [&_data](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		_data.resize(_data.size() + 1);
@@ -326,7 +429,7 @@ bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughDat
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 {
-	if (m_tables[DataTables_Boroughs] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	_data.clear();
@@ -389,10 +492,19 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImmoBank::DatabaseManager::GetAllBoroughs(std::vector<BoroughData>& _data)
+void DatabaseManager::GetAllBoroughs(std::vector<BoroughData>& _data)
 {
 	sCity city;
 	GetBoroughs(city, _data);
+}
+
+//-------------------------------------------------------------------------------------------------
+sqlite3* DatabaseManager::GetTable(const std::string& _name)
+{
+	auto it = m_tables.find(_name);
+	if (it != m_tables.end())
+		return it->second;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -434,7 +546,7 @@ void DatabaseManager::AddCity(const sCityData& _data)
 
 	RemoveCityData(_data.m_data.m_name, _data.m_data.m_zipCode);
 
-	if (SQLExecute(m_tables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, PAPKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %u, %d, %d, %u)",
+	if (SQLExecute(m_mainTables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, PAPKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %u, %d, %d, %u)",
 		_data.m_data.m_name.c_str(),
 		_data.m_data.m_logicImmoKey.c_str(),
 		_data.m_data.m_papKey,
@@ -447,21 +559,19 @@ void DatabaseManager::AddCity(const sCityData& _data)
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity)
 {
-	if (m_tables[DataTables_Cities] == nullptr)
+	if (m_mainTables[DataTables_Cities] == nullptr)
 		return false;
 
 	std::vector<sCityData> cities;
 	std::string name = _name;
 	sCity::UnFixName(name);
 	char buf[1024];
-	if (_zipCode == -1)
-		sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
-	else
-		sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", name.c_str(), _zipCode);
+	sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
+	//sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", name.c_str(), _zipCode);
 	
 	Str128f sql(buf);
 
-	SQLExecuteSelect(m_tables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_mainTables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		cities.resize(cities.size() + 1);
@@ -533,7 +643,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::RemoveCityData(const std::string& _name, const int _zipCode)
 {
-	if (m_tables[DataTables_Cities] == nullptr)
+	if (m_mainTables[DataTables_Cities] == nullptr)
 		return false;
 
 	m_modified = true;
@@ -541,19 +651,19 @@ bool DatabaseManager::RemoveCityData(const std::string& _name, const int _zipCod
 	std::vector<sCityData> cities;
 	Str128f sql("DELETE FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", _name.c_str(), _zipCode);
 	
-	return SQLExecute(m_tables[DataTables_Cities], sql.c_str());
+	return SQLExecute(m_mainTables[DataTables_Cities], sql.c_str());
 }
 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 {
-	if (m_tables[DataTables_Cities] == nullptr)
+	if (m_mainTables[DataTables_Cities] == nullptr)
 		return false;
 
 	std::vector<sCityData> cities;
 	Str128f sql("SELECT * FROM Cities");
 
-	SQLExecuteSelect(m_tables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_mainTables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{
 		int index = 0;
 		cities.resize(cities.size() + 1);
@@ -598,85 +708,6 @@ void DatabaseManager::ListAllCitiesWithName(std::vector<sCity>& _list, std::stri
 			_list.push_back(*it);
 		++it;
 	}
-}
-
-//-------------------------------------------------------------------------------------------------
-void DatabaseManager::CreateTables()
-{
-	SQLExecute(m_tables[DataTables_Cities],
-		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
-		"`NAME` TEXT,\n"			// Name of the city
-		"`LOGICIMMOKEY` TEXT,\n"	// LogicImmoKey
-		"`PAPKEY` INTEGER,\n"		// PapKey
-		"`ZIPCODE` INTEGER,\n"		// ZIP code
-		"`INSEECODE` INTEGER,\n"	// INSEE code
-		"`TIMEUPDATE` INTEGER"		// Last time the borough has been updated
-		")"
-	);
-
-	SQLExecute(m_tables[DataTables_Boroughs],
-		"CREATE TABLE IF NOT EXISTS 'Boroughs' (\n"
-		"`CITY` TEXT,\n"			// Name of the city
-		"`BOROUGH` TEXT,\n"			// Name of the borough
-		"`TIMEUPDATE` INTEGER,\n"	// Last time the borough has been updated
-		"`KEY` INTEGER,\n"			// Internal meilleursagents.com key
-		"`APARTMENTBUY` REAL,\n"	// Buy min price
-		"`APARTMENTBUYMIN` REAL,\n"	// Buy min price
-		"`APARTMENTBUYMAX` REAL,\n"	// Buy max price
-		"`HOUSEBUY` REAL,\n"		// Buy min price
-		"`HOUSEBUYMIN` REAL,\n"		// Buy max price
-		"`HOUSEBUYMAX` REAL,\n"		// Buy min price
-		"`RENTHOUSE` REAL,\n"		// Buy max price
-		"`RENTHOUSEMIN` REAL,\n"	// Buy min price
-		"`RENTHOUSEMAX` REAL,\n"	// Buy max price
-		"`RENTT1` REAL,\n"			// Buy min price
-		"`RENTT1MIN` REAL,\n"		// Buy max price
-		"`RENTT1MAX` REAL,\n"		// Buy min price
-		"`RENTT2` REAL,\n"			// Buy max price
-		"`RENTT2MIN` REAL,\n"		// Buy min price
-		"`RENTT2MAX` REAL,\n"		// Buy max price
-		"`RENTT3` REAL,\n"			// Buy min price
-		"`RENTT3MIN` REAL,\n"		// Buy max price
-		"`RENTT3MAX` REAL,\n"		// Buy min price
-		"`RENTT4` REAL,\n"			// Buy max price
-		"`RENTT4MIN` REAL,\n"		// Buy min price
-		"`RENTT4MAX` REAL,\n"		// Buy max price
-		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
-		"`LOGICIMMOKEY` TEXT,\n"	// Text for LogicImmo key
-		"`PAPKEY` INTEGER,\n"		// Internal PAP key
-		"`ZIPCODE` INTEGER"			// ZIP code
-		")"
-	);
-}
-
-//-------------------------------------------------------------------------------------------------
-void DatabaseManager::OpenTables()
-{
-	// Find EXE path
-	std::string exePath = Tools::GetExePath();
-	
-	// Load SQL databases
-	if (!m_tables[DataTables_Cities])
-	{
-		std::string path = exePath + "cities.sqlite";
-		m_tables[DataTables_Cities] = SQLOpenDB(path.c_str());
-	}
-
-	if (!m_tables[DataTables_Boroughs])
-	{
-		std::string path = exePath + "boroughs.sqlite";
-		m_tables[DataTables_Boroughs] = SQLOpenDB(path.c_str());
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-void DatabaseManager::CloseTables()
-{
-	for (int entry = 0; entry < DataTables_COUNT; ++entry)
-	{
-		SQLCloseDB(m_tables[entry]);
-		m_tables[entry] = nullptr;
-	}	
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -812,7 +843,18 @@ void DatabaseManager::DisplayDebug()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImmoBank::DatabaseManager::DisplaySQlite3Debug()
+bool DatabaseManager::TriggerSQLCommand(const std::string& _tableName, const std::string& _query, bool _affectExternal)
+{
+	bool result = SQLExecute(m_tables[_tableName], _query.c_str());
+	if (_affectExternal)
+	{
+		m_externalDB->ExecuteQuery(_query);
+	}
+	return result;
+}
+
+//-------------------------------------------------------------------------------------------------
+void DatabaseManager::DisplaySQlite3Debug()
 {
 	if (!m_displayDebugSQLite3)
 		return;

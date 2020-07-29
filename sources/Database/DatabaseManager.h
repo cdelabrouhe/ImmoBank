@@ -21,6 +21,7 @@ namespace ImmoBank
 
 	class MySQLDatabase;
 	class ImageDatabase;
+	class OnlineDatabase;
 
 	extern const std::string	s_wholeCityName;
 
@@ -71,14 +72,19 @@ namespace ImmoBank
 
 		inline bool IsConnectionValid() const { return m_connectionValid; }
 
-		void GetConnectionParameters(std::string& _server, std::string& _user);
+		void	GetConnectionParameters(std::string& _server, std::string& _user);
 
-		void TriggerExternalSQLCommand(const std::string& _query);
+		bool	TriggerSQLCommand(const std::string& _tableName, const std::string& _query, bool _affectExternal = true);
+		void	TriggerExternalSQLCommand(const std::string& _query);
 		
 		void	DisplayDebug();
 		void	DisplaySQlite3Debug();
 		void	DisplayMySQLRequestsPanel();
 		void	NotifyMySQLEvent(const std::string& _request);
+
+		void	NotifyOnlineDatabaseCreation(OnlineDatabase* _db);
+
+		sqlite3* GetTable(const std::string& _name);
 
 	private:
 		void	CreateTables();
@@ -94,7 +100,8 @@ namespace ImmoBank
 		bool							m_displayDebugMySQL = false;
 
 	private:
-		sqlite3*						m_tables[DataTables_COUNT];
+		sqlite3*						m_mainTables[DataTables_COUNT];
+		std::map<std::string, sqlite3*>	m_tables;
 		std::vector<CityComputeData>	m_cityComputes;
 		std::vector<CityUpdateData>		m_cityUpdates;
 		std::vector<BoroughData>		m_boroughComputes;
@@ -111,8 +118,6 @@ namespace ImmoBank
 		std::vector<std::string>		m_SQlite3Requests;
 
 	public:
-		bool							m_generateLogicImmoIndices = false;
-		bool							m_generatePapIndices = false;
 		bool							m_generateZipCodesIndices = false;
 		bool							m_updateLocalBaseToServer = false;
 		bool							m_updateServerToLocalBase = false;

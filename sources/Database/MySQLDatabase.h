@@ -112,9 +112,9 @@ namespace ImmoBank
 		bool UpdateAllZipCodes();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();
+		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 
 	protected:
-		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 		int ExecuteUpdate(const std::string& _query) const;
 
 	private:

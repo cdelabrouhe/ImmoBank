@@ -738,10 +738,19 @@ MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const
 
 	if (m_connexion)
 	{
-		if (mysql_query(m_connexion, _query.c_str()) == SQL_NO_ERROR)
+		auto error = mysql_query(m_connexion, _query.c_str());
+		if (error == SQL_NO_ERROR)
 		{
 			MYSQL_RES* res = mysql_use_result(m_connexion);
 			return res;
+		}
+		else
+		{
+			const char* errorStr = mysql_error(m_connexion);
+			char buf[4096];
+			sprintf(buf, "SQL ERROR (%s) sending update with request '%s'", errorStr, _query.c_str());
+			std::string message = buf;
+			DisplayMySQLMessage(message);
 		}
 	}
 #endif
@@ -760,8 +769,9 @@ int MySQLDatabase::ExecuteUpdate(const std::string& _query) const
 		auto error = mysql_query(m_connexion, _query.c_str());
 		if (error != SQL_NO_ERROR)
 		{
+			const char* errorStr = mysql_error(m_connexion);
 			char buf[4096];
-			sprintf(buf, "SQL ERROR (%d) sending update with request '%s'", error, _query.c_str());
+			sprintf(buf, "SQL ERROR (%s) sending update with request '%s'", errorStr, _query.c_str());
 			std::string message = buf;
 			DisplayMySQLMessage(message);
 			return 0;

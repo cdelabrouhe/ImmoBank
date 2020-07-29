@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+struct sqlite3_stmt;
+
 namespace ImmoBank
 {
 	enum ColumnType
@@ -35,6 +37,7 @@ namespace ImmoBank
 	struct EntryData
 	{
 		virtual void Generate(DatabaseHelper* _db)	{}
+		virtual void Load(DatabaseHelper* _db)		{}
 		virtual void copyTo(EntryData* _target) = 0;
 
 		std::vector<EntryValue>	m_data;
@@ -44,17 +47,24 @@ namespace ImmoBank
 	{
 	public:
 		void SetDatabaseName(const std::string& _name)				{ m_databaseName = _name;	}
+		const std::string& GetDatabaseName() const					{ return m_databaseName;	}
 		void AddEntry(const std::string& _name, ColumnType _type);
 		size_t GetEntryCount() { return m_entries.size(); }
 		Entry* GetEntry(const int _ID);
 		void UpdateEntryData(EntryData& _data);
-		void CreateTable();
+		void CreateTableRequest(std::string& _request);
 		void UpdateDataInternal(EntryData* _data);
-		virtual EntryData* GetEntryDataFromSource(EntryData* _source) { return nullptr; }
-		virtual EntryData* GenerateEntryData() { return nullptr; }
+
+		virtual void Load();
+
+	protected:
+		virtual EntryData* _GetEntryDataFromSource(EntryData* _source)	{ return nullptr;	}
+		virtual EntryData* _GetEntryDataFromKey(void* _key)				{ return nullptr;	}
+		virtual EntryData* _GenerateEntryData() { return nullptr; }
 
 	private:
-		void _Stringify(std::string& _str, EntryData* _data, bool _addQuote, bool _addValues, bool _addReturn);
+		void _Stringify(std::string& _str, EntryData* _data, bool _addBrackets, bool _addQuote, bool _addValues, bool _addReturn, bool _addType, bool _addAnd, bool _affectValues);
+		void _InternalLoad(sqlite3_stmt*);
 
 	protected:
 		std::string				m_databaseName;

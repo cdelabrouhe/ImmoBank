@@ -157,8 +157,13 @@ bool UIManager::Draw()
 						{
 							if (bool* update = db->ForceUpdate())
 							{
-								std::string name = "Force update internal data for " + db->GetName();
+								std::string name = "Force update internal data";
 								ImGui::MenuItem(name.c_str(), nullptr, update);
+							}
+
+							if (ImGui::MenuItem("Force update from main table"))
+							{
+								db->ForceUpdateDataFromMainTable();
 							}
 							ImGui::EndMenu();
 						}

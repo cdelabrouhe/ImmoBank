@@ -88,7 +88,7 @@ int OrpiOnlineDatabase::SendRequest(SearchRequest* _request)
 	return ID;
 }
 
-bool OrpiOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool OrpiOnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;

@@ -34,7 +34,7 @@ void LeSiteImmoOnlineDatabase::End()
 
 }
 
-bool LeSiteImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool LeSiteImmoOnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	return true;
 }

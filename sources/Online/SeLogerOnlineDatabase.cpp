@@ -137,7 +137,7 @@ int SeLogerOnlineDatase::SendRequest(SearchRequest* _request)
 return -1;
 }
 
-bool SeLogerOnlineDatase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool SeLogerOnlineDatase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;

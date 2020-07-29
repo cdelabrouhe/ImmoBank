@@ -75,7 +75,7 @@ int LaforetOnlineDatabase::SendRequest(SearchRequest* _request)
 	return ID;
 }
 
-bool LaforetOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool LaforetOnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;

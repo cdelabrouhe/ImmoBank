@@ -161,10 +161,9 @@ bool UIManager::Draw()
 								ImGui::MenuItem(name.c_str(), nullptr, update);
 							}
 
-							if (ImGui::MenuItem("Force update from main table"))
-							{
-								db->ForceUpdateDataFromMainTable();
-							}
+							if (ImGui::MenuItem("Update data from server"))
+								db->UpdateFromExternalDatabase();
+
 							ImGui::EndMenu();
 						}
 					}
@@ -349,16 +348,12 @@ void UIManager::DisplayCityInformation()
 		StringTools::ConvertToImGuiText(name);
 		if (Tools::IsDevMode())
 		{
-			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s  %s: %u", GET_TEXT("DatabaseWindowCityName")
+			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %u  %s: %s", GET_TEXT("DatabaseWindowCityName")
 				, name.c_str()
 				, GET_TEXT("DatabaseWindowZipCode")
 				, selectedCity.m_data.m_zipCode
 				, GET_TEXT("DatabaseWindowInseeCode")
 				, selectedCity.m_data.m_inseeCode
-				, "LogicImmoKey"
-				, selectedCity.m_data.m_logicImmoKey.c_str()
-				, "PapKey"
-				, selectedCity.m_data.m_papKey);
 		}
 		else
 		{

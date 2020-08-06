@@ -6,6 +6,7 @@
 #include "BoroughData.h"
 #include "CityComputeData.h"
 #include "CityUpdateData.h"
+#include "MySQLDatabase.h"
 
 struct sqlite3;
 
@@ -14,7 +15,6 @@ namespace ImmoBank
 	enum DataTables
 	{
 		DataTables_NONE = -1,
-		DataTables_Cities,
 		DataTables_Boroughs,
 		DataTables_COUNT
 	};
@@ -53,7 +53,7 @@ namespace ImmoBank
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);
 
-		void	AddCity(const sCityData& _data);
+		void	AddCity(sCityData& _data);
 		bool	GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity = nullptr);
 		bool	RemoveCityData(const std::string& _name, const int _zipCode);
 		bool	ListAllCities(std::vector<sCity>& _list);
@@ -75,7 +75,8 @@ namespace ImmoBank
 		void	GetConnectionParameters(std::string& _server, std::string& _user);
 
 		bool	TriggerSQLCommand(const std::string& _tableName, const std::string& _query, bool _affectExternal = true);
-		void	TriggerExternalSQLCommand(const std::string& _query);
+		void	TriggerDebugExternalSQLCommand(const std::string& _query);
+		MYSQL_RES*	TriggerExternalSQLCommand(const std::string& _query);
 		
 		void	DisplayDebug();
 		void	DisplaySQlite3Debug();

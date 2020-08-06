@@ -53,17 +53,6 @@ void DatabaseManager::Init()
 //-------------------------------------------------------------------------------------------------
 void DatabaseManager::CreateTables()
 {
-	SQLExecute(m_mainTables[DataTables_Cities],
-		"CREATE TABLE IF NOT EXISTS 'Cities' (\n"
-		"`NAME` TEXT,\n"			// Name of the city
-		"`LOGICIMMOKEY` TEXT,\n"	// LogicImmoKey
-		"`PAPKEY` INTEGER,\n"		// PapKey
-		"`ZIPCODE` INTEGER,\n"		// ZIP code
-		"`INSEECODE` INTEGER,\n"	// INSEE code
-		"`TIMEUPDATE` INTEGER"		// Last time the borough has been updated
-		")"
-	);
-
 	SQLExecute(m_mainTables[DataTables_Boroughs],
 		"CREATE TABLE IF NOT EXISTS 'Boroughs' (\n"
 		"`CITY` TEXT,\n"			// Name of the city
@@ -84,6 +73,7 @@ void DatabaseManager::CreateTables()
 		"`RENTT1MAX` REAL,\n"		// Buy min price
 		"`RENTT2` REAL,\n"			// Buy max price
 		"`RENTT2MIN` REAL,\n"		// Buy min price
+
 		"`RENTT2MAX` REAL,\n"		// Buy max price
 		"`RENTT3` REAL,\n"			// Buy min price
 		"`RENTT3MIN` REAL,\n"		// Buy max price
@@ -92,9 +82,8 @@ void DatabaseManager::CreateTables()
 		"`RENTT4MIN` REAL,\n"		// Buy min price
 		"`RENTT4MAX` REAL,\n"		// Buy max price
 		"`SELOGERKEY` INTEGER,\n"	// Internal SeLoger key
-		"`LOGICIMMOKEY` TEXT,\n"	// Text for LogicImmo key
-		"`PAPKEY` INTEGER,\n"		// Internal PAP key
-		"`ZIPCODE` INTEGER"			// ZIP code
+		"`ZIPCODE` INTEGER,\n"		// ZIP code
+		"`INSEECODE` INTEGER"		// INSEE code
 		")"
 	);
 }
@@ -106,12 +95,6 @@ void DatabaseManager::OpenTables()
 	std::string exePath = Tools::GetExePath();
 
 	// Load SQL databases
-	if (!m_mainTables[DataTables_Cities])
-	{
-		std::string path = exePath + "cities.sqlite";
-		m_mainTables[DataTables_Cities] = SQLOpenDB(path.c_str());
-	}
-
 	if (!m_mainTables[DataTables_Boroughs])
 	{
 		std::string path = exePath + "boroughs.sqlite";
@@ -258,7 +241,7 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 	RemoveBoroughData(localData.m_city.m_name, localData.m_name, localData.m_city.m_zipCode);
 
 	char buf[4096];
-	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, LOGICIMMOKEY, PAPKEY, ZIPCODE) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, '%s', %u, %u)",
+	sprintf(buf, "INSERT OR REPLACE INTO Boroughs (CITY, BOROUGH, TIMEUPDATE, KEY, APARTMENTBUY, APARTMENTBUYMIN, APARTMENTBUYMAX, HOUSEBUY, HOUSEBUYMIN, HOUSEBUYMAX, RENTHOUSE, RENTHOUSEMIN, RENTHOUSEMAX, RENTT1, RENTT1MIN, RENTT1MAX, RENTT2, RENTT2MIN, RENTT2MAX, RENTT3, RENTT3MIN, RENTT3MAX, RENTT4, RENTT4MIN, RENTT4MAX, SELOGERKEY, ZIPCODE, INSEECODE) VALUES('%s', '%s', %u, %u, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %u, %u, %u)",
 		localData.m_city.m_name.c_str(),
 		localData.m_name.c_str(),
 		localData.m_timeUpdate.GetData(),
@@ -285,9 +268,8 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentApartmentT4Plus.m_min,
 		localData.m_priceRentApartmentT4Plus.m_max,
 		localData.m_selogerKey,
-		localData.m_logicImmoKey.empty() ? "(null)" : localData.m_logicImmoKey.c_str(),
-		localData.m_papKey,
-		localData.m_city.m_zipCode);
+		localData.m_city.m_zipCode,
+		localData.m_city.m_inseeCode);
 
 	/*static bool s_test = false;
 	if (s_test)
@@ -309,6 +291,40 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 }
 
 //-------------------------------------------------------------------------------------------------
+void ExtractBoroughDataFromSQL(BoroughData& _borough, sqlite3_stmt* _stmt)
+{
+	int index = 0;
+	_borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+	_borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
+	_borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
+	_borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
+	_borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceBuyHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceBuyHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceBuyHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
+	_borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
+	_borough.m_city.m_inseeCode = sqlite3_column_int64(_stmt, index++);
+}
+
+//-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data)
 {
 	if (m_mainTables[DataTables_Boroughs] == nullptr)
@@ -319,38 +335,9 @@ bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::st
 
 	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], sql.c_str(), [&boroughs](sqlite3_stmt* _stmt)
 	{
-		int index = 0;
-		boroughs.resize(boroughs.size() + 1);
-		auto& borough = boroughs.back();
-		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-		borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
+		BoroughData borough;
+		ExtractBoroughDataFromSQL(borough, _stmt);
+		boroughs.push_back(borough);
 	});
 
 	if (boroughs.size() == 1)
@@ -370,10 +357,20 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 
 	m_modified = true;
 
+	bool result = false;
 	std::vector<sCityData> cities;
-	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
+	if (_name != s_wholeCityName)
+	{
+		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
+		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
+	}
+	else
+	{
+		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
+		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
+	}
 
-	return SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
+	return result;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -386,38 +383,9 @@ bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughDat
 
 	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], _query.c_str(), [&_data](sqlite3_stmt* _stmt)
 	{
-		int index = 0;
-		_data.resize(_data.size() + 1);
-		auto& borough = _data.back();
-		borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-		borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceBuyHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
-		borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-		borough.m_papKey = sqlite3_column_int64(_stmt, index++);
-		borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
+		BoroughData borough;
+		ExtractBoroughDataFromSQL(borough, _stmt);
+		_data.push_back(borough);
 	});
 	
 	if (_data.size() >= 1)
@@ -463,10 +431,13 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	for (auto& borough : _data)
 	{
 		int zipCode = borough.m_city.m_zipCode;
+		int inseeCode = borough.m_city.m_inseeCode;
 		borough.m_city = !_city.m_name.empty() ? _city : borough.m_city;
 		borough.m_city.FixName();
 		if (zipCode != 0)
 			borough.m_city.m_zipCode = zipCode;
+		if (inseeCode != 0)
+			borough.m_city.m_inseeCode = inseeCode;
 
 		// Ask data to external database
 		if (!borough.IsValid())
@@ -540,140 +511,111 @@ bool DatabaseManager::IsBoroughUpdating(const BoroughData& _data)
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::AddCity(const sCityData& _data)
+void DatabaseManager::AddCity(sCityData& _data)
 {
 	m_modified = true;
 
-	RemoveCityData(_data.m_data.m_name, _data.m_data.m_zipCode);
+	BoroughData data;
+	if (GetBoroughData(_data.m_data.m_name, s_wholeCityName, data))
+		return;
 
-	if (SQLExecute(m_mainTables[DataTables_Cities], "INSERT OR REPLACE INTO Cities (NAME, LOGICIMMOKEY, PAPKEY, ZIPCODE, INSEECODE, TIMEUPDATE) VALUES('%s', '%s', %u, %d, %d, %u)",
-		_data.m_data.m_name.c_str(),
-		_data.m_data.m_logicImmoKey.c_str(),
-		_data.m_data.m_papKey,
-		_data.m_data.m_zipCode,
-		_data.m_data.m_inseeCode,
-		_data.m_timeUpdate.GetData()))
-		printf("Add city %s to database Cities\n", _data.m_data.m_name.c_str());
+	data.m_city = _data.m_data;
+	AddBoroughData(data);
 }
 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity)
 {
-	if (m_mainTables[DataTables_Cities] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	std::vector<sCityData> cities;
-	std::string name = _name;
-	sCity::UnFixName(name);
-	char buf[1024];
-	sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s'", name.c_str());
-	//sprintf(buf, "SELECT * FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", name.c_str(), _zipCode);
-	
-	Str128f sql(buf);
+	BoroughData data;
+	if (!GetBoroughData(_name, s_wholeCityName, data))
+		return false;
 
-	SQLExecuteSelect(m_mainTables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
+	_data.m_data = data.m_city;
+	_data.m_timeUpdate = data.m_timeUpdate;
+	GetBoroughs(_data.m_data, _data.m_boroughs);
+	_data.m_data.FixName();
+
+	// Look for a WholeCity borough
+	std::string lookFor = s_wholeCityName;
+	auto itCity = std::find_if(_data.m_boroughs.begin(), _data.m_boroughs.end(), [lookFor](BoroughData& _borough)->bool
+	{	return (_borough.m_name == lookFor);	});
+	if (itCity == _data.m_boroughs.end())
 	{
-		int index = 0;
-		cities.resize(cities.size() + 1);
-		auto& city = cities.back();
-		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_data.m_papKey = sqlite3_column_int(_stmt, index++);
-		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
-		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
-		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-	});
-
-	if (cities.size() == 1)
-	{
-		_data = cities.back();
-		GetBoroughs(_data.m_data, _data.m_boroughs);
-		_data.m_data.FixName();
-
-		// Look for a WholeCity borough
-		std::string lookFor = s_wholeCityName;
-		auto itCity = std::find_if(_data.m_boroughs.begin(), _data.m_boroughs.end(), [lookFor](BoroughData& _borough)->bool
-		{	return (_borough.m_name == lookFor);	});
-		if (itCity == _data.m_boroughs.end())
-		{
-			BoroughData data;
-			data.m_city = _data.m_data;
-			data.m_name = s_wholeCityName;
-			_data.m_boroughs.push_back(data);
-		}
-
-		std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
-
-		auto it = _data.m_boroughs.begin();
-		while (it != _data.m_boroughs.end())
-		{
-			BoroughData& data = *it;
-			const bool isWholeCity = (_wholeCity && data.IsWholeCity());
-			if (isWholeCity)
-				*_wholeCity = data;
-
-			// Ask data to external database
-			if (!data.IsValid())
-			{
-				unsigned int key = data.m_meilleursAgentsKey;
-				auto itExternal = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
-				{
-					return (_pair.first == key);
-				});
-				if (itExternal == m_externalBoroughRequests.end())
-				{
-					int queryID = m_externalDB->AskForBoroughData(data);
-					if (queryID != -1)
-						m_externalBoroughRequests.push_back(std::make_pair(key, queryID));
-				}
-			}
-
-			// next
-			if (_wholeCity && data.IsWholeCity())
-				it = _data.m_boroughs.erase(it);
-			else
-				++it;
-		}
-
-		return true;
+		BoroughData data;
+		data.m_city = _data.m_data;
+		data.m_name = s_wholeCityName;
+		_data.m_boroughs.push_back(data);
 	}
-	return false;
+
+	std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
+
+	auto it = _data.m_boroughs.begin();
+	while (it != _data.m_boroughs.end())
+	{
+		BoroughData& data = *it;
+		const bool isWholeCity = (_wholeCity && data.IsWholeCity());
+		if (isWholeCity)
+			*_wholeCity = data;
+
+		// Ask data to external database
+		if (!data.IsValid())
+		{
+			unsigned int key = data.m_meilleursAgentsKey;
+			auto itExternal = std::find_if(m_externalBoroughRequests.begin(), m_externalBoroughRequests.end(), [key](std::pair<unsigned int, int>& _pair)->bool
+			{
+				return (_pair.first == key);
+			});
+			if (itExternal == m_externalBoroughRequests.end())
+			{
+				int queryID = m_externalDB->AskForBoroughData(data);
+				if (queryID != -1)
+					m_externalBoroughRequests.push_back(std::make_pair(key, queryID));
+			}
+		}
+
+		// next
+		if (_wholeCity && data.IsWholeCity())
+			it = _data.m_boroughs.erase(it);
+		else
+			++it;
+	}
+
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::RemoveCityData(const std::string& _name, const int _zipCode)
 {
-	if (m_mainTables[DataTables_Cities] == nullptr)
-		return false;
+	return RemoveBoroughData(_name, s_wholeCityName, _zipCode);
+}
 
-	m_modified = true;
-
-	std::vector<sCityData> cities;
-	Str128f sql("DELETE FROM Cities WHERE NAME='%s' AND ZIPCODE=%d", _name.c_str(), _zipCode);
-	
-	return SQLExecute(m_mainTables[DataTables_Cities], sql.c_str());
+//-------------------------------------------------------------------------------------------------
+void FillCity(sqlite3_stmt* _stmt, std::vector<sCityData>& _cities)
+{
+	BoroughData borough;
+	ExtractBoroughDataFromSQL(borough, _stmt);
+	sCityData data;
+	data.m_data = borough.m_city;
+	data.m_timeUpdate = borough.m_timeUpdate;
+	_cities.push_back(data);
 }
 
 //-------------------------------------------------------------------------------------------------
 bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 {
-	if (m_mainTables[DataTables_Cities] == nullptr)
+	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	std::vector<sCityData> cities;
-	Str128f sql("SELECT * FROM Cities");
+	Str128f sql("SELECT * FROM Boroughs WHERE BOROUGH='%s'", s_wholeCityName);
 
-	SQLExecuteSelect(m_mainTables[DataTables_Cities], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
+	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{
-		int index = 0;
-		cities.resize(cities.size() + 1);
-		auto& city = cities.back();
-		city.m_data.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_data.m_logicImmoKey = (const char*)sqlite3_column_text(_stmt, index++);
-		city.m_data.m_papKey = sqlite3_column_int(_stmt, index++);
-		city.m_data.m_zipCode = sqlite3_column_int(_stmt, index++);
-		city.m_data.m_inseeCode = sqlite3_column_int(_stmt, index++);
-		city.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
+		FillCity(_stmt, cities);
 	});
 
 	if (cities.size() > 0)
@@ -758,8 +700,6 @@ void DatabaseManager::Test()
 	data.m_priceRentApartmentT4Plus.m_min = 20;
 	data.m_priceRentApartmentT4Plus.m_max = 21;
 	data.m_selogerKey = 0;
-	data.m_logicImmoKey = "";
-	data.m_papKey = 0;
 	data.m_city.m_zipCode = 0;
 
 	AddBoroughData(data);
@@ -830,7 +770,7 @@ void DatabaseManager::GetConnectionParameters(std::string& _server, std::string&
 }
 
 //-------------------------------------------------------------------------------------------------
-void DatabaseManager::TriggerExternalSQLCommand(const std::string& _query)
+void DatabaseManager::TriggerDebugExternalSQLCommand(const std::string& _query)
 {
 	m_externalDB->DebugQuery(_query);
 }
@@ -851,6 +791,12 @@ bool DatabaseManager::TriggerSQLCommand(const std::string& _tableName, const std
 		m_externalDB->ExecuteQuery(_query);
 	}
 	return result;
+}
+
+//-------------------------------------------------------------------------------------------------
+MYSQL_RES* DatabaseManager::TriggerExternalSQLCommand(const std::string& _query)
+{
+	return m_externalDB->ExecuteQuery(_query);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -875,7 +821,7 @@ void DatabaseManager::DisplaySQlite3Debug()
 		m_SQlite3Requests.clear();
 		for (auto& result : s_debugResults)
 		{
-			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey) + ", LogicImmoKEY: " + result.m_logicImmoKey + ", PapKEY: " + std::to_string(result.m_papKey);
+			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey);
 			m_SQlite3Requests.push_back(mes);
 		}
 	}
@@ -914,7 +860,7 @@ void DatabaseManager::DisplayMySQLRequestsPanel()
 	if (callCommand)
 	{
 		std::string str = m_MySQLInputDebug;
-		DatabaseManager::getSingleton()->TriggerExternalSQLCommand(str);
+		DatabaseManager::getSingleton()->TriggerDebugExternalSQLCommand(str);
 	}
 
 	if (ImGui::Button("Clear"))

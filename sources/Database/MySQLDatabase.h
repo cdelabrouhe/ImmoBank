@@ -112,7 +112,7 @@ namespace ImmoBank
 		bool UpdateAllZipCodes();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();
-		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
+		MYSQL_RES* ExecuteQuery(const std::string& _query) const;
 
 	protected:
 		int ExecuteUpdate(const std::string& _query) const;
@@ -145,8 +145,6 @@ namespace ImmoBank
 			int m_requestID = -1;
 		};
 		std::vector<sBoroughData>	m_boroughData;
-		bool			m_updateLogicImmoInProgress = false;
-		bool			m_updatePapInProgress = false;
 		bool			m_updateZipCodesInProgress = false;
 	};
 }

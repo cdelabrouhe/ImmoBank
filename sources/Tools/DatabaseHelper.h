@@ -53,14 +53,17 @@ namespace ImmoBank
 		Entry* GetEntry(const int _ID);
 		void UpdateEntryData(EntryData& _data);
 		void CreateTableRequest(std::string& _request);
-		void UpdateDataInternal(EntryData* _data);
+		void UpdateDataInternal(EntryData* _data, bool _affectServerData = true);
+		void UpdateFromExternalDatabase();
 
 		virtual void Load();
 
 	protected:
-		virtual EntryData* _GetEntryDataFromSource(EntryData* _source)	{ return nullptr;	}
-		virtual EntryData* _GetEntryDataFromKey(void* _key)				{ return nullptr;	}
+		virtual EntryData* _GetEntryDataFromSource(EntryData* _source) const	{ return nullptr;	}
+		virtual EntryData* _GetEntryDataFromFullKey(void* _key) const			{ return nullptr;	}
+		virtual EntryData* _GetEntryDataFromCityName(const std::string& _name) const { return nullptr; }
 		virtual EntryData* _GenerateEntryData() { return nullptr; }
+		void _ClearAllData();
 
 	private:
 		void _Stringify(std::string& _str, EntryData* _data, bool _addBrackets, bool _addQuote, bool _addValues, bool _addReturn, bool _addType, bool _addAnd, bool _affectValues);

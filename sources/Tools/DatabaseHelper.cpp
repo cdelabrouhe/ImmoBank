@@ -3,6 +3,7 @@
 #include <Database/DatabaseManager.h>
 #include <Database/SQLDatabase.h>
 #include "extern/sqlite/include/sqlite3.h"
+#include "mysql.h"
 
 using namespace ImmoBank;
 
@@ -30,19 +31,19 @@ void DatabaseHelper::Load()
 	});
 }
 
-void DatabaseHelper::UpdateDataInternal(EntryData* _data)
+void DatabaseHelper::UpdateDataInternal(EntryData* _data, bool _affectServerData)
 {
 	_data->Generate(this);
 
 	std::string str = "DELETE FROM `" + m_databaseName + "` " + "WHERE ";
 	_Stringify(str, _data, false, false, false, false, false, true, true);
 
-	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str);
+	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str, _affectServerData);
 
 	str = "INSERT INTO " + m_databaseName + " ";
 	_Stringify(str, _data, true, false, true, false, false, false, false);
 
-	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str);
+	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str, _affectServerData);
 }
 
 void DatabaseHelper::_Stringify(std::string& _str, EntryData* _data, bool _addBrackets, bool _addQuote, bool _addValues, bool _addReturn, bool _addType, bool _addAnd, bool _affectValues)
@@ -170,4 +171,47 @@ void DatabaseHelper::_InternalLoad(sqlite3_stmt* _stmt)
 
 	data->Load(this);
 	m_data.push_back(data);
+}
+
+void DatabaseHelper::UpdateFromExternalDatabase()
+{
+	_ClearAllData();
+
+	std::string request = "SELECT * FROM `" + m_databaseName + "`";
+	MYSQL_RES* res = DatabaseManager::getSingleton()->TriggerExternalSQLCommand(request);
+
+	while (MYSQL_ROW row = mysql_fetch_row(res))
+	{
+		auto* data = _GenerateEntryData();
+		int rowID = 0;
+		for (auto& entry : m_entries)
+		{
+			bool valid = true;
+			EntryValue val;
+			switch (entry.m_type)
+			{
+			case ColumnType_FLOAT:	val.m_fVal = (float)strtod(row[rowID++], nullptr);				break;
+			case ColumnType_INT:	val.m_iVal = strtoul(row[rowID++], nullptr, 10);				break;
+			case ColumnType_TEXT:	val.m_sVal = row[rowID++];										break;
+			default:	valid = false;	break;
+			}
+
+			if (valid)
+				data->m_data.push_back(val);
+		}
+
+		data->Load(this);
+		m_data.push_back(data);
+
+		UpdateDataInternal(data, false);
+	}
+}
+
+void DatabaseHelper::_ClearAllData()
+{
+	for (auto* data : m_data)
+	{
+		delete data;
+	}
+	m_data.clear();
 }

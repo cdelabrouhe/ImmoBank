@@ -5,6 +5,7 @@
 #include "Tools\StringTools.h"
 #include "SearchRequestResulCityBorough.h"
 #include <algorithm>
+#include <Online/OnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -39,22 +40,12 @@ void SearchRequestCityBoroughs::SwitchState(State _state)
 			std::string request = "https://geo.meilleursagents.com/geo/v1/?q=" + name + str + "&types=arrmuns,boroughs";
 			m_httpRequestsID.push_back(OnlineManager::getSingleton()->SendBasicHTTPRequest(request));
 		}
-		break;
-	}
-	case State_CheckLogicImmo:
-	{
-		// No boroughs on LogicImmo => set city key
-		for (auto& borough : m_boroughs)
-			borough.m_logicImmoID = m_city.m_logicImmoKey;
 
-		break;
-	}
-	case State_CheckPap:
-	{
-		// No boroughs on Pap => set city key
-		for (auto& borough : m_boroughs)
-			borough.m_papKeyID = m_city.m_papKey;
-
+		auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+		for (auto* db : dbs)
+		{
+			db->ReferenceCity(m_city.m_name);
+		}
 		break;
 	}
 	default:
@@ -134,22 +125,10 @@ void SearchRequestCityBoroughs::Process()
 						valid = false;
 				}
 
-				SwitchState(State_CheckLogicImmo);
+				SwitchState(State_DONE);
 			}
 		}
 		break;
-
-		case State_CheckLogicImmo:
-		{			
-			SwitchState(State_CheckPap);
-			break;
-		}
-
-		case State_CheckPap:
-		{
-			SwitchState(State_DONE);
-			break;
-		}
 
 		default:
 			break;
@@ -182,8 +161,6 @@ bool SearchRequestCityBoroughs::GetResult(std::vector<SearchRequestResult*>& _re
 		SearchRequestResulCityBorough* result = new SearchRequestResulCityBorough();
 		result->m_name = borough.m_name;
 		result->m_internalID = borough.m_internalID;
-		result->m_logicImmoID = borough.m_logicImmoID;
-		result->m_papKeyID = borough.m_papKeyID;
 		_results.push_back(result);
 	}
 

@@ -26,6 +26,9 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
+	int key = GetKey(announce->m_city);
+	if (key == -1)
+		return -1;
 
 	std::string request = "https://ws.pap.fr/immobilier/annonces?";
 
@@ -58,7 +61,7 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 	}
 
 	// Localisation (no borough for now)
-	request += "&recherche[geo][ids][]=" + std::to_string(announce->m_city.m_papKey);
+	request += "&recherche[geo][ids][]=" + std::to_string(key);
 
 	// Price
 	request += "&recherche[prix][min]=" + std::to_string(announce->m_priceMin);
@@ -210,23 +213,14 @@ void PapOnlineDatabase::ReferenceCity(const std::string& _name)
 		m_currentKeyID = -1;
 	}
 
-	sCityData data;
-	DatabaseManager::getSingleton()->GetCityData(_name, -1, data);
-	if (data.m_data.m_papKey == 0)
-	{
-		std::string request = _ComputeKeyURL(_name);
-		m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
-	}
-	else
-	{
-		_UpdateData(_name, -1, data.m_data.m_papKey);
-	}
+	std::string request = _ComputeKeyURL(_name);
+	m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 }
 
 //-------------------------------------------------------------------------------------------------
 void PapOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
 {
-	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
+	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in PAP for now
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -246,10 +240,7 @@ bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sC
 	int zip = _zipCode / 1000;
 	EntryData* data = GetEntryData(_name, zip);
 	if (data != nullptr)
-	{
-		_city.m_papKey = ((sLocalData*)data)->m_key;
 		return true;
-	}
 
 	return false;
 }
@@ -265,7 +256,7 @@ void PapOnlineDatabase::_UpdateData(const std::string& _cityName, const int _zip
 }
 
 //-------------------------------------------------------------------------------------------------
-EntryData* PapOnlineDatabase::_GetEntryDataFromSource(EntryData* _source)
+EntryData* PapOnlineDatabase::_GetEntryDataFromSource(EntryData* _source) const
 {
 	sLocalData* source = (sLocalData*)_source;
 	for (auto* data : m_data)
@@ -368,7 +359,7 @@ void PapOnlineDatabase::_DecodeData(const std::string& _data, const sBoroughData
 }
 
 //-------------------------------------------------------------------------------------------------
-EntryData* PapOnlineDatabase::_GetEntryDataFromKey(void* _key)
+EntryData* PapOnlineDatabase::_GetEntryDataFromFullKey(void* _key) const
 {
 	std::pair<std::string,int> key = *(std::pair<std::string, int>*)_key;
 	for (auto* entry : m_data)
@@ -381,13 +372,42 @@ EntryData* PapOnlineDatabase::_GetEntryDataFromKey(void* _key)
 }
 
 //-------------------------------------------------------------------------------------------------
-EntryData* PapOnlineDatabase::GetEntryData(const std::string& _cityName, const int _zipCode)
+EntryData* PapOnlineDatabase::GetEntryData(const std::string& _cityName, const int _zipCode) const
 {
 	std::pair<std::string, int> key = std::make_pair(_cityName, _zipCode);
-	return _GetEntryDataFromKey((void*)&key);
+	return _GetEntryDataFromFullKey((void*)&key);
 }
 
 //-------------------------------------------------------------------------------------------------
+EntryData* PapOnlineDatabase::_GetEntryDataFromCityName(const std::string& _name) const
+{
+	for (auto* entry : m_data)
+	{
+		if (entry->m_data[0].m_sVal == _name)
+			return entry;
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+int PapOnlineDatabase::GetKey(sCity& _city) const
+{
+	std::string name = _city.m_name;
+	StringTools::ReplaceBadSyntax(name, "-", " ");
+	StringTools::TransformToLower(name);
+	StringTools::FixName(name);
+	StringTools::ConvertToImGuiText(name);
+	EntryData* data = GetEntryData(name, _city.m_zipCode);
+	if (data == nullptr)
+		data = _GetEntryDataFromCityName(name);
+
+	if (data != nullptr)
+		return data->m_data[2].m_iVal;
+
+	return -1;
+}
+
+/*//-------------------------------------------------------------------------------------------------
 void PapOnlineDatabase::ForceUpdateDataFromMainTable()
 {
 	std::vector<BoroughData> list;
@@ -406,4 +426,4 @@ void PapOnlineDatabase::ForceUpdateDataFromMainTable()
 			_UpdateData(name, entry.m_city.m_zipCode, entry.m_papKey);
 		}
 	}
-}
+}*/

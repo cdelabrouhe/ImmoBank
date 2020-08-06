@@ -36,6 +36,7 @@ namespace ImmoBank
 
 		void	DisplayDebug();
 
+		OnlineDatabase* GetOnlineDatabase(const std::string& _name) const;
 		std::vector<OnlineDatabase*>& GetOnlineDatabases() { return m_databases; }
 
 	public:

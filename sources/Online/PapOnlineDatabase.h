@@ -8,6 +8,8 @@ namespace ImmoBank
 	{
 		struct sLocalData : public EntryData
 		{
+			virtual ~sLocalData() {}
+
 			virtual void Generate(DatabaseHelper* _db) override;
 			virtual void Load(DatabaseHelper* _db) override;
 			virtual void copyTo(EntryData* _target) override;
@@ -26,9 +28,9 @@ namespace ImmoBank
 		virtual void ReferenceBorough(const BoroughData& _borough) override;
 		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) override;
 
-		EntryData* GetEntryData(const std::string& _cityName, const int _zipCode);
+		EntryData* GetEntryData(const std::string& _cityName, const int _zipCode) const;
 
-		virtual void ForceUpdateDataFromMainTable() override;
+		int GetKey(sCity& _city) const;
 
 	protected:
 		virtual bool _ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;
@@ -38,8 +40,9 @@ namespace ImmoBank
 		virtual void _DecodeData(const std::string& _data, const sBoroughData& _sourceBorough) override;
 
 		void _UpdateData(const std::string& _cityName, const int _zipCode, unsigned int _key);
-		virtual EntryData* _GetEntryDataFromSource(EntryData* _source) override;
-		virtual EntryData* _GetEntryDataFromKey(void* _key) override;
+		virtual EntryData* _GetEntryDataFromSource(EntryData* _source) const override;
+		virtual EntryData* _GetEntryDataFromFullKey(void* _key) const override;
+		virtual EntryData* _GetEntryDataFromCityName(const std::string& _name) const override;
 
 	private:
 		int		m_currentKeyID = -1;

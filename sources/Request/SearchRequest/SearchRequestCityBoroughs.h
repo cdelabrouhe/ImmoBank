@@ -10,8 +10,6 @@ namespace ImmoBank
 		{
 			State_NONE = -1,
 			State_GetRawList,
-			State_CheckLogicImmo,
-			State_CheckPap,
 			State_DONE,
 			Stat_COUNT
 		};

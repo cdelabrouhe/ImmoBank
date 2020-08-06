@@ -5,6 +5,7 @@
 #include "Tools/StringTools.h"
 #include "extern/jsoncpp/reader.h"
 #include <time.h>
+#include <Text/TextManager.h>
 
 using namespace ImmoBank;
 
@@ -24,7 +25,6 @@ void CitySelector::_UpdateCitiesList()
 
 		if (reader.parse(result, root))
 		{
-			// Parse LogicImmo keys
 			unsigned int nbMaxCities = 10;
 			unsigned int nbCities = root.isArray() ? (root.size() < nbMaxCities ? root.size() : nbMaxCities) : 0;
 			for (unsigned int ID = 0; ID < nbCities; ++ID)
@@ -108,7 +108,7 @@ bool CitySelector::Display()
 	_UpdateAsynchronousData();	
 
 	// left
-	if (ImGui::InputText("Search city", (char*)m_inputTextCity, 256))
+	if (ImGui::InputText(GET_TEXT("DatabaseWindowSearchCity"), (char*)m_inputTextCity, 256))
 	{
 		if (strlen(m_inputTextCity) >= 2)
 		{

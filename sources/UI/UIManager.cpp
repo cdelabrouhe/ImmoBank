@@ -15,6 +15,9 @@
 #include <GL/ProdToolGL.h>
 #include "GLFW/glfw3.h"
 #include <shellapi.h>
+#include <Online/OnlineDatabase.h>
+#include <Online/PapOnlineDatabase.h>
+#include <Online/LogicImmoOnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -143,12 +146,31 @@ bool UIManager::Draw()
 				ImGui::MenuItem(GET_TEXT("MenuDebugDisplayMySQLDebug"), nullptr, &DatabaseManager::getSingleton()->m_displayDebugMySQL);
 				ImGui::MenuItem("SQlite3 debug panel", nullptr, &DatabaseManager::getSingleton()->m_displayDebugSQLite3);
 				ImGui::MenuItem("OnlineManager debug panel", nullptr, &OnlineManager::getSingleton()->m_displayDebug);
-				ImGui::MenuItem("GenerateLogicImmoKeys", nullptr, &DatabaseManager::getSingleton()->m_generateLogicImmoIndices);
-				ImGui::MenuItem("GeneratePapKeys", nullptr, &DatabaseManager::getSingleton()->m_generatePapIndices);
 				ImGui::MenuItem("GenerateZipCodes", nullptr, &DatabaseManager::getSingleton()->m_generateZipCodesIndices);
 				ImGui::MenuItem("UpdateLocalBaseToServer", nullptr, &DatabaseManager::getSingleton()->m_updateLocalBaseToServer);
 				ImGui::MenuItem("UpdateServerToLocalBase", nullptr, &DatabaseManager::getSingleton()->m_updateServerToLocalBase);
 
+				if (ImGui::BeginMenu("Databases"))
+				{
+					auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+					for (auto* db : dbs)
+					{
+						if (ImGui::BeginMenu(db->GetName().c_str()))
+						{
+							if (bool* update = db->ForceUpdate())
+							{
+								std::string name = "Force update internal data";
+								ImGui::MenuItem(name.c_str(), nullptr, update);
+							}
+
+							if (ImGui::MenuItem("Update data from server"))
+								db->UpdateFromExternalDatabase();
+
+							ImGui::EndMenu();
+						}
+					}
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 		}
@@ -328,16 +350,27 @@ void UIManager::DisplayCityInformation()
 		StringTools::ConvertToImGuiText(name);
 		if (Tools::IsDevMode())
 		{
-			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %s  %s: %u", GET_TEXT("DatabaseWindowCityName")
+			char buf[2048];
+			sprintf(buf, "%s: %s    %s: %d   %s: %d"
+				, GET_TEXT("DatabaseWindowCityName")
 				, name.c_str()
 				, GET_TEXT("DatabaseWindowZipCode")
 				, selectedCity.m_data.m_zipCode
 				, GET_TEXT("DatabaseWindowInseeCode")
-				, selectedCity.m_data.m_inseeCode
-				, "LogicImmoKey"
-				, selectedCity.m_data.m_logicImmoKey.c_str()
-				, "PapKey"
-				, selectedCity.m_data.m_papKey);
+				, selectedCity.m_data.m_inseeCode);
+
+			std::string text(buf);
+
+			auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+			for (auto* db : dbs)
+			{
+				if (db->HasKey())
+				{
+					text += "  " + db->GetName() + " key: " + db->GetKeyAsString(selectedCity.m_data);
+				}
+			}
+
+			ImGui::Text("%s", text.c_str());
 		}
 		else
 		{

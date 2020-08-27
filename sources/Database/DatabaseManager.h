@@ -6,6 +6,7 @@
 #include "BoroughData.h"
 #include "CityComputeData.h"
 #include "CityUpdateData.h"
+#include "MySQLDatabase.h"
 
 struct sqlite3;
 
@@ -14,13 +15,13 @@ namespace ImmoBank
 	enum DataTables
 	{
 		DataTables_NONE = -1,
-		DataTables_Cities,
 		DataTables_Boroughs,
 		DataTables_COUNT
 	};
 
 	class MySQLDatabase;
 	class ImageDatabase;
+	class OnlineDatabase;
 
 	extern const std::string	s_wholeCityName;
 
@@ -52,7 +53,7 @@ namespace ImmoBank
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);
 
-		void	AddCity(const sCityData& _data);
+		void	AddCity(sCityData& _data);
 		bool	GetCityData(const std::string& _name, const int _zipCode, sCityData& _data, BoroughData* _wholeCity = nullptr);
 		bool	RemoveCityData(const std::string& _name, const int _zipCode);
 		bool	ListAllCities(std::vector<sCity>& _list);
@@ -71,14 +72,20 @@ namespace ImmoBank
 
 		inline bool IsConnectionValid() const { return m_connectionValid; }
 
-		void GetConnectionParameters(std::string& _server, std::string& _user);
+		void	GetConnectionParameters(std::string& _server, std::string& _user);
 
-		void TriggerExternalSQLCommand(const std::string& _query);
+		bool	TriggerSQLCommand(const std::string& _tableName, const std::string& _query, bool _affectExternal = true);
+		void	TriggerDebugExternalSQLCommand(const std::string& _query);
+		MYSQL_RES*	TriggerExternalSQLCommand(const std::string& _query);
 		
 		void	DisplayDebug();
 		void	DisplaySQlite3Debug();
 		void	DisplayMySQLRequestsPanel();
 		void	NotifyMySQLEvent(const std::string& _request);
+
+		void	NotifyOnlineDatabaseCreation(OnlineDatabase* _db);
+
+		sqlite3* GetTable(const std::string& _name);
 
 	private:
 		void	CreateTables();
@@ -94,7 +101,8 @@ namespace ImmoBank
 		bool							m_displayDebugMySQL = false;
 
 	private:
-		sqlite3*						m_tables[DataTables_COUNT];
+		sqlite3*						m_mainTables[DataTables_COUNT];
+		std::map<std::string, sqlite3*>	m_tables;
 		std::vector<CityComputeData>	m_cityComputes;
 		std::vector<CityUpdateData>		m_cityUpdates;
 		std::vector<BoroughData>		m_boroughComputes;
@@ -111,8 +119,6 @@ namespace ImmoBank
 		std::vector<std::string>		m_SQlite3Requests;
 
 	public:
-		bool							m_generateLogicImmoIndices = false;
-		bool							m_generatePapIndices = false;
 		bool							m_generateZipCodesIndices = false;
 		bool							m_updateLocalBaseToServer = false;
 		bool							m_updateServerToLocalBase = false;

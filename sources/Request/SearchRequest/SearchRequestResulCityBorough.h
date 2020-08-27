@@ -15,8 +15,6 @@ namespace ImmoBank
 		virtual ~SearchRequestResulCityBorough() {}
 
 		std::string		m_name;
-		std::string		m_logicImmoID;
 		unsigned int	m_internalID = 0xFFFFFFFF;
-		unsigned int	m_papKeyID = 0xFFFFFFFF;
 	};
 }

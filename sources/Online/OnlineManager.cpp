@@ -34,25 +34,18 @@ void OnlineManager::Init()
 {
 	s_downloader.Init();
 
-	/*auto seLogerDB = new SeLogerOnlineDatase();
-	seLogerDB->Init();
-	m_databases.push_back(seLogerDB);*/
+	//m_databases.push_back(new SeLogerOnlineDatase());
+	m_databases.push_back(new LaforetOnlineDatabase());
+	m_databases.push_back(new OrpiOnlineDatabase());
+	m_databases.push_back(new LogicImmoOnlineDatabase());
+	m_databases.push_back(new PapOnlineDatabase());
 
-	auto laforetDB = new LaforetOnlineDatabase();
-	laforetDB->Init();
-	m_databases.push_back(laforetDB);
-
-	auto orpiDB = new OrpiOnlineDatabase();
-	orpiDB->Init();
-	m_databases.push_back(orpiDB);
-
-	auto logicImmoDB = new LogicImmoOnlineDatabase();
-	logicImmoDB->Init();
-	m_databases.push_back(logicImmoDB);
-
-	auto papDB = new PapOnlineDatabase();
-	papDB->Init();
-	m_databases.push_back(papDB);
+	// Notify DatabaseManager that a new DB has been created
+	for (auto* db : m_databases)
+	{
+		db->Init();
+		DatabaseManager::getSingleton()->NotifyOnlineDatabaseCreation(db);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -77,6 +70,17 @@ void OnlineManager::End()
 
 	for (auto db : m_databases)
 		db->End();
+}
+
+//-------------------------------------------------------------------------------------------------
+OnlineDatabase* OnlineManager::GetOnlineDatabase(const std::string& _name) const
+{
+	for (auto db : m_databases)
+	{
+		if (db->GetName() == _name)
+			return db;
+	}
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

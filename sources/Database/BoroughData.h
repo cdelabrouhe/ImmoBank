@@ -27,8 +27,6 @@ namespace ImmoBank
 		sDate				m_timeUpdate;
 		unsigned int		m_meilleursAgentsKey = 0xffffffff;
 		unsigned int		m_selogerKey = 0;	// Not used anymore, but we keep it for compatibility matters
-		unsigned int		m_papKey = 0;
-		std::string			m_logicImmoKey;
 		sPrice				m_priceRentApartmentT1;
 		sPrice				m_priceRentApartmentT2;
 		sPrice				m_priceRentApartmentT3;
@@ -54,24 +52,13 @@ namespace ImmoBank
 
 		void SetTimeUpdateToNow();
 
-		void SetLogicImmoKey(std::string& _key);
-		std::string GetLogicImmoKey();
-
-		void SetPapKey(unsigned int _key);
-		int GetPapKey();
-
 		std::string ComputeRequestURL() const;
-		std::string ComputeLogicImmoKeyURL() const;
-		static std::string ComputeLogicImmoKeyURL(const std::string& _name);
-		std::string ComputePapKeyURL() const;
-		static std::string ComputePapKeyURL(const std::string& _name);
 
 		bool operator==(const BoroughData &_other) const
 		{
 			return (_other.m_city.m_name == _other.m_city.m_name)
 				&& (_other.m_name == _other.m_name)
 				&& (_other.m_selogerKey == _other.m_selogerKey)
-				&& (_other.m_logicImmoKey == _other.m_logicImmoKey)
 				&& (_other.m_meilleursAgentsKey == _other.m_meilleursAgentsKey);
 		}
 

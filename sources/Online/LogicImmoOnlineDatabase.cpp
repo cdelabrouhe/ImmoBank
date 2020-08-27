@@ -12,6 +12,12 @@ using namespace ImmoBank;
 void LogicImmoOnlineDatabase::Init()
 {
 	SetName("LogicImmo");
+	SetDatabaseName("DB_LOGICIMMO");
+	AddEntry("CITY", ColumnType_TEXT);
+	AddEntry("ZIPCODE", ColumnType_INT);
+	AddEntry("DBKEY", ColumnType_TEXT);
+
+	m_intervalBetweenRequests = 60;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -21,6 +27,9 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
+	std::string key = GetKey(announce->m_city);
+	if (key.empty())
+		return -1;
 
 	// Doc: https://github.com/axeleroy/untoitpourcaramel
 	// Cherche ville avec http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=Montpellier
@@ -53,7 +62,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	BoroughData borough;
 	sCityData cityData;
 	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
-	request += "&localities=" + borough.m_logicImmoKey;
+	request += "&localities=" + GetKey(cityData.m_data);
 
 	// Price
 	request += "&price_range=" + std::to_string(announce->m_priceMin) + "," + std::to_string(announce->m_priceMax);
@@ -83,7 +92,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool LogicImmoOnlineDatabase::ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
+bool LogicImmoOnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
 {
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;
@@ -173,11 +182,26 @@ void LogicImmoOnlineDatabase::Process()
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
-					m_keys[std::make_pair(name, zip)] = val["key"].asString();
+					EntryData* data = GetEntryData(name, zip);
+
+					if (data == nullptr)
+					{
+						_UpdateData(name, zip, val["key"].asString());
+					}
+					else
+					{
+						sLocalData* localData = (sLocalData*)data;
+						localData->m_cityName = name;
+						localData->m_zipCode = zip;
+						localData->m_key = val["key"].asString();
+						UpdateDataInternal(localData);
+					}
 				}
 			}
 		}
 	}
+
+	OnlineDatabase::Process();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -189,25 +213,18 @@ void LogicImmoOnlineDatabase::ReferenceCity(const std::string& _name)
 		m_currentKeyID = -1;
 	}
 
-	sCityData data;
-	DatabaseManager::getSingleton()->GetCityData(_name, -1, data);
-	if (data.m_data.m_logicImmoKey.empty())
-	{
-		std::string request = ComputeKeyURL(_name);
-		m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
-	}
-	else
-		m_keys[std::make_pair(_name, -1)] = data.m_data.m_logicImmoKey;
+	std::string request = _ComputeKeyURL(_name);
+	m_currentKeyID = OnlineManager::getSingleton()->SendBasicHTTPRequest(request, true);
 }
 
 //-------------------------------------------------------------------------------------------------
-void ImmoBank::LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
+void LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
 {
 	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string LogicImmoOnlineDatabase::ComputeKeyURL(const std::string& _name)
+std::string LogicImmoOnlineDatabase::_ComputeKeyURL(const std::string& _name)
 {
 	std::string name = _name;
 	StringTools::RemoveSpecialCharacters(name);
@@ -221,12 +238,168 @@ std::string LogicImmoOnlineDatabase::ComputeKeyURL(const std::string& _name)
 bool LogicImmoOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
 {
 	int zip = _zipCode / 1000;
-	auto it = m_keys.find(std::make_pair(_name, zip));
-	if (it != m_keys.end())
-	{
-		_city.m_logicImmoKey = it->second;
+	EntryData* data = GetEntryData(_name, zip);
+	if (data != nullptr)
 		return true;
-	}
 
 	return false;
 }
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::_UpdateData(const std::string& _cityName, const int _zipCode, const std::string& _key)
+{
+	sLocalData localData;
+	localData.m_cityName = _cityName;
+	localData.m_zipCode = _zipCode;
+	localData.m_key = _key;
+	UpdateEntryData(localData);
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::_GetEntryDataFromSource(EntryData* _source) const
+{
+	sLocalData* source = (sLocalData*)_source;
+	for (auto* data : m_data)
+	{
+		sLocalData* localData = (sLocalData*)data;
+		if ((source->m_cityName == localData->m_cityName) && (source->m_zipCode == localData->m_zipCode))
+			return data;
+	}
+
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::_GenerateEntryData()
+{
+	return new sLocalData;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::sLocalData::Generate(DatabaseHelper* _db)
+{
+	m_data.resize(_db->GetEntryCount());
+	m_data[0].m_sVal = m_cityName;
+	m_data[1].m_iVal = m_zipCode;
+	m_data[2].m_sVal = m_key;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::sLocalData::Load(DatabaseHelper* _db)
+{
+	m_cityName = m_data[0].m_sVal;
+	m_zipCode = m_data[1].m_iVal;
+	m_key = m_data[2].m_sVal;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::sLocalData::copyTo(EntryData* _target)
+{
+	sLocalData* target = (sLocalData*)_target;
+	target->m_cityName = m_cityName;
+	target->m_zipCode = m_zipCode;
+	target->m_key = m_key;
+}
+
+//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::_DecodeData(const std::string& _data, const sBoroughData& _sourceBorough)
+{
+	Json::Reader reader;
+	Json::Value root;
+	reader.parse(_data, root);
+
+	Json::Value& places = root["items"];
+	if (places.isArray())
+	{
+		const int nbPlaces = places.size();
+		for (int placeID = 0; placeID < nbPlaces; ++placeID)
+		{
+			Json::Value val = places.get(placeID, Json::nullValue);
+			std::string name = val["name"].asString();
+			if (name.empty())
+				continue;
+
+			StringTools::TransformToLower(name);
+			StringTools::ReplaceBadSyntax(name, " ", "-");
+			std::string key = val["key"].asString();
+			std::string zipCode = val["postCode"].asString();
+			int zip = _sourceBorough.m_data.m_city.m_zipCode;
+			if (!zipCode.empty())
+				zip = stoi(zipCode);
+			else
+				continue;
+
+			_UpdateData(name, zip, key);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::_GetEntryDataFromFullKey(void* _key) const
+{
+	std::pair<std::string, int> key = *(std::pair<std::string, int>*)_key;
+	for (auto* entry : m_data)
+	{
+		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[0].m_iVal);
+		if (localKey == key)
+			return entry;
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::GetEntryData(const std::string& _cityName, const int _zipCode) const
+{
+	std::pair<std::string, int> key = std::make_pair(_cityName, _zipCode);
+	return _GetEntryDataFromFullKey((void*)&key);
+}
+
+//-------------------------------------------------------------------------------------------------
+EntryData* LogicImmoOnlineDatabase::_GetEntryDataFromCityName(const std::string& _name) const
+{
+	for (auto* entry : m_data)
+	{
+		if (entry->m_data[0].m_sVal == _name)
+			return entry;
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string LogicImmoOnlineDatabase::GetKey(sCity& _city) const
+{
+	std::string name = _city.m_name;
+	StringTools::TransformToLower(name);
+	StringTools::FixName(name);
+	StringTools::ConvertToImGuiText(name);
+	EntryData* data = GetEntryData(name, _city.m_zipCode);
+	if (data == nullptr)
+		data = _GetEntryDataFromCityName(name);
+
+	if (data != nullptr)
+		return data->m_data[2].m_sVal;
+
+	return "NO KEY FOUND";
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::LogicImmoOnlineDatabase::GetKeyAsString(sCity& _city) const
+{
+	return GetKey(_city);
+}
+
+/*//-------------------------------------------------------------------------------------------------
+void LogicImmoOnlineDatabase::ForceUpdateDataFromMainTable()
+{
+	std::vector<BoroughData> list;
+	DatabaseManager::getSingleton()->GetAllBoroughs(list);
+
+	for (auto& entry : list)
+	{
+		EntryData* data = GetEntryData(entry.m_city.m_name, entry.m_city.m_zipCode);
+		if ((data == nullptr) && (entry.m_city.m_zipCode != 0) && !entry.m_logicImmoKey.empty())
+		{
+			_UpdateData(entry.m_city.m_name, entry.m_city.m_zipCode, entry.m_logicImmoKey);
+		}
+	}
+}*/

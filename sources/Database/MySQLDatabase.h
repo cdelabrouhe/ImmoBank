@@ -109,14 +109,12 @@ namespace ImmoBank
 
 		void DebugQuery(const std::string& _query);
 
-		bool UpdateAllLogicImmoKeys();
-		bool UpdateAllPapKeys();
 		bool UpdateAllZipCodes();
 		bool UpdateLocalBaseToServer();
 		bool UpdateServerToLocalBase();
+		MYSQL_RES* ExecuteQuery(const std::string& _query) const;
 
 	protected:
-		MYSQL_RES* MySQLDatabase::ExecuteQuery(const std::string& _query) const;
 		int ExecuteUpdate(const std::string& _query) const;
 
 	private:
@@ -147,8 +145,6 @@ namespace ImmoBank
 			int m_requestID = -1;
 		};
 		std::vector<sBoroughData>	m_boroughData;
-		bool			m_updateLogicImmoInProgress = false;
-		bool			m_updatePapInProgress = false;
 		bool			m_updateZipCodesInProgress = false;
 	};
 }

@@ -74,8 +74,6 @@ void BoroughData::Reset(bool _resetDB)
 	m_priceBuyHouse.Reset();
 	m_priceRentHouse.Reset();
 	m_meilleursAgentsKey = 0;
-	m_logicImmoKey = "";
-	m_papKey = 0;
 
 	// Reset all data in DBs
 	if (_resetDB)
@@ -88,11 +86,6 @@ void BoroughData::Reset(bool _resetDB)
 void BoroughData::SetWholeCity()
 {
 	m_name = s_wholeCityName;
-	if ((m_logicImmoKey.empty() || m_logicImmoKey == "(null)") && (!m_city.m_logicImmoKey.empty()))
-		m_logicImmoKey = m_city.m_logicImmoKey;
-
-	if (m_papKey == 0)
-		m_papKey = m_city.m_papKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -120,18 +113,6 @@ void BoroughData::SetTimeUpdateToNow()
 	std::time_t t = std::time(0);   // get time now
 	std::tm* now = std::localtime(&t);
 	m_timeUpdate.SetDate(now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
-}
-
-//-------------------------------------------------------------------------------------------------
-void BoroughData::SetLogicImmoKey(std::string& _key)
-{
-	m_logicImmoKey = _key;
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string BoroughData::GetLogicImmoKey()
-{
-	return m_logicImmoKey;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -194,52 +175,6 @@ std::string BoroughData::ComputeRequestURL() const
 	}
 
 	return request;
-}
-
-//-------------------------------------------------------------------------------------------------
-void ImmoBank::BoroughData::SetPapKey(unsigned int _key)
-{
-	m_papKey = _key;
-}
-
-//-------------------------------------------------------------------------------------------------
-int ImmoBank::BoroughData::GetPapKey()
-{
-	return m_papKey;
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL() const
-{
-	return ComputeLogicImmoKeyURL(m_city.m_name);
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string ImmoBank::BoroughData::ComputeLogicImmoKeyURL(const std::string& _name)
-{
-	std::string name = _name;
-	StringTools::RemoveSpecialCharacters(name);
-	StringTools::ReplaceBadSyntax(name, "-", "%20");
-	StringTools::ReplaceBadSyntax(name, " ", "%20");
-	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
-	return request;
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string ImmoBank::BoroughData::ComputePapKeyURL() const
-{
-	return ComputePapKeyURL(m_city.m_name);
-}
-
-//-------------------------------------------------------------------------------------------------
-std::string ImmoBank::BoroughData::ComputePapKeyURL(const std::string& _name)
-{
-	std::string name = _name;
-	StringTools::RemoveSpecialCharacters(name);
-	StringTools::ReplaceBadSyntax(name, "-", "%20");
-	StringTools::ReplaceBadSyntax(name, " ", "%20");
-	std::string str = "https://ws.pap.fr/gis/places?recherche[cible]=pap-recherche-ac&recherche[q]=" + name;
-	return str;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -313,16 +248,6 @@ void BoroughData::Edit()
 		{
 			EDIT_INFO_UINT(MeilleursAgentsKey, m_meilleursAgentsKey);
 
-			static char s_text[64];
-			strcpy(s_text, m_logicImmoKey.c_str());
-			if (ImGui::InputText("LogicImmoKey", (char*)s_text, 64))
-				m_logicImmoKey = s_text;
-
-			static int s_papKey = -1;
-			s_papKey = m_papKey;
-			if (ImGui::InputInt("PapKey", &s_papKey))
-				m_papKey = s_papKey;
-
 			static int s_zipCode = -1;
 			s_zipCode = m_city.m_zipCode;
 			if (ImGui::InputInt("ZipCode", &s_zipCode))
@@ -364,11 +289,16 @@ void BoroughData::DisplayAsTooltip()
 		{
 			ImGui::Text("ZIP code: %d", m_city.m_zipCode);
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
+
+			auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+			for (auto* db : dbs)
+			{
+				if (db->HasKey())
+				{
+					ImGui::Text("%s key: %s", db->GetName(), db->GetKeyAsString(m_city).c_str());
+				}
+			}
 			bool isCity = false;
-			unsigned int papKey = GetPapKey();
-			std::string logicImmoKey = GetLogicImmoKey();
-			ImGui::Text("LogicImmoKey: %s", logicImmoKey.c_str()),
-			ImGui::Text("PapKey: %u", papKey);
 		}
 
 		if (IsValid())

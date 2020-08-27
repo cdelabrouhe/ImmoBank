@@ -49,6 +49,6 @@ namespace ImmoBank
 		virtual void End() override;
 
 	protected:
-		virtual bool ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;
+		virtual bool _ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;
 	};
 }

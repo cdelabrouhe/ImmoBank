@@ -16,6 +16,8 @@
 #include "GLFW/glfw3.h"
 #include <shellapi.h>
 #include <Online/OnlineDatabase.h>
+#include <Online/PapOnlineDatabase.h>
+#include <Online/LogicImmoOnlineDatabase.h>
 
 using namespace ImmoBank;
 
@@ -348,12 +350,27 @@ void UIManager::DisplayCityInformation()
 		StringTools::ConvertToImGuiText(name);
 		if (Tools::IsDevMode())
 		{
-			ImGui::Text("%s: %s    %s: %d   %s: %d	%s: %u  %s: %s", GET_TEXT("DatabaseWindowCityName")
+			char buf[2048];
+			sprintf(buf, "%s: %s    %s: %d   %s: %d"
+				, GET_TEXT("DatabaseWindowCityName")
 				, name.c_str()
 				, GET_TEXT("DatabaseWindowZipCode")
 				, selectedCity.m_data.m_zipCode
 				, GET_TEXT("DatabaseWindowInseeCode")
-				, selectedCity.m_data.m_inseeCode
+				, selectedCity.m_data.m_inseeCode);
+
+			std::string text(buf);
+
+			auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+			for (auto* db : dbs)
+			{
+				if (db->HasKey())
+				{
+					text += "  " + db->GetName() + " key: " + db->GetKeyAsString(selectedCity.m_data);
+				}
+			}
+
+			ImGui::Text("%s", text.c_str());
 		}
 		else
 		{

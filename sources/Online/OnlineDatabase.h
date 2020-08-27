@@ -42,6 +42,10 @@ namespace ImmoBank
 		virtual void ReferenceBorough(const BoroughData& _borough)	{}
 		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) { return true; }
 
+		virtual bool HasKey() { return false; }
+
+		virtual std::string GetKeyAsString(sCity& _city) const	{ return ""; }
+
 		bool* ForceUpdate();
 
 	protected:

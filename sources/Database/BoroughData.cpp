@@ -289,6 +289,15 @@ void BoroughData::DisplayAsTooltip()
 		{
 			ImGui::Text("ZIP code: %d", m_city.m_zipCode);
 			ImGui::Text("MeilleursAgentsKey: %u", m_meilleursAgentsKey);
+
+			auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
+			for (auto* db : dbs)
+			{
+				if (db->HasKey())
+				{
+					ImGui::Text("%s key: %s", db->GetName(), db->GetKeyAsString(m_city).c_str());
+				}
+			}
 			bool isCity = false;
 		}
 

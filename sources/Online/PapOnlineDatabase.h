@@ -30,7 +30,10 @@ namespace ImmoBank
 
 		EntryData* GetEntryData(const std::string& _cityName, const int _zipCode) const;
 
+		virtual bool HasKey() { return true; }
+
 		int GetKey(sCity& _city) const;
+		virtual std::string GetKeyAsString(sCity& _city) const override;
 
 	protected:
 		virtual bool _ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;

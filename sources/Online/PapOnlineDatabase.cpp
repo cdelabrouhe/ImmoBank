@@ -407,6 +407,13 @@ int PapOnlineDatabase::GetKey(sCity& _city) const
 	return -1;
 }
 
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::PapOnlineDatabase::GetKeyAsString(sCity& _city) const
+{
+	int key = GetKey(_city);
+	return (key != -1) ? std::to_string(key) : "NO KEY FOUND";
+}
+
 /*//-------------------------------------------------------------------------------------------------
 void PapOnlineDatabase::ForceUpdateDataFromMainTable()
 {

@@ -379,7 +379,13 @@ std::string LogicImmoOnlineDatabase::GetKey(sCity& _city) const
 	if (data != nullptr)
 		return data->m_data[2].m_sVal;
 
-	return "";
+	return "NO KEY FOUND";
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ImmoBank::LogicImmoOnlineDatabase::GetKeyAsString(sCity& _city) const
+{
+	return GetKey(_city);
 }
 
 /*//-------------------------------------------------------------------------------------------------

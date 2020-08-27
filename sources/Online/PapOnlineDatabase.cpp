@@ -413,24 +413,3 @@ std::string ImmoBank::PapOnlineDatabase::GetKeyAsString(sCity& _city) const
 	int key = GetKey(_city);
 	return (key != -1) ? std::to_string(key) : "NO KEY FOUND";
 }
-
-/*//-------------------------------------------------------------------------------------------------
-void PapOnlineDatabase::ForceUpdateDataFromMainTable()
-{
-	std::vector<BoroughData> list;
-	DatabaseManager::getSingleton()->GetAllBoroughs(list);
-
-	for (auto& entry : list)
-	{
-		std::string name = entry.m_city.m_name;
-		StringTools::ReplaceBadSyntax(name, "-", " ");
-		StringTools::TransformToLower(name);
-		StringTools::FixName(name);
-		StringTools::ConvertToImGuiText(name);
-		EntryData* data = GetEntryData(name, entry.m_city.m_zipCode);
-		if ((data == nullptr) && (entry.m_city.m_zipCode != 0) && (entry.m_papKey != 0))
-		{
-			_UpdateData(name, entry.m_city.m_zipCode, entry.m_papKey);
-		}
-	}
-}*/

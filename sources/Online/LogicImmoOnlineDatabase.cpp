@@ -387,19 +387,3 @@ std::string ImmoBank::LogicImmoOnlineDatabase::GetKeyAsString(sCity& _city) cons
 {
 	return GetKey(_city);
 }
-
-/*//-------------------------------------------------------------------------------------------------
-void LogicImmoOnlineDatabase::ForceUpdateDataFromMainTable()
-{
-	std::vector<BoroughData> list;
-	DatabaseManager::getSingleton()->GetAllBoroughs(list);
-
-	for (auto& entry : list)
-	{
-		EntryData* data = GetEntryData(entry.m_city.m_name, entry.m_city.m_zipCode);
-		if ((data == nullptr) && (entry.m_city.m_zipCode != 0) && !entry.m_logicImmoKey.empty())
-		{
-			_UpdateData(entry.m_city.m_name, entry.m_city.m_zipCode, entry.m_logicImmoKey);
-		}
-	}
-}*/

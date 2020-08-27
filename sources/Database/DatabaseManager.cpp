@@ -296,8 +296,8 @@ void ExtractBoroughDataFromSQL(BoroughData& _borough, sqlite3_stmt* _stmt)
 	int index = 0;
 	_borough.m_city.m_name = (const char*)sqlite3_column_text(_stmt, index++);
 	_borough.m_name = (const char*)sqlite3_column_text(_stmt, index++);
-	_borough.m_timeUpdate.SetData(sqlite3_column_int64(_stmt, index++));
-	_borough.m_meilleursAgentsKey = sqlite3_column_int64(_stmt, index++);
+	_borough.m_timeUpdate.SetData((unsigned int)sqlite3_column_int64(_stmt, index++));
+	_borough.m_meilleursAgentsKey = (unsigned int)sqlite3_column_int64(_stmt, index++);
 	_borough.m_priceBuyApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceBuyApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceBuyApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
@@ -319,9 +319,9 @@ void ExtractBoroughDataFromSQL(BoroughData& _borough, sqlite3_stmt* _stmt)
 	_borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_selogerKey = sqlite3_column_int64(_stmt, index++);
-	_borough.m_city.m_zipCode = sqlite3_column_int64(_stmt, index++);
-	_borough.m_city.m_inseeCode = sqlite3_column_int64(_stmt, index++);
+	_borough.m_selogerKey = (unsigned int)sqlite3_column_int64(_stmt, index++);
+	_borough.m_city.m_zipCode = (int)sqlite3_column_int64(_stmt, index++);
+	_borough.m_city.m_inseeCode = (int)sqlite3_column_int64(_stmt, index++);
 }
 
 //-------------------------------------------------------------------------------------------------

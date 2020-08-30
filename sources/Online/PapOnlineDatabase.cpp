@@ -9,6 +9,8 @@
 
 using namespace ImmoBank;
 
+AUTO_REFERENCE_ONLINE_DATABASE(PapOnlineDatabase)
+
 void PapOnlineDatabase::Init()
 {
 	SetName("PAP");

@@ -2,13 +2,9 @@
 #include "HTTPDownloader.h"
 #include "Request/SearchRequest/SearchRequest.h"
 #include "Tools/StringTools.h"
-#include "SeLogerOnlineDatabase.h"
-#include "LaforetOnlineDatabase.h"
-#include "OrpiOnlineDatabase.h"
-#include "LogicImmoOnlineDatabase.h"
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
-#include "PapOnlineDatabase.h"
+#include "OnlineDatabase.h"
 
 using namespace ImmoBank;
 
@@ -23,6 +19,12 @@ OnlineManager* OnlineManager::getSingleton()
 }
 
 //-------------------------------------------------------------------------------------------------
+void OnlineManager::ReferenceDatabase(OnlineDatabase* _db)
+{
+	m_databases.push_back(_db);
+}
+
+//-------------------------------------------------------------------------------------------------
 // DATA
 //-------------------------------------------------------------------------------------------------
 HTTPDownloader	s_downloader;
@@ -33,12 +35,6 @@ HTTPDownloader	s_downloader;
 void OnlineManager::Init()
 {
 	s_downloader.Init();
-
-	//m_databases.push_back(new SeLogerOnlineDatase());
-	m_databases.push_back(new LaforetOnlineDatabase());
-	m_databases.push_back(new OrpiOnlineDatabase());
-	m_databases.push_back(new LogicImmoOnlineDatabase());
-	m_databases.push_back(new PapOnlineDatabase());
 
 	// Notify DatabaseManager that a new DB has been created
 	for (auto* db : m_databases)

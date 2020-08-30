@@ -4,6 +4,17 @@
 #include <map>
 #include <string>
 
+#define AUTO_REFERENCE_ONLINE_DATABASE(name)\
+struct AutoReferenceOnlineDatabase##name \
+{ \
+	AutoReferenceOnlineDatabase##name##() \
+	{ \
+		OnlineManager::getSingleton()->ReferenceDatabase(new name##()); \
+	} \
+}; \
+AutoReferenceOnlineDatabase##name s_autoRefOnlineDB##name##; \
+
+
 namespace ImmoBank
 {
 	//-------------------------------------------------------------------------------------------------
@@ -33,6 +44,7 @@ namespace ImmoBank
 		bool	GetBasicHTTPRequestResult(const int _requestID, std::string& _result);
 		bool	GetBinaryHTTPRequestResult(const int _requestID, unsigned char*& _result, int& _size);
 		void	CancelBasicHTTPRequest(const int _requestID);
+		void	ReferenceDatabase(OnlineDatabase* _db);
 
 		void	DisplayDebug();
 

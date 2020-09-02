@@ -40,7 +40,7 @@ namespace ImmoBank
 
 		virtual void ReferenceCity(const std::string& _name) {}
 		virtual void ReferenceBorough(const BoroughData& _borough)	{}
-		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) { return true; }
+		virtual bool HasCity(const std::string& _name, const int _zipCode) { return true; }
 
 		virtual bool HasKey() { return false; }
 

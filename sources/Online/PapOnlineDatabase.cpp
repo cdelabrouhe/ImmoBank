@@ -237,10 +237,15 @@ std::string PapOnlineDatabase::_ComputeKeyURL(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
+bool PapOnlineDatabase::HasCity(const std::string& _name, const int _zipCode)
 {
-	int zip = _zipCode / 1000;
+	int zip = _zipCode;
 	EntryData* data = GetEntryData(_name, zip);
+	if (data != nullptr)
+		return true;
+
+	zip = _zipCode / 1000;
+	data = GetEntryData(_name, zip);
 	if (data != nullptr)
 		return true;
 
@@ -366,7 +371,7 @@ EntryData* PapOnlineDatabase::_GetEntryDataFromFullKey(void* _key) const
 	std::pair<std::string,int> key = *(std::pair<std::string, int>*)_key;
 	for (auto* entry : m_data)
 	{
-		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[0].m_iVal);
+		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[1].m_iVal);
 		if (localKey == key)
 			return entry;
 	}

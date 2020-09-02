@@ -82,7 +82,7 @@ void ImmoBank::CitySelector::_UpdateAsynchronousData()
 		auto& dbs = OnlineManager::getSingleton()->GetOnlineDatabases();
 		for (auto* db : dbs)
 		{
-			valid &= db->HasCity(name, city.m_data.m_zipCode, city.m_data);
+			valid &= db->HasCity(name, city.m_data.m_zipCode);
 		}
 
 		if (!valid)

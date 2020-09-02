@@ -180,7 +180,6 @@ void LogicImmoOnlineDatabase::Process()
 						continue;
 
 					int zip = stoi(zipCode);
-					zip /= 1000;
 					StringTools::TransformToLower(name);
 					StringTools::FixName(name);
 					StringTools::ConvertToImGuiText(name);
@@ -222,7 +221,7 @@ void LogicImmoOnlineDatabase::ReferenceCity(const std::string& _name)
 //-------------------------------------------------------------------------------------------------
 void LogicImmoOnlineDatabase::ReferenceBorough(const BoroughData& _borough)
 {
-	ReferenceCity(_borough.m_city.m_name);	// No specific bogough in LogicImmo for now
+	ReferenceCity(_borough.m_city.m_name);	// No specific borough in LogicImmo for now
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -237,10 +236,9 @@ std::string LogicImmoOnlineDatabase::_ComputeKeyURL(const std::string& _name)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool LogicImmoOnlineDatabase::HasCity(const std::string& _name, const int _zipCode, sCity& _city)
+bool LogicImmoOnlineDatabase::HasCity(const std::string& _name, const int _zipCode)
 {
-	int zip = _zipCode / 1000;
-	EntryData* data = GetEntryData(_name, zip);
+	EntryData* data = GetEntryData(_name, _zipCode);
 	if (data != nullptr)
 		return true;
 
@@ -327,7 +325,11 @@ void LogicImmoOnlineDatabase::_DecodeData(const std::string& _data, const sBorou
 			std::string zipCode = val["postCode"].asString();
 			int zip = _sourceBorough.m_data.m_city.m_zipCode;
 			if (!zipCode.empty())
+			{
 				zip = stoi(zipCode);
+				if (zip < 100)
+					zip *= 1000;
+			}
 			else
 				continue;
 
@@ -342,7 +344,7 @@ EntryData* LogicImmoOnlineDatabase::_GetEntryDataFromFullKey(void* _key) const
 	std::pair<std::string, int> key = *(std::pair<std::string, int>*)_key;
 	for (auto* entry : m_data)
 	{
-		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[0].m_iVal);
+		std::pair<std::string, int> localKey = std::make_pair(entry->m_data[0].m_sVal, entry->m_data[1].m_iVal);
 		if (localKey == key)
 			return entry;
 	}

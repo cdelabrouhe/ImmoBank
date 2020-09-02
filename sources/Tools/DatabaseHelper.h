@@ -55,6 +55,7 @@ namespace ImmoBank
 		void CreateTableRequest(std::string& _request);
 		void UpdateDataInternal(EntryData* _data, bool _affectServerData = true);
 		void UpdateFromExternalDatabase();
+		void RemoveDataInternal(EntryData* _data, bool _affectServerData = true);
 
 		virtual void Load();
 

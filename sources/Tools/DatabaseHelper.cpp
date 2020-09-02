@@ -46,6 +46,16 @@ void DatabaseHelper::UpdateDataInternal(EntryData* _data, bool _affectServerData
 	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str, _affectServerData);
 }
 
+void ImmoBank::DatabaseHelper::RemoveDataInternal(EntryData* _data, bool _affectServerData)
+{
+	_data->Generate(this);
+
+	std::string str = "DELETE FROM `" + m_databaseName + "` " + "WHERE ";
+	_Stringify(str, _data, false, false, false, false, false, true, true);
+
+	DatabaseManager::getSingleton()->TriggerSQLCommand(m_databaseName, str, _affectServerData);
+}
+
 void DatabaseHelper::_Stringify(std::string& _str, EntryData* _data, bool _addBrackets, bool _addQuote, bool _addValues, bool _addReturn, bool _addType, bool _addAnd, bool _affectValues)
 {
 	bool first = true;

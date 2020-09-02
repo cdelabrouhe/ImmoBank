@@ -26,7 +26,7 @@ namespace ImmoBank
 
 		virtual void ReferenceCity(const std::string& _name) override;
 		virtual void ReferenceBorough(const BoroughData& _borough) override;
-		virtual bool HasCity(const std::string& _name, const int _zipCode, sCity& _city) override;
+		virtual bool HasCity(const std::string& _name, const int _zipCode) override;
 
 		EntryData* GetEntryData(const std::string& _cityName, const int _zipCode) const;
 

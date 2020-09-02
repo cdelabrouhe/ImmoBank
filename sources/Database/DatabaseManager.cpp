@@ -519,6 +519,7 @@ void DatabaseManager::AddCity(sCityData& _data)
 	if (GetBoroughData(_data.m_data.m_name, s_wholeCityName, data))
 		return;
 
+	data.m_name = s_wholeCityName;
 	data.m_city = _data.m_data;
 	AddBoroughData(data);
 }

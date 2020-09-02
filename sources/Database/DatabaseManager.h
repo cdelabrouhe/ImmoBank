@@ -48,7 +48,7 @@ namespace ImmoBank
 		void	AddBoroughData(const BoroughData& _data, bool _saveExternal = true);
 		bool	GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data);
 		bool	RemoveBoroughData(const std::string& _cityName, const std::string& _name, const int _zipCode);
-		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data);
+		bool	GetBoroughs(sCity& _city, std::vector<BoroughData>& _data, bool _checkZipCode = true);
 		void	GetAllBoroughs(std::vector<BoroughData>& _data);
 		bool	IsCityUpdating(const std::string& _cityName);
 		bool	IsBoroughUpdating(const BoroughData& _data);

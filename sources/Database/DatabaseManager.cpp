@@ -395,7 +395,7 @@ bool DatabaseManager::AddQuery(const std::string& _query, std::vector<BoroughDat
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
+bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data, bool _checkZipCode)
 {
 	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
@@ -403,19 +403,18 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 	_data.clear();
 	
 	char buf[4096];
-	bool checkZipCode = true;
 	do 
 	{
 		if (!_city.m_name.empty())
 		{
-			if (checkZipCode)
+			if (_checkZipCode)
 			{
-				checkZipCode = false;
+				_checkZipCode = false;
 				sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s' AND ZIPCODE=%d", _city.m_name.c_str(), _city.m_zipCode);
 			}
 			else
 			{
-				checkZipCode = true;
+				_checkZipCode = true;
 				sprintf(buf, "SELECT * FROM Boroughs WHERE CITY='%s'", _city.m_name.c_str());
 			}
 		}
@@ -426,7 +425,7 @@ bool DatabaseManager::GetBoroughs(sCity& _city, std::vector<BoroughData>& _data)
 
 		AddQuery(sql, _data);
 
-	} while (!checkZipCode && (_data.size() == 0));
+	} while (!_checkZipCode && (_data.size() == 0));
 
 	for (auto& borough : _data)
 	{
@@ -537,7 +536,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, 
 
 	_data.m_data = data.m_city;
 	_data.m_timeUpdate = data.m_timeUpdate;
-	GetBoroughs(_data.m_data, _data.m_boroughs);
+	GetBoroughs(_data.m_data, _data.m_boroughs, false);
 	_data.m_data.FixName();
 
 	// Look for a WholeCity borough

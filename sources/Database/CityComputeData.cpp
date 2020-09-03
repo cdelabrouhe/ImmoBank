@@ -48,7 +48,7 @@ bool CityComputeData::Process()
 
 					// Store data into DB
 					BoroughData localData;
-					if (!DatabaseManager::getSingleton()->GetBoroughData(data.m_city.m_name, data.m_name, localData))
+					if (!DatabaseManager::getSingleton()->GetBoroughData(data.m_city.m_name, data.m_city.m_zipCode, data.m_name, localData))
 						DatabaseManager::getSingleton()->AddBoroughData(data);
 
 					delete borough;

@@ -9,7 +9,7 @@
 
 using namespace ImmoBank;
 
-
+DISABLE_OPTIMIZE
 //--------------------------------------------------------------------------------------------------------------
 void CitySelector::_UpdateCitiesList()
 {

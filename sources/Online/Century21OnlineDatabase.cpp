@@ -9,6 +9,8 @@
 
 using namespace ImmoBank;
 
+AUTO_REFERENCE_ONLINE_DATABASE(Century21OnlineDatabase)
+
 void Century21OnlineDatabase::Init()
 {
 	SetName("Century21");

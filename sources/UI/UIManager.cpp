@@ -18,7 +18,7 @@
 #include <Online/OnlineDatabase.h>
 #include <Online/PapOnlineDatabase.h>
 #include <Online/LogicImmoOnlineDatabase.h>
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 //-------------------------------------------------------------------------------------------------

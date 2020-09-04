@@ -6,7 +6,7 @@
 #include "extern/jsoncpp/reader.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 #include "Text/TextManager.h"
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 AUTO_REFERENCE_ONLINE_DATABASE(PapOnlineDatabase)

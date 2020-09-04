@@ -10,7 +10,7 @@
 #include "Online/OnlineManager.h"
 #include "extern/jsoncpp/reader.h"
 #include <Config/ConfigManager.h>
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 #define MYSQL_ACTIVE

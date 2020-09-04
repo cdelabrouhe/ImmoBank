@@ -376,6 +376,15 @@
     <ClInclude Include="sources\Tools\DatabaseHelper.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Online\Century21OnlineDatabase.h">
+      <Filter>Sources\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\TinyXML\tinystr.h">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\TinyXML\tinyxml.h">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\ProdTool.cpp">
@@ -516,6 +525,21 @@
     <ClCompile Include="sources\Tools\DatabaseHelper.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Online\Century21OnlineDatabase.cpp">
+      <Filter>Sources\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\TinyXML\tinystr.cpp">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\TinyXML\tinyxml.cpp">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\TinyXML\tinyxmlerror.cpp">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\TinyXML\tinyxmlparser.cpp">
+      <Filter>Sources\extern\TinyXML</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -607,6 +631,9 @@
     </Filter>
     <Filter Include="Sources\extern\libjpeg-turbo">
       <UniqueIdentifier>{1bcce02a-23be-4250-b9d4-45f5ed0da1ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\extern\TinyXML">
+      <UniqueIdentifier>{d67d2098-23aa-4d63-8d0f-6588d0954234}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

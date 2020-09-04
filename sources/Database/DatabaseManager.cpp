@@ -11,7 +11,7 @@
 #include "extern/ImGui/imgui.h"
 #include "ImageDatabase.h"
 #include <Online/OnlineDatabase.h>
-DISABLE_OPTIMIZE
+
 using namespace ImmoBank;
 
 DatabaseManager* s_singleton = nullptr;
@@ -359,16 +359,8 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 
 	bool result = false;
 	std::vector<sCityData> cities;
-	if (_name != s_wholeCityName)
-	{
-		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
-		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
-	}
-	else
-	{
-		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
-		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
-	}
+	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
+	result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
 
 	return result;
 }

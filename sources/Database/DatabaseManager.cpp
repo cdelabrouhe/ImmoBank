@@ -325,13 +325,13 @@ void ExtractBoroughDataFromSQL(BoroughData& _borough, sqlite3_stmt* _stmt)
 }
 
 //-------------------------------------------------------------------------------------------------
-bool DatabaseManager::GetBoroughData(const std::string& _cityName, const std::string& _name, BoroughData& _data)
+bool DatabaseManager::GetBoroughData(const std::string& _cityName, const int _zipCode, const std::string& _name, BoroughData& _data)
 {
 	if (m_mainTables[DataTables_Boroughs] == nullptr)
 		return false;
 
 	std::vector<BoroughData> boroughs;
-	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
+	Str128f sql("SELECT * FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
 
 	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], sql.c_str(), [&boroughs](sqlite3_stmt* _stmt)
 	{
@@ -359,16 +359,8 @@ bool DatabaseManager::RemoveBoroughData(const std::string& _cityName, const std:
 
 	bool result = false;
 	std::vector<sCityData> cities;
-	if (_name != s_wholeCityName)
-	{
-		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
-		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
-	}
-	else
-	{
-		Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s'", _cityName.c_str(), _name.c_str());
-		result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
-	}
+	Str128f sql("DELETE FROM Boroughs WHERE CITY='%s' AND BOROUGH='%s' AND ZIPCODE=%d", _cityName.c_str(), _name.c_str(), _zipCode);
+	result = SQLExecute(m_mainTables[DataTables_Boroughs], sql.c_str());
 
 	return result;
 }
@@ -515,7 +507,7 @@ void DatabaseManager::AddCity(sCityData& _data)
 	m_modified = true;
 
 	BoroughData data;
-	if (GetBoroughData(_data.m_data.m_name, s_wholeCityName, data))
+	if (GetBoroughData(_data.m_data.m_name, _data.m_data.m_zipCode, s_wholeCityName, data))
 		return;
 
 	data.m_name = s_wholeCityName;
@@ -531,7 +523,7 @@ bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, 
 
 	std::vector<sCityData> cities;
 	BoroughData data;
-	if (!GetBoroughData(_name, s_wholeCityName, data))
+	if (!GetBoroughData(_name, _zipCode, s_wholeCityName, data))
 		return false;
 
 	_data.m_data = data.m_city;
@@ -705,7 +697,7 @@ void DatabaseManager::Test()
 	AddBoroughData(data);
 
 	BoroughData data2;
-	GetBoroughData("Montpellier", "Antigone", data2);
+	GetBoroughData("Montpellier", 34000, "Antigone", data2);
 	printf("");
 }
 
@@ -821,7 +813,7 @@ void DatabaseManager::DisplaySQlite3Debug()
 		m_SQlite3Requests.clear();
 		for (auto& result : s_debugResults)
 		{
-			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", SeLogerKEY: " + std::to_string(result.m_selogerKey);
+			std::string mes = "City: " + result.m_city.m_name + ", Borough: " + result.m_name + ", MeilleursAgentsKEY: " + std::to_string(result.m_meilleursAgentsKey) + ", ZipCode: " + std::to_string(result.m_city.m_zipCode);
 			m_SQlite3Requests.push_back(mes);
 		}
 	}

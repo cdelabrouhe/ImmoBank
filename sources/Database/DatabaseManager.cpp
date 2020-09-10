@@ -533,8 +533,8 @@ bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, 
 
 	// Look for a WholeCity borough
 	std::string lookFor = s_wholeCityName;
-	auto itCity = std::find_if(_data.m_boroughs.begin(), _data.m_boroughs.end(), [lookFor](BoroughData& _borough)->bool
-	{	return (_borough.m_name == lookFor);	});
+	auto itCity = std::find_if(_data.m_boroughs.begin(), _data.m_boroughs.end(), [lookFor, _zipCode](BoroughData& _borough)->bool
+	{	return (_borough.m_name == lookFor) && (_borough.m_city.m_zipCode == _zipCode);	});
 	if (itCity == _data.m_boroughs.end())
 	{
 		BoroughData data;
@@ -545,13 +545,22 @@ bool DatabaseManager::GetCityData(const std::string& _name, const int _zipCode, 
 
 	std::sort(_data.m_boroughs.begin(), _data.m_boroughs.end(), BoroughData::compare);
 
+	bool found = false;
 	auto it = _data.m_boroughs.begin();
 	while (it != _data.m_boroughs.end())
 	{
 		BoroughData& data = *it;
 		const bool isWholeCity = (_wholeCity && data.IsWholeCity());
 		if (isWholeCity)
-			*_wholeCity = data;
+		{
+			if (!found)
+			{
+				found = true;
+				*_wholeCity = data;
+			}
+			else if (data.m_city.m_zipCode == _zipCode)
+				*_wholeCity = data;
+		}
 
 		// Ask data to external database
 		if (!data.IsValid())

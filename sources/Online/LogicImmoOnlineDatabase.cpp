@@ -29,9 +29,6 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
-	std::string key = GetKey(announce->m_city);
-	if (key.empty())
-		return -1;
 
 	// Doc: https://github.com/axeleroy/untoitpourcaramel
 	// Cherche ville avec http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=Montpellier
@@ -64,7 +61,7 @@ int LogicImmoOnlineDatabase::SendRequest(SearchRequest* _request)
 	BoroughData borough;
 	sCityData cityData;
 	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
-	request += "&localities=" + GetKey(cityData.m_data);
+	request += "&localities=" + GetKey(borough);
 
 	// Price
 	request += "&price_range=" + std::to_string(announce->m_priceMin) + "," + std::to_string(announce->m_priceMax);
@@ -370,13 +367,13 @@ EntryData* LogicImmoOnlineDatabase::_GetEntryDataFromCityName(const std::string&
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string LogicImmoOnlineDatabase::GetKey(sCity& _city) const
+std::string LogicImmoOnlineDatabase::GetKey(BoroughData& _borough) const
 {
-	std::string name = _city.m_name;
+	std::string name = _borough.m_city.m_name;
 	StringTools::TransformToLower(name);
 	StringTools::FixName(name);
 	StringTools::ConvertToImGuiText(name);
-	EntryData* data = GetEntryData(name, _city.m_zipCode);
+	EntryData* data = GetEntryData(name, _borough.m_city.m_zipCode);
 	if (data == nullptr)
 		data = _GetEntryDataFromCityName(name);
 
@@ -387,7 +384,7 @@ std::string LogicImmoOnlineDatabase::GetKey(sCity& _city) const
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string ImmoBank::LogicImmoOnlineDatabase::GetKeyAsString(sCity& _city) const
+std::string ImmoBank::LogicImmoOnlineDatabase::GetKeyAsString(BoroughData& _borough) const
 {
-	return GetKey(_city);
+	return GetKey(_borough);
 }

@@ -44,7 +44,7 @@ namespace ImmoBank
 
 		virtual bool HasKey() { return false; }
 
-		virtual std::string GetKeyAsString(sCity& _city) const	{ return ""; }
+		virtual std::string GetKeyAsString(BoroughData& _borough) const	{ return ""; }
 
 		bool* ForceUpdate();
 

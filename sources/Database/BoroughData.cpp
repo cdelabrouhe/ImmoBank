@@ -295,7 +295,7 @@ void BoroughData::DisplayAsTooltip()
 			{
 				if (db->HasKey())
 				{
-					ImGui::Text("%s key: %s", db->GetName(), db->GetKeyAsString(m_city).c_str());
+					ImGui::Text("%s key: %s", db->GetName(), db->GetKeyAsString(*this).c_str());
 				}
 			}
 			bool isCity = false;

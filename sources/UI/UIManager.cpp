@@ -366,7 +366,7 @@ void UIManager::DisplayCityInformation()
 			{
 				if (db->HasKey())
 				{
-					text += "  " + db->GetName() + " key: " + db->GetKeyAsString(selectedCity.m_data);
+					text += "  " + db->GetName() + " key: " + db->GetKeyAsString(wholeCityData);
 				}
 			}
 

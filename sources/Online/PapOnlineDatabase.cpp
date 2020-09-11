@@ -28,9 +28,6 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
-	int key = GetKey(announce->m_city);
-	if (key == -1)
-		return -1;
 
 	std::string request = "https://ws.pap.fr/immobilier/annonces?";
 
@@ -63,7 +60,10 @@ int PapOnlineDatabase::SendRequest(SearchRequest* _request)
 	}
 
 	// Localisation (no borough for now)
-	request += "&recherche[geo][ids][]=" + std::to_string(key);
+	BoroughData borough;
+	sCityData cityData;
+	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
+	request += "&recherche[geo][ids][]=" + std::to_string(GetKey(borough));
 
 	// Price
 	request += "&recherche[prix][min]=" + std::to_string(announce->m_priceMin);
@@ -397,14 +397,14 @@ EntryData* PapOnlineDatabase::_GetEntryDataFromCityName(const std::string& _name
 }
 
 //-------------------------------------------------------------------------------------------------
-int PapOnlineDatabase::GetKey(sCity& _city) const
+int PapOnlineDatabase::GetKey(BoroughData& _borough) const
 {
-	std::string name = _city.m_name;
+	std::string name = _borough.m_city.m_name;
 	StringTools::ReplaceBadSyntax(name, "-", " ");
 	StringTools::TransformToLower(name);
 	StringTools::FixName(name);
 	StringTools::ConvertToImGuiText(name);
-	EntryData* data = GetEntryData(name, _city.m_zipCode);
+	EntryData* data = GetEntryData(name, _borough.m_city.m_zipCode);
 	if (data == nullptr)
 		data = _GetEntryDataFromCityName(name);
 
@@ -415,8 +415,8 @@ int PapOnlineDatabase::GetKey(sCity& _city) const
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string ImmoBank::PapOnlineDatabase::GetKeyAsString(sCity& _city) const
+std::string ImmoBank::PapOnlineDatabase::GetKeyAsString(BoroughData& _borough) const
 {
-	int key = GetKey(_city);
+	int key = GetKey(_borough);
 	return (key != -1) ? std::to_string(key) : "NO KEY FOUND";
 }

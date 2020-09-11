@@ -21,9 +21,29 @@ void Century21OnlineDatabase::Process()
 
 }
 
+std::string Century21OnlineDatabase::GetKey(BoroughData& _borough) const
+{
+	std::string key;
+	if (_borough.m_name == s_wholeCityName)
+	{
+		key = "v-" + _borough.m_city.m_name;
+		StringTools::TransformToLower(key);
+	}
+	else
+	{
+		key = "cp-" + std::to_string(_borough.m_city.m_zipCode);
+	}
+	return key;
+}
+
+std::string Century21OnlineDatabase::GetKeyAsString(BoroughData& _borough) const
+{
+	return GetKey(_borough);
+}
+
 int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 {
-	if (_request->m_requestType != SearchRequestType_Announce)
+	/*if (_request->m_requestType != SearchRequestType_Announce)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
@@ -54,11 +74,11 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 		++categoryID;
 	}
 
-	// Localisation (no borough for now)
+	// Localisation
 	BoroughData borough;
 	sCityData cityData;
-	//DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, cityData, &borough);
-	//request += "&localities=" + borough.m_logicImmoKey;
+	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
+	request += "&localities=" + GetKey(borough);
 
 	// Price
 	request += "&price_range=" + std::to_string(announce->m_priceMin) + "," + std::to_string(announce->m_priceMax);
@@ -84,7 +104,8 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 	m_requests[ID].m_initialRequest = announce;
 	m_requests[ID].m_request = request;
 
-	return ID;
+	return ID;*/
+	return -1;
 }
 
 bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)

@@ -26,7 +26,7 @@ std::string Century21OnlineDatabase::GetKey(BoroughData& _borough) const
 	std::string key;
 	if (_borough.m_name == s_wholeCityName)
 	{
-		key = "v-" + _borough.m_city.m_name;
+		key = "cpv-" + std::to_string(_borough.m_city.m_zipCode) + "_" + _borough.m_city.m_name;
 		StringTools::TransformToLower(key);
 	}
 	else
@@ -43,15 +43,15 @@ std::string Century21OnlineDatabase::GetKeyAsString(BoroughData& _borough) const
 
 int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 {
-	/*if (_request->m_requestType != SearchRequestType_Announce)
+	if (_request->m_requestType != SearchRequestType_Announce)
 		return -1;
 
 	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_request;
 
 	// Cherche ville avec https://www.century21.fr/autocomplete/localite/?q=montpellier
-	// Recherche avec https://www.century21.fr/annonces/achat/v-montpellier/s-40-/st-0-/b-0-460000/p-2/page-1/?nombres_de_pieces=2&nombres_de_pieces=3&xhr=true
+	// Recherche avec https://www.century21.fr/annonces/achat/cpv-34000_montpellier/b-0-460000/?nombres_de_pieces=2&nombres_de_pieces=3
 
-	std::string request = "http://lisemobile.logic-immo.com/li.search_ads.php?client=v8.a&domain=sales";
+	std::string request = "https://www.century21.fr/annonces/achat/";
 
 	// Apartment / house => no such information in LogicImmo parameters (or just didn't find it)
 	int categoryID = 0;
@@ -78,23 +78,23 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 	BoroughData borough;
 	sCityData cityData;
 	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
-	request += "&localities=" + GetKey(borough);
-
-	// Price
-	request += "&price_range=" + std::to_string(announce->m_priceMin) + "," + std::to_string(announce->m_priceMax);
+	request += "/" + GetKey(borough);
 
 	// Surface
-	request += "&area_range=" + std::to_string(announce->m_surfaceMin) + "," + std::to_string(announce->m_surfaceMax);
+	request += "/s-" + std::to_string(announce->m_surfaceMin) + "-";
+
+	// Surface terrain
+	request += "/st-0-";
+
+	// Price
+	request += "/b-0-" + std::to_string(announce->m_priceMax);
 
 	// Nb rooms
-	request += "&rooms_range=" + std::to_string(announce->m_nbRoomsMin);
+	request += "/p-" + std::to_string(announce->m_nbRoomsMin);
 	for (int roomID = announce->m_nbRoomsMin + 1; roomID <= announce->m_nbRoomsMax; ++roomID)
-		request += "," + std::to_string(roomID);
+		request += "-" + std::to_string(roomID);
 
-	// Nb bedrooms
-	request += "&bedrooms_range=" + std::to_string(announce->m_nbBedRoomsMin);
-	for (int roomID = announce->m_nbBedRoomsMin + 1; roomID <= announce->m_nbBedRoomsMax; ++roomID)
-		request += "," + std::to_string(roomID);
+	request += "/";
 
 	int ID = 0;
 	while (m_requests.find(ID) != m_requests.end())
@@ -104,8 +104,7 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 	m_requests[ID].m_initialRequest = announce;
 	m_requests[ID].m_request = request;
 
-	return ID;*/
-	return -1;
+	return ID;
 }
 
 bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results)
@@ -134,7 +133,7 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		free(test_data);
 	}*/
 
-	Json::Value root;
+	/*Json::Value root;
 	Json::Reader reader;
 	reader.parse(_str, root);
 
@@ -167,7 +166,7 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		result->Init();
 
 		_results.push_back(result);
-	}
+	}*/
 
 	return true;
 }

@@ -53,27 +53,6 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 
 	std::string request = "https://www.century21.fr/annonces/achat/";
 
-	// Apartment / house => no such information in LogicImmo parameters (or just didn't find it)
-	int categoryID = 0;
-	auto nbCategories = announce->m_categories;
-	for (auto category : announce->m_categories)
-	{
-		switch (category)
-		{
-		case Category_Apartment:
-			//request += "&appartement=on";
-			break;
-		case Category_House:
-			//request += "&maison=on";
-			break;
-		default:
-			//printf("Error: unknown request category");
-			return -1;
-		}
-
-		++categoryID;
-	}
-
 	// Localisation
 	BoroughData borough;
 	sCityData cityData;
@@ -112,61 +91,47 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 	if (_initialRequest->m_requestType != SearchRequestType_Announce)
 		return false;
 
-	if (_str.empty())
-		return true;
-
-	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
-
-	const char* str = "<doc attr0='1' attr1='2.0' attr2='foo' />";
-
-	TiXmlDocument doc;
-	doc.Parse(_str.c_str());
-
-	/*std::string str;
-	FILE* f = fopen("data_test_laforet.html", "rt");
+	std::string doc = _str;
+	/*FILE* f = fopen("data_test_century21.html", "rt");
 	if (f)
 	{
 		char* test_data = (char*)malloc(10000000);
 		fread(test_data, sizeof(char), 10000000, f);
 		fclose(f);
-		str = test_data;
+		doc = test_data;
 		free(test_data);
 	}*/
 
-	/*Json::Value root;
-	Json::Reader reader;
-	reader.parse(_str, root);
+	if (doc.empty())
+		return true;
 
-	Json::Value& datas = root["items"];
-	int nbAnnounces = datas.size();
-	for (int announceID = 0; announceID < nbAnnounces; ++announceID)
+	SearchRequestAnnounce* announce = (SearchRequestAnnounce*)_initialRequest;
+
+	std::string limit = "<div id=\"bien_";
+	std::string linkDelimiter = "<a href=";
+	std::string priceDelimiter = "<div class=\"price tw-py-1 tw-text-xl tw-font-semibold tw-text-center\">";
+	int size = limit.size();
+	auto delimiter = doc.find(limit);
+	while (delimiter != std::string::npos)
 	{
-		Json::Value& data = datas[announceID];
 		SearchRequestResultAnnounce* result = new SearchRequestResultAnnounce(*announce);
-		result->m_database = GetName();
-		result->m_name = data["info"]["propertyType"]["name"].asString();
-		StringTools::RemoveSpecialCharacters(result->m_name);
-		result->m_description = data["info"]["text"].asString();
-		StringTools::RemoveSpecialCharacters(result->m_description);
-		result->m_price = data["pricing"]["amount"].asInt();
-		result->m_surface = data["properties"]["area"].asDouble();
-		result->m_URL = data["info"]["link"].asString();
-		result->m_imageURL = data["pictures"].get(0u, Json::nullValue).asString();
-		StringTools::FindAndReplaceAll(result->m_imageURL, "[WIDTH]", "640");
-		StringTools::FindAndReplaceAll(result->m_imageURL, "[HEIGHT]", "480");
-		StringTools::FindAndReplaceAll(result->m_imageURL, "[SCALE]", "1");
-		result->m_nbRooms = data["properties"]["rooms"].asInt();
-		result->m_nbBedRooms = data["properties"]["bedrooms"].asInt();
-		int category = stoi(data["info"]["propertyType"]["identifier"].asString());
-		if (category == 1)
-			result->m_category = Category_Apartment;
-		else
-			result->m_category = Category_House;
+		doc = doc.substr(delimiter + size, doc.size());
+		delimiter = doc.find(limit);
+		std::string announceData = doc.substr(0, delimiter);
+		auto findLink = announceData.find(linkDelimiter);
 
-		result->Init();
+		// URL
+		std::string link = announceData.substr(findLink + linkDelimiter.size() + 1, announceData.size());
+		result->m_URL = link.substr(0, link.find("\""));
+		auto findPrice = announceData.find(priceDelimiter);
 
-		_results.push_back(result);
-	}*/
+		// Price
+		std::string priceData = announceData.substr(findPrice + priceDelimiter.size(), announceData.size());
+		priceData = priceData.substr(0, priceData.find("&"));
+		StringTools::ReplaceBadSyntax(priceData, " ", "");
+		result->m_price = stoi(priceData);
+		printf("");
+	}
 
 	return true;
 }

@@ -5,6 +5,8 @@
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
 #include "OnlineDatabase.h"
+#include "Century21OnlineDatabase.h"
+#include "Request/SearchRequest/SearchRequestAnnounce.h"
 
 using namespace ImmoBank;
 
@@ -42,6 +44,11 @@ void OnlineManager::Init()
 		db->Init();
 		DatabaseManager::getSingleton()->NotifyOnlineDatabaseCreation(db);
 	}
+
+	std::string str;
+	std::vector<SearchRequestResult*> list;
+	SearchRequestAnnounce request;
+	static_cast<Century21OnlineDatabase*>(GetOnlineDatabase("Century21"))->_ProcessResult(&request, str, list);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -16,11 +16,6 @@ void Century21OnlineDatabase::Init()
 	SetName("Century21");
 }
 
-void Century21OnlineDatabase::Process()
-{
-
-}
-
 std::string Century21OnlineDatabase::GetKey(BoroughData& _borough) const
 {
 	std::string key;
@@ -141,6 +136,7 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		titleData = titleData.substr(0, titleData.find("\""));
 		StringTools::RemoveSpecialCharacters(titleData);
 		result->m_name = titleData;
+		result->m_description = titleData;
 
 		// Image
 		auto findImg = announceData.find(imgDelimiter);
@@ -155,16 +151,30 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		std::string infData = announceData.substr(findData + infDelimiter.size(), announceData.size());
 		infData = infData.substr(0, infData.find("</h4>"));
 		StringTools::RemoveSpecialCharacters(infData);
-		std::string surface = infData.substr(0, infData.find_last_of(","));
-		std::string nbRooms = infData.substr(infData.find_last_of(",") + 1, infData.size());
-		StringTools::RemoveEOL(nbRooms);
-		StringTools::ReplaceBadSyntax(nbRooms, " ", "");
-		/*for (char c : zipStr)
-			valid &= isdigit(c) > 0;*/
 
-		/*result->m_description = data["description"].asString();
-		result->m_nbBedRooms = data["bedrooms"].asInt();*/
-		printf("");
+		// Surface
+		std::string surfaceStr = infData.substr(0, infData.find_last_of(","));
+		auto surfaceDelimiter = surfaceStr.find_first_of(",");
+		if (surfaceDelimiter != std::string::npos)
+		{
+			StringTools::ReplaceBadSyntax(surfaceStr, " ", "");
+			surfaceStr = surfaceStr.substr(0, surfaceDelimiter);
+		}
+		result->m_surface = stof(surfaceStr);
+
+		// Nb rooms
+		std::string nbRoomsStr = infData.substr(infData.find_last_of(",") + 1, infData.size());
+		StringTools::RemoveEOL(nbRoomsStr);
+		StringTools::ReplaceBadSyntax(nbRoomsStr, " ", "");
+		nbRoomsStr = nbRoomsStr.substr(0, 1);
+		result->m_nbRooms = stoi(nbRoomsStr);
+		result->m_nbBedRooms = result->m_nbRooms;
+
+		result->Init();
+
+		_results.push_back(result);
+
+		delimiter = doc.find(limit);
 	}
 
 	return true;

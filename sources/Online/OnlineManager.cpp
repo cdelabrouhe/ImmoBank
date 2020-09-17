@@ -44,11 +44,6 @@ void OnlineManager::Init()
 		db->Init();
 		DatabaseManager::getSingleton()->NotifyOnlineDatabaseCreation(db);
 	}
-
-	std::string str;
-	std::vector<SearchRequestResult*> list;
-	SearchRequestAnnounce request;
-	static_cast<Century21OnlineDatabase*>(GetOnlineDatabase("Century21"))->_ProcessResult(&request, str, list);
 }
 
 //-------------------------------------------------------------------------------------------------

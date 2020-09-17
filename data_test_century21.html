@@ -1,0 +1,4133 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7 ]>
+<html lang="fr" class="no-js ie6"> <![endif]--><!--[if IE 7 ]>
+<html lang="fr" class="no-js ie7"> <![endif]--><!--[if IE 8 ]>
+<html lang="fr" class="no-js ie8"> <![endif]--><!--[if IE 9 ]>
+<html lang="fr" class="no-js ie9"> <![endif]--><!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="fr" class="no-js"><!--<![endif]-->
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta charset="utf-8"/>
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"57291cc109",applicationID:"24270498"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(c(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(5),c=e(6),f=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],p="api-",l=p+"ixn-";a(d,function(e,n){s[n]=i(p+n,!0,"api")}),s.addPageAction=i(p+"addPageAction",!0),s.setCurrentRouteName=i(p+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(l+"tracer",[u.now(),e,t],r),function(){if(f.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw f.emit("fn-err",[arguments,this,e],t),e}finally{f.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(l+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?d("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&d("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&d("lcp",[t[t.length-1]])}function o(e){e.getEntries().forEach(function(e){e.hadRecentInput||d("cls",[e])})}function a(e){if(e instanceof m&&!g){var n=Math.round(e.timeStamp),t={type:e.type};n<=p.now()?t.fid=p.now()-n:n>p.offset&&n<=Date.now()?(n-=p.offset,t.fid=p.now()-n):n=p.now(),g=!0,d("timing",["fi",n,t])}}function c(e){d("pageHide",[p.now(),e])}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var f,u,s,d=e("handle"),p=e("loader"),l=e(4),m=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){f=new PerformanceObserver(r);try{f.observe({entryTypes:["paint"]})}catch(v){}u=new PerformanceObserver(i);try{u.observe({entryTypes:["largest-contentful-paint"]})}catch(v){}s=new PerformanceObserver(o);try{s.observe({type:"layout-shift",buffered:!0})}catch(v){}}if("addEventListener"in document){var g=!1,y=["click","keydown","mousedown","pointerdown","touchstart"];y.forEach(function(e){document.addEventListener(e,a,!1)})}l(c)}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,f=c.match(a);f&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(i="Safari",o=f[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e){function n(){e(a&&document[a]?document[a]:document[i]?"hidden":"visible")}"addEventListener"in document&&o&&document.addEventListener(o,n,!1)}n.exports=r;var i,o,a;"undefined"!=typeof document.hidden?(i="hidden",o="visibilitychange",a="visibilityState"):"undefined"!=typeof document.msHidden?(i="msHidden",o="msvisibilitychange"):"undefined"!=typeof document.webkitHidden&&(i="webkitHidden",o="webkitvisibilitychange",a="webkitVisibilityState")},{}],5:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],6:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],7:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?f(e,c,o):o()}function t(t,r,i,o){if(!p.aborted||o){e&&e(t,r,i);for(var a=n(i),c=v(t),f=c.length,u=0;u<f;u++)c[u].apply(a,r);var d=s[w[t]];return d&&d.push([b,t,r,a]),a}}function l(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return d[e]=d[e]||i(t)}function y(e,n){u(e,function(e,t){n=n||"feature",w[t]=n,n in s||(s[n]=[])})}var h={},w={},b={on:l,addEventListener:l,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:y,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(p.aborted=!0,s=p.backlog={})}var c="nr@context",f=e("gos"),u=e(5),s={},d={},p=n.exports=i();p.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=l.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(w,function(n,t){e[n]||(e[n]=t)});var t=a();f("mark",["onload",t+E.offset],null,"api"),f("timing",["load",t]);var r=l.createElement("script");r.src="https://"+e.agent,n.parentNode.insertBefore(r,n)}}function i(){"complete"===l.readyState&&o()}function o(){f("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(c=Math.max((new Date).getTime(),c))-E.offset}var c=(new Date).getTime(),f=e("handle"),u=e(5),s=e("ee"),d=e(3),p=window,l=p.document,m="addEventListener",v="attachEvent",g=p.XMLHttpRequest,y=g&&g.prototype;NREUM.o={ST:setTimeout,SI:p.setImmediate,CT:clearTimeout,XHR:g,REQ:p.Request,EV:p.Event,PR:p.Promise,MO:p.MutationObserver};var h=""+location,w={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1177.min.js"},b=g&&y&&y[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:c,now:a,origin:h,features:{},xhrWrappable:b,userAgent:d};e(1),e(2),l[m]?(l[m]("DOMContentLoaded",o,!1),p[m]("load",r,!1)):(l[v]("onreadystatechange",i),p[v]("onload",r)),f("mark",["firstbyte",c],null,"api");var x=0,O=e(7)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(6),a="nr@original",c=Object.prototype.hasOwnProperty,f=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,c,f;try{a=this,r=o(arguments),c="function"==typeof t?t(r,a):t||{}}catch(u){p([u,"",[r,a,i],c])}s(n+"start",[r,a,i],c);try{return f=e.apply(a,r)}catch(d){throw s(n+"err",[r,a,d],c),d}finally{s(n+"end",[r,a,f],c)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,d(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,c,f,u="-"===i.charAt(0);for(f=0;f<n.length;f++)c=n[f],a=e[c],r(a)||(e[c]=t(a,u?c+i:i,o,c))}function s(t,r,i){if(!f||n){var o=f;f=!0;try{e.emit(t,r,i,n)}catch(a){p([a,t,r,i])}f=o}}function d(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){p([r])}for(var i in e)c.call(e,i)&&(n[i]=e[i]);return n}function p(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","queueTime":1,"licenseKey":"57291cc109","agent":"","transactionName":"ZAZbZxFSC0FQWxULVl1Mf0YNUBFbXlZOBlNSDV5cPEMMX1RWFQdaW01PWgZEFl1TUgQBTUBZe1oGXSlbQkw3C1xE","applicationID":"24270498","errorBeacon":"bam.nr-data.net","applicationTime":251}</script>
+  <meta name="verify-v1" content="vaH6Ww2qTnhkQOiN1kEHkZbdVNn0U5jLvWPO/+NwOIQ="/>
+  
+  
+    <meta name="ROBOTS" content="index, follow"/>
+    <meta name="googlebot" content="index, follow"/>
+  
+
+
+  
+    
+      
+      
+    
+  
+
+  
+  <title>
+  
+    Vente immobilier à MONTPELLIER (34000)  1, 2, 3 p  - 215000€ | CENTURY 21
+  
+</title>
+  <meta name="description" content=""/>
+  <meta name="keywords" content="Agences Immobilières, Immobilier, Achat, Vente, Location, Appartement, Maison, Parking, Terrain, Agence, Taux, Prix, Petites annonces">
+  
+    <meta property="twitter:account_id" content="1510100551"/>
+    <meta property="fb:admins" content="741613563"/>
+  
+
+  <script type="text/javascript">
+    function redirect_etendu() {
+      var url = String(document.location);
+
+      if (url.indexOf('#etendu#') != -1) {
+        window.location.assign("/")
+      }
+    }
+
+    redirect_etendu();
+  </script>
+
+  
+    <meta property="og:title" content="Agences immobilières CENTURY 21 : achat, vente, location et activités de gestion immobilière | CENTURY 21"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://www.century21.fr/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/"/>
+    <meta property="og:site_name" content="www.century21.fr"/>
+    <meta property="og:image" content="https://www.century21.fr/theme/generic/css/images/logo_century21-fb.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="www.century21.fr"/>
+    <meta name="twitter:creator" content="@Century21France"/>
+    <meta name="twitter:image" content="https://www.century21.fr/theme/generic/css/images/logo_century21-fb.png"/>
+  
+
+  
+    <link rel="canonical" href="https://www.century21.fr/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/"/>
+  
+  <!--[if gt IE 5 ]><link href="/theme/generic/css/styles-ie.css" rel="stylesheet" /><![endif]-->
+  <!--[if IE 6 ]><link href="/theme/generic/css/styles-ie6.css" rel="stylesheet" /><![endif]-->
+  <!--[if IE 7 ]><link href="/theme/generic/css/styles-ie7.css" rel="stylesheet" /><![endif]-->
+  <!--[if IE 8 ]><link href="/theme/generic/css/styles-ie8.css" rel="stylesheet" /><![endif]-->
+
+  
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <link href="/theme/generic/css/print.css" rel="stylesheet" media="print">
+      
+      
+      
+      
+      <link href="/theme/generic/css/tailwind.min.css" rel="stylesheet">
+  
+
+  
+    <link rel="stylesheet" type="text/css" href="/theme/generic/js/lib/odometer-0.4.6/css/odometer-theme-default.css"/>
+    <link rel="stylesheet" href="/theme/generic/css/c-combien/launch-defil-number.css">
+    <link rel="stylesheet" type="text/css" href="/theme/generic/css/legacy/styles-liste-biens.legacy.css" media="all"/>
+
+
+  
+
+  <script type="text/javascript">
+    var IS_MOBILE = false;
+    var is_ice = "false";
+    var HTTP_STATIC = "";
+    var HTTP_PROTOCOL = "https";
+    var TYPE_SITE = "NATIONAL";
+    var SITE_TYPE = "NATIONAL";
+    var DEBUG = false;
+    var PARTICIPE_COLLECTE = 0;
+    var dateServer = new Date();
+    var anneeServer = dateServer.getFullYear();
+    var moisServer = dateServer.getMonth() + 1;
+    var moisBg = (parseInt(dateServer.getMonth() + 1) < 10) ? '0' + parseInt(dateServer.getMonth() + 1) : dateServer.getMonth() + 1;
+    var heureBg = dateServer.getHours();
+    var RECAPTCHA_PUBLIC_KEY = "6LfQV88UAAAAADg8fB8wzTXISqSepbOVVR_0AeNb";
+    
+    
+
+    
+
+
+    
+      var gaProperty = 'UA-3333689-1'
+    
+    if (window != top) top.location.href = window.location.href;
+    
+  </script>
+  <!--[if IE]><link rel="shortcut icon" href="/theme/generic/css/images/favicon.ico"><![endif]-->
+  <link rel="icon" href="/theme/generic/css/images/favicon-16x16.png"/>
+  <link rel="apple-touch-icon" href="/theme/generic/css/images/apple-touch-icon.png"/>
+
+  
+      <script src="/js/lazysizes.min.js" async></script>
+      <script src="/theme/generic/js/lib/jquery.js"></script>
+      <script src="/theme/generic/js/uid-gen.js"></script>
+      <script src="/theme/generic/js/lib/jquery-ui.js"></script>
+      <script src="/theme/generic/js/lib/jquery.ui.touch-punch.min.js"></script>
+      <script src="/theme/generic/js/lib/jquery-cookie.js"></script>
+      <script src="/theme/generic/js/lib/jquery-slider-ui.js"></script>
+      <script src="/theme/generic/js/lib/fancyapps-fancyBox/source/jquery.fancybox.js"></script>
+      
+      <script src="/theme/generic/js/lib/jquery.placeholder.js"></script>
+      <script src="/theme/generic/js/lib/jtruncate.js"></script>
+      <script src="/theme/bootstrap/js/bootstrap.min.js"></script>
+      <script src="/theme/generic/js/lib/jquery-loader.js"></script>
+      <script src="/theme/generic/js/lib/jcarousellite_1.0.1.min.js"></script>
+      <script src="/theme/generic/js/lib/owl-carousel-v2/owl.carousel.js"></script>
+      <script src="/theme/generic/js/lib/jquery.lightbox-0.5.min.js"></script>
+      <script src="/theme/generic/js/lib/jquery-animation-background.js"></script>
+      <script src="/theme/generic/js/lib/jquery-easing.js"></script>
+      <script src="/theme/generic/js/lib/jquery-boxShadow.js"></script>
+      <script src="/theme/generic/js/lib/rateyo/jquery.rateyo.js"></script>
+      <script src="/theme/generic/js/scripts.js"></script>
+      <script src="/theme/generic/js/scripts-star-rating.js"></script>
+      <script src="/js/calculette.js"></script>
+      <script src="/js/dept.js"></script>
+      <script src="https://www.google.com/recaptcha/api.js?render=6LfQV88UAAAAADg8fB8wzTXISqSepbOVVR_0AeNb"></script>
+      <script src="/js/common.js?t=2"></script>
+      <script src="/js/jquery.tokeninput.js"></script>
+      <script src="/theme/generic/js/lib/modernizr-custom.js"></script>
+  
+
+  
+
+  
+  <script>
+    $(document).ready(function () {
+      
+      var sizeListe = $("li.annonce").length;
+      if (sizeListe >= 3) {
+        var idItem1 = $("li.annonce:eq(0)").find(".contentAnnonce").data("uid");
+        var idItem2 = $("li.annonce:eq(1)").find(".contentAnnonce").data("uid");
+        var idItem3 = $("li.annonce:eq(2)").find(".contentAnnonce").data("uid");
+
+        dataLayer.push({
+          'product_liste_id1': '' + idItem1 + '',
+          'product_liste_id2': '' + idItem2 + '',
+          'product_liste_id3': '' + idItem3 + ''
+        });
+      }
+    });
+  </script>
+  
+    <script>
+      var CURRENT_LOCATION = '/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/';
+      var URL_DETAIL = '/trouver_logement/detail/';
+      var type_transac = "Acheteur";
+
+      function get_alerte_add_url() {
+        return get_hash_or_pathname() + 'alerte/';
+      }
+
+      $(document).ready(function () {
+        
+        if (DEBUG) {
+          call_popup_boost();
+        } else {
+          if (!$.cookie("c21_popup_laterale")) {
+            $.cookie("c21_popup_laterale", 1, {expires: 1, path: '/'});
+            call_popup_boost();
+          }
+        }
+
+      });
+    </script>
+      <script src="/js/jquery.ba-hashchange.min.js"></script>
+      <script src="/theme/generic/js/scripts-liste-biens.js"></script>
+  
+
+
+  <meta property="fb:admins" content="100001097395315"/>
+  <script>
+    var ACTIVITE_CENTURA = "";
+    var CACHE_POPUP_ANNONCE = {};
+    var UID_BIEN = [];
+    var overPopupService = 0;
+    var DEV_ENV = false;
+
+    
+
+    
+
+    function fix_articles() {
+      $('.articles_cont').each(function () {
+
+        
+        if ($(this).find('.articles').length && $(this).find('.articles').html().trim() == '') {
+          $(this).hide();
+        }
+
+        
+        var link = $(this).find('.articles_link').attr('href');
+        $(this).find('.get_articles_link').attr('href', link);
+      });
+    }
+
+    $(document).ready(function () {
+      /* fix_articles();*/
+    });
+
+    
+
+      //if (!_gaq.push) _gaq.push = function () { };
+
+      
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-3333689-1']);
+        _gaq.push(['_setDomainName', 'century21.fr']);
+        _gaq.push(['_setAllowLinker', true]);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript';
+          ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+        })();
+
+
+      
+    
+  </script>
+
+  
+  
+    <script>
+        window.dataLayer = window.dataLayer||[]; dataLayer.push({ 'event': 'pageLoad', 'usersegment': 'acheteur', 'pageCategory1': 'acheter', 'pageCategory2': 'listing' });
+      dataLayer.push({
+        
+
+          'env_work': 'Prod',
+          'env_site': 'SITE NATIONAL',
+          'env_device': 'Desktop',
+          'env_template': 'Generique',
+          'pagename': 'Vente immobilier à MONTPELLIER (34000)  1, 2, 3 p  - 215000€ | CENTURY 21',
+          'visitorStatus': '',
+          'type compte': ''
+          
+
+        
+      });
+
+
+      
+    </script>
+  
+
+  
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer'  ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })
+    (window, document, 'script', 'dataLayer', 'GTM-P8DRVBV');
+
+  </script>
+
+  <!-- 
+
+  
+    <script>
+      (function (h, o, t, j, a, r) {
+        h.hj = h.hj || function () {
+          (h.hj.q = h.hj.q || []).push(arguments)
+        };
+        h._hjSettings = {hjid: 1294600, hjsv: 6};
+        a = o.getElementsByTagName('head')[0];
+        r = o.createElement('script');
+        r.async = 1;
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+    </script>
+   -->
+
+  
+</head>
+
+<body id="site" class="LISTEBIEN2 relooking c-container__980 base-site-nat">
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P8DRVBV"
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <div id="main">
+    <!--BANDEAU MESSAGE COOKIE CNIL-->
+    <div id="bandeauCookie"></div>
+
+    <div id="lineTop"
+         class="o-line-top tw-w-full tw-text-xs tw-h-8"
+    >
+      <div class="mid tw-relative tw-w-full tw-bg-c21-gold tw-z-50">
+        <div class="content tw-container tw-mx-auto tw-flex tw-items-center tw-justify-between" style="height: 35px;">
+          <ul class="tw-flex tw-items-center tw-w-6/12">
+            
+              <li>
+                <span>
+                  <a href="/fiches/a_propos/"
+                     onclick="google_tag_event('Menu,Click,A Propos');"
+                     class="tw-block tw-py-1 tw-px-2 tw-text-white hover:tw-text-c21-grey-dark tw-text-sm"
+                  >
+                    A propos de CENTURY 21</a>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <a href="/fiches/a_propos/century21/international/"
+                     onclick="google_tag_event('Menu,Click,International');"
+                     class="tw-block tw-py-1 tw-px-2 tw-text-white hover:tw-text-c21-grey-dark tw-text-sm"
+                  >
+                    International</a>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <a href="/trouver_agence/"
+                     onclick="google_tag_event('Menu,Click,Nos Agences Immobilières');"
+                     class="tw-block tw-py-1 tw-px-2 tw-text-white hover:tw-text-c21-grey-dark tw-text-sm"
+                  >
+                    Nos agences immobilières</a>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <a href="/fiches/a_propos/le_blog_immobilier/"
+                     onclick="google_tag_event('Menu,Click,Blog Immobilier');"
+                     class="tw-block tw-py-1 tw-px-2 tw-text-white hover:tw-text-c21-grey-dark tw-text-sm"
+                  >
+                    Blog immobilier</a>
+                </span>
+              </li>
+            
+          </ul>
+          <ul class="tw-flex tw-items-center tw-justify-end tw-w-5/12">
+            
+              <li class="tw-mr-2">
+                <form id="rechercheSITE"
+                      action="/text_search/"
+                      method="get"
+                      class="tw-flex"
+                >
+                  <input type="text"
+                         id="inputRECHERCHESITE"
+                         name="q"
+                         placeholder="Rechercher sur le site"
+                         class="tw-inline-block tw-w-48 tw-px-3 tw-bg-c21-grey-light tw-text-sm tw-leading-6"
+                  />
+                  <a id="btnMOTEURFULLTEXT"
+                     class="tw-px-2 tw-bg-c21-grey-light hover:tw-bg-c21-grey-medium hover:tw-text-white tw-text-c21-grey-dark tw-text-sm tw-leading-6 "
+                  >
+                    OK
+                  </a>
+                </form>
+              </li>
+            
+            
+              <li class="tw-mr-2">
+                <a id="btnMONCOMPTE2"
+                   href="/accounts/"
+                   class="tw-py-1 tw-px-3 tw-bg-c21-grey-light hover:tw-bg-c21-grey-medium hover:tw-text-white tw-text-black tw-text-sm"
+                >
+                  Mon compte
+                </a>
+              </li>
+            
+            
+              <li class="tw-mr-1 tw-text-white hover:tw-text-c21-grey-dark">
+                <a rel="noopener"
+                   href="https://www.facebook.com/Century21France"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Facebook');"
+                   title="Facebook"
+                   class="tw-block tw-h-6 tw-items-center tw-justify-center tw-w-6 tx-flex"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 16 28" class="tw-fill-current tw-w-full tw-h-full"><path d="M14.984.187v4.125h-2.453c-1.922 0-2.281.922-2.281 2.25v2.953h4.578l-.609 4.625H10.25v11.859H5.469V14.14H1.485V9.515h3.984V6.109C5.469 2.156 7.891 0 11.422 0c1.687 0 3.141.125 3.563.187z"/></svg>
+                </a>
+              </li>
+            
+            
+              <li class="tw-mr-1 tw-text-white hover:tw-text-c21-grey-dark">
+                <a rel="noopener"
+                   href="https://twitter.com/century21fr"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Twitter');"
+                   title="Twitter"
+                   class="tw-block tw-h-6 tw-items-center tw-justify-center tw-w-6 tx-flex"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 26 28" class="tw-fill-current tw-w-full tw-h-full"><path d="M25.312 6.375a10.85 10.85 0 01-2.531 2.609c.016.219.016.438.016.656 0 6.672-5.078 14.359-14.359 14.359-2.859 0-5.516-.828-7.75-2.266.406.047.797.063 1.219.063 2.359 0 4.531-.797 6.266-2.156a5.056 5.056 0 01-4.719-3.5c.313.047.625.078.953.078.453 0 .906-.063 1.328-.172a5.048 5.048 0 01-4.047-4.953v-.063a5.093 5.093 0 002.281.641 5.044 5.044 0 01-2.25-4.203c0-.938.25-1.797.688-2.547a14.344 14.344 0 0010.406 5.281 5.708 5.708 0 01-.125-1.156 5.045 5.045 0 015.047-5.047 5.03 5.03 0 013.687 1.594 9.943 9.943 0 003.203-1.219 5.032 5.032 0 01-2.219 2.781c1.016-.109 2-.391 2.906-.781z"/></svg>
+                </a>
+              </li>
+            
+            
+              <li class="tw-mr-1 tw-text-white hover:tw-text-c21-grey-dark">
+                <a rel="noopener"
+                   href="https://www.linkedin.com/company/century-21-france/"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Linkedin');"
+                   title="Linkedin"
+                   class="tw-block tw-h-6 tw-items-center tw-justify-center tw-w-6 tx-flex"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 28" class="tw-fill-current tw-w-full tw-h-full"><path d="M5.453 9.766V25.25H.297V9.766h5.156zm.328-4.782c.016 1.484-1.109 2.672-2.906 2.672h-.031C1.11 7.656 0 6.468 0 4.984c0-1.516 1.156-2.672 2.906-2.672 1.766 0 2.859 1.156 2.875 2.672zM24 16.375v8.875h-5.141v-8.281c0-2.078-.75-3.5-2.609-3.5-1.422 0-2.266.953-2.641 1.875-.125.344-.172.797-.172 1.266v8.641H8.296c.063-14.031 0-15.484 0-15.484h5.141v2.25h-.031c.672-1.062 1.891-2.609 4.672-2.609 3.391 0 5.922 2.219 5.922 6.969z"/></svg>
+                </a>
+              </li>
+            
+            
+              <li class="tw-mr-1 tw-text-white hover:tw-text-c21-grey-dark">
+                <a rel="noopener"
+                   href="https://www.instagram.com/century21fr/"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Instagram');"
+                   title="Instagram"
+                   class="tw-block tw-h-6 tw-items-center tw-justify-center tw-w-6 tx-flex"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 28" class="tw-fill-current tw-w-full tw-h-full"><path d="M16 14c0-2.203-1.797-4-4-4s-4 1.797-4 4 1.797 4 4 4 4-1.797 4-4zm2.156 0c0 3.406-2.75 6.156-6.156 6.156S5.844 17.406 5.844 14 8.594 7.844 12 7.844s6.156 2.75 6.156 6.156zm1.688-6.406c0 .797-.641 1.437-1.437 1.437S16.97 8.39 16.97 7.594s.641-1.437 1.437-1.437 1.437.641 1.437 1.437zM12 4.156c-1.75 0-5.5-.141-7.078.484-.547.219-.953.484-1.375.906s-.688.828-.906 1.375c-.625 1.578-.484 5.328-.484 7.078s-.141 5.5.484 7.078c.219.547.484.953.906 1.375s.828.688 1.375.906c1.578.625 5.328.484 7.078.484s5.5.141 7.078-.484c.547-.219.953-.484 1.375-.906s.688-.828.906-1.375c.625-1.578.484-5.328.484-7.078s.141-5.5-.484-7.078c-.219-.547-.484-.953-.906-1.375s-.828-.688-1.375-.906C17.5 4.015 13.75 4.156 12 4.156zM24 14c0 1.656.016 3.297-.078 4.953-.094 1.922-.531 3.625-1.937 5.031s-3.109 1.844-5.031 1.937c-1.656.094-3.297.078-4.953.078s-3.297.016-4.953-.078c-1.922-.094-3.625-.531-5.031-1.937S.173 20.875.08 18.953C-.014 17.297.002 15.656.002 14s-.016-3.297.078-4.953c.094-1.922.531-3.625 1.937-5.031s3.109-1.844 5.031-1.937c1.656-.094 3.297-.078 4.953-.078s3.297-.016 4.953.078c1.922.094 3.625.531 5.031 1.937s1.844 3.109 1.937 5.031C24.016 10.703 24 12.344 24 14z"/></svg>
+                </a>
+              </li>
+            
+            
+              <li class="tw-mr-1 tw-text-white hover:tw-text-c21-grey-dark">
+                <a rel="noopener"
+                   href="https://www.youtube.com/user/century21france"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Youtube');"
+                   title="Youtube"
+                   class="tw-block tw-h-6 tw-items-center tw-justify-center tw-w-6 tx-flex"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 28" class="tw-fill-current tw-w-full tw-h-full"><path d="M15.172 19.437v3.297c0 .703-.203 1.047-.609 1.047-.234 0-.469-.109-.703-.344v-4.703c.234-.234.469-.344.703-.344.406 0 .609.359.609 1.047zm5.281.016v.719h-1.406v-.719c0-.703.234-1.062.703-1.062s.703.359.703 1.062zM5.359 16.047h1.672v-1.469H2.156v1.469h1.641v8.891H5.36v-8.891zm4.5 8.891h1.391v-7.719H9.859v5.906c-.313.438-.609.656-.891.656-.187 0-.297-.109-.328-.328-.016-.047-.016-.219-.016-.547v-5.688H7.233v6.109c0 .547.047.906.125 1.141.125.391.453.578.906.578.5 0 1.031-.313 1.594-.953v.844zm6.703-2.313v-3.078c0-.719-.031-1.234-.141-1.547-.172-.578-.562-.875-1.109-.875-.516 0-1 .281-1.453.844v-3.391h-1.391v10.359h1.391v-.75c.469.578.953.859 1.453.859.547 0 .938-.297 1.109-.859.109-.328.141-.844.141-1.563zm5.282-.156v-.203h-1.422c0 .562-.016.875-.031.953-.078.375-.281.562-.625.562-.484 0-.719-.359-.719-1.078v-1.359h2.797v-1.609c0-.828-.141-1.422-.422-1.813-.406-.531-.953-.797-1.656-.797-.719 0-1.266.266-1.672.797-.297.391-.438.984-.438 1.813v2.703c0 .828.156 1.437.453 1.813.406.531.953.797 1.687.797s1.313-.281 1.687-.828a1.8 1.8 0 00.328-.844c.031-.141.031-.453.031-.906zm-9.5-14.266V4.922c0-.719-.203-1.078-.672-1.078-.453 0-.672.359-.672 1.078v3.281c0 .719.219 1.094.672 1.094.469 0 .672-.375.672-1.094zm11.234 11.735c0 1.797-.016 3.719-.406 5.469-.297 1.234-1.297 2.141-2.5 2.266-2.875.328-5.781.328-8.672.328s-5.797 0-8.672-.328c-1.203-.125-2.219-1.031-2.5-2.266-.406-1.75-.406-3.672-.406-5.469 0-1.813.016-3.719.406-5.469.297-1.234 1.297-2.141 2.516-2.281 2.859-.313 5.766-.313 8.656-.313s5.797 0 8.672.313c1.203.141 2.219 1.047 2.5 2.281.406 1.75.406 3.656.406 5.469zM7.984 0h1.594L7.687 6.234v4.234H6.124V6.234c-.141-.766-.453-1.859-.953-3.313-.344-.969-.688-1.953-1.016-2.922h1.656L6.92 4.108zm5.782 5.203v2.734c0 .828-.141 1.453-.438 1.844-.391.531-.938.797-1.656.797-.703 0-1.25-.266-1.641-.797-.297-.406-.438-1.016-.438-1.844V5.203c0-.828.141-1.437.438-1.828.391-.531.938-.797 1.641-.797.719 0 1.266.266 1.656.797.297.391.438 1 .438 1.828zM19 2.672v7.797h-1.422V9.61c-.562.656-1.094.969-1.609.969-.453 0-.781-.187-.922-.578-.078-.234-.125-.609-.125-1.172V2.673h1.422v5.734c0 .328 0 .516.016.547.031.219.141.344.328.344.281 0 .578-.219.891-.672V2.673h1.422z"/></svg>
+                </a>
+              </li>
+            
+            
+              <li>
+                <a rel="noopener"
+                   href="https://www.messenger.com/t/Century21France"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Messenger');"
+                   class="picto-bot-c21 tw-relative tw-block"
+                >
+                  <img src="/theme/generic/css/images/op-marque/bot-messenger-century21.svg"
+                       alt="le Bot CENTURY 21"
+                       height="24px"
+                       width="24px"
+                       title="le Bot CENTURY 21"
+                  >
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    
+    
+
+    <header id="mainHeader"
+            class="tw-bg-c21-grey-dark tw-border-b tw-border-c21-gold"
+            style="height: 81px;"
+    >
+      
+        <div class="mid o-top-bar__content tw-flex tw-items-center tw-w-full tw-h-full"
+             data-template="n__base"
+        >
+          <div class="content tw-container tw-mx-auto">
+            <ul class="tw-container tw-flex tw-items-center tw-justify-between tw-mx-auto tw-text-sm">
+              <li>
+                <a href="/"
+                   id="btnLogo"
+                   title="Retour à l'accueil CENTURY 21, N°1 des agences immobilières dans le monde"
+                >
+                  <img src="/theme/generic/css/images/op-marque/logo_c21.svg"
+                       alt="Retour à l'accueil CENTURY 21, N°1 des agences immobilières dans le monde"
+                       width="200px"
+                       height="23px"
+                  />
+                  
+                </a>
+              </li>
+              <li class="link-nav">
+                <a href="/acheter/"
+                   onclick="google_tag_event('Menu,Click,Acheter');"
+                   class="tw-text-white tw-text-sm active"
+                >
+                  ACHETER</a>
+              </li>
+              <li class="link-nav">
+                <a href="/louer/"
+                   onclick="google_tag_event('Menu,Click,Louer');"
+                   class="tw-text-white tw-text-sm "
+                >
+                  LOUER</a>
+              </li>
+              <li class="link-nav">
+                <a href="/outils/vendre/"
+                   onclick="google_tag_event('Menu,Click,Vendre');"
+                   class="tw-text-white tw-text-sm "
+                >
+                  VENDRE</a>
+              </li>
+              <li class="link-nav">
+                <a href="/outils/faire_gerer/"
+                   onclick="google_tag_event('Menu,Click,Faire Gerer');"
+                   class="tw-text-white tw-text-sm "
+                >
+                  FAIRE G&Eacute;RER</a>
+              </li>
+              <li class="link-nav">
+                <a href="/commerce_entreprises/"
+                   onclick="google_tag_event('Menu,Click,Entreprise Et Commerce');"
+                   class="tw-text-white tw-text-sm"
+                >
+                  ENTREPRISE ET COMMERCE</a>
+              </li>
+              <li>
+                <a rel="noopener"
+                   href="https://www.lesmeilleurstalents.com"
+                   target="_blank"
+                   onclick="google_tag_event('Menu,Click,Offres Emploi');"
+                   class="tw-text-white tw-text-sm"
+                >
+                  OFFRES D'EMPLOI</a>
+              </li>
+              <li><a rel="noopener"
+                     href="https://franchise.century21.fr/"
+                     target="_blank"
+                     onclick="google_tag_event('Menu,Click,Devenir Franchise');"
+                     class="tw-text-white tw-text-sm"
+              >
+                DEVENIR FRANCHIS&Eacute;</a></li>
+            </ul>
+          </div>
+          <div class="print_content tw-hidden">
+            <span class="titre_h2">CENTURY 21, N°1 des agences immobilières dans le monde</span>
+          </div>
+        </div>
+        
+      
+    </header>
+
+    
+
+    
+
+    <!-- MENU NON UTILISE ... -->
+    <!--  -->
+
+    
+      
+    
+
+    
+      <div id="page">
+        <div class="mid">
+          
+
+          
+          <div class="content o-global-container tw-mx-auto tw-p-8 tw-bg-white">
+            
+              
+
+              
+                
+
+                
+
+                
+              
+
+              
+
+  <span id="bloc_liste_biens">
+    
+
+
+
+<script>
+  var UID_BIEN = UID_BIEN.concat(["1857070943", "1533667679", "2039812579", "2195376000", "1368046091", "1042474807", "2226032374", "2196291915"]);
+  
+    UID_BIEN = UID_BIEN.concat([]);
+  
+  var PAGE_TITLE = "Vente immobilier à MONTPELLIER (34000)  1, 2, 3 p  - 215000€ | CENTURY 21";
+</script>
+
+
+  <h1 class="fwbPlus"> à vendre Montpellier (34000)</h1>
+
+
+
+  
+    <h2 class="tw-text-center tw-p-3">1 Pièce - 2 Pièces - 3 Pièces - Moins de 215000 € - Plus de 40 m<sup>2</sup> -  MONTPELLIER (34000)</h2>
+  
+
+
+
+  <link rel="stylesheet" href="/theme/generic/css/styles-liste-biens-new.css">
+  <link rel="stylesheet" href="/theme/generic/css/style-new-c21-acheter.css">
+
+
+
+
+
+  
+    <div class="mgtPlus">
+      <button id="TRI" class="bcsecondPlus">TRIER</button>
+      <button id="AFFINER" class="bcsecondPlus">AFFINER</button>
+      <button id="btnALERTE2"
+              class="bcsecondPlus purple"
+              onclick="google_tag_event('bien,liste-bien,clic-CREER-ALERTE');alerte_popup();"
+      >
+        créer une alerte
+      </button>
+    </div>
+    
+      <div id="blocRECHERCHE" class="blocRECHERCHE dbplus " style="display:none">
+        
+<div id="moteurAFFINEE"
+     class=" c-form-acheter-louer dark tw-relative tw-w-8/12 tw-my-5 tw-mx-auto tw-py-5 tw-px-10 tw-bg-c21-grey-light tw-bg-opacity-85"
+     data-template="n__bien__bloc_moteur"
+>
+  <form id="formRECHAFFINEE"
+        name="formRECHAFFINEE"
+        action="."
+        method="POST"
+        onSubmit="return checkTypedField(this.localisation, $('#msg_erreur_ou'))"
+        class="tw-relative tw-flex"
+  >
+    <input id="id_agence" name="agence" type="hidden" />
+    <ul class="tw-space-y-5 tw-w-full">
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Vous recherchez</label>
+        </div>
+        <div class="zone-field tw-flex tw-items-center tw-space-x-3 xl:tw-w-9/12 tw-sp zone-checkbox mumBOX tw-relative">
+          
+            <div class="BTN"><a id="btn-id_types_biens_0" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'maison')"> Maison</a></div>
+            <div class="BTN"><a id="btn-id_types_biens_1" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'appartement')"> Appartement</a></div>
+            <div class="morePOPUP tw-bg-white tw-font-semibold tw-inline-block tw-cursor-pointer">
+              <span>+ DE CHOIX</span>
+            </div>
+            <div class="boxMORE js-box-more tw-hidden tw-absolute tw-space-y-2 tw-p-2 tw-pt-0 tw-z-50 tw-bg-c21-grey-medium"
+                 id="typeUNIVERS"
+                 style="top: 54px;right:0;"
+            >
+              
+                
+                  <div class="BTN"><a id="btn-id_age_bien_0" class="inactif age_bien" onclick="styledCheckBox.check(this, 'age_bien', 'ancien')"> Ancien</a></div>
+                
+                  <div class="BTN"><a id="btn-id_age_bien_1" class="inactif age_bien" onclick="styledCheckBox.check(this, 'age_bien', 'neuf')"> Neuf</a></div>
+                
+              
+              <div class="BTN"><a id="btn-id_types_biens_2" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'terrain')"> Terrain</a></div>
+              <div class="BTN"><a id="btn-id_types_biens_3" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'parking')"> Parking</a></div>
+              
+                <div class="BTN"><a id="btn-id_types_biens_6" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'immeuble')"> Immeuble</a></div>
+                <div class="BTN"><a id="btn-id_types_biens_7" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'divers')"> Divers</a></div>
+              
+            </div>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">A quel endroit</label>
+        </div>
+        <div class="zone-field tw-bg-white xl:tw-w-9/12">
+          <input class="fL" id="id_localisation" name="localisation" placeholder="Ville, code postal" type="text" value="cpv-34000_montpellier" /><script>$(document).ready(function() {$("#id_localisation").tokenInput("/autocomplete/localite/", {tokenLimit:null,theme:"facebook", prePopulate:[{"id": "cpv-34000_montpellier", "name": "MONTPELLIER (34000)"}],onReady:function(){recupSelection('id_localisation');},preventDuplicates:true,hintText:"",placeholder:"Département, Ville, Code Postal, arrdt...",searchingText:"Recherche en cours...",onAdd:function(item){reverseListe(item,"id_localisation");}}); });</script>
+          <ul id="msg_erreur_ou" class="errorlist tw-hidden">
+            <li>Vous devez renseigner un lieu au minimum.</li>
+          </ul>
+          <input id="hiddenVal" type="hidden"/>
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Étendre à</label>
+        </div>
+        <div class="zone-field xl:tw-w-9/12 c-tw-form__has-select">
+          <select class="customSELECT" id="id_etendue" name="etendue">
+<option value="0"></option>
+<option value="5">5 km</option>
+<option value="10">10 km</option>
+<option value="15">15 km</option>
+</select>
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          
+            <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Budget maxi</label>
+          
+        </div>
+        <div class="zone-field xl:tw-w-9/12">
+          <div id="slider-id_budget_max" class="slider"></div>
+<input type="hidden"  id="id_budget_max" name="budget_max" value="215000" />
+<script>$(document).ready(function() { initSliderSelect("id_budget_max",0,1000000,20000,"€",215000); });</script>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Surface mini</label>
+        </div>
+        <div class="zone-field xl:tw-w-9/12">
+          <div id="slider-id_surface_min" class="slider"></div>
+<input type="hidden"  id="id_surface_min" name="surface_min" value="40" />
+<script>$(document).ready(function() { initSliderSelect("id_surface_min",0,400,10,"m²",40); });</script>
+          
+        </div>
+      </li>
+      
+        <li class="tw-flex tw-items-center tw-justify-between">
+          <div class="zone-label tw-w-3/12 tw-mr-6">
+            <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Terrain mini</label>
+          </div>
+          <div class="zone-field xl:tw-w-9/12">
+            <div id="slider-id_surface_terrain_min" class="slider"></div>
+<input type="hidden"  id="id_surface_terrain_min" name="surface_terrain_min" value="0" />
+<script>$(document).ready(function() { initSliderSelect("id_surface_terrain_min",0,4000,10,"m²",0); });</script>
+            
+          </div>
+        </li>
+      
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Nombre de pièces</label>
+        </div>
+        <div class="zone-field tw-flex tw-space-x-3 xl:tw-w-9/12 zone-checkbox">
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_0" name="nombres_de_pieces" type="hidden" value="1" /><a id="btn-id_nombres_de_pieces_0" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '1')"> 1</a></div>
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_1" name="nombres_de_pieces" type="hidden" value="2" /><a id="btn-id_nombres_de_pieces_1" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '2')"> 2</a></div>
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_2" name="nombres_de_pieces" type="hidden" value="3" /><a id="btn-id_nombres_de_pieces_2" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '3')"> 3</a></div>
+          
+            <div class="BTN"><a id="btn-id_nombres_de_pieces_3" class="inactif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '4')"> 4</a></div>
+          
+            <div class="BTN"><a id="btn-id_nombres_de_pieces_4" class="inactif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '5')"> 5+</a></div>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <a class="tw-underline fL black" href="/commerce_entreprises/acheter/"
+           
+           onclick="google_tag_event('page-univer,moteur-vente,clic-btn-ICE-popup-QUOI');">Entreprise
+          / Commerce</a>
+        <div class="lienMoreRech floatR">
+          
+          <div id="div_ref_moteur_affinee" class="rechParRef tw-cursor-pointer">
+            <a id="fermerRechParRef" class="pictoBtnFermer"></a>
+            <div class="content_rechParRef">
+              <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Référence&nbsp;?</label>
+              <input type="text" placeholder="Entrez votre référence" name="reference" id="form_RECHAFFINEE_ref">
+              <input type="hidden" name="type_transaction" value="vente">
+              <a id="btnRECHERCHE_REF" class="gris">Rechercher</a>
+              <div id="result_bien_ref" style="display: none;"></div>
+            </div>
+          </div>
+          
+          <a id="ref_moteur_affinee"
+             class="lienRECH_REF black tw-underline tw-text-base"
+          >
+            Rechercher par référence</a>
+        </div>
+        
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        
+          <div class="blocPLUSDECRITERE">
+            
+              
+                <ul>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_0" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'photo')"> Photo (8)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_1" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'visite_virtuelle')"> Vid&eacute;o et/ou visite virtuelle (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_2" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'chauffage_individuel')"> Chauffage Individuel (7)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_3" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'chauffage_collectif')"> Chauffage Collectif (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_4" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'parking')"> Parking (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_5" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'terrasse_balcon_jardin')"> Terrasse / Balcon / Jardin (4)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_6" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'cave_ou_sous_sol')"> Cave et/ou sous-sol (2)</a></div></li>
+                  
+                </ul>
+              
+            
+          </div>
+        
+      </li>
+    </ul>
+    
+      <div class="zone-btn-extra">
+        <ul>
+          
+            <li>
+              <a id="btnALERTE"
+                 onclick="google_tag_event('bien,liste-bien,clic-CREER-ALERTE');"
+                 class=""
+              >
+                Cr&eacute;er une alerte
+              </a>
+            </li>
+          
+          
+            <li>
+              <a id="lienPLUSCRITERES"
+                 class="tw-block tw-p-2 tw-bg-c21-gold tw-text-white tw-text-center tw-text-2xl tw-font-semibold "
+                 onclick="google_tag_event('bien,liste-bien,clic-PLUS-CRITERES');"
+              >
+                + de critères
+              </a>
+            </li>
+          
+        </ul>
+      </div>
+    
+  </form>
+</div>
+
+      </div>
+      <div class="reset"></div>
+    
+    <div id="blocPAGINATION" class="pagination zoneTOP bc_plus" style="display:none;"
+         data-template="n__bien__bloc_liste_biens_new">
+      
+        <div class="btnCRITERE_TRI">
+          <ul>
+            
+              
+                <li>
+                  <a class="actif" href="#"
+                     onclick="return load_liste_biens('?tri=prix&order=desc')">
+                    <span>Prix</span><span class="tri_asc"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=surface&order=asc')">
+                    <span>Surface</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=nb_pieces&order=asc')">
+                    <span>Nb Pièces</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=ville&order=asc')">
+                    <span>Ville</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=dpe&order=asc')">
+                    <span>DPE</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=exclusivite&order=asc')">
+                    <span>Exclusivité</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="#" onclick="return load_liste_biens('?tri=date&order=asc')">
+                    <span>Date</span><span class="tri_neutre"></span>
+                  </a>
+                </li>
+              
+            
+          </ul>
+        </div>
+      
+    </div>
+
+    <div class="reset"></div>
+    <div class="tw-ml-5">
+      <h2 class="titreSeparation titreSeparation txtA_plusplus">
+        
+          8
+          annonces  correspondent  &agrave;
+          votre recherche.
+        
+      </h2>
+    </div>
+
+  
+  <div class="reset"></div>
+  <!-- <div class="tw-ml-5">
+				 <div class="titreSeparation titreSeparation">
+			
+					8
+					annonces correspondant &agrave; votre recherche.
+				
+					</div>
+		</div> -->
+		<div class="annonce_et_plus_infos">
+			<div id="blocANNONCES">
+				<ul class="annoncesListeBien">
+				
+				<li  class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_48274');
+</script>
+<div id="bien_1857070943"
+     data-uid="1857070943"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1857070943/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_48274');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">109 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1857070943','202_2879_48274',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_48274_9_88B8ACAB-D7D0-48CA-AC2B-D7C8E6A454F0.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 41.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1857070943/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_48274');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>41,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li  class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_750_30701');
+</script>
+<div id="bien_1533667679"
+     data-uid="1533667679"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1533667679/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_750_30701');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">110 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1533667679','202_750_30701',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/750/c21_202_750_30701_9_7501D6C1-179C-4AEB-BB96-6A69A7825331.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 55.5 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1533667679/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_750_30701');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>55,48 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li  class="annonce margR0">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_416_60270');
+</script>
+<div id="bien_2039812579"
+     data-uid="2039812579"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2039812579/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_60270');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">113 700&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2039812579','202_416_60270',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_60270_9_8D6E178F-FD05-485A-91CE-342E8D863B1F.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 80.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2039812579/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_60270');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>80,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li  class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_750_33684');
+</script>
+<div id="bien_2195376000"
+     data-uid="2195376000"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2195376000/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_750_33684');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">160 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2195376000','202_750_33684',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/750/c21_202_750_33684_9_55B586F9-5D71-4AF7-8603-386ECF3D9388.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 65.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2195376000/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_750_33684');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>65,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li  class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_45909');
+</script>
+<div id="bien_1368046091"
+     data-uid="1368046091"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1368046091/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_45909');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">170 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1368046091','202_2879_45909',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_45909_9_9046B506-CABD-42D7-9686-EF4523CBF350.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 43.5 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1368046091/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_45909');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>43,46 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li  class="annonce margR0">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_2827_50994');
+</script>
+<div id="bien_1042474807"
+     data-uid="1042474807"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1042474807/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2827_50994');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">175 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1042474807','202_2827_50994',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2827/c21_202_2827_50994_9_25D455BA-3A2D-41F4-A978-868B60528A29.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 49.5 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1042474807/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2827_50994');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>49,45 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+						
+						
+						<li class="annonce">							
+							
+  
+    <div class="popin-pub-alerte-mail version-liste ">
+			
+      <div class="text-popin tw-flex tw-items-center tw-font-semibold tw-text-2xl tw-text-center">
+        
+          Tous les nouveaux biens à Montpellier
+          directement dans votre boîte mail !
+        
+      </div>
+      
+        <div class="form-popin">
+          <form action="/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/alerte/add/" onsubmit="submit_popin_alerte(this);return false;">
+            <div class="input-btn">
+              <input type="hidden" name="g-recaptcha-response"/>
+              <input name="email" type="email" placeholder="Saisissez votre e-mail !" required>
+              <input type="hidden" name="version_popin" value="version-1">
+              <input onclick="google_tag_event('bien,liste-bien-encart,clic-CREER-ALERTE');" class="btn" type="submit"  value="OK">
+            </div>
+          </form>
+        </div>
+      
+    </div>
+  
+
+
+						</li>
+						
+					
+					
+					
+				
+				<li  class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_2297_21610');
+</script>
+<div id="bien_2226032374"
+     data-uid="2226032374"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2226032374/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2297_21610');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">184 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2226032374','202_2297_21610',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2297/c21_202_2297_21610_9_EF7C6C6E-302B-47C3-A118-5BD0CCA73618.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 45.1 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2226032374/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2297_21610');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>45,15 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				<li id="derniereAnnonce" class="annonce">
+					<script>
+  google_tag_event('bien,vu_sur_listing,202_3326_1011');
+</script>
+<div id="bien_2196291915"
+     data-uid="2196291915"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2196291915/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_3326_1011');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">190 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2196291915','202_3326_1011',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/3326/c21_202_3326_1011_9_F9D76EAA-A2D2-48F5-8F96-1FC9F290461A.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 58.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2196291915/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_3326_1011');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>58,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+				</li>
+					
+					
+					
+					
+				
+				
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<div class="tw-mx-auto tw-flex tw-jusitfy-center tw-w-full">
+  <a class="tw-mx-auto tw-mb-4 tw-flex tw-justify-center tw-w-full"
+    
+      href="/fiches/tour-de-france/"
+    
+  >
+    <img src="/theme/generic/css/images/conf_presse/2020/aout/op-tour-de-france/CENTURY21-Tour-De-France-1280x121.png" alt="Le marché de l'immobilier de l'ancien au 1er semestre 2020" loading="lazy" />
+  </a>
+</div>
+
+
+
+				
+				</ul>
+
+				
+                
+                <div class="titreSeparation titreSeparation" styel="font-size:16px;">
+                    
+                           vous avez vu 8 annonces sur 8
+                        
+                            </div>
+                <p class="mgtmgb">Vous n'avez pas trouvé&nbsp;?</p>
+                <p class="txcfts">Le bien qui vous correspond n'est peut-être pas encore en ligne.<br>Créez une alerte pour ne pas le rater!</p>
+                <div class="mgt_plus">
+                        <button onclick="alerte_popup();" class="cursorp">CRÉER UNE ALERTE</button>
+                        <button id="modifier3" class="cursorp_plus">MODIFIER LES CRITÈRES</button>
+                    </div>
+                    
+                    <p class="txtcfwfs">Ces biens peuvent aussi vous intéresser</p>
+                    
+				<ul class="annoncesListeBien">
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_3395_353');
+</script>
+<div id="bien_2116236588"
+     data-uid="2116236588"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2116236588/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_3395_353');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">75 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2116236588','202_3395_353',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/3395/c21_202_3395_353_9_5F412D8E-CF28-479F-9810-6F1B355738A2.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 57.2 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2116236588/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_3395_353');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>57,19 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_48722');
+</script>
+<div id="bien_1948525881"
+     data-uid="1948525881"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1948525881/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_48722');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">74 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1948525881','202_2879_48722',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_48722_9_641739FA-16EB-424E-AD35-F2D42F503EED.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 66.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1948525881/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_48722');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement <br/>66,04 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49740');
+</script>
+<div id="bien_2196974556"
+     data-uid="2196974556"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2196974556/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49740');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">79 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2196974556','202_2879_49740',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49740_9_7C59D5EF-B249-44D9-8DC6-4FEB129E48CA.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 58.7 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2196974556/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49740');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>58,74 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_750_33689');
+</script>
+<div id="bien_2196242554"
+     data-uid="2196242554"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2196242554/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_750_33689');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">81 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2196242554','202_750_33689',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/750/c21_202_750_33689_9_956411C5-F4BE-4587-B1D2-6661AEC03CB1.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 58.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2196242554/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_750_33689');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>58,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49031');
+</script>
+<div id="bien_2009809023"
+     data-uid="2009809023"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2009809023/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49031');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">82 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2009809023','202_2879_49031',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49031_9_15175CFA-E87B-48E1-9BC2-246DAB837B83.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 73.4 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2009809023/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49031');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>73,44 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49623');
+</script>
+<div id="bien_2168476615"
+     data-uid="2168476615"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2168476615/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49623');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">85 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2168476615','202_2879_49623',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49623_9_268E16FD-D7A8-47C9-8BCF-7A95EAF09204.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 36.5 m² - 1 pi&egrave;ce"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2168476615/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49623');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F1 <br/>36,5 m&sup2; ,
+        1 pièce
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+						
+						
+							<li class="annonce">							
+								
+  
+    <div class="popin-pub-alerte-mail version-liste ">
+			
+      <div class="text-popin tw-flex tw-items-center tw-font-semibold tw-text-2xl tw-text-center">
+        
+          Tous les nouveaux biens à Montpellier
+          directement dans votre boîte mail !
+        
+      </div>
+      
+        <div class="form-popin">
+          <form action="/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/alerte/add/" onsubmit="submit_popin_alerte(this);return false;">
+            <div class="input-btn">
+              <input type="hidden" name="g-recaptcha-response"/>
+              <input name="email" type="email" placeholder="Saisissez votre e-mail !" required>
+              <input type="hidden" name="version_popin" value="version-1">
+              <input onclick="google_tag_event('bien,liste-bien-encart,clic-CREER-ALERTE');" class="btn" type="submit"  value="OK">
+            </div>
+          </form>
+        </div>
+      
+    </div>
+  
+
+
+							</li>
+						
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61178');
+</script>
+<div id="bien_2158146523"
+     data-uid="2158146523"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2158146523/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61178');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">84 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2158146523','202_416_61178',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61178_9_0FC6D881-F5D6-46A5-89D9-991CBD2B3AB8.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 57.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2158146523/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61178');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>57,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_47929');
+</script>
+<div id="bien_1832253044"
+     data-uid="1832253044"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1832253044/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_47929');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">115 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1832253044','202_2879_47929',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_47929_9_A45E8582-808D-4E14-8DC0-A48F5C7686BB.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 41.1 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1832253044/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_47929');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>41,1 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_750_33815');
+</script>
+<div id="bien_2233947927"
+     data-uid="2233947927"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2233947927/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_750_33815');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">114 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2233947927','202_750_33815',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/750/c21_202_750_33815_9_7469C0C7-55A9-440D-A460-F33F25A76E21.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 47.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2233947927/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_750_33815');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>46,97 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61460');
+</script>
+<div id="bien_2180320516"
+     data-uid="2180320516"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2180320516/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61460');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">121 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2180320516','202_416_61460',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61460_9_E489A41B-8D7A-452B-B070-AC255ED5F153.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 59.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2180320516/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61460');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>59,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_3326_753');
+</script>
+<div id="bien_1979610424"
+     data-uid="1979610424"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1979610424/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_3326_753');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">122 900&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1979610424','202_3326_753',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/3326/c21_202_3326_753_9_3FD86DFF-FEEF-4863-AAAD-0B11DDD7D259.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 46.9 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1979610424/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_3326_753');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>46,86 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_60334');
+</script>
+<div id="bien_2047685734"
+     data-uid="2047685734"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2047685734/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_60334');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">126 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2047685734','202_416_60334',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_60334_9_6C996959-AEA3-477D-8977-284428A8EADD.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 46.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2047685734/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_60334');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>46,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49582');
+</script>
+<div id="bien_2160961302"
+     data-uid="2160961302"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2160961302/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49582');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">128 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2160961302','202_2879_49582',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49582_9_319BFA19-0B3D-4694-AAD6-342B420FAC0B.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 53.1 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2160961302/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49582');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>53,15 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61748');
+</script>
+<div id="bien_2218397048"
+     data-uid="2218397048"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2218397048/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61748');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">129 300&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2218397048','202_416_61748',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61748_9_0F7D33FC-BD5D-485E-A271-0A9A997DB3EB.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 42.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2218397048/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61748');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement T2 <br/>42,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_60711');
+</script>
+<div id="bien_2104676892"
+     data-uid="2104676892"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2104676892/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_60711');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">129 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2104676892','202_416_60711',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_60711_9_5E491134-786E-4210-95AE-4128594B1C43.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 48.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2104676892/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_60711');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>48,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_59913');
+</script>
+<div id="bien_1989074128"
+     data-uid="1989074128"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1989074128/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_59913');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">130 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1989074128','202_416_59913',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_59913_9_BAF317D0-F7EA-4370-9518-A8E0C3C95D4A.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 50.4 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1989074128/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_59913');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>50,35 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61779');
+</script>
+<div id="bien_2223391780"
+     data-uid="2223391780"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2223391780/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61779');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">135 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2223391780','202_416_61779',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61779_9_45BC6A95-3CC9-46C2-B337-1E6FD48F2994.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 46.6 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2223391780/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61779');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>46,63 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_3326_33');
+</script>
+<div id="bien_1543823386"
+     data-uid="1543823386"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1543823386/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_3326_33');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">134 900&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1543823386','202_3326_33',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/3326/c21_202_3326_33_9_1F0597BA-6AC7-4F0E-AAC0-906C53FD2932.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 60.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1543823386/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_3326_33');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement T3 <br/>60,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49664');
+</script>
+<div id="bien_2178000488"
+     data-uid="2178000488"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2178000488/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49664');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">136 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2178000488','202_2879_49664',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49664_9_CFC13DFA-AF37-40B8-BAD3-A5553B2C5A98.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 46.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2178000488/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49664');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>46,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_48971');
+</script>
+<div id="bien_2002787859"
+     data-uid="2002787859"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2002787859/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_48971');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">137 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2002787859','202_2879_48971',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_48971_9_85453948-2B25-468D-A39D-1A050144F551.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 49.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2002787859/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_48971');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>49,04 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_750_33478');
+</script>
+<div id="bien_2151738418"
+     data-uid="2151738418"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2151738418/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_750_33478');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">139 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2151738418','202_750_33478',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/750/c21_202_750_33478_9_F8C04C91-F41A-4968-A880-6CE58A25CD5B.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 49.2 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2151738418/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_750_33478');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>49,18 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61782');
+</script>
+<div id="bien_2224050419"
+     data-uid="2224050419"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2224050419/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61782');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">139 500&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2224050419','202_416_61782',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61782_9_284580B9-5BD6-47EA-A088-098667101EE5.jpg"
+             alt="Vente appartement - MONTPELLIER (34080) - 75.5 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2224050419/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61782');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34080</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>75,5 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61031');
+</script>
+<div id="bien_2144258834"
+     data-uid="2144258834"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2144258834/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61031');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">139 800&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2144258834','202_416_61031',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61031_9_AAEC80C4-790E-466B-9A8B-831A87783870.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 61.0 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2144258834/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61031');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>61,0 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_48660');
+</script>
+<div id="bien_1936177111"
+     data-uid="1936177111"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/1936177111/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_48660');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">143 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('1936177111','202_2879_48660',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_48660_9_C23397EA-21DE-439C-84D4-D889D1C8617E.jpg"
+             alt="Vente appartement - MONTPELLIER (34090) - 41.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/1936177111/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_48660');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34090</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>41,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49797');
+</script>
+<div id="bien_2217705868"
+     data-uid="2217705868"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2217705868/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49797');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">149 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2217705868','202_2879_49797',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49797_9_FC10ED56-6FA9-419B-816C-5B16AA827027.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 48.7 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2217705868/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49797');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>48,67 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2297_21526');
+</script>
+<div id="bien_2175721359"
+     data-uid="2175721359"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2175721359/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2297_21526');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">149 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2175721359','202_2297_21526',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2297/c21_202_2297_21526_9_AE7B69D5-0199-48A9-BCEE-5011CF33149B.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 64.2 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2175721359/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2297_21526');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F3 <br/>64,22 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2827_53051');
+</script>
+<div id="bien_2117629001"
+     data-uid="2117629001"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2117629001/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2827_53051');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">151 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2117629001','202_2827_53051',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2827/c21_202_2827_53051_9_5BE762A0-CD45-4B58-9034-856564EA7D50.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 36.0 m² - 1 pi&egrave;ce"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2117629001/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2827_53051');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Studio <br/>36,0 m&sup2; ,
+        1 pièce
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_416_61775');
+</script>
+<div id="bien_2223289569"
+     data-uid="2223289569"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2223289569/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_416_61775');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">159 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2223289569','202_416_61775',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/416/c21_202_416_61775_9_27D26EB4-A99B-4025-8011-1A58356616BD.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 50.0 m² - 2 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2223289569/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_416_61775');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F2 <br/>50,0 m&sup2; ,
+        2 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  class="annonce fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2879_49206');
+</script>
+<div id="bien_2045210247"
+     data-uid="2045210247"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2045210247/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2879_49206');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">158 000&euro;
+        <span class="font20"></span>
+      </div>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2045210247','202_2879_49206',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2879/c21_202_2879_49206_9_50353C58-C5A4-4ECC-8A70-B4181C6C1CBC.jpg"
+             alt="Vente appartement - MONTPELLIER (34070) - 60.6 m² - 3 pi&egrave;ces"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2045210247/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2879_49206');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34070</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement <br/>60,58 m&sup2; ,
+        3 pièces
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+					<li  id="derniereAnnonce"  class="annonce margR0 fondBienApprochant">
+						<script>
+  google_tag_event('bien,vu_sur_listing,202_2827_52973');
+</script>
+<div id="bien_2032178803"
+     data-uid="2032178803"
+     data-template="n__bien__bloc__bien__liste"
+     class="contentAnnonce"
+>
+  <div class="zone-photo-exclu">
+    <a href="/trouver_logement/detail/2032178803/"
+       onclick="google_tag_event('bien,clic_sur_listing,202_2827_52973');return go_detail(this);"
+    >
+      <div class="price tw-py-1 tw-text-xl tw-font-semibold tw-text-center">165 850&euro;
+        <span class="font20"></span>
+      </div>
+      
+        <span class="infoEXCLU tw-py-1 tw-leading-none tw-bg-c21-gold tw-text-white tw-text-center tw-text-xs tw-font-semibold tw-z-10">
+          
+          Mandat Confiance / Exclusivité
+        </span>
+      
+      <p class="pixM photoAnnonce tw-relative tw-flex tw-items-center tw-justify-center"
+         onmouseover="popup_annonce('2032178803','202_2827_52973',$(this));return false;"
+      >
+        <img width="220"
+             height="146"
+             src="/imagesBien/202/2827/c21_202_2827_52973_9_D9C95B70-A8F6-45FF-9222-755A717B0910.jpg"
+             alt="Vente appartement - MONTPELLIER (34000) - 38.3 m² - 1 pi&egrave;ce"
+             
+        />
+      </p>
+    </a>
+  </div>
+  <a href="/trouver_logement/detail/2032178803/"
+     onclick="google_tag_event('bien,clic_sur_listing,202_2827_52973');return go_detail(this);"
+     class="tw-block"
+  >
+    <h3 class="tw-text-xs tw-leading-none tw-my-1">
+      
+        MONTPELLIER&nbsp;<span class="tw-text-sm">34000</span>
+      
+    </h3>
+    <div class="tw-flex tw-justify-between">
+      <h4 class="tw-w-8/12 tw-text-c21-grey-medium tw-text-sm">
+        Appartement F1 <br/>38,31 m&sup2; ,
+        1 pièce
+      </h4>
+      <div class="tw-w-4/12 tw-flex tw-flex-col tw-items-center tw-justify-between">
+        <span class="icon-zoom-in2"></span>
+        <span class="tw-text-sm">Voir détail</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+					</li>
+					
+					
+										
+				
+				</ul>
+				
+				
+				
+				<div id="blocPAGINATION" class="zoneFOOTER" data-template="n__bien__bloc_liste_biens_new">
+					
+  <div class="pagination_seo c-pagination xl:tw-flex xl:tw-justify-between xl:tw-items-center">
+    <div class="elementL xl:tw-w-9/12">
+      <div class="btnNB_PAGE xl:tw-w-full">
+        <ul 
+            class="tw-flex tw-items-center"
+        >
+          
+
+          
+            <li class="active tw-text-center tw-bg-c21-grey-light xl:tw-w-10">
+              <a href="/annonces/achat/cpv-34000_montpellier/s-40-/st-0-/b-0-215000/p-1-2-3/"
+                 class="tw-block tw-capitalize tw-p-1 tw-text-xs tw-font-semibold tw-border tw-border-c21-grey-medium xl:tw-border-none"
+              >
+                1</a>
+            </li>
+          
+
+          
+        </ul>
+        
+      </div>
+    </div>
+
+    <div class="tw-flex tw-justify-end tw-text-center tw-my-3 xl:tw-w-2/12">
+      <div class="btnNB_ANNONCE tw-flex tw-items-center tw-justify-center">
+        <label class="tw-mr-2 tw-text-xs tw-text-c21-grey-dark">biens / page</label>
+        <select name="num_par_page"
+                class="customSELECT tw-border tw-border-c21-grey-medium xl:tw-border-none tw-rounded-none ">
+          
+            <option
+                    selected="selected">
+              30
+            </option>
+          
+            <option
+                    >
+              60
+            </option>
+          
+            <option
+                    >
+              90
+            </option>
+          
+        </select>
+      </div>
+    </div>
+  </div>
+
+
+				<div class="reset"></div>
+				</div>
+				<div class="reset"></div>
+			</div>
+
+
+
+		</div>
+		
+<!-- 
+<div id="blocRECHERCHE" style="display:block">
+  
+<div id="moteurAFFINEE"
+     class=" c-form-acheter-louer dark tw-relative tw-w-8/12 tw-my-5 tw-mx-auto tw-py-5 tw-px-10 tw-bg-c21-grey-light tw-bg-opacity-85"
+     data-template="n__bien__bloc_moteur"
+>
+  <form id="formRECHAFFINEE"
+        name="formRECHAFFINEE"
+        action="."
+        method="POST"
+        onSubmit="return checkTypedField(this.localisation, $('#msg_erreur_ou'))"
+        class="tw-relative tw-flex"
+  >
+    <input id="id_agence" name="agence" type="hidden" />
+    <ul class="tw-space-y-5 tw-w-full">
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Vous recherchez</label>
+        </div>
+        <div class="zone-field tw-flex tw-items-center tw-space-x-3 xl:tw-w-9/12 tw-sp zone-checkbox mumBOX tw-relative">
+          
+            <div class="BTN"><a id="btn-id_types_biens_0" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'maison')"> Maison</a></div>
+            <div class="BTN"><a id="btn-id_types_biens_1" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'appartement')"> Appartement</a></div>
+            <div class="morePOPUP tw-bg-white tw-font-semibold tw-inline-block tw-cursor-pointer">
+              <span>+ DE CHOIX</span>
+            </div>
+            <div class="boxMORE js-box-more tw-hidden tw-absolute tw-space-y-2 tw-p-2 tw-pt-0 tw-z-50 tw-bg-c21-grey-medium"
+                 id="typeUNIVERS"
+                 style="top: 54px;right:0;"
+            >
+              
+                
+                  <div class="BTN"><a id="btn-id_age_bien_0" class="inactif age_bien" onclick="styledCheckBox.check(this, 'age_bien', 'ancien')"> Ancien</a></div>
+                
+                  <div class="BTN"><a id="btn-id_age_bien_1" class="inactif age_bien" onclick="styledCheckBox.check(this, 'age_bien', 'neuf')"> Neuf</a></div>
+                
+              
+              <div class="BTN"><a id="btn-id_types_biens_2" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'terrain')"> Terrain</a></div>
+              <div class="BTN"><a id="btn-id_types_biens_3" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'parking')"> Parking</a></div>
+              
+                <div class="BTN"><a id="btn-id_types_biens_6" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'immeuble')"> Immeuble</a></div>
+                <div class="BTN"><a id="btn-id_types_biens_7" class="inactif types_biens" onclick="styledCheckBox.check(this, 'types_biens', 'divers')"> Divers</a></div>
+              
+            </div>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">A quel endroit</label>
+        </div>
+        <div class="zone-field tw-bg-white xl:tw-w-9/12">
+          <input class="fL" id="id_localisation" name="localisation" placeholder="Ville, code postal" type="text" value="cpv-34000_montpellier" /><script>$(document).ready(function() {$("#id_localisation").tokenInput("/autocomplete/localite/", {tokenLimit:null,theme:"facebook", prePopulate:[{"id": "cpv-34000_montpellier", "name": "MONTPELLIER (34000)"}],onReady:function(){recupSelection('id_localisation');},preventDuplicates:true,hintText:"",placeholder:"Département, Ville, Code Postal, arrdt...",searchingText:"Recherche en cours...",onAdd:function(item){reverseListe(item,"id_localisation");}}); });</script>
+          <ul id="msg_erreur_ou" class="errorlist tw-hidden">
+            <li>Vous devez renseigner un lieu au minimum.</li>
+          </ul>
+          <input id="hiddenVal" type="hidden"/>
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Étendre à</label>
+        </div>
+        <div class="zone-field xl:tw-w-9/12 c-tw-form__has-select">
+          <select class="customSELECT" id="id_etendue" name="etendue">
+<option value="0"></option>
+<option value="5">5 km</option>
+<option value="10">10 km</option>
+<option value="15">15 km</option>
+</select>
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          
+            <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Budget maxi</label>
+          
+        </div>
+        <div class="zone-field xl:tw-w-9/12">
+          <div id="slider-id_budget_max" class="slider"></div>
+<input type="hidden"  id="id_budget_max" name="budget_max" value="215000" />
+<script>$(document).ready(function() { initSliderSelect("id_budget_max",0,1000000,20000,"€",215000); });</script>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Surface mini</label>
+        </div>
+        <div class="zone-field xl:tw-w-9/12">
+          <div id="slider-id_surface_min" class="slider"></div>
+<input type="hidden"  id="id_surface_min" name="surface_min" value="40" />
+<script>$(document).ready(function() { initSliderSelect("id_surface_min",0,400,10,"m²",40); });</script>
+          
+        </div>
+      </li>
+      
+        <li class="tw-flex tw-items-center tw-justify-between">
+          <div class="zone-label tw-w-3/12 tw-mr-6">
+            <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Terrain mini</label>
+          </div>
+          <div class="zone-field xl:tw-w-9/12">
+            <div id="slider-id_surface_terrain_min" class="slider"></div>
+<input type="hidden"  id="id_surface_terrain_min" name="surface_terrain_min" value="0" />
+<script>$(document).ready(function() { initSliderSelect("id_surface_terrain_min",0,4000,10,"m²",0); });</script>
+            
+          </div>
+        </li>
+      
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <div class="zone-label tw-w-3/12 tw-mr-6">
+          <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Nombre de pièces</label>
+        </div>
+        <div class="zone-field tw-flex tw-space-x-3 xl:tw-w-9/12 zone-checkbox">
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_0" name="nombres_de_pieces" type="hidden" value="1" /><a id="btn-id_nombres_de_pieces_0" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '1')"> 1</a></div>
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_1" name="nombres_de_pieces" type="hidden" value="2" /><a id="btn-id_nombres_de_pieces_1" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '2')"> 2</a></div>
+          
+            <div class="BTN"><input id="id_nombres_de_pieces_2" name="nombres_de_pieces" type="hidden" value="3" /><a id="btn-id_nombres_de_pieces_2" class="actif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '3')"> 3</a></div>
+          
+            <div class="BTN"><a id="btn-id_nombres_de_pieces_3" class="inactif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '4')"> 4</a></div>
+          
+            <div class="BTN"><a id="btn-id_nombres_de_pieces_4" class="inactif nombres_de_pieces" onclick="styledCheckBox.check(this, 'nombres_de_pieces', '5')"> 5+</a></div>
+          
+        </div>
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        <a class="tw-underline fL black" href="/commerce_entreprises/acheter/"
+           
+           onclick="google_tag_event('page-univer,moteur-vente,clic-btn-ICE-popup-QUOI');">Entreprise
+          / Commerce</a>
+        <div class="lienMoreRech floatR">
+          
+          <div id="div_ref_moteur_affinee" class="rechParRef tw-cursor-pointer">
+            <a id="fermerRechParRef" class="pictoBtnFermer"></a>
+            <div class="content_rechParRef">
+              <label class="tw-block tw-text-right tw-font-semibold tw-text-lg">Référence&nbsp;?</label>
+              <input type="text" placeholder="Entrez votre référence" name="reference" id="form_RECHAFFINEE_ref">
+              <input type="hidden" name="type_transaction" value="vente">
+              <a id="btnRECHERCHE_REF" class="gris">Rechercher</a>
+              <div id="result_bien_ref" style="display: none;"></div>
+            </div>
+          </div>
+          
+          <a id="ref_moteur_affinee"
+             class="lienRECH_REF black tw-underline tw-text-base"
+          >
+            Rechercher par référence</a>
+        </div>
+        
+      </li>
+      <li class="tw-flex tw-items-center tw-justify-between">
+        
+          <div class="blocPLUSDECRITERE">
+            
+              
+                <ul>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_0" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'photo')"> Photo (8)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_1" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'visite_virtuelle')"> Vid&eacute;o et/ou visite virtuelle (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_2" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'chauffage_individuel')"> Chauffage Individuel (7)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_3" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'chauffage_collectif')"> Chauffage Collectif (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_4" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'parking')"> Parking (1)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_5" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'terrasse_balcon_jardin')"> Terrasse / Balcon / Jardin (4)</a></div></li>
+                  
+                    <li><div class="BTN"><a id="btn-id_affinage_6" class="inactif affinage" onclick="styledCheckBox.check(this, 'affinage', 'cave_ou_sous_sol')"> Cave et/ou sous-sol (2)</a></div></li>
+                  
+                </ul>
+              
+            
+          </div>
+        
+      </li>
+    </ul>
+    
+      <div class="zone-btn-extra">
+        <ul>
+          
+            <li>
+              <a id="btnALERTE"
+                 onclick="google_tag_event('bien,liste-bien,clic-CREER-ALERTE');"
+                 class=""
+              >
+                Cr&eacute;er une alerte
+              </a>
+            </li>
+          
+          
+            <li>
+              <a id="lienPLUSCRITERES"
+                 class="tw-block tw-p-2 tw-bg-c21-gold tw-text-white tw-text-center tw-text-2xl tw-font-semibold "
+                 onclick="google_tag_event('bien,liste-bien,clic-PLUS-CRITERES');"
+              >
+                + de critères
+              </a>
+            </li>
+          
+        </ul>
+      </div>
+    
+  </form>
+</div>
+
+</div>
+<div class="reset"></div>
+ -->
+
+<!-- test semantic_bosster -->
+<!--  -->
+
+<!-- <div id="blocPAGINATION" class="zoneTOP">
+  
+  <div class="btnCRITERE_TRI">
+    <ul>
+     	<li><label>Trier par : </label></li>
+      
+          
+          <li>
+          	<a class="actif" href="#" onclick="return load_liste_biens('?tri=prix&order=desc')">		<span>Prix</span><span class="tri_asc"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=surface&order=asc')">
+				<span>Surface</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=nb_pieces&order=asc')">
+				<span>Nb Pièces</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=ville&order=asc')">
+				<span>Ville</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=dpe&order=asc')">
+				<span>DPE</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=exclusivite&order=asc')">
+				<span>Exclusivité</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+          
+          <li>
+          	<a href="#" onclick="return load_liste_biens('?tri=date&order=asc')">
+				<span>Date</span><span class="tri_neutre"></span>
+          	</a>
+          </li>
+          
+      
+    </ul>
+  </div>
+  
+</div> -->
+<hr>
+
+  <section class="infos-agence-mobile" data-template="nat__bien__bloc_liste_biens_new">
+    <div id="plus_infos">
+      
+        
+<link rel="stylesheet" type="text/css" href="/js/leaflet/leaflet.css"/>
+<link rel="stylesheet" type="text/css" href="/js/mappy/L.Mappy.css"/>
+<script type="text/javascript" src="/js/leaflet/leaflet.js"></script>
+<script type="text/javascript" src="/js/mappy/L.Mappy.js"></script>
+<script type="text/javascript" src="/js/gmap.js"></script>
+<script>
+  
+    var AGENCES = [{"nom": "CENTURY 21 Eurogestrim", "tel": "0467061300", "uid": 81500, "ville": "MONTPELLIER", "adresse": "25  boulevard Renouvier", "source": "202/750/webmaster_1_202_750_0_2_0.jpg", "lat": 43.6028883683162, "mail": "ag750@century21france.fr", "lng": 3.86795009480746, "cp": "34000"}, {"nom": "CENTURY 21 Mercom Transactions", "tel": "0499522262", "uid": 84617, "ville": "MONTPELLIER", "adresse": "64  avenue du Pont Juvenal", "source": "202/1069/webmaster_1_202_1069_0_2_0.jpg", "lat": 43.6054380128329, "mail": "mercom.transactions@century21.fr", "lng": 3.88922287098903, "cp": "34000"}, {"nom": "CENTURY 21 L'Agence du Centre", "tel": "0499610610", "uid": 242103652, "ville": "MONTPELLIER", "adresse": "18  rue Saint Guilhem", "source": "202/2827/webmaster_1_202_2827_0_2_0.jpg", "lat": 43.6097736693765, "mail": "saintguilhem@century21france.fr", "lng": 3.87549878146436, "cp": "34000"}, {"nom": "CENTURY 21 HR Immobilier", "tel": "0467649898", "uid": 1517767089, "ville": "MONTPELLIER", "adresse": "290  avenue Théroigne de Méricourt", "source": "202/3326/webmaster_1_202_3326_0_2_0.jpg", "lat": 43.5977215838806, "mail": "hr.immobilier@century21.fr", "lng": 3.90156099664248, "cp": "34000"}];
+    function init_gmap() {
+      V5Map.init({
+        'clientId': 'century21',
+        'name': 'agence',
+        'points': AGENCES,
+        'infoWindow': infoWindowAgenceContentLight,
+      });
+    }
+  
+</script>
+
+
+  <div id="moduleNOTREAG" class="lg:tw-grid lg:tw-grid-cols-3 lg:tw-gap-3">
+    <div>
+      <h2 class="tw-bg-c21-gold tw-p-3 tw-text-center tw-text-white">
+        Découvrez cette agence à CASTELNAU LE LEZ
+      </h2>
+      <a class="lienNOMAG tw-block tw-text-center"
+         href="/trouver_agence/agence/308233559/"
+         target="_blank"
+      >
+        <img src="/imagesBien/202/2879/webmaster_1_202_2879_0_2_0.jpg"
+             alt="Agence immobilièreCENTURY 21 Vicarello, 34170 CASTELNAU LE LEZ"
+             class="image-agence"
+        />
+      </a>
+      <a class="lienNOMAG tw-block tw-text-center"
+         href="/trouver_agence/agence/308233559/"
+         target="_blank"
+      >
+        CENTURY 21 Vicarello</a>
+    </div>
+    <div>
+      
+
+      
+        
+          <div class="qualitelis_glob tw-bg-c21-grey-light tw-p-3">
+            <div class="note_glob">
+              <span class="tw-block tw-text-center tw-font-semibold">Les clients notent cette agence</span>
+              <div class="res_note">
+                <div class="tw-flex tw-items-center tw-mb-3">
+                  <span class="note_ag tw-block tw-font-semibold tw-text-xl">9,0/10</span>
+                  <div class="my-rating"
+                       data-rating="9,0"
+                       data-rateYo-star-width="18px"
+                       data-rateYo-normal-fill="#e8e2de"
+                       data-rateYo-rated-fill="#beaf87"
+                  ></div>
+                </div>
+                <span class="zone-avis tw-font-semibold">
+                  <a href="https://www.century21-vicarello-castelnau.com/agence/avis-clients/">
+                    <span class="tw-underline">579 avis</span>
+                  </a>
+                  sur cette agence
+                </span>
+              </div>
+            </div>
+            <div class="qualitelis tw-text-center tw-mt-3">Certifié par
+              <img src="/theme/generic/css/images/qualitelis/qualitelis.svg"
+                   class="logo-qualitelis tw-block tw-mx-auto"
+                   alt="Qualitelis"
+                   width="50px"
+              ></div>
+          </div>
+
+        
+      
+    </div>
+    <div>
+      <a class="tw-flex tw-items-center tw-justify-between tw-bg-c21-grey-light tw-my-3 tw-p-3"
+         href="/trouver_agence/agence/308233559/"
+         target="_blank"
+      >
+        Voir la fiche de cette agence <span class="icon-chevron-right"></span></a>
+      
+        <a class="tw-flex tw-items-center tw-justify-between tw-bg-c21-grey-light tw-my-3 tw-p-3"
+           href="https://www.century21-vicarello-castelnau.com"
+           target="_blank"
+        >
+          Voir le site de cette agence <span class="icon-chevron-right"></span>
+        </a>
+        <ul>
+          
+            <li>
+              
+                <a class="tw-flex tw-items-center tw-justify-between tw-bg-c21-grey-light tw-my-3 tw-p-3"
+                   href="https://www.century21-vicarello-castelnau.com/annonces/achat/"
+                >
+              
+              63 biens &agrave; vendre dans cette agence <span class="icon-chevron-right"></span>
+              </a>
+            </li>
+          
+          
+            <li>
+              
+                <a class="tw-flex tw-items-center tw-justify-between tw-bg-c21-grey-light tw-my-3 tw-p-3"
+                   href="https://www.century21-vicarello-castelnau.com/annonces/location/"
+                >
+              
+              16 biens &agrave; louer dans cette agence <span class="icon-chevron-right"></span>
+              </a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  </div>
+
+
+
+<div id="moduleGOOGLEMAP" class="module238" style="display: none">
+  <ul>
+    <li id="map_tab_agence" onclick="showAgences()" class="mapActive">Trouvez d'autres agences</li>
+    
+  </ul>
+  <div class="reset"></div>
+  <div class="map_google">
+    <div id="mapCanvas" style="width:239px;height:240px">
+    </div>
+  </div>
+</div>
+
+
+
+
+  
+    <div id="moduleEDITOVILLE" class="module238 tw-w-full tw-px-3">
+      <h2>MONTPELLIER&nbsp;en clin d'oeil</h2>
+      <img src="/imagesBien/202/cms/618879172/montpellier/montpellier__cmsbig.jpg"
+           alt="Montpellier - © Jenifoto – Fotolia.com" class="image-agence"/>
+      <div class="titreACTUAG tw-mt-3 tw-text-xl tw-text-center">
+        MONTPELLIER <br/>
+        34000 - Herault - LANGUEDOC-ROUSSILLON
+      </div>
+      <a href="/edito/ville/montpellier/"></a>
+      <p class="txtACTU tw-p-3 tw-text-center"> C’est au tournant du premier millénaire que fut fondée Montpellier, colonie romaine située au carrefour de nombreux axes routiers ...</p>
+      <a class="link-suite tw-block tw-underline tw-text-center"
+         href="/edito/ville/montpellier/">
+        En savoir plus sur MONTPELLIER...</a>
+    </div>
+  
+
+  
+
+  <div class="xl:tw-flex tw-w-full tw-mt-3">
+    <div id="moduleETAPEACHAT" class="xl:tw-w-2/6 xl:tw-mr-4">
+      <h2 class="tw-p-3 tw-bg-c21-gold tw-text-center tw-text-xl tw-py-3 tw-text-white">
+        Les étapes pour bien acheter
+      </h2>
+      <ul class="articles tw-px-3">
+  
+    <li>
+      <a class="lienFLECHEGRIS tw-block tw-text-xs tw-py-1 tw-font-semibold tw-mb-3 tw-uppercase tw-underline"
+         href="/edito/article/immobilier-un-marche-en-nette-hausse-au-troisieme-trimestr/"
+      >
+        Immobilier : un marché en nette hausse au troisième trimestre</a>
+    </li>
+  
+    <li>
+      <a class="lienFLECHEGRIS tw-block tw-text-xs tw-py-1 tw-font-semibold tw-mb-3 tw-uppercase tw-underline"
+         href="/edito/article/le-dispositif-denormandie-devrait-favoriser-loffre-loca/"
+      >
+        Le dispositif « Denormandie » devrait favoriser l’offre locative en centre-ville.</a>
+    </li>
+  
+    <li>
+      <a class="lienFLECHEGRIS tw-block tw-text-xs tw-py-1 tw-font-semibold tw-mb-3 tw-uppercase tw-underline"
+         href="/edito/article/les-scpi-fiscales/"
+      >
+        Les SCPI fiscales</a>
+    </li>
+  
+    <li>
+      <a class="lienFLECHEGRIS tw-block tw-text-xs tw-py-1 tw-font-semibold tw-mb-3 tw-uppercase tw-underline"
+         href="/edito/article/la-maison-connectee-la-salle-de-bains-8/"
+      >
+        La maison connectée - La salle de bains (8)</a>
+    </li>
+  
+    <li>
+      <a class="lienFLECHEGRIS tw-block tw-text-xs tw-py-1 tw-font-semibold tw-mb-3 tw-uppercase tw-underline"
+         href="/edito/article/avantages-et-inconvenients-dune-residence-secondaire/"
+      >
+        Avantages et inconvénients d’une résidence secondaire</a>
+    </li>
+  
+  <ul>
+
+    </div>
+
+    
+
+    
+
+    
+  </div>
+
+
+
+
+      
+    </div>
+    <div class="reset"></div>
+  </section>
+
+
+<div class="reset"></div>
+
+
+<script>
+
+
+  
+    var page_number = "";
+  
+
+
+
+  
+
+
+    var h = document.location.hash;
+
+    if (h && h[1] == '/') document.location.href = h.substr(1)
+
+    $(".blocRECHERCHE").slideUp();
+
+
+  
+
+
+  $("#AFFINER").click(function () {
+    $(".blocRECHERCHE").slideToggle("slow");
+    $(".pagination").slideUp("slow");
+    $("#TRI").removeClass('tt');
+    $(this).toggleClass("tt");
+
+  });
+  $("#modifier2").click(function () {
+    $(".blocRECHERCHE").slideToggle("slow");
+    $(".pagination").slideUp("slow");
+    $("#TRI").removeClass('tt');
+    $(this).toggleClass("tt");
+
+  });
+  $("#modifier3").click(function () {
+    $(".blocRECHERCHE").slideToggle("slow");
+    $(".pagination").slideUp("slow");
+    $("#TRI").removeClass('tt');
+    $(this).toggleClass("tt");
+    scrollTop();
+
+
+  });
+  $("#TRI").click(function () {
+    $(".pagination").slideToggle("slow");
+    $(".blocRECHERCHE").slideUp("slow");
+    $("#aff").removeClass('tt');
+    $(this).toggleClass("tt");
+
+
+  });
+  $("#TRI2").click(function () {
+    $(".pagination2").slideToggle("slow");
+    $(".blocRECHERCHE").slideUp("slow");
+    $("#aff").removeClass('tt');
+    $(this).toggleClass("tt");
+
+  });
+
+
+</script>
+<script>
+  if ($('#btnALERTE2').length > 0 || $('#btnALERTE3').length > 0) {
+    $('#btnALERTE').css('display', 'none');
+  }
+
+  //   $(".h1_page").remove()
+
+
+      //   $(".pagination").stop(true,true).slideUp();
+
+
+
+</script>
+
+
+
+  </span>
+  <span class="reset"></span>
+
+
+              
+            
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <footer id="mainFooter">
+        <div class="mid">
+          
+          
+           <div class="content">
+			  <div class="mentions_fixe">
+          <ul>
+              <li><a href="/fiches/protection-des-donnees/">Politique de protection des données</a></li>
+            <li><a href="/fiches/mentions/">Mentions légales</a></li>
+            <li><a href="/fiches/credits/">Crédits</a></li>
+            <li><a href="/contactez_nous/">Nous contacter</a></li>
+           
+          </ul>
+			  </div>
+			  <div class="reset"></div>
+			 
+				  
+
+				  <div class="reset"></div>
+
+				  
+				  <div class="reset"></div>
+         	
+          </div>
+        </div>
+      </footer>
+      
+      
+    
+  </div>
+
+  
+
+
+
+
+  <div id="mainBACKGROUND"
+       style="background:url(/theme/generic/css/images/images-fonds/SN-page-interne-D.jpg) no-repeat 0 0/cover;"
+  >
+    <div class="mid"></div>
+  </div>
+
+
+
+  <script>
+    $(document).ready(function () {
+      $('form input.token_input').tokenInput("/autocomplete/localite/", {
+        theme: 'facebook',
+        hintText: '',
+        placeholder: 'Saisissez votre choix ici...'
+      });
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+</body>
+  <!--site national -->
+</html>

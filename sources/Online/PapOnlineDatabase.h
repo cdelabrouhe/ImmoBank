@@ -32,8 +32,8 @@ namespace ImmoBank
 
 		virtual bool HasKey() { return true; }
 
-		int GetKey(sCity& _city) const;
-		virtual std::string GetKeyAsString(sCity& _city) const override;
+		int GetKey(BoroughData& _borough) const;
+		virtual std::string GetKeyAsString(BoroughData& _borough) const override;
 
 	protected:
 		virtual bool _ProcessResult(SearchRequest* _initialRequest, std::string& _str, std::vector<SearchRequestResult*>& _results) override;

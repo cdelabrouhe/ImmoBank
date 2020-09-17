@@ -110,11 +110,15 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 	std::string limit = "<div id=\"bien_";
 	std::string linkDelimiter = "<a href=";
 	std::string priceDelimiter = "<div class=\"price tw-py-1 tw-text-xl tw-font-semibold tw-text-center\">";
+	std::string titleDelimiter = "alt=";
+	std::string imgDelimiter = "src=";
+	std::string infDelimiter = "<br/>";
 	int size = limit.size();
 	auto delimiter = doc.find(limit);
 	while (delimiter != std::string::npos)
 	{
 		SearchRequestResultAnnounce* result = new SearchRequestResultAnnounce(*announce);
+		result->m_database = GetName();
 		doc = doc.substr(delimiter + size, doc.size());
 		delimiter = doc.find(limit);
 		std::string announceData = doc.substr(0, delimiter);
@@ -122,14 +126,44 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 
 		// URL
 		std::string link = announceData.substr(findLink + linkDelimiter.size() + 1, announceData.size());
-		result->m_URL = link.substr(0, link.find("\""));
-		auto findPrice = announceData.find(priceDelimiter);
+		result->m_URL = "https://www.century21.fr" + link.substr(0, link.find("\""));
 
 		// Price
+		auto findPrice = announceData.find(priceDelimiter);
 		std::string priceData = announceData.substr(findPrice + priceDelimiter.size(), announceData.size());
 		priceData = priceData.substr(0, priceData.find("&"));
 		StringTools::ReplaceBadSyntax(priceData, " ", "");
 		result->m_price = stoi(priceData);
+
+		// Title
+		auto findTitle = announceData.find(titleDelimiter);
+		std::string titleData = announceData.substr(findTitle + titleDelimiter.size() + 1, announceData.size());
+		titleData = titleData.substr(0, titleData.find("\""));
+		StringTools::RemoveSpecialCharacters(titleData);
+		result->m_name = titleData;
+
+		// Image
+		auto findImg = announceData.find(imgDelimiter);
+		std::string imgData = announceData.substr(findImg + imgDelimiter.size() + 1, announceData.size());
+		imgData = imgData.substr(0, imgData.find("\""));
+		StringTools::RemoveSpecialCharacters(imgData);
+		result->m_imageTinyURL = "https://www.century21.fr" + imgData;
+		result->m_imageURL = result->m_imageTinyURL;
+
+		// Data
+		auto findData = announceData.find(infDelimiter);
+		std::string infData = announceData.substr(findData + infDelimiter.size(), announceData.size());
+		infData = infData.substr(0, infData.find("</h4>"));
+		StringTools::RemoveSpecialCharacters(infData);
+		std::string surface = infData.substr(0, infData.find_last_of(","));
+		std::string nbRooms = infData.substr(infData.find_last_of(",") + 1, infData.size());
+		StringTools::RemoveEOL(nbRooms);
+		StringTools::ReplaceBadSyntax(nbRooms, " ", "");
+		/*for (char c : zipStr)
+			valid &= isdigit(c) > 0;*/
+
+		/*result->m_description = data["description"].asString();
+		result->m_nbBedRooms = data["bedrooms"].asInt();*/
 		printf("");
 	}
 

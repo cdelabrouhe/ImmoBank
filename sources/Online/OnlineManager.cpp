@@ -5,8 +5,6 @@
 #include "extern/ImGui/imgui.h"
 #include "Tools/Tools.h"
 #include "OnlineDatabase.h"
-#include "Century21OnlineDatabase.h"
-#include "Request/SearchRequest/SearchRequestAnnounce.h"
 
 using namespace ImmoBank;
 

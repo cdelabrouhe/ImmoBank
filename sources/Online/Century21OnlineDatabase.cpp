@@ -168,7 +168,7 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		StringTools::ReplaceBadSyntax(nbRoomsStr, " ", "");
 		nbRoomsStr = nbRoomsStr.substr(0, 1);
 		result->m_nbRooms = stoi(nbRoomsStr);
-		result->m_nbBedRooms = result->m_nbRooms;
+		result->m_nbBedRooms = result->m_nbRooms > 1 ? result->m_nbRooms - 1 : result->m_nbRooms;
 
 		result->Init();
 

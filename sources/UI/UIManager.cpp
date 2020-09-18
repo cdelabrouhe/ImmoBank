@@ -16,8 +16,6 @@
 #include "GLFW/glfw3.h"
 #include <shellapi.h>
 #include <Online/OnlineDatabase.h>
-#include <Online/PapOnlineDatabase.h>
-#include <Online/LogicImmoOnlineDatabase.h>
 
 using namespace ImmoBank;
 

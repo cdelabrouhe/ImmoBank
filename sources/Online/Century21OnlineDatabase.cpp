@@ -6,6 +6,7 @@
 #include "extern/jsoncpp/reader.h"
 #include "Request/SearchRequest/SearchRequestResultAnnounce.h"
 #include "extern/TinyXML/tinyxml.h"
+#include "Text/TextManager.h"
 
 using namespace ImmoBank;
 
@@ -46,13 +47,33 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 	// Cherche ville avec https://www.century21.fr/autocomplete/localite/?q=montpellier
 	// Recherche avec https://www.century21.fr/annonces/achat/cpv-34000_montpellier/b-0-460000/?nombres_de_pieces=2&nombres_de_pieces=3
 
-	std::string request = "https://www.century21.fr/annonces/achat/";
+	std::string request = "https://www.century21.fr/annonces/achat";
+	auto nbCategories = announce->m_categories;
+	for (auto category : announce->m_categories)
+	{
+		switch (category)
+		{
+		case Category_Apartment:
+		{
+			request += "-appartement";
+		}
+		break;
+		case Category_House:
+		{
+			request += "-maison";
+		}
+		break;
+		default:
+			break;
+		}
+	}
 
 	// Localisation
 	BoroughData borough;
 	sCityData cityData;
 	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
 	request += "/" + GetKey(borough);
+	StringTools::ReplaceBadSyntax(request, " ", "+");
 
 	// Surface
 	request += "/s-" + std::to_string(announce->m_surfaceMin) + "-";
@@ -108,6 +129,8 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 	std::string titleDelimiter = "alt=";
 	std::string imgDelimiter = "src=";
 	std::string infDelimiter = "<br/>";
+	std::string appartement = GET_TEXT("GeneralAppartment");
+	StringTools::TransformToLower(appartement);
 	int size = limit.size();
 	auto delimiter = doc.find(limit);
 	while (delimiter != std::string::npos)
@@ -137,6 +160,12 @@ bool Century21OnlineDatabase::_ProcessResult(SearchRequest* _initialRequest, std
 		StringTools::RemoveSpecialCharacters(titleData);
 		result->m_name = titleData;
 		result->m_description = titleData;
+
+		StringTools::TransformToLower(titleData);
+		if (titleData.find(appartement) != std::string::npos)
+			result->m_category = Category_Apartment;
+		else
+			result->m_category = Category_House;
 
 		// Image
 		auto findImg = announceData.find(imgDelimiter);

@@ -74,7 +74,6 @@ int Century21OnlineDatabase::SendRequest(SearchRequest* _request)
 	sCityData cityData;
 	DatabaseManager::getSingleton()->GetCityData(announce->m_city.m_name, announce->m_city.m_zipCode, cityData, &borough);
 	request += "/" + GetKey(borough);
-	StringTools::ReplaceBadSyntax(request, " ", "+");
 
 	// Surface
 	request += "/s-" + std::to_string(announce->m_surfaceMin) + "-";

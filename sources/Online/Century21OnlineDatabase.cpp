@@ -23,6 +23,7 @@ std::string Century21OnlineDatabase::GetKey(BoroughData& _borough) const
 	if (_borough.m_name == s_wholeCityName)
 	{
 		key = "cpv-" + std::to_string(_borough.m_city.m_zipCode) + "_" + _borough.m_city.m_name;
+		StringTools::ReplaceBadSyntax(key, " ", "+");
 		StringTools::TransformToLower(key);
 	}
 	else

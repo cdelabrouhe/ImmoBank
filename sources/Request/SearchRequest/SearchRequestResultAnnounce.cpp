@@ -291,3 +291,33 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 
 	return keep;
 }
+
+bool SearchRequestResultAnnounce::Compare(const SearchRequestResult* _target, Tools::SortType _sortType, bool _invert) const
+{
+	bool result = false;
+	switch (_sortType)
+	{
+	case Tools::SortType::Rate:
+		result = !_invert 
+			? GetRentabilityRate() < ((SearchRequestResultAnnounce*)_target)->GetRentabilityRate()
+			: GetRentabilityRate() > ((SearchRequestResultAnnounce*)_target)->GetRentabilityRate();
+		break;
+	case Tools::SortType::Price:
+		result = !_invert
+			? m_price < ((SearchRequestResultAnnounce*)_target)->m_price
+			: m_price >((SearchRequestResultAnnounce*)_target)->m_price;
+		break;
+	case Tools::SortType::Surface:
+		result = !_invert
+			? m_surface < ((SearchRequestResultAnnounce*)_target)->m_surface
+			: m_surface >((SearchRequestResultAnnounce*)_target)->m_surface;
+		break;
+	case Tools::SortType::PriceM2:
+		result = !_invert
+			? m_priceM2 < ((SearchRequestResultAnnounce*)_target)->m_priceM2
+			: m_priceM2 > ((SearchRequestResultAnnounce*)_target)->m_priceM2;
+		break;
+	}
+
+	return result;
+}

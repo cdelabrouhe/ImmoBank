@@ -39,6 +39,7 @@ void EditableRequestAnnounce::Init(SearchRequest* _request)
 }
 
 static Tools::SortType s_sortType = Tools::SortType::Rate;
+static bool s_invert = false;
 
 void EditableRequestAnnounce::Process()
 {
@@ -61,7 +62,7 @@ void EditableRequestAnnounce::Process()
 	if (m_updateList)
 	{
 		m_updateList = false;
-		Tools::DoboSort(m_result, s_sortType);
+		Tools::DoboSort(m_result, s_sortType, s_invert);
 	}
 }
 
@@ -334,18 +335,41 @@ void EditableRequestAnnounce::Display(unsigned int _ID)
 			std::string filterName = std::string(GET_TEXT("RequestWindowFilter")) + " (\"incl,-excl\") (\"error\")";
 			filter.Draw(filterName.c_str(), 180);
 			auto sortType = s_sortType;
+			bool pressed = false;
 			if (ImGui::Button(GET_TEXT("RequestWindowSortByRate")))
+			{
 				s_sortType = Tools::SortType::Rate;
+				pressed = true;
+			}
 			ImGui::SameLine();
 			if (ImGui::Button(GET_TEXT("RequestWindowSortByPrice")))
+			{
 				s_sortType = Tools::SortType::Price;
+				pressed = true;
+			}
 			ImGui::SameLine();
 			if (ImGui::Button(GET_TEXT("RequestWindowSortBySurface")))
+			{
 				s_sortType = Tools::SortType::Surface;
+				pressed = true;
+			}
 			ImGui::SameLine();
 			if (ImGui::Button(GET_TEXT("RequestWindowSortByPriceM2")))
+			{
 				s_sortType = Tools::SortType::PriceM2;
-			m_updateList = sortType != s_sortType;
+				pressed = true;
+			}
+
+			if (sortType != s_sortType)
+			{
+				m_updateList = true;
+				s_invert = false;
+			}
+			else if (pressed)
+			{
+				s_invert = !s_invert;
+				m_updateList = true;
+			}
 
 			ImGui::Separator();
 			ImGui::Separator();

@@ -21,12 +21,12 @@ namespace ImmoBank
 		virtual void PostProcess() {}
 		virtual bool Display(ImGuiTextFilter* _filter = nullptr) { return true; }
 
-		static bool compare(const SearchRequestResult* _a, const SearchRequestResult* _b, Tools::SortType _sortType)
+		static bool compare(const SearchRequestResult* _a, const SearchRequestResult* _b, Tools::SortType _sortType, bool _invert)
 		{
-			return _a->Compare(_b, _sortType);
+			return _a->Compare(_b, _sortType, _invert);
 		}
 
-		virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType) const
+		virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType, bool _invert) const
 		{
 			return false;
 		}

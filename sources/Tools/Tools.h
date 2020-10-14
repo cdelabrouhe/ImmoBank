@@ -57,7 +57,7 @@ namespace ImmoBank
 		}
 
 		template <typename T>
-		static void DoboSort(std::vector<T*>& tab, SortType _sortType)
+		static void DoboSort(std::vector<T*>& tab, SortType _sortType, bool _invert)
 		{
 			int size = (int)tab.size();
 			int gap = size;
@@ -67,7 +67,7 @@ namespace ImmoBank
 				gap = reduce(gap);
 				for (int i = 0; i < size - gap; i++)
 				{
-					if (T::compare(tab[i], tab[i + gap], _sortType))
+					if (T::compare(tab[i], tab[i + gap], _sortType, _invert))
 					{
 						swapped = true;
 						T* tmp = tab[i];

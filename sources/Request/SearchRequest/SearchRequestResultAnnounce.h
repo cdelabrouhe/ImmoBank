@@ -52,21 +52,7 @@ namespace ImmoBank
 			return *this;
 		}
 
-		virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType) const override
-		{
-			switch (_sortType)
-			{
-			case Tools::SortType::Rate:
-				return GetRentabilityRate() < ((SearchRequestResultAnnounce*)_target)->GetRentabilityRate();
-			case Tools::SortType::Price:
-				return m_price < ((SearchRequestResultAnnounce*)_target)->m_price;
-			case Tools::SortType::Surface:
-				return m_surface < ((SearchRequestResultAnnounce*)_target)->m_surface;
-			case Tools::SortType::PriceM2:
-				return m_priceM2 < ((SearchRequestResultAnnounce*)_target)->m_priceM2;
-			}
-			return false;
-		}
+		virtual bool Compare(const SearchRequestResult* _target, Tools::SortType _sortType, bool _invert) const override;
 
 	private:
 		void UpdateBoroughs(bool _lookForBorough);

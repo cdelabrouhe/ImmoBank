@@ -55,7 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
             FloatingActionButton(
               onPressed: () {
                 setState(() {
-                  m_list.add(Announce.announceSection);
+                  Announce announce = new Announce();
+                  m_list.add(announce.announceSection);
                   print(">>>>>>>>>>>>>>>>>>>>>>>>>   ADD Button pressed");
                 });
               },

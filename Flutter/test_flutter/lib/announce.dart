@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
 class Announce {
+  static String m_description =
+      'Paris 18ème - Abbesses - Dans une charmante copropriété Montmartroise calme et verdoyante, idéalement située proche de la rue des Abbesses et de la rue Lepic, un appartement composé d une grande pièce principale, avec une cuisine aménagée et un coin bureau, une salle d eau et un w.-c. séparé. Au sous-sol, une cave. Honoraires d agence à la charge de l acquéreur inclus :  4,61 % soit 20 000 € d honoraires. Prix hors honoraires : 434 000 €.';
+  static String m_URL =
+      'https://www.laforet.com/agence-immobiliere/paris18abbesses/acheter/paris-18/appartement-1-piece-19493910';
+  static String m_imageURL =
+      'https://laforetbusiness.laforet-intranet.com/office9/laforet_paris11bastille/catalog/images/pr_p/1/9/2/9/1/9/3/0/19291930a.jpg';
+
   static Widget titleSection = Container(
     padding: const EdgeInsets.all(16),
     child: Row(
@@ -14,14 +21,14 @@ class Announce {
               Container(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'Oeschinen Lake Campground',
+                  'Test gros titre',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Text(
-                'Kandersteg, Switzerland',
+                'Test petit titre',
                 style: TextStyle(
                   color: Colors.grey[500],
                 ),
@@ -31,7 +38,7 @@ class Announce {
         ),
         /*3*/
         Icon(
-          Icons.star,
+          Icons.star_border,
           color: Colors.red[500],
         ),
         Text('41'),
@@ -44,14 +51,17 @@ class Announce {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: color),
+        IconButton(
+          icon: Icon(icon, color: color),
+          onPressed: () {},
+        ),
         Container(
-          margin: const EdgeInsets.only(top: 8),
+          margin: const EdgeInsets.only(top: 0),
           child: Text(
             label,
             style: TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
           ),
@@ -63,12 +73,12 @@ class Announce {
   static Color color = Colors.blue;
 
   static Widget buttonSection = Container(
-    margin: const EdgeInsets.only(top: 10),
+    margin: const EdgeInsets.only(top: 2),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildButtonColumn(color, Icons.call, 'CALL'),
-        _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
+        _buildButtonColumn(color, Icons.link, 'LINK'),
         _buildButtonColumn(color, Icons.share, 'SHARE'),
       ],
     ),
@@ -77,24 +87,19 @@ class Announce {
   static Widget textSection = Container(
     padding: const EdgeInsets.all(10),
     child: Text(
-      'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-      'Alps. Situated 1,578 meters above sea level, it is one of the '
-      'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-      'half-hour walk through pastures and pine forest, leads you to the '
-      'lake, which warms to 20 degrees Celsius in the summer. Activities '
-      'enjoyed here include rowing, and riding the summer toboggan run.',
+      m_description,
       softWrap: true,
     ),
   );
 
-  static Widget announceSection = Center(
+  Widget announceSection = Center(
     child: Container(
       padding: EdgeInsets.all(10.0),
       child: Column(
         children: [
           titleSection,
           Image.network(
-            'https://laforetbusiness.laforet-intranet.com/office9/laforet_paris11bastille/catalog/images/pr_p/1/9/2/9/1/9/3/0/19291930a.jpg',
+            m_imageURL,
             width: 600,
             height: 240,
             fit: BoxFit.fitWidth,

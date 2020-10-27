@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 setState(() {
                   Announce announce = new Announce();
-                  m_list.add(announce.announceSection);
+                  m_list.add(announce.announceSectionLight);
                   print(">>>>>>>>>>>>>>>>>>>>>>>>>   ADD Button pressed");
                 });
               },

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Announce {
+  static String m_title = 'Paris 18ème - Appartement 3 pièces';
+
+  static int m_price = 437000;
+
+  static double m_rate = 10.7;
+
   static String m_description =
       'Paris 18ème - Abbesses - Dans une charmante copropriété Montmartroise calme et verdoyante, idéalement située proche de la rue des Abbesses et de la rue Lepic, un appartement composé d une grande pièce principale, avec une cuisine aménagée et un coin bureau, une salle d eau et un w.-c. séparé. Au sous-sol, une cave. Honoraires d agence à la charge de l acquéreur inclus :  4,61 % soit 20 000 € d honoraires. Prix hors honoraires : 434 000 €.';
   static String m_URL =
@@ -21,14 +27,14 @@ class Announce {
               Container(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'Test gros titre',
+                  m_title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Text(
-                'Test petit titre',
+                m_price.toString(),
                 style: TextStyle(
                   color: Colors.grey[500],
                 ),
@@ -112,6 +118,107 @@ class Announce {
           ),*/
           buttonSection,
           textSection,
+        ],
+      ),
+    ),
+  );
+
+  //--------------------------------------------------------------------------
+  // Light
+  //--------------------------------------------------------------------------
+  static Widget titleSectionLight = Container(
+    padding: const EdgeInsets.all(4),
+    child: Row(
+      children: [
+        Expanded(
+          /*1*/
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /*2*/
+              Text(
+                m_title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    m_price.toString(),
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  Text(' - '),
+                  Text(
+                    m_rate.toString(),
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  Text(
+                    '%',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        /*3*/
+        Icon(
+          Icons.star_border,
+          color: Colors.red[500],
+        )
+      ],
+    ),
+  );
+
+  static Column _buildButtonColumnLight(Color color, IconData icon) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(icon, color: color),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  static Widget buttonSectionLight = Container(
+    margin: const EdgeInsets.only(top: 2),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildButtonColumnLight(color, Icons.call),
+        _buildButtonColumnLight(color, Icons.link),
+        _buildButtonColumnLight(color, Icons.share),
+      ],
+    ),
+  );
+
+  Widget announceSectionLight = Center(
+    child: Container(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          titleSectionLight,
+          Row(
+            children: [
+              Image.network(
+                m_imageURL,
+                width: 310,
+                height: 122,
+                fit: BoxFit.fitWidth,
+              ),
+              buttonSectionLight,
+            ],
+          ),
         ],
       ),
     ),

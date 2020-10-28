@@ -52,14 +52,29 @@ class Announce {
     ),
   );
 
-  static Column _buildButtonColumn(Color color, IconData icon, String label) {
+  static void PhoneCall() {
+    print("Phone call !");
+  }
+
+  static void GoToURL() {
+    print("Go to URL !");
+  }
+
+  static void Share() {
+    print("Share !");
+  }
+
+  static Column _buildButtonColumn(
+      Color color, IconData icon, String label, Function() _f) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Icon(icon, color: color),
-          onPressed: () {},
+          onPressed: () {
+            _f();
+          },
         ),
         Container(
           margin: const EdgeInsets.only(top: 0),
@@ -83,9 +98,9 @@ class Announce {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildButtonColumn(color, Icons.call, 'CALL'),
-        _buildButtonColumn(color, Icons.link, 'LINK'),
-        _buildButtonColumn(color, Icons.share, 'SHARE'),
+        _buildButtonColumn(color, Icons.call, 'CALL', PhoneCall),
+        _buildButtonColumn(color, Icons.link, 'LINK', GoToURL),
+        _buildButtonColumn(color, Icons.share, 'SHARE', Share),
       ],
     ),
   );
@@ -177,14 +192,17 @@ class Announce {
     ),
   );
 
-  static Column _buildButtonColumnLight(Color color, IconData icon) {
+  static Column _buildButtonColumnLight(
+      Color color, IconData icon, Function() _f) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Icon(icon, color: color),
-          onPressed: () {},
+          onPressed: () {
+            _f();
+          },
         ),
       ],
     );
@@ -195,9 +213,9 @@ class Announce {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildButtonColumnLight(color, Icons.call),
-        _buildButtonColumnLight(color, Icons.link),
-        _buildButtonColumnLight(color, Icons.share),
+        _buildButtonColumnLight(color, Icons.call, PhoneCall),
+        _buildButtonColumnLight(color, Icons.link, GoToURL),
+        _buildButtonColumnLight(color, Icons.share, Share),
       ],
     ),
   );

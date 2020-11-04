@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AnnounceData {
-  String title = 'Paris 18ème - Appartement 3 pièces';
-  int price = 437000;
-  double rate = 10.7;
-  String description =
-      'Paris 18ème - Abbesses - Dans une charmante copropriété Montmartroise calme et verdoyante, idéalement située proche de la rue des Abbesses et de la rue Lepic, un appartement composé d une grande pièce principale, avec une cuisine aménagée et un coin bureau, une salle d eau et un w.-c. séparé. Au sous-sol, une cave. Honoraires d agence à la charge de l acquéreur inclus :  4,61 % soit 20 000 € d honoraires. Prix hors honoraires : 434 000 €.';
-  String announceURL =
-      'https://www.laforet.com/agence-immobiliere/paris18abbesses/acheter/paris-18/appartement-1-piece-19493910';
-  String imageURL =
-      'https://laforetbusiness.laforet-intranet.com/office9/laforet_gaillon/catalog/images/pr_p/1/9/5/0/9/9/3/2/19509932a.jpg';
+  String title;
+  int price;
+  double rate;
+  String description;
+  String announceURL;
+  String imageURL;
 
   AnnounceData(
       {this.title,
@@ -18,6 +15,18 @@ class AnnounceData {
       this.description,
       this.announceURL,
       this.imageURL});
+
+  void Init() {
+    title = 'Paris 18ème - Appartement 3 pièces';
+    price = 437000;
+    rate = 10.7;
+    description =
+        'Paris 18ème - Abbesses - Dans une charmante copropriété Montmartroise calme et verdoyante, idéalement située proche de la rue des Abbesses et de la rue Lepic, un appartement composé d une grande pièce principale, avec une cuisine aménagée et un coin bureau, une salle d eau et un w.-c. séparé. Au sous-sol, une cave. Honoraires d agence à la charge de l acquéreur inclus :  4,61 % soit 20 000 € d honoraires. Prix hors honoraires : 434 000 €.';
+    announceURL =
+        'https://www.laforet.com/agence-immobiliere/paris18abbesses/acheter/paris-18/appartement-1-piece-19493910';
+    imageURL =
+        'https://laforetbusiness.laforet-intranet.com/office9/laforet_gaillon/catalog/images/pr_p/1/9/5/0/9/9/3/2/19509932a.jpg';
+  }
 }
 
 class Announce {

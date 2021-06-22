@@ -66,10 +66,7 @@ void BoroughData::End()
 //-------------------------------------------------------------------------------------------------
 void BoroughData::Reset(bool _resetDB)
 {
-	m_priceRentApartmentT1.Reset();
-	m_priceRentApartmentT2.Reset();
-	m_priceRentApartmentT3.Reset();
-	m_priceRentApartmentT4Plus.Reset();
+	m_priceRentApartment.Reset();
 	m_priceBuyApartment.Reset();
 	m_priceBuyHouse.Reset();
 	m_priceRentHouse.Reset();
@@ -214,7 +211,7 @@ void BoroughData::Edit()
 			if (strlen(clipboard) > 0)
 			{
 				std::string str(clipboard);
-				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartmentT1, m_priceRentApartmentT2, m_priceRentApartmentT3, m_priceRentApartmentT4Plus, m_priceBuyApartment, m_priceBuyHouse, m_meilleursAgentsKey, m_city.m_zipCode))
+				if (Tools::ExtractPricesFromHTMLSource(str, m_priceRentApartment, m_priceBuyApartment, m_priceBuyHouse, m_meilleursAgentsKey, m_city.m_zipCode))
 				{
 					DatabaseManager::getSingleton()->AddBoroughData(*this);
 
@@ -238,10 +235,7 @@ void BoroughData::Edit()
 		ImGui::Separator();
 		ImGui::SetWindowFontScale(1.f);
 		ImGui::Text(GET_TEXT("BoroughManualEditRent"));
-		EDIT_INFO_FLOAT3(T1, m_priceRentApartmentT1, 1);
-		EDIT_INFO_FLOAT3(T2, m_priceRentApartmentT2, 1);
-		EDIT_INFO_FLOAT3(T3, m_priceRentApartmentT3, 1);
-		EDIT_INFO_FLOAT3(T4+, m_priceRentApartmentT4Plus, 1);
+		EDIT_INFO_FLOAT3(T1, m_priceRentApartment, 1);
 		EDIT_INFO_CSTR(GET_TEXT("BoroughManualEditHouse"), m_priceRentHouse, 1);
 
 		if (Tools::IsDevMode())
@@ -338,10 +332,7 @@ void BoroughData::DisplayAsTooltip()
 			ImGui::Separator();
 			ImGui::SetWindowFontScale(1.f);
 			ImGui::Text(GET_TEXT("PricePopupRent"));
-			DISPLAY_INFO(T1, m_priceRentApartmentT1);
-			DISPLAY_INFO(T2, m_priceRentApartmentT2);
-			DISPLAY_INFO(T3, m_priceRentApartmentT3);
-			DISPLAY_INFO(T4 + , m_priceRentApartmentT4Plus);
+			DISPLAY_INFO_CSTR(GET_TEXT("PricePopupAppartment"), m_priceRentApartment);
 			DISPLAY_INFO_CSTR(GET_TEXT("PricePopupHouse"), m_priceRentHouse);
 
 			ImGui::Separator();

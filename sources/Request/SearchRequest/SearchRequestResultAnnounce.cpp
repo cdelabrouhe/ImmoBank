@@ -92,17 +92,7 @@ float SearchRequestResultAnnounce::GetEstimatedRent() const
 		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
 		if (!m_waitingForDBUpdate && !DatabaseManager::getSingleton()->IsBoroughUpdating(borough))
 		{
-			float rent = 0.f;
-			if (m_nbRooms == 1)
-				rent = m_surface * borough.m_priceRentApartmentT1.m_val;
-			else if (m_nbRooms == 2)
-				rent = m_surface * borough.m_priceRentApartmentT2.m_val;
-			else if (m_nbRooms == 3)
-				rent = m_surface * borough.m_priceRentApartmentT3.m_val;
-			else
-				rent = m_surface * borough.m_priceRentApartmentT4Plus.m_val;
-
-			return rent;
+			return m_surface * borough.m_priceRentApartment.m_val;
 		}
 	}
 	return 0.f;
@@ -225,7 +215,7 @@ bool SearchRequestResultAnnounce::Display(ImGuiTextFilter* _filter)
 	if (forceChange || (m_selectedBoroughID > 0))
 	{
 		const BoroughData& borough = m_boroughs[m_selectedBoroughID - 1];
-		if (borough.m_priceRentApartmentT1.m_val < 0.1f)
+		if (borough.m_priceRentApartment.m_val < 0.1f)
 		{
 			needNeighboorUpdate = true;
 			requestBorough = borough;

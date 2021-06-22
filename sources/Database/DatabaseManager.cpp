@@ -255,18 +255,18 @@ void DatabaseManager::AddBoroughData(const BoroughData& _data, bool _saveExterna
 		localData.m_priceRentHouse.m_val,
 		localData.m_priceRentHouse.m_min,
 		localData.m_priceRentHouse.m_max,
-		localData.m_priceRentApartmentT1.m_val,
-		localData.m_priceRentApartmentT1.m_min,
-		localData.m_priceRentApartmentT1.m_max,
-		localData.m_priceRentApartmentT2.m_val,
-		localData.m_priceRentApartmentT2.m_min,
-		localData.m_priceRentApartmentT2.m_max,
-		localData.m_priceRentApartmentT3.m_val,
-		localData.m_priceRentApartmentT3.m_min,
-		localData.m_priceRentApartmentT3.m_max,
-		localData.m_priceRentApartmentT4Plus.m_val,
-		localData.m_priceRentApartmentT4Plus.m_min,
-		localData.m_priceRentApartmentT4Plus.m_max,
+		localData.m_priceRentApartment.m_val,
+		localData.m_priceRentApartment.m_min,
+		localData.m_priceRentApartment.m_max,
+		localData.m_priceRentApartment.m_val,
+		localData.m_priceRentApartment.m_min,
+		localData.m_priceRentApartment.m_max,
+		localData.m_priceRentApartment.m_val,
+		localData.m_priceRentApartment.m_min,
+		localData.m_priceRentApartment.m_max,
+		localData.m_priceRentApartment.m_val,
+		localData.m_priceRentApartment.m_min,
+		localData.m_priceRentApartment.m_max,
 		localData.m_selogerKey,
 		localData.m_city.m_zipCode,
 		localData.m_city.m_inseeCode);
@@ -307,18 +307,18 @@ void ExtractBoroughDataFromSQL(BoroughData& _borough, sqlite3_stmt* _stmt)
 	_borough.m_priceRentHouse.m_val = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceRentHouse.m_min = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_priceRentHouse.m_max = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT1.m_val = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT1.m_min = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT1.m_max = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT2.m_val = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT2.m_min = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT2.m_max = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT3.m_val = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT3.m_min = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT3.m_max = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT4Plus.m_val = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT4Plus.m_min = (float)sqlite3_column_double(_stmt, index++);
-	_borough.m_priceRentApartmentT4Plus.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_val = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_min = (float)sqlite3_column_double(_stmt, index++);
+	_borough.m_priceRentApartment.m_max = (float)sqlite3_column_double(_stmt, index++);
 	_borough.m_selogerKey = (unsigned int)sqlite3_column_int64(_stmt, index++);
 	_borough.m_city.m_zipCode = (int)sqlite3_column_int64(_stmt, index++);
 	_borough.m_city.m_inseeCode = (int)sqlite3_column_int64(_stmt, index++);
@@ -688,18 +688,9 @@ void DatabaseManager::Test()
 	data.m_priceRentHouse.m_val = 7;
 	data.m_priceRentHouse.m_min = 8;
 	data.m_priceRentHouse.m_max = 9;
-	data.m_priceRentApartmentT1.m_val = 10;
-	data.m_priceRentApartmentT1.m_min = 11;
-	data.m_priceRentApartmentT1.m_max = 12;
-	data.m_priceRentApartmentT2.m_val = 13;
-	data.m_priceRentApartmentT2.m_min = 14;
-	data.m_priceRentApartmentT2.m_max = 15;
-	data.m_priceRentApartmentT3.m_val = 16;
-	data.m_priceRentApartmentT3.m_min = 17;
-	data.m_priceRentApartmentT3.m_max = 18;
-	data.m_priceRentApartmentT4Plus.m_val = 19;
-	data.m_priceRentApartmentT4Plus.m_min = 20;
-	data.m_priceRentApartmentT4Plus.m_max = 21;
+	data.m_priceRentApartment.m_val = 10;
+	data.m_priceRentApartment.m_min = 11;
+	data.m_priceRentApartment.m_max = 12;
 	data.m_selogerKey = 0;
 	data.m_city.m_zipCode = 0;
 

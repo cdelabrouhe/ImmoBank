@@ -27,10 +27,7 @@ namespace ImmoBank
 		sDate				m_timeUpdate;
 		unsigned int		m_meilleursAgentsKey = 0xffffffff;
 		unsigned int		m_selogerKey = 0;	// Not used anymore, but we keep it for compatibility matters
-		sPrice				m_priceRentApartmentT1;
-		sPrice				m_priceRentApartmentT2;
-		sPrice				m_priceRentApartmentT3;
-		sPrice				m_priceRentApartmentT4Plus;
+		sPrice				m_priceRentApartment;
 		sPrice				m_priceBuyApartment;
 		sPrice				m_priceBuyHouse;
 		sPrice				m_priceRentHouse;

@@ -238,18 +238,18 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
 			m_data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
-			m_data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			m_data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
 			m_data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 			if (auto zip = row[rowID++])
 				m_data.m_city.m_zipCode = strtoul(zip, nullptr, 10);
@@ -293,18 +293,18 @@ void MySQLBoroughQuery::Process(MySQLDatabase* _db)
 			m_data.m_priceRentHouse.m_val,
 			m_data.m_priceRentHouse.m_min,
 			m_data.m_priceRentHouse.m_max,
-			m_data.m_priceRentApartmentT1.m_val,
-			m_data.m_priceRentApartmentT1.m_min,
-			m_data.m_priceRentApartmentT1.m_max,
-			m_data.m_priceRentApartmentT2.m_val,
-			m_data.m_priceRentApartmentT2.m_min,
-			m_data.m_priceRentApartmentT2.m_max,
-			m_data.m_priceRentApartmentT3.m_val,
-			m_data.m_priceRentApartmentT3.m_min,
-			m_data.m_priceRentApartmentT3.m_max,
-			m_data.m_priceRentApartmentT4Plus.m_val,
-			m_data.m_priceRentApartmentT4Plus.m_min,
-			m_data.m_priceRentApartmentT4Plus.m_max,
+			m_data.m_priceRentApartment.m_val,
+			m_data.m_priceRentApartment.m_min,
+			m_data.m_priceRentApartment.m_max,
+			m_data.m_priceRentApartment.m_val,
+			m_data.m_priceRentApartment.m_min,
+			m_data.m_priceRentApartment.m_max,
+			m_data.m_priceRentApartment.m_val,
+			m_data.m_priceRentApartment.m_min,
+			m_data.m_priceRentApartment.m_max,
+			m_data.m_priceRentApartment.m_val,
+			m_data.m_priceRentApartment.m_min,
+			m_data.m_priceRentApartment.m_max,
 			m_data.m_selogerKey,
 			m_data.m_city.m_zipCode,
 			m_data.m_city.m_inseeCode);
@@ -368,18 +368,18 @@ void MySQLBoroughListQuery::Process(MySQLDatabase* _db)
 			data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
 			data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
 			data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
-			data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+			data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
 			data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 			if (auto zip = row[rowID++])
 				data.m_city.m_zipCode = strtoul(zip, nullptr, 10);
@@ -688,18 +688,18 @@ void MySQLDatabase::DebugQuery(const std::string& _query)
 		data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
 		data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
 		data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
-		data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+		data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
 		data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 		data.m_city.m_zipCode = strtoul(row[rowID++], nullptr, 10);
 		data.m_city.m_inseeCode = strtoul(row[rowID++], nullptr, 10);
@@ -805,18 +805,18 @@ bool ImmoBank::MySQLDatabase::UpdateAllZipCodes()
 				data.m_priceRentHouse.m_val = (float)strtod(row[rowID++], nullptr);
 				data.m_priceRentHouse.m_min = (float)strtod(row[rowID++], nullptr);
 				data.m_priceRentHouse.m_max = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT1.m_val = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT1.m_min = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT1.m_max = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT2.m_val = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT2.m_min = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT2.m_max = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT3.m_val = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT3.m_min = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT3.m_max = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT4Plus.m_val = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT4Plus.m_min = (float)strtod(row[rowID++], nullptr);
-				data.m_priceRentApartmentT4Plus.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_val = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_min = (float)strtod(row[rowID++], nullptr);
+				data.m_priceRentApartment.m_max = (float)strtod(row[rowID++], nullptr);
 				data.m_selogerKey = strtoul(row[rowID++], nullptr, 10);
 				
 				auto zip = row[rowID++];

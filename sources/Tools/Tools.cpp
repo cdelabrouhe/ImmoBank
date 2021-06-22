@@ -62,7 +62,7 @@ float Tools::ComputeRentabilityRate(float _rent, float _price)
 	return _rent * 12.f * 100.f / _price;
 }
 
-bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rentT1, sPrice& _rentT2, sPrice& _rentT3, sPrice& _rentT4Plus, sPrice& _buyApartment, sPrice& _buyHouse, unsigned int& _meilleursAgentsKey, int& _zipCode)
+bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _rent, sPrice& _buyApartment, sPrice& _buyHouse, unsigned int& _meilleursAgentsKey, int& _zipCode)
 {
 	std::string searchStr("MA.Context.placePrices = ");
 	_zipCode = -1;
@@ -113,19 +113,12 @@ bool Tools::ExtractPricesFromHTMLSource(const std::string& _source, sPrice& _ren
 	Json::Value root;
 	reader.parse(tmp, root);
 	Json::Value& rental = root["rental"]["apartment"];
-	Json::Value& valRentT1 = rental["t1"];
-	Json::Value& valRentT2 = rental["t2"];
-	Json::Value& valRentT3 = rental["t3"];
-	Json::Value& valRentT4 = rental["t4_plus"];
-	_rentT1 = sPrice((float)valRentT1["value"].asDouble(), (float)valRentT1["low"].asDouble(), (float)valRentT1["high"].asDouble());
-	_rentT2 = sPrice((float)valRentT2["value"].asDouble(), (float)valRentT2["low"].asDouble(), (float)valRentT2["high"].asDouble());
-	_rentT3 = sPrice((float)valRentT3["value"].asDouble(), (float)valRentT3["low"].asDouble(), (float)valRentT3["high"].asDouble());
-	_rentT4Plus = sPrice((float)valRentT4["value"].asDouble(), (float)valRentT4["low"].asDouble(), (float)valRentT4["high"].asDouble());
+	_rent = sPrice((float)rental["value"].asDouble(), (float)rental["low"].asDouble(), (float)rental["high"].asDouble());
 	Json::Value& sellApartment = root["sell"]["apartment"];
 	Json::Value& sellHouse = root["sell"]["house"];
 	_buyApartment = sPrice((float)sellApartment["value"].asDouble(), (float)sellApartment["low"].asDouble(), (float)sellApartment["high"].asDouble());
 	_buyHouse = sPrice((float)sellHouse["value"].asDouble(), (float)sellHouse["low"].asDouble(), (float)sellHouse["high"].asDouble());
-	_meilleursAgentsKey = root["place"]["id"].asUInt();
+	_meilleursAgentsKey = root["rental"]["place"]["id"].asUInt();
 
 
 

@@ -612,7 +612,7 @@ bool DatabaseManager::ListAllCities(std::vector<sCity>& _list)
 		return false;
 
 	std::vector<sCityData> cities;
-	Str128f sql("SELECT * FROM Boroughs WHERE BOROUGH='%s'", s_wholeCityName);
+	Str128f sql("SELECT * FROM Boroughs WHERE BOROUGH='%s'", s_wholeCityName.c_str());
 
 	SQLExecuteSelect(m_mainTables[DataTables_Boroughs], sql.c_str(), [&cities](sqlite3_stmt* _stmt)
 	{

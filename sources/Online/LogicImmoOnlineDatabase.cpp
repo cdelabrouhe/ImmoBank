@@ -166,13 +166,13 @@ void LogicImmoOnlineDatabase::Process()
 			// Parse LogicImmo keys
 			if (root.isObject())
 			{
-				Json::Value& items = root["items"];
+				Json::Value& items = root["result"]["data"];
 				unsigned int nbCities = items.size();
 				for (unsigned int ID = 0; ID < nbCities; ++ID)
 				{
 					Json::Value val = items.get(ID, Json::nullValue);
-					std::string name = val["name"].asString();
-					std::string zipCode = val["postCode"].asString();
+					std::string name = val["lct_name_v"].asString();
+					std::string zipCode = val["lct_post_code"].asString();
 					if (zipCode.size() == 0)
 						continue;
 
@@ -182,16 +182,18 @@ void LogicImmoOnlineDatabase::Process()
 					StringTools::ConvertToImGuiText(name);
 					EntryData* data = GetEntryData(name, zip);
 
+					std::string key = val["lct_id_2"].asString() + "_" + val["lct_level"].asString();
+
 					if (data == nullptr)
 					{
-						_UpdateData(name, zip, val["key"].asString());
+						_UpdateData(name, zip, key);
 					}
 					else
 					{
 						sLocalData* localData = (sLocalData*)data;
 						localData->m_cityName = name;
 						localData->m_zipCode = zip;
-						localData->m_key = val["key"].asString();
+						localData->m_key = key;
 						UpdateDataInternal(localData);
 					}
 				}
@@ -228,7 +230,8 @@ std::string LogicImmoOnlineDatabase::_ComputeKeyURL(const std::string& _name)
 	StringTools::RemoveSpecialCharacters(name);
 	StringTools::ReplaceBadSyntax(name, "-", "%20");
 	StringTools::ReplaceBadSyntax(name, " ", "%20");
-	std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
+	//std::string request = "http://lisemobile.logic-immo.com/li.search_localities.php?client=v8.a&fulltext=" + name;
+	std::string request = "http://api.logic-immo.com/localities?query=(lct_level:2)%20AND%20(lct_name_suggest:" + _name + "*)";
 	return request;
 }
 

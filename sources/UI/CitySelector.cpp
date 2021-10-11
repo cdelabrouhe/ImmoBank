@@ -92,7 +92,7 @@ void ImmoBank::CitySelector::_UpdateAsynchronousData()
 
 		DatabaseManager::getSingleton()->AddCity(city);
 
-		m_waitingForData.erase(itCity);
+		itCity = m_waitingForData.erase(itCity);
 
 		m_changed = true;
 	}
@@ -131,35 +131,39 @@ bool CitySelector::Display()
 		m_changed = true;
 	}
 
-	std::string citiesStr[100];
-	const char* cities[100];
-	const int nbCities = m_cities.size() > 100 ? 100 : m_cities.size();
-	auto it = m_cities.begin();
-	int ID = 0;
-	while (ID < nbCities)
+	if (m_displayAllResults)
 	{
-		citiesStr[ID++] = it->second.m_name + " (" + std::to_string(it->second.m_zipCode) + ")";
-		++it;
-	}
-
-	ID = 0;
-	while (ID < nbCities)
-	{
-		cities[ID] = citiesStr[ID++].c_str();
-	}
-
-	if (m_displayAllResults && m_cities.size() > 0)
-	{
-		if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
+		std::string citiesStr[100];
+		const char* cities[100];
+		const int nbCities = m_cities.size() > 100 ? 100 : m_cities.size();
+		auto it = m_cities.begin();
+		int ID = 0;
+		while (ID < nbCities)
 		{
-			std::string str = cities[m_selectedCityID];
-			int size = str.size() < 256 ? (int)str.size() : 256;
-			char* dest = m_inputTextCity;
-			const char* source = str.c_str();
-			memcpy(dest, source, size);
+			citiesStr[ID++] = it->second.m_name + " (" + std::to_string(it->second.m_zipCode) + ")";
+			++it;
 		}
 
-		return m_selectedCityID > -1;
+		ID = 0;
+		while (ID < nbCities)
+		{
+			cities[ID] = citiesStr[ID].c_str();
+			++ID;
+		}
+
+		if (m_cities.size() > 0)
+		{
+			if (ImGui::Combo("City name", &m_selectedCityID, cities, (int)m_cities.size()))
+			{
+				std::string str = cities[m_selectedCityID];
+				int size = str.size() < 256 ? (int)str.size() : 256;
+				char* dest = m_inputTextCity;
+				const char* source = str.c_str();
+				memcpy(dest, source, size);
+			}
+
+			return m_selectedCityID > -1;
+		}
 	}
 
 	return false;
